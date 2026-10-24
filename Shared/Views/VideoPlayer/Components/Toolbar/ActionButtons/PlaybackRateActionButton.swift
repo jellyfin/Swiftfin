@@ -24,29 +24,31 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         var body: some View {
             @Bindable
             var mediaSession = mediaSession
+            let supportedRates = mediaSession.player?.supportedRates ?? 0.1 ... 5
+            let selection = Binding(get: { mediaSession.effectiveRate }, set: { mediaSession.rate = $0 })
 
             Menu(
                 L10n.playbackSpeed,
                 systemImage: VideoPlayerActionButton.playbackSpeed.systemImage
             ) {
-                Picker(L10n.playbackSpeed, selection: $mediaSession.rate) {
-                    ForEach(rates, id: \.self) { rate in
+                Picker(L10n.playbackSpeed, selection: selection) {
+                    ForEach(rates.filter { supportedRates.contains($0) }, id: \.self) { rate in
                         Text(rate, format: .playbackRate)
                             .tag(rate)
                     }
 
-                    if !rates.contains(mediaSession.rate) {
+                    if !rates.contains(mediaSession.effectiveRate) {
                         Divider()
 
-                        Text(mediaSession.rate, format: .playbackRate)
-                            .tag(mediaSession.rate)
+                        Text(mediaSession.effectiveRate, format: .playbackRate)
+                            .tag(mediaSession.effectiveRate)
                     }
                 }
 
                 Divider()
 
                 Button(L10n.custom) {
-                    viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.playbackSpeed)
+                    viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.playbackSpeed(range: supportedRates))
                 }
             }
         }

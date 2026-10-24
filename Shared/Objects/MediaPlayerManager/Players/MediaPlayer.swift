@@ -19,17 +19,40 @@ protocol MediaPlayer: AnyObject, Observable {
     var mediaSession: MediaSession? { get set }
 
     var displayTitle: String { get }
-    var mediaPlayerType: MediaPlayerType { get }
+    var playbackProfile: PlaybackProfile { get }
+    var playbackLocation: MediaPlaybackLocation { get }
+    var supportedRates: ClosedRange<Double> { get }
 
     func load(_ item: MediaPlayerItem)
 
     func play()
     func pause()
     func stop()
+    func stopForTransfer() async throws
 
     func setRate(_ rate: Double)
     func seek(_ request: PlaybackTimeline.Seek)
     func cancelSeek()
+}
+
+enum MediaPlaybackLocation {
+    case local
+    case remote
+}
+
+extension MediaPlayer {
+
+    var playbackLocation: MediaPlaybackLocation {
+        .local
+    }
+
+    var supportedRates: ClosedRange<Double> {
+        0.1 ... 5
+    }
+
+    func stopForTransfer() async throws {
+        stop()
+    }
 }
 
 @MainActor

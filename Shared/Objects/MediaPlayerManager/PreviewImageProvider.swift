@@ -79,7 +79,7 @@ final class PreviewImageProvider {
     func downloadURL(for id: Int) -> URL? {
         switch source {
         case let .chapters(chapters):
-            chapters.indices.contains(id) ? chapters[id].imageSource?.url : nil
+            chapters[safe: id]?.imageSource?.url
         case let .trickplay(trickplay):
             id >= 0 ? trickplay.sheetURL(id) : nil
         }

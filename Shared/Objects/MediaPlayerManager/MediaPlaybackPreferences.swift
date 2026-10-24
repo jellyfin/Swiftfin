@@ -32,12 +32,12 @@ struct MediaPlaybackPreferences {
         let streams = source.mediaStreams ?? []
         let audioStreams = streams.filter { $0.type == .audio && $0.isExternal != true && ($0.index ?? -1) >= 0 }
         let subtitles = streams.filter { $0.type == .subtitle && $0.deliveryMethod != .drop && ($0.index ?? -1) >= 0 }
-        let defaultAudio = audioStreams.first { $0.index == source.defaultAudioStreamIndex }
+        let defaultAudio = audioStreams.first(property: \.index, equalTo: source.defaultAudioStreamIndex)
 
         // Wait for the server's language choice when its default audio index is not available yet.
         let preferredAudio = defaultAudio.flatMap { preferredAudio(in: audioStreams, default: $0) }
         let audioIndex = explicitAudio ?? preferredAudio?.index ?? source.defaultAudioStreamIndex
-        let audioLanguage = audioStreams.first { $0.index == audioIndex }?.language
+        let audioLanguage = audioStreams.first(property: \.index, equalTo: audioIndex)?.language
 
         return Selection(
             audio: audioIndex,
@@ -70,7 +70,7 @@ struct MediaPlaybackPreferences {
 
     private func preferredSubtitle(in streams: [MediaStream], defaultIndex: Int?, audioLanguage: String?) -> Int? {
         // Missing stream metadata can be filled by the playback-info response. Leave negotiation to the server.
-        guard !streams.isEmpty else { return defaultIndex }
+        guard streams.isNotEmpty else { return defaultIndex }
 
         let preferredLanguages = captions.selectedLanguages.isEmpty ? languages : captions.selectedLanguages
         let forced = streams.filter { $0.isForced == true }

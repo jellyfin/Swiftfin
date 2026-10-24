@@ -69,7 +69,7 @@ private struct TextSubtitleOverlayContent: View {
     }
 
     private var selectedCaptionStyle: CaptionStyle {
-        profiles.first { $0.id == profileID }?.style ?? captionStyle
+        profiles.first(property: \.id, equalTo: profileID)?.style ?? captionStyle
     }
 
     @ViewBuilder

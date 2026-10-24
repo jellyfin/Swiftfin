@@ -20,24 +20,46 @@ struct VideoPlayer: View {
     private var viewState: ViewState = .init()
 
     let mediaSession: MediaSession
+    
+    #if os(iOS)
+    private var remotePlaybackBody: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "tv")
+                .font(.system(size: 56))
+
+            Text(L10n.castingTo(mediaSession.player?.displayTitle ?? L10n.cast))
+                .font(.title2)
+
+            if mediaSession.state == .playback, !mediaSession.playbackState.isReady {
+                Text(L10n.castConnectionSuspended)
+                    .font(.callout)
+            }
+        }
+        .foregroundStyle(.white)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.black)
+    }
+    #endif
 
     var body: some View {
-        ZStack {
+        Container(
+            viewState: viewState,
+            mediaSession: mediaSession,
+            videoSize: { (mediaSession.player as? any VideoMediaPlayer)?.videoState.videoSize ?? .zero }
+        ) { videoLayout in
             if let player = mediaSession.player as? any VideoMediaPlayer {
-                Container(
-                    viewState: viewState,
-                    mediaSession: mediaSession,
-                    videoSize: { player.videoState.videoSize }
-                ) { videoLayout in
-                    player.videoPlayerBody(layout: videoLayout)
-                        .eraseToAnyView()
-                } playbackControls: {
-                    PlaybackControls()
-                }
-                .id(ObjectIdentifier(player))
-            } else {
-                Color.black
+                return player.videoPlayerBody(layout: videoLayout).eraseToAnyView()
             }
+
+            #if os(iOS)
+            if mediaSession.isRemotePlayback {
+                return remotePlaybackBody.eraseToAnyView()
+            }
+            #endif
+
+            return Color.black.eraseToAnyView()
+        } playbackControls: {
+            PlaybackControls()
         }
         .onAppear {
             if mediaSession.player == nil, mediaSession.state != .stopped {

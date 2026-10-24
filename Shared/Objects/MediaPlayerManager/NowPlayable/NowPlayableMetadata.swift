@@ -74,7 +74,7 @@ struct NowPlayableStaticMetadata: Equatable {
         ]
 
         var result = values.compactMap { identifier, value -> AVMetadataItem? in
-            guard let value, !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+            guard let value, value.nilIfBlank != nil else { return nil }
 
             let item = AVMutableMetadataItem()
             item.identifier = identifier

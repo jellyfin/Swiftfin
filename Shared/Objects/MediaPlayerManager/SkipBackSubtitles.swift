@@ -27,7 +27,7 @@ struct SkipBackSubtitles {
     private var finishingCues: Set<SubtitleCue>?
 
     init(from origin: Duration, to landing: Duration) {
-        end = landing + min(.seconds(30), max(.seconds(10), origin - landing))
+        end = landing + (origin - landing).clamped(to: .seconds(10) ... .seconds(30))
     }
 
     mutating func hasFinished(at position: Duration, cues: Set<SubtitleCue>) -> Bool {

@@ -146,11 +146,18 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
     ) -> some View {
-        switch libraryStyle.displayType {
-        case .grid:
-            UserViewLibraryGridElement(element: self)
-        case .list:
-            UserViewLibraryListElement(element: self)
+        Group {
+            switch libraryStyle.displayType {
+            case .grid:
+                UserViewLibraryGridElement(element: self)
+            case .list:
+                UserViewLibraryListElement(element: self)
+            }
+        }
+        .contextMenu {
+            if case let .userView(item) = self {
+                ShuffleButton(item: item.snapshot)
+            }
         }
     }
 }

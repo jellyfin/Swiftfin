@@ -199,17 +199,18 @@ extension UserSessionManager {
                     $0.id == mediaSourceID
                 }
 
+                let configuration = with(MediaPlaybackConfiguration()) {
+                    $0.selectMediaSource(id: mediaSource?.id)
+                    $0.startSeconds = startPositionTicks.map { .ticks($0) }
+                }
+
                 // Keep the record alive until the playback intent takes ownership
-                guard var intent = withExtendedLifetime(entry, {
+                guard let intent = withExtendedLifetime(entry, {
                     entry.snapshot.getPlaybackIntent(
                         userSession: userSession,
-                        mediaSource: mediaSource
+                        configuration: configuration
                     )
                 }) else { return }
-
-                if let startPositionTicks {
-                    intent = intent.updating(startSeconds: .ticks(startPositionTicks))
-                }
 
                 // A command fetched for a previous login cannot start playback for the new user.
                 guard currentSession === userSession else { return }

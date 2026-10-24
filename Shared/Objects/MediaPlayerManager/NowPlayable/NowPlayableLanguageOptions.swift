@@ -38,7 +38,7 @@ struct NowPlayableLanguageOptions {
             item.audioStreams,
             kind: .audio,
             selected: item.selectedAudioStreamIndex,
-            defaultIndex: item.automaticTrackDefaults.audio,
+            defaultIndex: item.configuration.automaticTrackDefaults?.audio,
             item: item
         )
 
@@ -46,7 +46,7 @@ struct NowPlayableLanguageOptions {
             item.subtitleStreams,
             kind: .subtitle,
             selected: item.effectiveSubtitleStreamIndex,
-            defaultIndex: item.automaticTrackDefaults.subtitle,
+            defaultIndex: item.configuration.automaticTrackDefaults?.subtitle,
             item: item
         )
 
@@ -104,17 +104,17 @@ struct NowPlayableLanguageOptions {
             )
         }
 
-        guard !options.isEmpty else { return }
+        guard options.isNotEmpty else { return }
 
         selections += options
 
         groups.append(.init(
             languageOptions: options.map(\.option),
-            defaultLanguageOption: options.first { $0.index == defaultIndex }?.option,
+            defaultLanguageOption: options.first(property: \.index, equalTo: defaultIndex)?.option,
             allowEmptySelection: kind != .audio
         ))
 
-        if let option = options.first(where: { $0.index == selected })?.option {
+        if let option = options.first(property: \.index, equalTo: selected)?.option {
             current.append(option)
         }
     }
@@ -124,9 +124,7 @@ struct NowPlayableLanguageOptions {
 
         if enabled, option.isAutomaticAudibleLanguageOption() || option.isAutomaticLegibleLanguageOption() {
             let audible = option.isAutomaticAudibleLanguageOption()
-            guard let intent = item.playbackIntent else { return false }
-
-            item.playbackIntent = intent.followingSystemPreferences(audio: audible, subtitles: !audible)
+            item.configuration.followSystemPreferences(audio: audible, subtitles: !audible)
             item.mediaPreferences?.update(.current)
             return true
         }

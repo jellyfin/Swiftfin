@@ -21,7 +21,9 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         static func isAvailable(for item: MediaPlayerItem?) -> Bool {
             guard let item else { return false }
 
-            return (item.baseItem.mediaSources?.count ?? 0) > 1 || item.mediaSource.supportedBitrates.isNotEmpty
+            return item.baseItem.mediaType == .video
+                || (item.baseItem.mediaSources?.count ?? 0) > 1
+                || item.mediaSource.supportedBitrates.isNotEmpty
         }
 
         var body: some View {
@@ -45,11 +47,9 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                                           let newSource = versions.first(where: { $0.id == newID })
                                     else { return }
 
-                                    mediaSession.playNewItem(
-                                        intent: mediaSession.intent
-                                            .selecting(mediaSource: newSource)
-                                            .updating(startSeconds: mediaSession.seconds)
-                                    )
+                                    var intent = playbackItem.resumingIntent(at: mediaSession.seconds)
+                                    intent.configuration.selectMediaSource(id: newSource.id)
+                                    mediaSession.playNewItem(intent: intent)
                                 }
                             )
                         ) {
@@ -67,9 +67,9 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     if hasBitrateSection {
                         Picker(
                             selection: Binding(
-                                get: { playbackItem.requestedBitrate },
+                                get: { playbackItem.configuration.requestedBitrate },
                                 set: { newBitrate in
-                                    guard newBitrate != playbackItem.requestedBitrate else { return }
+                                    guard newBitrate != playbackItem.configuration.requestedBitrate else { return }
 
                                     mediaSession.setBitrate(bitrate: newBitrate)
                                 }
@@ -81,7 +81,29 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             }
                         } label: {
                             Text(L10n.playbackQuality)
-                            Text(playbackItem.requestedBitrate.displayTitle)
+                            Text(playbackItem.configuration.requestedBitrate.displayTitle)
+                        }
+                        .pickerStyle(.menu)
+                    }
+
+                    if playbackItem.baseItem.mediaType == .video {
+                        Picker(
+                            selection: Binding(
+                                get: { playbackItem.configuration.maxResolution },
+                                set: { newResolution in
+                                    guard newResolution != playbackItem.configuration.maxResolution else { return }
+
+                                    mediaSession.setResolution(resolution: newResolution)
+                                }
+                            )
+                        ) {
+                            ForEach(PlaybackResolution.allCases, id: \.rawValue) { resolution in
+                                Text(resolution.displayTitle)
+                                    .tag(resolution)
+                            }
+                        } label: {
+                            Text(L10n.resolution)
+                            Text(playbackItem.configuration.maxResolution.displayTitle)
                         }
                         .pickerStyle(.menu)
                     }

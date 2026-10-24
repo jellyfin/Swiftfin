@@ -44,28 +44,17 @@ extension VideoPlayerSupplementType {
             return MediaInfoSupplement(item: item.baseItem)
 
         case .chapters:
-            guard !item.chapters.isEmpty else { return nil }
+            guard item.chapters.isNotEmpty else { return nil }
 
             return MediaChaptersSupplement(id: "Chapters-\(item.baseItem.id ?? "any")", chapters: item.chapters)
 
         case .queue:
-            switch queue {
-            case let queue as EpisodeMediaPlayerQueue:
-                guard item.baseItem.type == .episode, let seasonID = item.baseItem.seasonID?.nilIfBlank else { return nil }
+            guard let queue else { return nil }
 
-                let season = BaseItemDto(id: seasonID, name: item.baseItem.seasonName, seriesID: item.baseItem.seriesID, type: .season)
-
-                return QueueSupplement(id: "Queue-\(ObjectIdentifier(queue))", displayTitle: L10n.episodes) {
-                    EpisodeQueueView(season: season)
-                        .id(seasonID)
-                }
-
-            default:
-                return nil
-            }
+            return MediaQueueView(queue: queue)
 
         case .people:
-            guard let people = item.baseItem.mergedPeople?.filter({ $0.type?.isSupported == true }), !people.isEmpty else { return nil }
+            guard let people = item.baseItem.mergedPeople?.filter({ $0.type?.isSupported == true }), people.isNotEmpty else { return nil }
 
             return MediaPeopleSupplement(people: people)
 

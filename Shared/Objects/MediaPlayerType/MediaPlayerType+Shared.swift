@@ -13,13 +13,14 @@ extension MediaPlayerType {
 
     // MARK: - Codec Profiles
 
+    @MainActor
     @ArrayBuilder<CodecProfile>
-    var codecProfiles: [CodecProfile] {
+    func codecProfiles(configuration: MediaPlaybackConfiguration) -> [CodecProfile] {
         switch self {
         case .avPlayer:
-            Self._avPlayerCodecProfiles
+            Self._avPlayerCodecProfiles(configuration: configuration)
         case .mpv:
-            Self._mpvCodecProfiles
+            Self._mpvCodecProfiles(configuration: configuration)
         }
     }
 

@@ -6,16 +6,15 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 
 extension DeviceProfile {
 
+    @MainActor
     static func build(
         for playerType: MediaPlayerType,
-        compatibilityMode: PlaybackCompatibility,
+        configuration: MediaPlaybackConfiguration,
         maxBitrate: Int? = nil,
-        maxResolution: PlaybackResolution = Defaults[.VideoPlayer.Playback.appMaximumResolution],
         mediaSource: MediaSourceInfo? = nil
     ) -> DeviceProfile {
 
@@ -23,9 +22,9 @@ extension DeviceProfile {
 
         // MARK: - Media Player Specific Logic
 
-        deviceProfile.codecProfiles = playerType.codecProfiles
+        deviceProfile.codecProfiles = playerType.codecProfiles(configuration: configuration)
 
-        if StoredValues[.User.forceSubtitleBurnIn] {
+        if configuration.forceSubtitleBurnIn {
             deviceProfile.subtitleProfiles = SubtitleProfile.build(method: .encode) {
                 SubtitleFormat.allCases
             }
@@ -45,13 +44,13 @@ extension DeviceProfile {
             }
         }
 
-        if let resolutionCodecProfile = maxResolution.codecProfile {
+        if let resolutionCodecProfile = configuration.maxResolution.codecProfile(for: mediaSource) {
             deviceProfile.codecProfiles?.append(resolutionCodecProfile)
         }
 
         // MARK: - DirectPlay & Transcoding Profiles
 
-        switch compatibilityMode {
+        switch configuration.compatibilityMode {
         case .auto:
             deviceProfile.directPlayProfiles = playerType.directPlayProfiles
             deviceProfile.transcodingProfiles = playerType.transcodingProfiles
@@ -64,8 +63,8 @@ extension DeviceProfile {
             deviceProfile.directPlayProfiles = PlaybackCompatibility.Video.forcedDirectPlayProfile
 
         case .custom:
-            let customProfileMode = Defaults[.VideoPlayer.Playback.customDeviceProfileAction]
-            let playbackDeviceProfile = StoredValues[.User.customDeviceProfiles]
+            let customProfileMode = configuration.customDeviceProfileAction
+            let playbackDeviceProfile = configuration.customDeviceProfiles
 
             if customProfileMode == .add {
                 deviceProfile.directPlayProfiles = playerType.directPlayProfiles
@@ -96,12 +95,23 @@ extension DeviceProfile {
                 + playerType.directPlayProfiles.filter { $0.type == .audio }
         }
 
-        if compatibilityMode != .directPlay,
+        if configuration.compatibilityMode != .directPlay,
            deviceProfile.transcodingProfiles?.contains(where: { $0.type == .audio }) != true
         {
             deviceProfile.transcodingProfiles = (deviceProfile.transcodingProfiles ?? [])
                 + playerType.transcodingProfiles.filter { $0.type == .audio }
         }
+
+        let sourceAudioCodec = mediaSource?.mediaStreams?
+            .first(where: {
+                $0.type == .audio && $0.index == configuration.audioStreamIndex
+            })?.codec
+        let sourceVideoCodec = mediaSource?.mediaStreams?.first(where: { $0.type == .video })?.codec
+
+        deviceProfile = deviceProfile.limitingTranscodingCodecLists(
+            sourceAudioCodec: sourceAudioCodec,
+            sourceVideoCodec: sourceVideoCodec
+        )
 
         // MARK: - Assign the Bitrate if provided
 

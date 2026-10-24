@@ -43,8 +43,8 @@ final class NowPlayableObserver: MediaSessionObserver {
     }
 
     private var supportedRates: [Double] {
-        Array(Set(Defaults[.VideoPlayer.Playback.rates] + [mediaSession?.rate ?? 1]))
-            .filter { $0.isFinite && $0 > 0 }
+        Set(Defaults[.VideoPlayer.Playback.rates] + [mediaSession?.effectiveRate ?? 1])
+            .filter { $0.isFinite && (mediaSession?.player?.supportedRates ?? 0.1 ... 5).contains($0) }
             .sorted()
     }
 
@@ -74,17 +74,17 @@ final class NowPlayableObserver: MediaSessionObserver {
         }
 
         let observations = [
-            MediaPlayerObservation { [weak mediaSession] in
+            ObservationToken { [weak mediaSession] in
                 mediaSession?.playbackItem
             } onChange: { [weak self] item in
                 self?.playbackItemDidChange(item)
             },
-            MediaPlayerObservation { [weak mediaSession] in
+            ObservationToken { [weak mediaSession] in
                 mediaSession?.playbackItem?.baseItem
             } onChange: { [weak self] _ in
                 self?.metadataDidChange()
             },
-            MediaPlayerObservation { [weak mediaSession] in
+            ObservationToken { [weak mediaSession] in
                 (
                     mediaSession?.state, mediaSession?.playbackRequestStatus, mediaSession?.playbackState,
                     mediaSession?.isSeeking, mediaSession?.rate
@@ -93,7 +93,7 @@ final class NowPlayableObserver: MediaSessionObserver {
                 self?.updatePlaybackInfo()
                 self?.updateRemoteCommands()
             },
-            MediaPlayerObservation { [weak mediaSession] in
+            ObservationToken { [weak mediaSession] in
                 (
                     mediaSession?.playbackItem?.effectiveSubtitleStreamIndex,
                     mediaSession?.playbackItem?.effectiveSecondarySubtitleStreamIndex,
@@ -102,12 +102,12 @@ final class NowPlayableObserver: MediaSessionObserver {
             } onChange: { [weak self] _ in
                 self?.updateLanguageOptions()
             },
-            MediaPlayerObservation { [weak mediaSession] in
+            ObservationToken { [weak mediaSession] in
                 (mediaSession?.queue?.nextItem, mediaSession?.queue?.previousItem)
             } onChange: { [weak self] _ in
                 self?.updateRemoteCommands()
             },
-            MediaPlayerObservation { [weak mediaSession] in
+            ObservationToken { [weak mediaSession] in
                 mediaSession?.observedSeconds
             } onChange: { [weak self] _ in
                 self?.updatePlaybackInfo()
@@ -133,7 +133,7 @@ final class NowPlayableObserver: MediaSessionObserver {
             .publisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] reason in
-                guard reason == .oldDeviceUnavailable else { return }
+                guard self?.ownsAudioSession == true, reason == .oldDeviceUnavailable else { return }
 
                 self?.playbackRequestStateBeforeInterruption = .paused
                 self?.mediaSession?.setPlaybackRequestStatus(status: .paused)
@@ -281,8 +281,8 @@ final class NowPlayableObserver: MediaSessionObserver {
             && !mediaSession.isSeeking && !state.isSeeking && !state.isBuffering && !state.isWaitingForDisplay
 
         let metadata = NowPlayableDynamicMetadata(
-            rate: isAdvancing ? mediaSession.rate : 0,
-            defaultRate: mediaSession.rate,
+            rate: isAdvancing ? mediaSession.effectiveRate : 0,
+            defaultRate: mediaSession.effectiveRate,
             position: mediaSession.observedSeconds,
             duration: item.baseItem.isLiveStream ? nil : item.baseItem.runtime ?? state.duration,
             currentLanguageOptions: languageOptions.current,
@@ -312,7 +312,7 @@ final class NowPlayableObserver: MediaSessionObserver {
         NowPlayableCommand.changePlaybackRate.isEnabled(canControl && mediaSession?.item.isLiveStream == false)
         MPRemoteCommandCenter.shared().changePlaybackRateCommand.supportedPlaybackRates = supportedRates.map { NSNumber(value: $0) }
 
-        let canSelectLanguage = mediaSession?.playbackItem?.canSelectTracks == true && !languageOptions.groups.isEmpty
+        let canSelectLanguage = mediaSession?.playbackItem?.canSelectTracks == true && languageOptions.groups.isNotEmpty
         NowPlayableCommand.enableLanguageOption.isEnabled(canSelectLanguage)
         NowPlayableCommand.disableLanguageOption
             .isEnabled(canSelectLanguage && languageOptions.current.contains { $0.languageOptionType == .legible })
@@ -447,6 +447,8 @@ final class NowPlayableObserver: MediaSessionObserver {
     }
 
     private func startSession() throws {
+        guard mediaSession?.isRemotePlayback != true else { return }
+
         let session = AVAudioSession.sharedInstance()
         let isAudio = mediaSession?.item.nowPlayableStaticMetadata().mediaType == .audio
 

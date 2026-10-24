@@ -59,7 +59,7 @@ extension VideoPlayer.UIContainerViewController {
             AlternateLayoutView(alignment: .topLeading) {
                 Color.clear
             } content: {
-                supplement.body
+                supplement
                     .coordinatedFocus(ViewState.Focus.supplementContent(supplement.id))
             }
             .environment(viewState)

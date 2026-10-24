@@ -36,9 +36,9 @@ func round<T: BinaryInteger>(_ value: T, toNearest: T) -> T {
 }
 
 @inlinable
-func with<V>(_ value: V, modify: @escaping (inout V) -> Void) -> V {
+func with<V>(_ value: V, modify: @escaping (inout V) throws -> Void) rethrows -> V {
     var value = value
-    modify(&value)
+    try modify(&value)
 
     return value
 }

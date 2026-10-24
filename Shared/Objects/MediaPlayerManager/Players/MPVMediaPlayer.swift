@@ -8,6 +8,7 @@
 
 import Combine
 import JellyfinAPI
+import Logging
 import MPVUI
 import Observation
 import SwiftUI
@@ -17,7 +18,7 @@ import SwiftUI
 final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaPlayerSecondarySubtitleProviding {
 
     let displayTitle = MediaPlayerType.mpv.displayTitle
-    let mediaPlayerType: MediaPlayerType = .mpv
+    let playbackProfile = PlaybackProfile.local(.mpv)
     let player = MPVPlayer(configuration: .init(audio: .init(audioSession: .hostManaged)))
     private let textSubtitles = TextSubtitlePresentation()
     private(set) var videoState = VideoPlaybackState()
@@ -55,6 +56,25 @@ final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaP
     private var seekStartedAt: ContinuousClock.Instant?
 
     init() {
+        let logger = Logger.swiftfin()
+        player.logHandler = { message in
+            let level: Logger.Level
+            switch message.level {
+            case .fatal, .error:
+                level = .error
+            case .warning:
+                level = .warning
+            default:
+                return
+            }
+
+            // Native network errors can include authenticated media URLs.
+            let text = message.message
+                .replacingOccurrences(of: #"(?i)\b(?:https?|rtsp|rtmp|ftp|file)://[^\s]+"#, with: "<URL>", options: .regularExpression)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            logger.log(level: level, "mpv [\(message.prefix)]: \(text)")
+        }
+
         #if os(iOS)
         automaticPiPObservation = observeAutomaticPictureInPicture()
         #endif
@@ -74,6 +94,10 @@ final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaP
 
             loadedItem?.replaySubtitles?.refresh()
         }
+
+        #if DEBUG
+        print("[MPV] Loading resolved URL: \(item.url.absoluteString)")
+        #endif
 
         player.load(
             item.url,
@@ -134,6 +158,9 @@ final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaP
 
         if isSeekReload, let loadedItem {
             loadedSubtitleIndexes.removeAll()
+            #if DEBUG
+            print("[MPV] Loading resolved URL: \(loadedItem.url.absoluteString)")
+            #endif
             player.load(loadedItem.url, autoPlay: mediaSession?.playbackRequestStatus == .playing, startTime: request.target)
         } else {
             player.seek(to: request.target)
@@ -171,7 +198,7 @@ final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaP
     private func setSubtitle(_ index: Int?, for role: MPVSubtitleRole) {
         guard loadedItem != nil else { return }
 
-        let track = player.subtitleTracks.first { $0.mpvID == index }
+        let track = player.subtitleTracks.first(property: \.mpvID, equalTo: index)
 
         if player.selectedSubtitle(for: role)?.id != track?.id {
             player.selectSubtitle(track?.id, for: role)
@@ -199,7 +226,7 @@ final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaP
             return
         }
 
-        if let track = tracks.first(where: { $0.mpvID == index }), !track.isSelected {
+        if let track = tracks.first(property: \.mpvID, equalTo: index), !track.isSelected {
             player.selectTrack(track.id)
         }
     }
@@ -229,7 +256,7 @@ final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaP
     /// MPVUI publishes through Observation. Observe it here so timing and state
     /// continue to reach the mediaSession when no video view is mounted.
     private func observePlayback(of item: MediaPlayerItem) {
-        let observation = MediaPlayerObservation { [player] in
+        let observation = ObservationToken { [player] in
             (
                 player.state, player.position, player.mediaInformation, player.playbackDiagnostics,
                 player.isPaused, player.bufferStatus, player.isSeekable, player.duration, player.lastError
@@ -394,6 +421,8 @@ final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaP
             mediaSession?.ended(from: self)
 
         case let .failed(error):
+            // MPVUI 0.7's Error conformance loses its native details when erased to Error.
+            mediaSession?.logger.error("MPV playback failed: \(String(reflecting: error))")
             mediaSession?.playerDidFail(error, from: self)
 
         case .idle, .loading, .ready, .playing, .paused, .buffering, .seeking, .stopped:
@@ -481,7 +510,7 @@ extension MediaTrackIndexMap {
 extension MPVMediaPlayer: MediaPlayerSubtitleCueProviding {
 
     func canObserveSubtitleCues(at playerIndex: Int) -> Bool {
-        guard let track = player.subtitleTracks.first(where: { $0.mpvID == playerIndex }),
+        guard let track = player.subtitleTracks.first(property: \.mpvID, equalTo: playerIndex),
               let codec = track.codec?.lowercased() else { return false }
 
         // MPVUI's live semantic stream covers these formats. Native ASS and
@@ -490,7 +519,7 @@ extension MPVMediaPlayer: MediaPlayerSubtitleCueProviding {
     }
 
     var subtitleCues: Set<SubtitleCue> {
-        Set((textSubtitles.snapshot?.regions ?? []).filter { !$0.text.isEmpty }.map {
+        Set((textSubtitles.snapshot?.regions ?? []).filter(\.text.isNotEmpty).map {
             SubtitleCue(text: $0.text, track: $0.trackID?.mpvID ?? -1, secondary: $0.role == .secondary)
         })
     }

@@ -243,6 +243,8 @@ private struct BaseItemDtoPosterContextMenu: View {
             }
         }
 
+        ShuffleButton(item: item)
+
         if item.canBePlayed {
             Button(isPlayed ? L10n.markAsUnplayed : L10n.markAsPlayed, systemImage: isPlayed ? "circle" : "checkmark.circle") {
                 Task {

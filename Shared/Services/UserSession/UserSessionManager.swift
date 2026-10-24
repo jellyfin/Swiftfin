@@ -319,8 +319,8 @@ final class UserSessionManager: ObservableObject {
 
     private func resolveStoredSession() throws -> UserSession? {
         guard case let .signedIn(userId) = Defaults[.lastSignedInUserID] else { return nil }
-        guard let user = StoredValues[.User.users].first(where: { $0.id == userId }),
-              let server = StoredValues[.Server.servers].first(where: { $0.id == user.serverID })
+        guard let user = StoredValues[.User.users].first(property: \.id, equalTo: userId),
+              let server = StoredValues[.Server.servers].first(property: \.id, equalTo: user.serverID)
         else {
             Defaults[.lastSignedInUserID] = .signedOut
             throw UserSessionError.invalidStoredSession(userID: userId)

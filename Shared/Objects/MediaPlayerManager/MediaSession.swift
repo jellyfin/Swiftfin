@@ -18,7 +18,7 @@ import StatefulMacros
 @StatefulObservable
 final class MediaSession {
 
-    typealias ItemResolver = @MainActor (PlaybackIntent, MediaPlayerType, UserSession) async throws -> MediaPlayerItem
+    typealias ItemResolver = @MainActor (PlaybackIntent, PlaybackProfile, UserSession) async throws -> MediaPlayerItem
 
     private let resolveItem: ItemResolver
 
@@ -78,6 +78,7 @@ final class MediaSession {
     var commandError: String?
     private(set) var intent: PlaybackIntent
     private(set) var isSeeking = false
+    private var isAdvancingQueue = false
     let logger = Logger.swiftfin()
     private(set) var playbackItem: MediaPlayerItem?
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
@@ -89,9 +90,31 @@ final class MediaSession {
     var rate: Double = Defaults[.VideoPlayer.Playback.playbackRate] {
         didSet {
             Defaults[.VideoPlayer.Playback.playbackRate] = rate
-            player?.setRate(rate)
+            player?.setRate(effectiveRate)
         }
     }
+
+    var effectiveRate: Double {
+        let range = player?.supportedRates ?? 0.1 ... 5
+        return min(max(rate, range.lowerBound), range.upperBound)
+    }
+
+    var isRemotePlayback: Bool {
+        player?.playbackLocation == .remote
+    }
+
+    var canReturnToLocalPlayback: Bool {
+        isRemotePlayback && localPlayer != nil && state != .stopped && state != .error
+    }
+
+    @ObservationIgnored
+    private var localPlayer: (any MediaPlayer)?
+    @ObservationIgnored
+    private var handoffRecovery: (player: any MediaPlayer, intent: PlaybackIntent)?
+    @ObservationIgnored
+    private var transferTask: Task<Void, Error>?
+    @ObservationIgnored
+    private var transferID = UUID()
 
     private(set) var seconds: Duration = .zero
     private(set) var observedSeconds: Duration = .zero
@@ -104,6 +127,8 @@ final class MediaSession {
     private var resolutionID = UUID()
     @ObservationIgnored
     private var resolutionTask: AnyCancellable?
+    @ObservationIgnored
+    private var queueAdvanceTask: AnyCancellable?
     @ObservationIgnored
     private var seekDispatchTask: AnyCancellable?
     @ObservationIgnored
@@ -148,6 +173,10 @@ final class MediaSession {
             break
         }
 
+        if isAdvancingQueue {
+            return .loading
+        }
+
         if isSeeking || playbackState.isSeeking {
             return .seeking
         }
@@ -164,20 +193,19 @@ final class MediaSession {
     }
 
     var playbackBitrate: PlaybackBitrate {
-        intent.requestedBitrate
+        intent.configuration.requestedBitrate
     }
 
     init(
         intent: PlaybackIntent,
         userSession: UserSession,
-        queue: any MediaPlayerQueue? = nil,
         reportQueue: MediaPlaybackReportQueue,
-        resolveItem: @escaping ItemResolver = { try await $0.resolve(for: $1, userSession: $2) }
+        resolveItem: @escaping ItemResolver = { try await MediaPlayerItemResolver.resolve($0, for: $1, userSession: $2) }
     ) {
         self.intent = intent
         self.userSession = userSession
         self.resolveItem = resolveItem
-        self.queue = queue
+        self.queue = intent.queue
         self.progressReporter = MediaProgressReporter(userSession: userSession, reportQueue: reportQueue)
 
         progressReporter.mediaSession = self
@@ -192,6 +220,7 @@ final class MediaSession {
     }
 
     isolated deinit {
+        transferTask?.cancel()
         progressReporter.stop()
         player?.mediaSession = nil
         playbackItem?.mediaSession = nil
@@ -199,7 +228,7 @@ final class MediaSession {
     }
 
     /// The session retains the engine independently of any mounted video surface.
-    /// Reattaching the same engine is harmless; a different engine needs a new session.
+    /// Reattaching the same engine is harmless; destinations change through transfer(to:).
     @discardableResult
     func attach(player: any MediaPlayer) -> Bool {
         guard state != .stopped else { return false }
@@ -211,6 +240,7 @@ final class MediaSession {
         guard player.mediaSession == nil else { return false }
 
         self.player = player
+        localPlayer = player.playbackLocation == .local ? player : nil
         player.mediaSession = self
         resolve(intent)
 
@@ -225,23 +255,66 @@ final class MediaSession {
             return nil
         }
 
-        return resolve(intent)
+        var nextIntent = intent
+        if canControlPlayback, let playbackItem {
+            nextIntent.configuration.continuation = MediaPlaybackContinuation(
+                item: playbackItem.baseItem,
+                source: playbackItem.mediaSource,
+                audioStreamIndex: playbackItem.configuration.audioStreamIndex,
+                subtitleStreamIndex: playbackItem.configuration.subtitleStreamIndex,
+                configuration: userSession.user.data.configuration
+            )
+        }
+
+        handoffRecovery = nil
+        return resolve(nextIntent)
+    }
+
+    /// Re-negotiate for each destination, retaining the local engine and desired transport state.
+    @discardableResult
+    func transfer(to destination: any MediaPlayer) -> Task<Void, Never>? {
+        guard let player, player !== destination, state != .stopped, state != .error,
+              destination.mediaSession == nil else { return nil }
+
+        let snapshot = currentIntent()
+        if handoffRecovery == nil {
+            handoffRecovery = (player, snapshot)
+        }
+        if player.playbackLocation == .local {
+            localPlayer = player
+        }
+        return resolve(snapshot, using: destination)
+    }
+
+    @discardableResult
+    func returnToLocalPlayback() -> Task<Void, Never>? {
+        guard canReturnToLocalPlayback, let localPlayer else { return nil }
+
+        handoffRecovery = nil
+        return resolve(currentIntent(), using: localPlayer)
     }
 
     private func currentIntent() -> PlaybackIntent {
-        guard canControlPlayback else { return intent }
+        guard playbackItem != nil else { return intent }
 
-        return playbackItem?.resumingIntent(at: seconds) ?? intent
+        var intent = playbackItem?.resumingIntent(at: seconds) ?? intent
+        intent.queue = queue
+        return intent
     }
 
     /// A single cancellable request owns installation. Superseded results cannot restart playback.
     @discardableResult
-    private func resolve(_ intent: PlaybackIntent) -> Task<Void, Never>? {
+    private func resolve(_ intent: PlaybackIntent, using destination: (any MediaPlayer)? = nil) -> Task<Void, Never>? {
         guard let player, state != .stopped else { return nil }
+
+        var intent = intent
+        intent.queue = queue
 
         core.cancelAll()
         playbackTransitions.reset()
         resolutionTask = nil
+        queueAdvanceTask = nil
+        isAdvancingQueue = false
 
         let id = UUID()
         resolutionID = id
@@ -255,6 +328,24 @@ final class MediaSession {
 
         resetPlayback()
         player.pause()
+        if let destination {
+            player.mediaSession = nil
+            playbackTransitions.stopPictureInPicture()
+            let previousTransfer = transferTask
+            transferID = UUID()
+            // This barrier survives a superseding resolution or item change.
+            transferTask = Task {
+                let previousResult = await previousTransfer?.result
+                defer { player.stop() }
+                try await player.stopForTransfer()
+                if case let .failure(error)? = previousResult {
+                    throw error
+                }
+            }
+            self.player = destination
+            destination.mediaSession = self
+        }
+        let destinationPlayer = destination ?? player
         self.intent = intent
 
         let core = core
@@ -267,11 +358,11 @@ final class MediaSession {
             guard !Task.isCancelled, let self, resolutionID == id, state == .preparing,
                   let item = playbackItem else { return }
 
-            player.load(item)
+            destinationPlayer.load(item)
 
             guard resolutionID == id, state == .preparing, playbackItem === item else { return }
 
-            player.setRate(rate)
+            destinationPlayer.setRate(effectiveRate)
 
             guard resolutionID == id, state == .preparing, playbackItem === item else { return }
 
@@ -295,7 +386,29 @@ final class MediaSession {
 
         do {
             try Task.checkCancellation()
-            let item = try await resolveItem(intent, player.mediaPlayerType, userSession)
+            let transferID = transferID
+            if let transferTask {
+                do {
+                    try await transferTask.value
+                } catch {
+                    guard !Task.isCancelled, resolutionID == id, state != .stopped else { return }
+
+                    playbackRequestStatus = .paused
+                    commandError = L10n.unableToStopRemotePlayback
+                }
+            }
+            try Task.checkCancellation()
+            guard resolutionID == id, state != .stopped else { return }
+
+            if self.transferID == transferID {
+                transferTask = nil
+            }
+            let resolvedIntent = try await queue?.resolve(intent, userSession: userSession) ?? intent
+            try Task.checkCancellation()
+            guard resolutionID == id, state != .stopped else { return }
+
+            self.intent = resolvedIntent
+            let item = try await resolveItem(resolvedIntent, player.playbackProfile, userSession)
             guard !Task.isCancelled, resolutionID == id, state != .stopped else {
                 await MediaProgressReporter.discard(item, session: userSession)
                 return
@@ -306,7 +419,7 @@ final class MediaSession {
             publishTimeline()
 
             playbackItem = item
-            item.configure(for: intent)
+            self.intent.configuration = item.configuration
             item.mediaSession = self
 
             observeSessionIfNeeded()
@@ -333,8 +446,20 @@ final class MediaSession {
     private func fail(_ error: Error) {
         guard state != .stopped, state != .error else { return }
 
+        if let recovery = handoffRecovery {
+            handoffRecovery = nil
+            resolve(recovery.intent, using: recovery.player)
+            commandError = L10n.unableToTransferPlayback
+            return
+        }
+        if canReturnToLocalPlayback {
+            returnToLocalPlayback()
+            commandError = L10n.remotePlaybackFailed
+            return
+        }
         if canControlPlayback {
-            intent = currentIntent().updating(startSeconds: observedSeconds)
+            intent = currentIntent()
+            intent.configuration.startSeconds = observedSeconds
         }
 
         logger.error("Playback failed: \(error.localizedDescription)")
@@ -342,8 +467,13 @@ final class MediaSession {
     }
 
     private func tearDown() {
+        handoffRecovery = nil
+        transferTask?.cancel()
+        transferTask = nil
         resolutionID = UUID()
         resolutionTask = nil
+        queueAdvanceTask = nil
+        isAdvancingQueue = false
         playbackTransitions.reset()
 
         progressReporter.stop()
@@ -360,17 +490,43 @@ final class MediaSession {
         if state == .stopped {
             player?.mediaSession = nil
             player = nil
+            localPlayer = nil
         }
     }
 
     func ended(from player: any MediaPlayer) {
         guard self.player === player, canControlPlayback, !isSeeking, !item.isLiveStream else { return }
-
-        if let next = queue?.nextItem, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true {
-            playNewItem(intent: next)
-        } else {
+        guard let queue, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true else {
             stop()
+            return
         }
+
+        if let next = queue.nextItem {
+            playNewItem(intent: next)
+            return
+        }
+
+        guard queueAdvanceTask == nil else { return }
+
+        isAdvancingQueue = true
+        let id = resolutionID
+        queueAdvanceTask = Task { [weak self] in
+            do {
+                let next = try await queue.next()
+                guard !Task.isCancelled, let self, resolutionID == id, state != .stopped else { return }
+
+                if let next, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true {
+                    playNewItem(intent: next)
+                } else {
+                    stop()
+                }
+            } catch {
+                guard !Task.isCancelled, let self, resolutionID == id, state != .stopped else { return }
+
+                fail(error)
+            }
+        }
+        .asAnyCancellable()
     }
 
     func setPlaybackRequestStatus(status: PlaybackRequestStatus) {
@@ -427,6 +583,7 @@ final class MediaSession {
     private func reportPlaybackStarted() {
         guard !hasReportedPlayback, let playbackItem else { return }
 
+        handoffRecovery = nil
         hasReportedPlayback = true
         progressReporter.start(playbackItem)
     }
@@ -562,14 +719,24 @@ final class MediaSession {
     func setBitrate(bitrate: PlaybackBitrate) {
         guard canControlPlayback else { return }
 
-        resolve(currentIntent().updating(requestedBitrate: bitrate))
+        var intent = currentIntent()
+        intent.configuration.requestedBitrate = bitrate
+        resolve(intent)
+    }
+
+    func setResolution(resolution: PlaybackResolution) {
+        guard canControlPlayback else { return }
+
+        var intent = currentIntent()
+        intent.configuration.maxResolution = resolution
+        resolve(intent)
     }
 
     /// An item requests a new stream after changing its own playback configuration.
     func reload(_ item: MediaPlayerItem) {
-        guard playbackItem === item, canControlPlayback, let intent = item.resumingIntent(at: seconds) else { return }
+        guard playbackItem === item, canControlPlayback else { return }
 
-        resolve(intent)
+        resolve(item.resumingIntent(at: seconds))
     }
 }
 

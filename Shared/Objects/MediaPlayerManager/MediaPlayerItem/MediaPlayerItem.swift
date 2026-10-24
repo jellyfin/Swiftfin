@@ -21,7 +21,6 @@ final class MediaPlayerItem {
     let subtitleStreams: [MediaStream]
     let videoStreams: [MediaStream]
 
-    private(set) var automaticTrackDefaults: MediaPlaybackPreferences.Selection
     let chapters: [ChapterInfo.FullInfo]
     let deviceProfile: DeviceProfile
     private(set) var indexMap: MediaTrackIndexMap
@@ -43,14 +42,9 @@ final class MediaPlayerItem {
 
     let mediaSource: MediaSourceInfo
     let playSessionID: String
-    let requestedBitrate: PlaybackBitrate
     private let runtimeTicks: Int?
 
-    var audioStreamIndex: Int?
-    var subtitleStreamIndex: Int?
-    var secondarySubtitleStreamIndex: Int? = -1
-    var configuration = Configuration()
-    var playbackIntent: PlaybackIntent?
+    var configuration: MediaPlaybackConfiguration
     private(set) var segments: MediaSegmentObserver?
 
     @ObservationIgnored
@@ -62,7 +56,6 @@ final class MediaPlayerItem {
     private(set) var replaySubtitles: MediaPlayerItemReplaySubtitles?
 
     private let sharedItem: ItemEntry
-    private let startPositionTicks: Int?
 
     /// Replay captions never change the persistent selection or Jellyfin reports.
     private(set) var temporarySubtitleTracks: SubtitleTrackSelection?
@@ -111,7 +104,7 @@ final class MediaPlayerItem {
         var value = sharedItem.snapshot
         value.runTimeTicks = runtimeTicks ?? value.runTimeTicks
 
-        if let startPositionTicks {
+        if let startPositionTicks = configuration.startSeconds?.ticks {
             var data = value.userData ?? UserItemDataDto(key: value.id ?? "")
             data.playbackPositionTicks = startPositionTicks
             value.userData = data
@@ -125,23 +118,23 @@ final class MediaPlayerItem {
         mediaSource: MediaSourceInfo,
         playSessionID: String,
         url: URL,
-        requestedBitrate: PlaybackBitrate = .max,
+        configuration: MediaPlaybackConfiguration,
         deviceProfile: DeviceProfile,
-        initialAudioStreamIndex: Int? = nil,
-        initialSubtitleStreamIndex: Int? = nil,
-        initialSecondarySubtitleStreamIndex: Int? = nil,
-        automaticTrackDefaults: MediaPlaybackPreferences.Selection? = nil,
         chapters: [ChapterInfo.FullInfo],
         temporaryFiles: PlaybackTemporaryFiles,
         previewImageProvider: PreviewImageProvider?,
         thumbnailProvider: ThumbnailProvider? = nil
     ) {
+        guard let audioStreamIndex = configuration.audioStreamIndex,
+              configuration.subtitleStreamIndex != nil, configuration.secondarySubtitleStreamIndex != nil,
+              configuration.startSeconds != nil, configuration.automaticTrackDefaults != nil
+        else { preconditionFailure("MediaPlayerItem requires a resolved playback configuration") }
+
         self.sharedItem = SharedBaseItem(wrappedValue: baseItem).entry
-        self.startPositionTicks = baseItem.userData?.playbackPositionTicks
+        self.configuration = configuration
         self.runtimeTicks = mediaSource.runTimeTicks ?? baseItem.runTimeTicks
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
-        self.requestedBitrate = requestedBitrate
         self.deviceProfile = deviceProfile
         self.chapters = chapters
         self.temporaryFiles = temporaryFiles
@@ -162,49 +155,19 @@ final class MediaPlayerItem {
 
         self.videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
 
-        self.automaticTrackDefaults = .init(
-            audio: automaticTrackDefaults?.audio ?? mediaSource.defaultAudioStreamIndex
-                ?? audioStreams.first(where: { $0.isDefault == true })?.index ?? audioStreams.first?.index,
-            subtitle: automaticTrackDefaults?.subtitle ?? mediaSource.defaultSubtitleStreamIndex
-        )
-
-        let resolvedAudioStreamIndex: Int = initialAudioStreamIndex
-            ?? mediaSource.defaultAudioStreamIndex
-            ?? mediaSource.mediaStreams?.first(where: { $0.type == .audio })?.index ?? 0
-
         self.indexMap = MediaTrackIndexMap.build(
             from: mediaStreams ?? [],
             for: isTranscoding ? .transcode : .directPlay,
-            selectedAudioStreamIndex: resolvedAudioStreamIndex
+            selectedAudioStreamIndex: audioStreamIndex
         )
 
-        audioStreamIndex = resolvedAudioStreamIndex
-
-        subtitleStreamIndex = initialSubtitleStreamIndex
-            ?? mediaSource.defaultSubtitleStreamIndex
-            ?? -1
-
-        if let index = initialSecondarySubtitleStreamIndex,
-           secondarySubtitleStreams.contains(where: { $0.index == index })
-        {
-            secondarySubtitleStreamIndex = index
+        if !secondarySubtitleStreams.contains(where: { $0.index == configuration.secondarySubtitleStreamIndex }) {
+            self.configuration.selectTracks(secondary: -1, preservingPreferences: true)
         }
     }
 
     // Observer cancellation must stay on the actor that owns playback.
     isolated deinit {}
-
-    /// Install item state before loading the engine. New intents start with fresh configuration.
-    func configure(for intent: PlaybackIntent) {
-        playbackIntent = intent
-        configuration = intent.itemConfiguration ?? Configuration()
-
-        if let defaults = configuration.automaticTrackDefaults {
-            automaticTrackDefaults = defaults
-        }
-
-        configuration.automaticTrackDefaults = automaticTrackDefaults
-    }
 
     /// Begin observations after the mediaSession has completed installation.
     func activate() {
@@ -216,7 +179,7 @@ final class MediaPlayerItem {
             segmentObservation = segments.observe(mediaSession)
         }
 
-        if baseItem.mediaType != .audio, !subtitleStreams.isEmpty {
+        if baseItem.mediaType != .audio, subtitleStreams.isNotEmpty {
             replaySubtitles = MediaPlayerItemReplaySubtitles(item: self, events: mediaSession.playbackEvents)
         }
 
@@ -225,15 +188,10 @@ final class MediaPlayerItem {
         preferences.start()
     }
 
-    func resumingIntent(at position: Duration) -> PlaybackIntent? {
-        playbackIntent?.updating(
-            startSeconds: position,
-            audioStreamIndex: selectedAudioStreamIndex,
-            subtitleStreamIndex: selectedSubtitleStreamIndex,
-            secondarySubtitleStreamIndex: selectedSecondarySubtitleStreamIndex,
-            preservingTrackPreferences: true
-        )
-        .preserving(configuration: configuration)
+    func resumingIntent(at position: Duration) -> PlaybackIntent {
+        PlaybackIntent(item: baseItem, configuration: with(configuration) {
+            $0.startSeconds = max(.zero, position)
+        })
     }
 
     var canSelectTracks: Bool {
@@ -244,11 +202,15 @@ final class MediaPlayerItem {
     func isRebuildRequired(type: MediaStreamType, from oldIndex: Int?, to newIndex: Int?) -> Bool {
         guard oldIndex != newIndex else { return false }
 
+        if mediaSession?.isRemotePlayback == true, type == .audio || type == .subtitle {
+            return true
+        }
+
         let isTranscoding = mediaSource.transcodingURL != nil
 
         // Removing a burned-in subtitle needs a new stream too.
         if type == .subtitle, isTranscoding,
-           subtitleStreams.first(where: { $0.index == oldIndex })?.deliveryMethod == .encode
+           subtitleStreams.first(property: \.index, equalTo: oldIndex)?.deliveryMethod == .encode
         {
             return true
         }
@@ -270,7 +232,7 @@ final class MediaPlayerItem {
             )
 
         case .subtitle:
-            guard let newStream = subtitleStreams.first(where: { $0.index == newIndex }) else { return false }
+            guard let newStream = subtitleStreams.first(property: \.index, equalTo: newIndex) else { return false }
 
             // Honor the negotiated delivery, including extracted/converted embedded subtitles.
             // Their original codec and `isExternal` flag do not describe the sidecar file.

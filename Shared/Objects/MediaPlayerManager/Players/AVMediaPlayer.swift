@@ -30,9 +30,9 @@ final class AVMediaPlayer: NSObject, MediaPlayer, MediaPlayerMetadataProviding {
     private(set) var isPiPActive: Bool = false
     private(set) var isPiPAvailable: Bool = false
     private(set) var isPiPTransitioning = false
-    let mediaPlayerType: MediaPlayerType = .avPlayer
+    let playbackProfile = PlaybackProfile.local(.avPlayer)
     let player: AVPlayer
-    private let playerLayer: AVPlayerLayer
+    let playerLayer: AVPlayerLayer
     private(set) var subtitleCues: Set<SubtitleCue> = []
     private(set) var videoState = VideoPlaybackState()
 
@@ -234,7 +234,7 @@ final class AVMediaPlayer: NSObject, MediaPlayer, MediaPlayerMetadataProviding {
         }
 
         guard let item = player.currentItem, let group else { return }
-        guard let index = stream.index, group.options.indices.contains(index) else {
+        guard let index = stream.index, let option = group.options[safe: index] else {
             if stream.type == .subtitle {
                 item.select(nil, in: group)
             }
@@ -242,7 +242,7 @@ final class AVMediaPlayer: NSObject, MediaPlayer, MediaPlayerMetadataProviding {
             return
         }
 
-        item.select(group.options[index], in: group)
+        item.select(option, in: group)
     }
 
     private func isCurrent(_ playerItem: AVPlayerItem, generation: Int) -> Bool {
@@ -484,7 +484,7 @@ extension AVMediaPlayer {
             return group.options.first
         }
 
-        if let language = streams.first(where: { $0.index == index })?.language {
+        if let language = streams.first(property: \.index, equalTo: index)?.language {
             return AVMediaSelectionGroup.mediaSelectionOptions(
                 from: group.options,
                 filteredAndSortedAccordingToPreferredLanguages: [language]
@@ -503,7 +503,7 @@ extension AVMediaPlayer {
         var snapshot = PlaybackState(
             isReady: isReady,
             isPlaying: player.timeControlStatus == .playing,
-            isSeekable: duration != nil || !item.seekableTimeRanges.isEmpty,
+            isSeekable: duration != nil || item.seekableTimeRanges.isNotEmpty,
             duration: duration,
             isBuffering: player.timeControlStatus == .waitingToPlayAtSpecifiedRate &&
                 (player.reasonForWaitingToPlay == .toMinimizeStalls || player.reasonForWaitingToPlay == .evaluatingBufferingRate)
@@ -617,56 +617,15 @@ extension AVMediaPlayer: AVPictureInPictureControllerDelegate {
 extension AVMediaPlayer: VideoMediaPlayer {
 
     func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
-        PlayerSurface(player: self)
-            .frame(width: layout.renderSize.width, height: layout.renderSize.height)
-            .scaleEffect(layout.renderScale)
-            .offset(layout.renderOffset)
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+        AVVideoPlayerView(player: self, layout: layout)
     }
 
-    /// Playback continues when the AVPlayerLayer surface is not mounted.
-    private struct PlayerSurface: UIViewRepresentable {
+    func videoSurfaceDidMove(to window: UIWindow) {
+        setupPiP()
 
-        let player: AVMediaPlayer
-
-        func makeUIView(context: Context) -> SurfaceView {
-            SurfaceView(player: player)
-        }
-
-        func updateUIView(_ uiView: SurfaceView, context: Context) {}
-    }
-
-    private final class SurfaceView: UIView {
-
-        private let player: AVMediaPlayer
-
-        init(player: AVMediaPlayer) {
-            self.player = player
-            super.init(frame: .zero)
-            layer.addSublayer(player.playerLayer)
-        }
-
-        @available(*, unavailable)
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-
-        override func layoutSubviews() {
-            super.layoutSubviews()
-            player.playerLayer.frame = bounds
-        }
-
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-
-            guard let window else { return }
-
-            player.setupPiP()
-
-            #if os(tvOS)
-            player.displayManager = window.avDisplayManager
-            #endif
-        }
+        #if os(tvOS)
+        displayManager = window.avDisplayManager
+        #endif
     }
 }
 
@@ -713,7 +672,7 @@ extension AVMediaPlayer: MediaPlayerSubtitleCueProviding, @preconcurrency AVPlay
     ) {
         guard output === subtitleOutput else { return }
 
-        subtitleCues = Set(strings.map(\.string).filter { !$0.isEmpty }.map { SubtitleCue(text: $0) })
+        subtitleCues = Set(strings.map(\.string).filter(\.isNotEmpty).map { SubtitleCue(text: $0) })
         loadedItem?.replaySubtitles?.refresh()
     }
 

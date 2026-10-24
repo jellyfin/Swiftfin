@@ -31,23 +31,6 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
         guard self.end > self.start else { return nil }
     }
 
-    var skipTitle: String {
-        switch type {
-        case .intro:
-            L10n.skipIntro
-        case .outro:
-            L10n.skipOutro
-        case .recap:
-            L10n.skipRecap
-        case .preview:
-            L10n.skipPreview
-        case .commercial:
-            L10n.skipCommercial
-        case .unknown:
-            L10n.skipSegment
-        }
-    }
-
     func skipTarget(at position: Duration, duration: Duration?) -> Duration? {
         let target = duration.map { min(end, $0) } ?? end
         guard position >= start, position < target else { return nil }

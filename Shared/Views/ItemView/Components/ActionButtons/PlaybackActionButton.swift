@@ -43,7 +43,7 @@ extension ItemActionButtons {
         private var audioStreamSelection: Binding<Int?> {
             Binding(
                 get: {
-                    provider.playbackIntent?.audioStreamIndex
+                    provider.playbackIntent?.configuration.audioStreamIndex
                         ?? provider.playbackIntent?.mediaSource?.defaultAudioStreamIndex
                         ?? audioStreams.first?.index
                 },
@@ -54,7 +54,7 @@ extension ItemActionButtons {
         private var subtitleStreamSelection: Binding<Int?> {
             Binding(
                 get: {
-                    provider.playbackIntent?.subtitleStreamIndex
+                    provider.playbackIntent?.configuration.subtitleStreamIndex
                         ?? provider.playbackIntent?.mediaSource?.defaultSubtitleStreamIndex
                         ?? -1
                 },
@@ -84,7 +84,7 @@ extension ItemActionButtons {
         private var qualityPicker: some View {
             Picker(
                 selection: Binding(
-                    get: { provider.playbackIntent?.requestedBitrate ?? appMaximumBitrate },
+                    get: { provider.playbackIntent?.configuration.requestedBitrate ?? appMaximumBitrate },
                     set: { provider.select(.bitrate($0)) }
                 )
             ) {
@@ -94,7 +94,7 @@ extension ItemActionButtons {
                 }
             } label: {
                 Text(L10n.playbackQuality)
-                Text(provider.playbackIntent?.requestedBitrate.displayTitle)
+                Text(provider.playbackIntent?.configuration.requestedBitrate.displayTitle)
             }
             .pickerStyle(.menu)
         }

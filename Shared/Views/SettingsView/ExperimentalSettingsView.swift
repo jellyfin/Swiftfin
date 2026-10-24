@@ -20,6 +20,11 @@ struct ExperimentalSettingsView: View {
     @Default(.Experimental.videoPlayerEPG)
     private var isVideoPlayerEPGEnabled
 
+    #if os(iOS)
+    @Default(.Experimental.chromecast)
+    private var isChromecastEnabled
+    #endif
+
     @Injected(\.userSessionManager)
     private var userSessionManager: UserSessionManager
 
@@ -30,6 +35,16 @@ struct ExperimentalSettingsView: View {
 
             #if os(iOS)
             Toggle("Auto switch connection", isOn: $isServerConnectionAutoSwitchEnabled)
+            Toggle("Chromecast", isOn: $isChromecastEnabled)
+                .onChange(of: isChromecastEnabled) {
+                    if isChromecastEnabled,
+                       !Defaults[.VideoPlayer.barActionButtons].contains(.playbackDestination),
+                       !Defaults[.VideoPlayer.menuActionButtons].contains(.playbackDestination)
+                    {
+                        Defaults[.VideoPlayer.barActionButtons].append(.playbackDestination)
+                    }
+                    ChromecastController.updateAvailability()
+                }
             #endif
 
             // swiftlint:enable hard_coded_display_string

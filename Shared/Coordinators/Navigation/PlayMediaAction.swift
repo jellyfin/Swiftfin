@@ -18,13 +18,12 @@ struct PlayMediaAction {
 
     let present: @MainActor (NavigationRoute) -> Void
 
-    func callAsFunction(intent: PlaybackIntent, queue: (any MediaPlayerQueue)? = nil) {
+    func callAsFunction(intent: PlaybackIntent) {
         guard let userSession = Container.shared.currentUserSession() else { return }
 
         let session = Container.shared.mediaPlayerManager().play(
             intent: intent,
-            userSession: userSession,
-            queue: queue ?? (intent.item.type == .episode ? EpisodeMediaPlayerQueue() : nil)
+            userSession: userSession
         )
 
         present(.videoPlayer(session: session))

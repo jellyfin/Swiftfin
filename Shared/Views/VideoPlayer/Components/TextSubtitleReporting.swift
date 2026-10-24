@@ -43,7 +43,7 @@ struct TextSubtitleReporting: ViewModifier {
 
         return (secondary + other)
             .map(\.text)
-            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .compacted(using: \.nilIfBlank)
     }
 
     private func reportVisibleCaptions() {

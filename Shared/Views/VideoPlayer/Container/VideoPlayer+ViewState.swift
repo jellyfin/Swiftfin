@@ -460,7 +460,7 @@ extension VideoPlayer {
             var previousActivity: (MediaSession.Activity?, Bool)?
 
             let observations = [
-                MediaPlayerObservation { [weak mediaSession] in
+                ObservationToken { [weak mediaSession] in
                     mediaSession?.playbackItem
                 } onChange: { [weak self] _ in
                     guard let self else { return }
@@ -493,7 +493,7 @@ extension VideoPlayer {
 
                     fitVideo()
                 },
-                MediaPlayerObservation { [weak mediaSession] in
+                ObservationToken { [weak mediaSession] in
                     mediaSession?.playbackRequestStatus
                 } onChange: { [weak self] status in
                     guard let self else { return }
@@ -506,7 +506,7 @@ extension VideoPlayer {
 
                     refreshAutoDismiss()
                 },
-                MediaPlayerObservation { [weak mediaSession] in
+                ObservationToken { [weak mediaSession] in
                     (mediaSession?.activity, mediaSession?.canSeek == true)
                 } onChange: { [weak self] activity in
                     guard let self else { return }

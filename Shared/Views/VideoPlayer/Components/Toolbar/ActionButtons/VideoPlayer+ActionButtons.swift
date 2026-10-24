@@ -37,11 +37,27 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         @Environment(MediaSession.self)
         private var mediaSession
 
+        #if os(iOS)
+        @Default(.Experimental.chromecast)
+        private var isChromecastEnabled
+        #endif
+
         @FocusState
         private var focusedButton: String?
 
         private func resolvedActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
             var filteredButtons = rawButtons
+
+            #if os(iOS)
+            if !isChromecastEnabled {
+                filteredButtons.removeAll(equalTo: .playbackDestination)
+            }
+            #elseif os(tvOS)
+            filteredButtons.removeAll(equalTo: .pictureInPicture)
+            #endif
+            if mediaSession.isRemotePlayback {
+                filteredButtons.removeAll { $0 == .aspectFill || $0 == .pictureInPicture }
+            }
 
             if mediaSession.playbackItem?.audioStreams.isEmpty == true {
                 filteredButtons.removeAll { $0 == .audio || $0 == .audioOffset }
@@ -56,7 +72,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             }
 
             if !PlaybackSettings.isAvailable(for: mediaSession.playbackItem) {
-                filteredButtons.removeAll { $0 == .playbackSettings }
+                filteredButtons.removeAll(equalTo: .playbackSettings)
             }
 
             if mediaSession.queue == nil {
@@ -120,6 +136,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             #if os(iOS)
             case .gestureLock:
                 GestureLock()
+            case .playbackDestination:
+                PlaybackDestination()
             #endif
             case .subtitleOffset:
                 SubtitleOffset()

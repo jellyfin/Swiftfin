@@ -99,14 +99,14 @@ extension PlaybackAdjustmentSupplement {
         )
     }
 
-    static var playbackSpeed: Self {
+    static func playbackSpeed(range: ClosedRange<Double>) -> Self {
         Self(
             id: "PlaybackAdjustment-speed",
             displayTitle: L10n.playbackSpeed,
             value: { mediaSession in
-                Binding(get: { mediaSession.rate }, set: { mediaSession.rate = $0 })
+                Binding(get: { mediaSession.effectiveRate }, set: { mediaSession.rate = $0 })
             },
-            range: 0.1 ... 5,
+            range: range,
             step: 0.05,
             presets: [0.5, 0.75, 1, 1.25, 1.5, 2],
             resetValue: 1,

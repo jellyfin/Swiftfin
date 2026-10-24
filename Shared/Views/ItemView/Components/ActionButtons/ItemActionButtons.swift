@@ -95,6 +95,8 @@ struct ItemActionButtons: View {
             hasTrailers(for: provider, enabledTrailers: enabledTrailers)
         case .playback:
             provider.item.presentPlayButton && provider.playbackIntent?.mediaSource != nil
+        case .shuffle:
+            provider.item.canShuffle
         case .record:
             provider.item.canBeRecorded
         case .refresh:
@@ -151,6 +153,8 @@ struct ItemActionButtons: View {
                 Trailers()
             case .playback:
                 Playback()
+            case .shuffle:
+                Shuffle()
             case .record:
                 Record()
             case .refresh:

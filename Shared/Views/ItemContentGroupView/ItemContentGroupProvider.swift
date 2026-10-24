@@ -322,18 +322,20 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     }
 
     func select(_ selection: PlaybackSelection) {
-        guard let intent = playbackIntent else { return }
+        guard var intent = playbackIntent else { return }
 
-        playbackIntent = switch selection {
+        switch selection {
         case let .mediaSource(source):
-            intent.selecting(mediaSource: source)
+            intent.configuration.selectMediaSource(id: source?.id)
         case let .audioStreamIndex(index):
-            intent.updating(audioStreamIndex: index ?? -1)
+            intent.configuration.selectTracks(audio: index ?? -1)
         case let .subtitleStreamIndex(index):
-            intent.updating(subtitleStreamIndex: index ?? -1)
+            intent.configuration.selectTracks(subtitle: index ?? -1)
         case let .bitrate(bitrate):
-            intent.updating(requestedBitrate: bitrate)
+            intent.configuration.requestedBitrate = bitrate
         }
+
+        playbackIntent = intent
     }
 
     private func resolvePlaybackIntent(

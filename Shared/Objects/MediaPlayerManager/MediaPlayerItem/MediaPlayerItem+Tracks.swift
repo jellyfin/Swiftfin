@@ -11,19 +11,9 @@ import JellyfinAPI
 
 extension MediaPlayerItem {
 
-    /// User adjustments survive a stream rebuild, but never leak into the next item.
-    struct Configuration {
-
-        var audioOffset: Duration = .zero
-        var subtitleOffset: Duration = .zero
-        var secondarySubtitleOffset: Duration = .zero
-        var disabledSubtitleTracks: SubtitleTrackSelection?
-        var automaticTrackDefaults: MediaPlaybackPreferences.Selection?
-    }
-
     var selectedAudioStreamIndex: Int? {
         get {
-            audioStreamIndex
+            configuration.audioStreamIndex
         }
         set {
             selectTracks(audio: newValue)
@@ -32,7 +22,7 @@ extension MediaPlayerItem {
 
     var selectedSubtitleStreamIndex: Int? {
         get {
-            subtitleStreamIndex
+            configuration.subtitleStreamIndex
         }
         set {
             selectTracks(subtitle: newValue ?? -1)
@@ -40,7 +30,7 @@ extension MediaPlayerItem {
     }
 
     var selectedSecondarySubtitleStreamIndex: Int? {
-        secondarySubtitleStreamIndex
+        configuration.secondarySubtitleStreamIndex
     }
 
     var audioOffset: Duration {
@@ -82,8 +72,6 @@ extension MediaPlayerItem {
         (mediaSession?.player as? MediaPlayerSecondarySubtitleProviding)?.setSecondarySubtitleOffset(secondarySubtitleOffset)
     }
 
-    /// Validate and commit a complete selection before requesting a replacement stream.
-    /// Automatic updates continue following preferences, while explicit choices opt out.
     func selectTracks(
         audio: Int? = nil,
         subtitle: Int? = nil,
@@ -97,31 +85,22 @@ extension MediaPlayerItem {
               || (supportsSecondarySubtitles && secondarySubtitleStreams.contains(where: { $0.index == secondary }))
         else { return }
 
-        let newAudio = audio ?? audioStreamIndex
-        let newSubtitle = subtitle ?? subtitleStreamIndex ?? -1
-        var newSecondary = secondary ?? secondarySubtitleStreamIndex ?? -1
+        let newAudio = audio ?? configuration.audioStreamIndex
+        let newSubtitle = subtitle ?? configuration.subtitleStreamIndex ?? -1
 
-        if newSubtitle >= 0, newSecondary == newSubtitle {
-            newSecondary = -1
-        }
-
-        let needsRebuild = isRebuildRequired(type: .audio, from: audioStreamIndex, to: newAudio)
-            || isRebuildRequired(type: .subtitle, from: subtitleStreamIndex, to: newSubtitle)
+        let needsRebuild = isRebuildRequired(type: .audio, from: configuration.audioStreamIndex, to: newAudio)
+            || isRebuildRequired(type: .subtitle, from: configuration.subtitleStreamIndex, to: newSubtitle)
 
         if subtitle != nil || secondary != nil {
             replaySubtitles?.end(apply: false)
         }
 
-        playbackIntent = playbackIntent?.updating(
-            audioStreamIndex: audio,
-            subtitleStreamIndex: subtitle,
-            secondarySubtitleStreamIndex: secondary,
-            preservingTrackPreferences: preservingTrackPreferences
+        configuration.selectTracks(
+            audio: audio,
+            subtitle: subtitle,
+            secondary: secondary,
+            preservingPreferences: preservingTrackPreferences
         )
-
-        audioStreamIndex = newAudio
-        subtitleStreamIndex = newSubtitle
-        secondarySubtitleStreamIndex = newSecondary
 
         if needsRebuild {
             mediaSession?.reload(self)
@@ -131,7 +110,6 @@ extension MediaPlayerItem {
             }
 
             if subtitle != nil || secondary != nil {
-                // Reapply even when persistent indexes were unchanged: replay captions may be active in the engine.
                 setTemporarySubtitleTracks(nil)
             }
 
@@ -153,7 +131,6 @@ extension MediaPlayerItem {
         effectiveSubtitleStreamIndex >= 0 || effectiveSecondarySubtitleStreamIndex >= 0
     }
 
-    /// The pickers keep their choices while the shared subtitle switch is off.
     func subtitleTrackIndex(secondary: Bool) -> Int {
         let index: Int = if subtitlesEnabled {
             secondary ? effectiveSecondarySubtitleStreamIndex : effectiveSubtitleStreamIndex
@@ -205,7 +182,7 @@ extension MediaPlayerItem {
         }
 
         replaySubtitles?.end(apply: false)
-        playbackIntent = playbackIntent?.updating(subtitleStreamIndex: selectedSubtitleStreamIndex ?? -1)
+        configuration.selectTracks(subtitle: selectedSubtitleStreamIndex ?? -1)
         configuration.disabledSubtitleTracks = .init(primary: primaryIndex, secondary: secondaryIndex)
 
         if wasEnabled {

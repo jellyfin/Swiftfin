@@ -62,6 +62,7 @@ struct QueueErrorView: PlatformView {
     var iOSView: some View {
         CompactOrRegularView(isCompact: viewState.isCompact) {
             ErrorView(error: ErrorMessage(L10n.unknownError))
+                .refreshable { retry() }
         } regularView: {
             errorCard
         }

@@ -299,7 +299,6 @@ extension Defaults.Keys {
         }
 
         static var mediaPlayerType: Key<MediaPlayerType> {
-            // Preserve the stored key so existing engine selections carry forward.
             UserKey("videoPlayerType", default: .mpv)
         }
 
@@ -419,6 +418,12 @@ extension Defaults.Keys {
         static var serverConnectionAutoSwitch: Key<Bool> {
             UserKey("experimentalServerConnectionAutoSwitch", default: false)
         }
+
+        #if os(iOS)
+        static var chromecast: Key<Bool> {
+            UserKey("experimentalChromecast", default: false)
+        }
+        #endif
 
         static var videoPlayerEPG: Key<Bool> {
             UserKey("experimentalVideoPlayerEPG", default: false)

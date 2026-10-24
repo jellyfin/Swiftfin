@@ -17,16 +17,27 @@ import Observation
 final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
 
     private weak var mediaSession: MediaSession?
+    private(set) var state: MediaPlayerQueueState = .initial
+    private(set) var items: [ItemEntry] = []
     var nextItem: PlaybackIntent?
     var previousItem: PlaybackIntent?
+
+    var currentEntryID: ItemEntry.ID? {
+        mediaSession?.item.id.map { ItemEntry.ID(itemID: $0, occurrence: nil) }
+    }
 
     @ObservationIgnored
     private var currentAdjacentEpisodesTask: AnyCancellable?
 
+    @ObservationIgnored
+    private var seasonLibrary: PagingLibraryViewModel<EpisodeLibrary>?
+    @ObservationIgnored
+    private var seasonObservations: Set<AnyCancellable> = []
+
     func observe(_ mediaSession: MediaSession) -> AnyCancellable {
         self.mediaSession = mediaSession
 
-        let observation = MediaPlayerObservation { [weak mediaSession] in
+        let observation = ObservationToken { [weak mediaSession] in
             mediaSession?.playbackItem
         } onChange: { [weak self] item in
             self?.didReceive(newItem: item)
@@ -36,6 +47,7 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
             MainActor.assumeIsolated {
                 observation.cancel()
                 didReceive(newItem: nil)
+                resetSeason()
                 self.mediaSession = nil
             }
         }
@@ -48,10 +60,73 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
 
         guard let newItem else { return }
 
+        updateSeason(for: newItem.baseItem)
+
         currentAdjacentEpisodesTask = Task { [weak self] in
             try await self?.getAdjacentEpisodes(for: newItem.baseItem)
         }
         .asAnyCancellable()
+    }
+
+    func refresh() {
+        seasonLibrary?.refresh()
+    }
+
+    func select(_ entry: ItemEntry) {
+        guard let mediaSession else { return }
+
+        let configuration = with(MediaPlaybackConfiguration()) {
+            $0.requestedBitrate = mediaSession.playbackBitrate
+        }
+        mediaSession.playNewItem(intent: PlaybackIntent(item: entry.snapshot, configuration: configuration))
+    }
+
+    private func updateSeason(for item: BaseItemDto) {
+        guard item.type == .episode, let seasonID = item.seasonID?.nilIfBlank, let mediaSession else {
+            resetSeason()
+            return
+        }
+
+        // Keep the list and its loading work when playback moves within the same season.
+        guard seasonLibrary?.library.parent.id != seasonID else { return }
+
+        resetSeason()
+
+        let season = BaseItemDto(id: seasonID, name: item.seasonName, seriesID: item.seriesID, type: .season)
+        let library = PagingLibraryViewModel(library: EpisodeLibrary(season: season), userSession: mediaSession.userSession)
+        seasonLibrary = library
+
+        library.$elements
+            .sink { [weak self] elements in
+                self?.items = Array(elements)
+            }
+            .store(in: &seasonObservations)
+
+        library.core
+            .statePublisher
+            .sink { [weak self] state in
+                self?.state = switch state {
+                case .initial:
+                    .initial
+                case .refreshing:
+                    .loading
+                case .content:
+                    .content
+                case .error:
+                    .error
+                }
+            }
+            .store(in: &seasonObservations)
+
+        refresh()
+    }
+
+    private func resetSeason() {
+        seasonObservations.removeAll()
+        seasonLibrary?.core.cancelAll()
+        seasonLibrary = nil
+        items = []
+        state = .initial
     }
 
     private func getAdjacentEpisodes(for item: BaseItemDto?) async throws {
@@ -97,13 +172,12 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
 
         let bitrate = mediaSession?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
 
-        let nextIntent = nextItem.map {
-            PlaybackIntent(item: $0, requestedBitrate: bitrate).updating(startSeconds: .zero)
+        let configuration = with(MediaPlaybackConfiguration()) {
+            $0.requestedBitrate = bitrate
+            $0.startSeconds = .zero
         }
-
-        let previousIntent = previousItem.map {
-            PlaybackIntent(item: $0, requestedBitrate: bitrate).updating(startSeconds: .zero)
-        }
+        let nextIntent = nextItem.map { PlaybackIntent(item: $0, configuration: configuration) }
+        let previousIntent = previousItem.map { PlaybackIntent(item: $0, configuration: configuration) }
 
         guard !Task.isCancelled else { return }
 

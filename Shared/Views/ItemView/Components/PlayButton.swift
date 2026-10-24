@@ -29,21 +29,16 @@ struct PlayButton: View {
     }
 
     private func play(fromBeginning: Bool = false) {
-        let playbackIntent = if fromBeginning {
-            provider.playbackIntent?.updating(startSeconds: .zero)
-        } else {
-            provider.playbackIntent
-        }
-
-        guard let playbackIntent else {
+        guard var playbackIntent = provider.playbackIntent else {
             provider.logger.error("Play selected with no playback intent")
             return
         }
 
-        let queue: any MediaPlayerQueue? = playbackIntent.item.type == .episode ?
-            EpisodeMediaPlayerQueue() : nil
+        if fromBeginning {
+            playbackIntent.configuration.startSeconds = .zero
+        }
 
-        playMedia(intent: playbackIntent, queue: queue)
+        playMedia(intent: playbackIntent)
     }
 
     var body: some View {
@@ -78,7 +73,7 @@ struct PlayButton: View {
         .buttonBorderShape(.capsule)
         .buttonStyle(BasicHoverButtonStyle())
         .contextMenu {
-            if provider.playbackIntent?.item.userData?.playbackPositionTicks != 0 {
+            if (provider.playbackIntent?.item.userData?.playbackPositionTicks ?? 0) > 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
                     play(fromBeginning: true)
                 }

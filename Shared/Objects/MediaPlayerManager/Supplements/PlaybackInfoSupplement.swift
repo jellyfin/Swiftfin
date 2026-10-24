@@ -74,12 +74,12 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             LabeledContent(L10n.videoPlayer, value: mediaSession.player?.displayTitle ?? .emptyDash)
 
             if let playbackItem = mediaSession.playbackItem {
-                if let stream = playbackItem.subtitleStreams.first(where: { $0.index == playbackItem.selectedSubtitleStreamIndex }) {
+                if let stream = playbackItem.subtitleStreams.first(property: \.index, equalTo: playbackItem.selectedSubtitleStreamIndex) {
                     LabeledContent(L10n.primarySubtitles, value: stream.displayTitle ?? L10n.unknown)
                 }
 
                 if let stream = playbackItem.subtitleStreams
-                    .first(where: { $0.index == playbackItem.selectedSecondarySubtitleStreamIndex })
+                    .first(property: \.index, equalTo: playbackItem.selectedSecondarySubtitleStreamIndex)
                 {
                     LabeledContent(L10n.secondarySubtitles, value: stream.displayTitle ?? L10n.unknown)
                 }

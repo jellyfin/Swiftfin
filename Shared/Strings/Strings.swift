@@ -1090,8 +1090,6 @@ internal enum L10n {
   internal static let movie = L10n.tr("Localizable", "movie", fallback: "Movie")
   /// Movies
   internal static let movies = L10n.tr("Localizable", "movies", fallback: "Movies")
-  /// MPV
-  internal static let mpv = L10n.tr("Localizable", "mpv", fallback: "MPV")
   /// Multi tap
   internal static let multiTap = L10n.tr("Localizable", "multiTap", fallback: "Multi tap")
   /// Music
@@ -1280,10 +1278,10 @@ internal enum L10n {
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
   /// Player
   internal static let player = L10n.tr("Localizable", "player", fallback: "Player")
-  /// Buffering…
-  internal static let playerBuffering = L10n.tr("Localizable", "playerBuffering", fallback: "Buffering…")
-  /// Loading…
-  internal static let playerLoading = L10n.tr("Localizable", "playerLoading", fallback: "Loading…")
+  /// Buffering
+  internal static let playerBuffering = L10n.tr("Localizable", "playerBuffering", fallback: "Buffering")
+  /// Loading
+  internal static let playerLoading = L10n.tr("Localizable", "playerLoading", fallback: "Loading")
   /// Play From beginning
   internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From beginning")
   /// Playlist
@@ -1666,6 +1664,8 @@ internal enum L10n {
   internal static let showUnwatched = L10n.tr("Localizable", "showUnwatched", fallback: "Show unwatched")
   /// Show watched
   internal static let showWatched = L10n.tr("Localizable", "showWatched", fallback: "Show watched")
+  /// Shuffle
+  internal static let shuffle = L10n.tr("Localizable", "shuffle", fallback: "Shuffle")
   /// Shutdown server
   internal static let shutdownServer = L10n.tr("Localizable", "shutdownServer", fallback: "Shutdown server")
   /// Are you sure you want to shutdown the server?
@@ -1690,20 +1690,10 @@ internal enum L10n {
   internal static let simple = L10n.tr("Localizable", "simple", fallback: "Simple")
   /// Size
   internal static let size = L10n.tr("Localizable", "size", fallback: "Size")
-  /// Skip Commercial
-  internal static let skipCommercial = L10n.tr("Localizable", "skipCommercial", fallback: "Skip Commercial")
+  /// Skip
+  internal static let skip = L10n.tr("Localizable", "skip", fallback: "Skip")
   /// Skip duplicates
   internal static let skipDuplicates = L10n.tr("Localizable", "skipDuplicates", fallback: "Skip duplicates")
-  /// Skip Intro
-  internal static let skipIntro = L10n.tr("Localizable", "skipIntro", fallback: "Skip Intro")
-  /// Skip Outro
-  internal static let skipOutro = L10n.tr("Localizable", "skipOutro", fallback: "Skip Outro")
-  /// Skip Preview
-  internal static let skipPreview = L10n.tr("Localizable", "skipPreview", fallback: "Skip Preview")
-  /// Skip Recap
-  internal static let skipRecap = L10n.tr("Localizable", "skipRecap", fallback: "Skip Recap")
-  /// Skip Segment
-  internal static let skipSegment = L10n.tr("Localizable", "skipSegment", fallback: "Skip Segment")
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slow scrub

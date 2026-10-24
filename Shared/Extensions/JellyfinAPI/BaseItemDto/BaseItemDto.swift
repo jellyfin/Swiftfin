@@ -50,20 +50,14 @@ extension BaseItemDto {
         let content = currentProgram ?? self
         let isAudio = mediaType == .audio || (mediaType == nil && (type == .audio || type == .audioBook || channelType == .radio))
 
-        func nonempty(_ text: String?) -> String? {
-            guard let text = text?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else { return nil }
-
-            return text
-        }
-
         func joined(_ texts: [String?], separator: String = ", ") -> String? {
-            nonempty(texts.compactMap(nonempty).joined(separator: separator))
+            texts.compactMap { $0?.nilIfBlank }.joined(separator: separator).nilIfBlank
         }
 
         let artist: String? = if content.type == .episode {
             joined([content.seriesName, content.seasonEpisodeLabel], separator: " · ")
         } else if currentProgram != nil {
-            nonempty(name)
+            name?.nilIfBlank
         } else if isAudio {
             joined((content.artists ?? []).map(Optional.some))
         } else {
@@ -73,13 +67,13 @@ extension BaseItemDto {
         return .init(
             mediaType: isAudio ? .audio : .video,
             isLiveStream: isLiveStream,
-            title: nonempty(content.name) ?? nonempty(name) ?? L10n.unknown,
+            title: content.name?.nilIfBlank ?? name?.nilIfBlank ?? L10n.unknown,
             artist: artist,
             artwork: image.map { image in MPMediaItemArtwork(boundsSize: image.size) { _ in image }},
-            albumArtist: isAudio ? nonempty(content.albumArtist) ?? joined((content.albumArtists ?? []).map(\.name)) : nil,
-            albumTitle: isAudio ? nonempty(content.album) : nil,
-            overview: nonempty(content.overview) ?? nonempty(overview),
-            contentRating: nonempty(content.officialRating) ?? nonempty(officialRating),
+            albumArtist: isAudio ? content.albumArtist?.nilIfBlank ?? joined((content.albumArtists ?? []).map(\.name)) : nil,
+            albumTitle: isAudio ? content.album?.nilIfBlank : nil,
+            overview: content.overview?.nilIfBlank ?? overview?.nilIfBlank,
+            contentRating: content.officialRating?.nilIfBlank ?? officialRating?.nilIfBlank,
             genre: joined((content.genres ?? genres ?? []).map(Optional.some))
         )
     }
@@ -164,7 +158,7 @@ extension BaseItemDto {
         guard !isMissing else { return false }
 
         return switch type {
-        case .series:
+        case .series, .season, .boxSet, .collectionFolder, .userView, .folder:
             false
         default:
             true
@@ -270,24 +264,20 @@ extension BaseItemDto {
     }
 
     @MainActor
+    func getPlaybackIntent(userSession: UserSession?) -> PlaybackIntent? {
+        getPlaybackIntent(userSession: userSession, configuration: .init())
+    }
+
+    @MainActor
     func getPlaybackIntent(
         userSession: UserSession?,
-        mediaSource: MediaSourceInfo? = nil,
-        audioStreamIndex: Int? = nil,
-        subtitleStreamIndex: Int? = nil,
-        requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+        configuration: MediaPlaybackConfiguration
     ) -> PlaybackIntent? {
         if type == .program, !isAiring || userSession == nil {
             return nil
         }
 
-        return PlaybackIntent(
-            item: self,
-            mediaSource: mediaSource,
-            audioStreamIndex: audioStreamIndex,
-            subtitleStreamIndex: subtitleStreamIndex,
-            requestedBitrate: requestedBitrate
-        )
+        return PlaybackIntent(item: self, configuration: configuration)
     }
 
     @MainActor
@@ -500,8 +490,8 @@ extension BaseItemDto {
     func fullChapterInfo(using client: JellyfinClient) -> [ChapterInfo.FullInfo] {
         (chapters ?? [])
             .enumerated()
-            .filter { $0.element.startPositionTicks != nil }
-            .sorted { ($0.element.startPositionTicks ?? 0) < ($1.element.startPositionTicks ?? 0) }
+            .compacted(using: \.element.startPositionTicks)
+            .sorted(using: \.element.startPositionTicks)
             .map { i, chapter in
 
                 guard let imageTag = chapter.imageTag, imageTag.isNotEmpty else {
@@ -542,6 +532,28 @@ extension BaseItemDto {
              .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist,
              .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
             return true
+        default:
+            return false
+        }
+    }
+
+    var canShuffle: Bool {
+        guard id?.nilIfBlank != nil, !isMissing,
+              Container.shared.currentUserSession()?.user.data.policy?.enableMediaPlayback == true
+        else { return false }
+
+        switch type {
+        case .series, .season, .boxSet:
+            return true
+
+        case .collectionFolder, .userView, .folder:
+            switch collectionType {
+            case .none, .movies, .tvshows, .boxsets, .homevideos, .musicvideos, .folders:
+                return true
+            default:
+                return false
+            }
+
         default:
             return false
         }

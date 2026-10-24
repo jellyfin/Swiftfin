@@ -8,16 +8,15 @@
 
 import SwiftUI
 
-@MainActor
-struct QueueSupplement<Content: View>: VideoPlayerSupplement {
+extension ItemActionButtons {
 
-    let id: String
-    let displayTitle: String
+    struct Shuffle: View {
 
-    @ViewBuilder
-    let content: () -> Content
+        @EnvironmentObject
+        private var provider: ItemContentGroupProvider
 
-    var body: some View {
-        content()
+        var body: some View {
+            ShuffleButton(item: provider.item)
+        }
     }
 }

@@ -6,25 +6,29 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 import JellyfinAPI
 import Logging
 
-extension MediaPlayerItem {
+/// Resolves one item identity and its configuration into a playable item.
+@MainActor
+enum MediaPlayerItemResolver {
 
-    static func build(
-        for initialItem: BaseItemDto,
-        userSession: UserSession,
-        mediaSource _initialMediaSource: MediaSourceInfo? = nil,
-        audioStreamIndex: Int? = nil,
-        subtitleStreamIndex: Int? = nil,
-        secondarySubtitleStreamIndex: Int? = nil,
-        mediaPlayerType: MediaPlayerType,
-        requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
-        compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode],
-        modifyItem: ((inout BaseItemDto) -> Void)? = nil
+    static func resolve(
+        _ intent: PlaybackIntent,
+        for profile: PlaybackProfile,
+        userSession: UserSession
     ) async throws -> MediaPlayerItem {
+        try Task.checkCancellation()
+        guard var initialItem = intent.entry.value else { throw ItemStore.StoreError.itemUnavailable }
+
+        if initialItem.type == .program {
+            guard let channel = try await initialItem.getChannel(for: initialItem, userSession: userSession) else {
+                throw ErrorMessage(L10n.unknownError)
+            }
+
+            initialItem = channel
+        }
 
         let logger = Logger.swiftfin()
 
@@ -33,51 +37,39 @@ extension MediaPlayerItem {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        // Keep the shared record alive through playback setup
         let storedItem = try await userSession.getFullItem(initialItem)
-        guard var item = storedItem.value else { throw ItemStore.StoreError.itemUnavailable }
+        guard var item = storedItem.value, intent.entry.value != nil else { throw ItemStore.StoreError.itemUnavailable }
 
-        // Playback overrides apply to this copy without updating the shared record
-        modifyItem?(&item)
-
-        guard let initialMediaSource = {
-            if let _initialMediaSource {
-                return _initialMediaSource
-            }
-
-            if let first = item.mediaSources?.first {
-                logger.trace("Using first media source for item \(itemID)")
-                return first
-            }
-
-            return nil
-        }() else {
-            logger.error("No media sources for item \(itemID)!")
-            throw ErrorMessage(L10n.unknownError)
+        var configuration = intent.configuration
+        guard let initialMediaSource = configuration.mediaSource(in: item) else {
+            throw ErrorMessage("Unable to find media source for item")
         }
 
-        let maxBitrate = try await getMaxBitrate(for: requestedBitrate, userSession: userSession)
-
-        let deviceProfile = DeviceProfile.build(
-            for: mediaPlayerType,
-            compatibilityMode: compatibilityMode,
+        configuration.prepare(for: item, source: initialMediaSource, profile: profile)
+        let maxBitrate = try await getMaxBitrate(configuration: configuration, userSession: userSession)
+        let deviceProfile = profile.deviceProfile(
+            configuration: configuration,
             maxBitrate: maxBitrate,
             mediaSource: initialMediaSource
         )
 
-        // Resolve accessibility choices before negotiating a transcode or burned-in subtitles.
-        let selection = MediaPlaybackPreferences.current.selection(
-            in: initialMediaSource, audio: audioStreamIndex, subtitle: subtitleStreamIndex
-        )
-
         var playbackInfo = PlaybackInfoDto()
         playbackInfo.isAutoOpenLiveStream = true
+
+        if profile.requiresHLS {
+            guard item.mediaType == .video else { throw ErrorMessage(L10n.remotePlaybackUnavailable) }
+
+            playbackInfo.enableDirectPlay = false
+            playbackInfo.enableDirectStream = false
+            playbackInfo.enableTranscoding = true
+        }
+
         playbackInfo.deviceProfile = deviceProfile
         playbackInfo.liveStreamID = initialMediaSource.liveStreamID
         playbackInfo.maxStreamingBitrate = maxBitrate
         playbackInfo.userID = userSession.user.id
-        playbackInfo.audioStreamIndex = selection.audio
-        playbackInfo.subtitleStreamIndex = selection.subtitle
+        playbackInfo.audioStreamIndex = configuration.audioStreamIndex
+        playbackInfo.subtitleStreamIndex = configuration.subtitleStreamIndex
 
         if !item.isLiveStream, initialMediaSource.type != .placeholder {
             playbackInfo.mediaSourceID = initialMediaSource.id
@@ -91,26 +83,26 @@ extension MediaPlayerItem {
         try userSession.items.validate()
         let client = userSession.client
 
-        // An opening request must return its live-stream IDs even if the intent is superseded.
         let response = try await Task { try await client.send(request) }.value
 
         do {
+            try Task.checkCancellation()
             try userSession.items.validate()
 
-            guard storedItem.value != nil else { throw ItemStore.StoreError.itemUnavailable }
+            guard storedItem.value != nil, intent.entry.value != nil else { throw ItemStore.StoreError.itemUnavailable }
 
             let mediaSource: MediaSourceInfo? = {
 
                 guard let mediaSources = response.value.mediaSources else { return nil }
 
                 if let tag = initialMediaSource.eTag,
-                   let matchingTag = mediaSources.first(where: { $0.eTag == tag })
+                   let matchingTag = mediaSources.first(property: \.eTag, equalTo: tag)
                 {
                     return matchingTag
                 }
 
                 if let initialID = initialMediaSource.id,
-                   let matchingMediaSource = mediaSources.first(where: { $0.id == initialID })
+                   let matchingMediaSource = mediaSources.first(property: \.id, equalTo: initialID)
                 {
                     return matchingMediaSource
                 }
@@ -139,7 +131,7 @@ extension MediaPlayerItem {
                 throw ErrorMessage("No associated play session ID")
             }
 
-            let playbackURL = try Self.streamURL(
+            var playbackURL = try Self.streamURL(
                 item: item,
                 mediaSource: mediaSource,
                 playSessionID: playSessionID,
@@ -147,20 +139,22 @@ extension MediaPlayerItem {
                 logger: logger
             )
 
-            let automaticTrackDefaults = MediaPlaybackPreferences.Selection(
-                audio: initialMediaSource.defaultAudioStreamIndex
-                    ?? (selection.audio == nil ? mediaSource.defaultAudioStreamIndex : nil)
-                    ?? initialMediaSource.mediaStreams?.first(where: { $0.type == .audio && $0.isDefault == true })?.index
-                    ?? initialMediaSource.mediaStreams?.first(where: { $0.type == .audio && $0.isExternal != true })?.index,
-                subtitle: initialMediaSource.defaultSubtitleStreamIndex
-                    ?? (selection.subtitle == nil ? mediaSource.defaultSubtitleStreamIndex : -1)
-            )
+            if profile.requiresHLS {
+                guard mediaSource.transcodingURL != nil,
+                      playbackURL.pathExtension.lowercased() == "m3u8",
+                      let authenticatedURL = RemotePlaybackURL.authenticated(playbackURL, accessToken: client.accessToken)
+                else { throw ErrorMessage(L10n.remotePlaybackUnavailable) }
+
+                playbackURL = authenticatedURL
+            }
+
+            configuration.finish(source: mediaSource, initialSource: initialMediaSource)
 
             let chapters = item.fullChapterInfo(using: client)
             let temporaryFiles = PlaybackTemporaryFiles(accessToken: client.accessToken)
 
             let previewImageProvider = PreviewImageProvider(
-                option: StoredValues[.User.previewImageScrubbing],
+                option: configuration.previewImageScrubbing,
                 item: item,
                 mediaSourceID: mediaSource.id,
                 chapters: chapters,
@@ -173,12 +167,8 @@ extension MediaPlayerItem {
                 mediaSource: mediaSource,
                 playSessionID: playSessionID,
                 url: playbackURL,
-                requestedBitrate: requestedBitrate,
+                configuration: configuration,
                 deviceProfile: deviceProfile,
-                initialAudioStreamIndex: selection.audio,
-                initialSubtitleStreamIndex: selection.subtitle,
-                initialSecondarySubtitleStreamIndex: secondarySubtitleStreamIndex,
-                automaticTrackDefaults: automaticTrackDefaults,
                 chapters: chapters,
                 temporaryFiles: temporaryFiles,
                 previewImageProvider: previewImageProvider,
@@ -191,12 +181,12 @@ extension MediaPlayerItem {
     }
 
     private static func getMaxBitrate(
-        for requestedBitrate: PlaybackBitrate,
-        userSession: UserSession,
-        testSize: PlaybackBitrateTestSize = Defaults[.VideoPlayer.Playback.appMaximumBitrateTest]
+        configuration: MediaPlaybackConfiguration,
+        userSession: UserSession
     ) async throws -> Int {
-        guard requestedBitrate == .auto else { return requestedBitrate.rawValue }
+        guard configuration.requestedBitrate == .auto else { return configuration.requestedBitrate.rawValue }
 
+        let testSize = configuration.bitrateTestSize
         let start = ContinuousClock.now
         _ = try await userSession.send(Paths.getBitrateTestBytes(size: testSize.rawValue))
 
@@ -211,9 +201,9 @@ extension MediaPlayerItem {
     }
 
     /// An abandoned resolution can have opened a live stream before a player ever loads its URL.
-    static func closeLiveStreams(_ mediaSources: [MediaSourceInfo], userSession: UserSession) {
+    private static func closeLiveStreams(_ mediaSources: [MediaSourceInfo], userSession: UserSession) {
         let streamIDs = Set(mediaSources.compactMap(\.liveStreamID))
-        guard !streamIDs.isEmpty else { return }
+        guard streamIDs.isNotEmpty else { return }
 
         let client = userSession.client
 

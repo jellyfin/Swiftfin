@@ -45,6 +45,11 @@
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
 	<string>${PRODUCT_NAME} uses Face ID to lock and access local users.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_googlecast._tcp</string>
+		<string>_CC1AD845._googlecast._tcp</string>
+	</array>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>${PRODUCT_NAME} uses the local network to connect to your Jellyfin server on your Wi-Fi network.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

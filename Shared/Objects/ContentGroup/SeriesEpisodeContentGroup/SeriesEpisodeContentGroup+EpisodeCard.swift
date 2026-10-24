@@ -43,7 +43,7 @@ extension SeriesEpisodeContentGroup {
                         return
                     }
 
-                    playMedia(intent: intent, queue: EpisodeMediaPlayerQueue())
+                    playMedia(intent: intent)
                 },
                 contentAction: {
                     router.route(to: .item(item: episode), in: namespace)

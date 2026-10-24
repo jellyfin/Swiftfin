@@ -59,7 +59,7 @@ final class MediaPlayerItemPreferences {
             }
             .store(in: &observations)
 
-        let readiness = MediaPlayerObservation { [weak item] in
+        let readiness = ObservationToken { [weak item] in
             item?.canSelectTracks == true
         } onChange: { [weak self] ready in
             if ready {
@@ -76,18 +76,18 @@ final class MediaPlayerItemPreferences {
     }
 
     func apply() {
-        guard let item, item.canSelectTracks, let intent = item.playbackIntent else { return }
+        guard let item, item.canSelectTracks else { return }
 
         // Negotiated responses can call the requested track their new default.
         // Keep the original baseline across replacements of the same item.
         var source = item.mediaSource
-        source.defaultAudioStreamIndex = item.automaticTrackDefaults.audio
-        source.defaultSubtitleStreamIndex = item.automaticTrackDefaults.subtitle
+        source.defaultAudioStreamIndex = item.configuration.automaticTrackDefaults?.audio
+        source.defaultSubtitleStreamIndex = item.configuration.automaticTrackDefaults?.subtitle
 
         let selection = preferences.selection(
             in: source,
-            audio: intent.followsSystemAudioPreferences ? nil : item.selectedAudioStreamIndex,
-            subtitle: intent.followsSystemCaptionPreferences ? nil : (item.selectedSubtitleStreamIndex ?? -1)
+            audio: item.configuration.followsSystemAudioPreferences ? nil : item.selectedAudioStreamIndex,
+            subtitle: item.configuration.followsSystemCaptionPreferences ? nil : (item.selectedSubtitleStreamIndex ?? -1)
         )
 
         let audio = selection.audio ?? item.selectedAudioStreamIndex

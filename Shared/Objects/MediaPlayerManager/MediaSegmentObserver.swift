@@ -76,7 +76,7 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
         return segments.compactMap { segment in
             guard segment.skipTarget(at: mediaSession.seconds, duration: duration) != nil else { return nil }
 
-            return VideoPlayerOverlayAction(id: segment.id, title: segment.skipTitle, systemImage: "forward.end.fill") { [
+            return VideoPlayerOverlayAction(id: segment.id, title: L10n.skip, systemImage: "forward.end.fill") { [
                 weak self,
                 weak item
             ] in

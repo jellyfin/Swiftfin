@@ -9,26 +9,31 @@
 import SwiftUI
 
 @MainActor
-struct QueueItemsView<Items: RandomAccessCollection>: View
-    where Items.Element == ItemEntry, Items.Index == Int
-{
+struct MediaQueueView: @MainActor VideoPlayerSupplement {
 
     @Environment(VideoPlayer.ViewState.self)
     private var viewState
 
-    let items: Items
-    let currentEntryID: ItemEntry.ID?
+    let queue: any MediaPlayerQueue
     var displayType: PosterDisplayType = .landscape
-    let action: (ItemEntry) -> Void
 
-    var body: some View {
-        if !items.isEmpty {
+    var id: String {
+        "Queue-\(ObjectIdentifier(queue))"
+    }
+
+    var displayTitle: String {
+        L10n.queue
+    }
+
+    @ViewBuilder
+    private var itemsView: some View {
+        if queue.items.isNotEmpty {
             VideoPlayer.PosterCollectionView(
-                data: items,
-                currentElementID: currentEntryID,
+                data: queue.items,
+                currentElementID: queue.currentEntryID,
                 isCompact: viewState.isCompact,
                 displayType: displayType,
-                action: action
+                action: queue.select
             ) { item in
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
@@ -51,6 +56,19 @@ struct QueueItemsView<Items: RandomAccessCollection>: View
                     .foregroundStyle(.secondary)
                 }
             }
+        }
+    }
+
+    var body: some View {
+        switch queue.state {
+        case .content:
+            itemsView
+
+        case .initial, .loading:
+            EmptyView()
+
+        case .error:
+            QueueErrorView(retry: queue.refresh)
         }
     }
 }

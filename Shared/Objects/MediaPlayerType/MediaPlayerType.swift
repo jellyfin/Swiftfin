@@ -9,9 +9,9 @@
 import Defaults
 import JellyfinAPI
 
-enum MediaPlayerType: String, CaseIterable, Displayable, SupportedCaseIterable, Storable {
+enum MediaPlayerType: String, CaseIterable, Displayable, Storable {
 
-    case avPlayer = "native"
+    case avPlayer
     case mpv
 
     var displayTitle: String {
@@ -48,10 +48,6 @@ enum MediaPlayerType: String, CaseIterable, Displayable, SupportedCaseIterable, 
         case .mpv:
             Self._mpvSubtitleProfiles
         }
-    }
-
-    static var supportedCases: [MediaPlayerType] {
-        allCases
     }
 
     @MainActor

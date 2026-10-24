@@ -110,7 +110,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 Text(title)
 
                 if let stream = streams(secondary: secondary)
-                    .first(where: { $0.index == playbackItem.subtitleTrackIndex(secondary: secondary) })
+                    .first(property: \.index, equalTo: playbackItem.subtitleTrackIndex(secondary: secondary))
                 {
                     Text(stream.displayTitle ?? L10n.unknown)
                 } else {
@@ -168,7 +168,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 } label: {
                     Text(L10n.textStyle)
 
-                    Text(profiles.first { $0.id == profileID.wrappedValue }?.name ?? L10n.system)
+                    Text(profiles.first(property: \.id, equalTo: profileID.wrappedValue)?.name ?? L10n.system)
                 }
                 .menuOrder(.fixed)
             }

@@ -149,8 +149,9 @@ extension MediaPlayerType {
 
     // MARK: - Codec Profiles
 
+    @MainActor
     @ArrayBuilder<CodecProfile>
-    static var _mpvCodecProfiles: [CodecProfile] {
+    static func _mpvCodecProfiles(configuration: MediaPlaybackConfiguration) -> [CodecProfile] {
         CodecProfile(
             codec: VideoCodec.h264.rawValue,
             type: .video,
@@ -223,7 +224,7 @@ extension MediaPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    mpvHEVCHDRProfiles
+                    mpvHEVCHDRProfiles(configuration: configuration)
                 }
             }
         )
@@ -251,7 +252,7 @@ extension MediaPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    mpvHDRProfiles
+                    mpvHDRProfiles(configuration: configuration)
                 }
             }
         )
@@ -279,7 +280,7 @@ extension MediaPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    mpvHDRProfiles
+                    mpvHDRProfiles(configuration: configuration)
                 }
             }
         )
@@ -287,12 +288,13 @@ extension MediaPlayerType {
 
     /// MPVUI uses AVFoundation sample buffers by default, not `gpu-next`.
     /// HDR output depends on the display route. Accepting a source does not guarantee native HDR presentation.
+    @MainActor
     @ArrayBuilder<VideoRangeType>
-    private static var mpvHDRProfiles: [VideoRangeType] {
+    private static func mpvHDRProfiles(configuration: MediaPlaybackConfiguration) -> [VideoRangeType] {
 
         VideoRangeType.sdr
 
-        if UIDevice.PlaybackCapabilities.isHDREnabled {
+        if !configuration.forceHDRTranscode {
             VideoRangeType.hlg
             VideoRangeType.hdr10
             VideoRangeType.hdr10Plus
@@ -301,11 +303,12 @@ extension MediaPlayerType {
 
     /// Native Dolby Vision in MPVUI's strict policy supports HEVC Profile 5 and Profile 8 HDR10/HLG bases.
     /// Profile 7 enhancement layers, SDR bases, and software Dolby Vision require a different rendering policy.
+    @MainActor
     @ArrayBuilder<VideoRangeType>
-    private static var mpvHEVCHDRProfiles: [VideoRangeType] {
-        mpvHDRProfiles
+    private static func mpvHEVCHDRProfiles(configuration: MediaPlaybackConfiguration) -> [VideoRangeType] {
+        mpvHDRProfiles(configuration: configuration)
 
-        if UIDevice.PlaybackCapabilities.isHDREnabled, UIDevice.PlaybackCapabilities.supportsDolbyVision {
+        if !configuration.forceHDRTranscode, !configuration.forceDVTranscode, UIDevice.PlaybackCapabilities.supportsDolbyVisionDecoding {
             VideoRangeType.dovi
             VideoRangeType.doviWithHLG
             VideoRangeType.doviWithHDR10

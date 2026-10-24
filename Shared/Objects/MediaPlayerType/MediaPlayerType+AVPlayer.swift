@@ -175,8 +175,9 @@ extension MediaPlayerType {
 
     // MARK: - Codec Profiles
 
+    @MainActor
     @ArrayBuilder<CodecProfile>
-    static var _avPlayerCodecProfiles: [CodecProfile] {
+    static func _avPlayerCodecProfiles(configuration: MediaPlaybackConfiguration) -> [CodecProfile] {
 
         CodecProfile(
             codec: VideoCodec.h264.rawValue,
@@ -213,7 +214,7 @@ extension MediaPlayerType {
                     isRequired: false,
                     property: .videoRangeType
                 ) {
-                    avPlayerHDRProfiles
+                    avPlayerHDRProfiles(configuration: configuration)
                 }
 
                 ProfileCondition(
@@ -257,36 +258,40 @@ extension MediaPlayerType {
                     isRequired: false,
                     property: .videoRangeType
                 ) {
-                    avPlayerHDRProfiles
+                    avPlayerHDRProfiles(configuration: configuration)
                 }
             }
         )
     }
 
+    @MainActor
     @ArrayBuilder<VideoRangeType>
-    private static var avPlayerHDRProfiles: [VideoRangeType] {
+    private static func avPlayerHDRProfiles(configuration: MediaPlaybackConfiguration) -> [VideoRangeType] {
+
+        let supportsHDR = UIDevice.PlaybackCapabilities.supportsHEVC && !configuration.forceHDRTranscode
+        let supportsDolbyVision = UIDevice.PlaybackCapabilities.supportsDolbyVisionDecoding && !configuration.forceDVTranscode
 
         VideoRangeType.sdr
         VideoRangeType.doviWithSDR
 
-        if UIDevice.PlaybackCapabilities.supportsHLG {
+        if supportsHDR {
             VideoRangeType.hlg
             VideoRangeType.doviWithHLG
         }
 
-        if UIDevice.PlaybackCapabilities.supportsHDR10 {
+        if supportsHDR {
             VideoRangeType.hdr10
             VideoRangeType.hdr10Plus
         }
 
-        if UIDevice.PlaybackCapabilities.supportsHDR10 || UIDevice.PlaybackCapabilities.supportsDolbyVision {
+        if supportsHDR || supportsDolbyVision {
             VideoRangeType.doviWithHDR10
             VideoRangeType.doviWithHDR10Plus
             VideoRangeType.doviWithEL
             VideoRangeType.doviWithELHDR10Plus
         }
 
-        if UIDevice.PlaybackCapabilities.supportsDolbyVision {
+        if supportsDolbyVision {
             VideoRangeType.dovi
         }
     }

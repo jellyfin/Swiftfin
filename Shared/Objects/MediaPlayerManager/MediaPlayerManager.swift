@@ -44,7 +44,7 @@ final class MediaPlayerManager {
 
     init(
         nowPlayableObserver: (any MediaSessionObserver)? = nil,
-        resolveItem: @escaping MediaSession.ItemResolver = { try await $0.resolve(for: $1, userSession: $2) }
+        resolveItem: @escaping MediaSession.ItemResolver = { try await MediaPlayerItemResolver.resolve($0, for: $1, userSession: $2) }
     ) {
         self.nowPlayableObserver = nowPlayableObserver ?? NowPlayableObserver()
         self.resolveItem = resolveItem
@@ -72,15 +72,18 @@ final class MediaPlayerManager {
     @discardableResult
     func play(
         intent: PlaybackIntent,
-        userSession: UserSession,
-        queue: (any MediaPlayerQueue)? = nil
+        userSession: UserSession
     ) -> MediaSession {
         stop()
+
+        var intent = intent
+        if intent.queue == nil, intent.item.type == .episode {
+            intent.queue = EpisodeMediaPlayerQueue()
+        }
 
         let session = MediaSession(
             intent: intent,
             userSession: userSession,
-            queue: queue,
             reportQueue: reportQueue,
             resolveItem: resolveItem
         )
