@@ -9,7 +9,6 @@
 import Foundation
 import JellyfinAPI
 
-/// A validated segment with an exclusive end so skipping immediately hides its action.
 struct MediaSegment: Identifiable, Hashable, Sendable {
 
     let id: String
@@ -32,6 +31,8 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
     }
 
     func skipTarget(at position: Duration, duration: Duration?) -> Duration? {
+        guard type == .intro || type == .outro else { return nil }
+
         let target = duration.map { min(end, $0) } ?? end
         guard position >= start, position < target else { return nil }
 

@@ -48,7 +48,6 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
 
                     segments = MediaSegment.segments(from: values, itemID: itemID)
                 } catch {
-                    // Playback can continue when segments are unavailable or unsupported.
                     guard !Task.isCancelled else { return }
 
                     self?.mediaSession?.logger.debug("Media segments unavailable: \(error.localizedDescription)")
@@ -73,22 +72,20 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
 
         let duration = mediaSession.playbackState.duration ?? mediaSession.item.runtime
 
-        return segments.compactMap { segment in
-            guard segment.skipTarget(at: mediaSession.seconds, duration: duration) != nil else { return nil }
+        guard let segment = segments.first(where: { $0.skipTarget(at: mediaSession.seconds, duration: duration) != nil }) else { return [] }
 
-            return VideoPlayerOverlayAction(id: segment.id, title: L10n.skip, systemImage: "forward.end.fill") { [
-                weak self,
-                weak item
-            ] in
-                guard let self, let mediaSession = self.mediaSession, let item, self.item === item,
-                      mediaSession.playbackItem === item, mediaSession.state == .playback, mediaSession.canSeek, !mediaSession.isSeeking,
-                      let target = segment.skipTarget(
-                          at: mediaSession.seconds,
-                          duration: mediaSession.playbackState.duration ?? mediaSession.item.runtime
-                      ) else { return }
+        return [VideoPlayerOverlayAction(id: segment.id, title: L10n.skip, systemImage: "forward.end.fill") { [
+            weak self,
+            weak item
+        ] in
+            guard let self, let mediaSession = self.mediaSession, let item, self.item === item,
+                  mediaSession.playbackItem === item, mediaSession.state == .playback, mediaSession.canSeek, !mediaSession.isSeeking,
+                  let target = segment.skipTarget(
+                      at: mediaSession.seconds,
+                      duration: mediaSession.playbackState.duration ?? mediaSession.item.runtime
+                  ) else { return }
 
-                mediaSession.seek(to: target)
-            }
-        }
+            mediaSession.seek(to: target)
+        }]
     }
 }
