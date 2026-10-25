@@ -23,7 +23,7 @@ struct RemoteView: View {
     @Router
     private var router
 
-    let provider: MediaPlayerItemProvider?
+    let intent: PlaybackIntent?
 
     private var selectedTarget: SessionViewModel? {
         viewModel.selectedTarget
@@ -37,8 +37,8 @@ struct RemoteView: View {
         }
     }
 
-    private func castReplacing(provider: MediaPlayerItemProvider, target: SessionViewModel) {
-        guard let itemID = provider.item.id else { return }
+    private func castReplacing(intent: PlaybackIntent, target: SessionViewModel) {
+        guard let itemID = intent.item.id else { return }
 
         target.error = nil
 
@@ -46,8 +46,8 @@ struct RemoteView: View {
             await target.remotePlaybackSession(
                 command: .playNow,
                 itemIDs: [itemID],
-                startPositionTicks: provider.item.userData?.playbackPositionTicks,
-                mediaSourceID: provider.mediaSource?.id,
+                startPositionTicks: intent.item.userData?.playbackPositionTicks,
+                mediaSourceID: intent.mediaSource?.id,
                 audioStreamIndex: nil,
                 subtitleStreamIndex: nil,
                 startIndex: nil
@@ -56,7 +56,7 @@ struct RemoteView: View {
             await target.refresh()
         }
 
-        proxy = CastMediaPlayerProxy(item: provider.item, session: target)
+        proxy = CastMediaPlayerProxy(item: intent.item, session: target)
     }
 
     var body: some View {
@@ -91,20 +91,20 @@ struct RemoteView: View {
                 }
             }
 
-            if let provider, let selectedTarget,
-               !selectedTarget.session.isPlaying(item: provider.item)
+            if let intent, let selectedTarget,
+               !selectedTarget.session.isPlaying(item: intent.item)
             {
                 StateAdapter(initialValue: false) { isPresentingReplaceConfirmation in
                     Button {
                         isCastPending = true
 
-                        if selectedTarget.session.isPlaying(item: provider.item) {
-                            proxy = CastMediaPlayerProxy(item: provider.item, session: selectedTarget)
+                        if selectedTarget.session.isPlaying(item: intent.item) {
+                            proxy = CastMediaPlayerProxy(item: intent.item, session: selectedTarget)
                         } else if let nowPlayingItem = selectedTarget.session.nowPlayingItem {
                             proxy = CastMediaPlayerProxy(item: nowPlayingItem, session: selectedTarget)
                             isPresentingReplaceConfirmation.wrappedValue = true
                         } else {
-                            castReplacing(provider: provider, target: selectedTarget)
+                            castReplacing(intent: intent, target: selectedTarget)
                         }
                     } label: {
                         Group {
@@ -138,7 +138,7 @@ struct RemoteView: View {
                         isPresented: isPresentingReplaceConfirmation
                     ) {
                         Button(L10n.replace, role: .destructive) {
-                            castReplacing(provider: provider, target: selectedTarget)
+                            castReplacing(intent: intent, target: selectedTarget)
                         }
 
                         Button(L10n.cancel, role: .cancel) {
@@ -149,7 +149,7 @@ struct RemoteView: View {
                             // swiftlint:disable:next nested_l10n
                             L10n.replaceQueueWarning(
                                 selectedTarget.session.nowPlayingItem?.displayTitle ?? L10n.unknown,
-                                provider.item.displayTitle
+                                intent.item.displayTitle
                             )
                         )
                     }

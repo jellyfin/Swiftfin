@@ -8,6 +8,7 @@
 
 import CollectionVGrid
 import Defaults
+import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
@@ -89,6 +90,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         // safe area (including filter bars) and the tab's measured top inset.
         var insets = frame.safeAreaInsets
         insets.top = max(insets.top, tabSafeAreaInsets.top)
+
         return insets + EdgeInsets.itemSpacing
         #else
         var insets: EdgeInsets = if isSafeAreaBarApplied {
@@ -112,7 +114,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         #endif
     }
 
-    @ViewBuilder
     private var elementsView: some View {
         AlternateLayoutView {
             Color.clear
@@ -181,6 +182,10 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         }
 
         viewModel.library.makeMenuContent(environment: $viewModel.environment)
+
+        if let parent = viewModel.library.parent as? BaseItemDto {
+            ShuffleButton(item: parent)
+        }
 
         Button(L10n.random, systemImage: "dice.fill") {
             viewModel.getRandomItem()
@@ -255,6 +260,13 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         }
         #if os(tvOS)
         .environmentObject(focusCoordinator)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                if let parent = viewModel.library.parent as? BaseItemDto {
+                    ShuffleButton(item: parent)
+                }
+            }
+        }
         #else
         .navigationBarMenuButton(
             isLoading: viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage)

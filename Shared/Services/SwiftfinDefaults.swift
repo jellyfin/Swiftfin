@@ -219,6 +219,7 @@ extension Defaults.Keys {
         }
 
         enum Home {
+
             static var showRecentlyAdded: Key<Bool> {
                 UserKey("showRecentlyAdded", default: true)
             }
@@ -290,15 +291,15 @@ extension Defaults.Keys {
             UserKey("resumeOffset", default: 0)
         }
 
-        static var supplements: Key<[VideoPlayerSupplement]> {
+        static var supplements: Key<[VideoPlayerSupplementType]> {
             UserKey(
                 "videoPlayerSupplements",
-                default: VideoPlayerSupplement.supportedCases
+                default: VideoPlayerSupplementType.supportedCases
             )
         }
 
-        static var videoPlayerType: Key<VideoPlayerType> {
-            UserKey("videoPlayerType", default: .vlc)
+        static var mediaPlayerType: Key<MediaPlayerType> {
+            UserKey("videoPlayerType", default: .mpv)
         }
 
         enum Gesture {
@@ -356,6 +357,7 @@ extension Defaults.Keys {
         }
 
         enum Playback {
+
             static var appMaximumResolution: Key<PlaybackResolution> {
                 UserKey("appMaximumResolution", default: .max)
             }
@@ -387,12 +389,17 @@ extension Defaults.Keys {
 
         enum Subtitle {
 
-            static var configuration: Key<SubtitleConfiguration> {
-                UserKey("subtitleConfiguration", default: .default)
+            static var captionProfileID: Key<String> {
+                UserKey("captionProfileID", default: "")
             }
         }
 
         enum Transition {
+
+            static var automaticPictureInPicture: Key<Bool> {
+                UserKey("automaticPictureInPicture", default: false)
+            }
+
             static var pauseOnBackground: Key<Bool> {
                 UserKey("playInBackground", default: true)
             }
@@ -401,10 +408,6 @@ extension Defaults.Keys {
 
     // Experimental settings
     enum Experimental {
-
-        static var mpvPlayer: Key<Bool> {
-            UserKey("experimentalMPVPlayer", default: false)
-        }
 
         // TODO: don't use L10n key as key, just used to not
         // lose translations
@@ -415,6 +418,12 @@ extension Defaults.Keys {
         static var serverConnectionAutoSwitch: Key<Bool> {
             UserKey("experimentalServerConnectionAutoSwitch", default: false)
         }
+
+        #if os(iOS)
+        static var chromecast: Key<Bool> {
+            UserKey("experimentalChromecast", default: false)
+        }
+        #endif
 
         static var videoPlayerEPG: Key<Bool> {
             UserKey("experimentalVideoPlayerEPG", default: false)

@@ -16,10 +16,16 @@ extension MediaStream {
 
     static var none: MediaStream = .init(displayTitle: L10n.none, index: -1)
 
+    /// Delivery describes what the player receives, while `isExternal` describes only the source file.
+    var isSidecarSubtitle: Bool {
+        type == .subtitle && deliveryMethod == .external && deliveryURL != nil && isTextSubtitleStream == true
+    }
+
     func url(with client: JellyfinClient) -> URL? {
         guard let deliveryURL else { return nil }
 
         let deliveryPath = deliveryURL.removingFirst(if: client.configuration.url.absoluteString.last == "/")
+
         return client.url(path: deliveryPath)
     }
 
@@ -359,7 +365,7 @@ extension [MediaStream] {
 
     /// Text-based external subtitles loaded as sidecar files. Image-based subtitles are excluded because the player silently drops them.
     var sidecarSubtitles: [MediaStream] {
-        filter { $0.deliveryMethod == .external && $0.deliveryURL != nil && $0.isTextSubtitleStream == true }
+        filter(\.isSidecarSubtitle)
     }
 
     var has4KVideo: Bool {

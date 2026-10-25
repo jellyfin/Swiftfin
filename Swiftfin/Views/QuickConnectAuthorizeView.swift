@@ -34,7 +34,6 @@ struct QuickConnectAuthorizeView: View {
         self._viewModel = StateObject(wrappedValue: QuickConnectAuthorizeViewModel(user: user))
     }
 
-    @ViewBuilder
     private var loginUserRow: some View {
         HStack {
             if let userSession = viewModel.userSession {
@@ -120,16 +119,14 @@ struct QuickConnectAuthorizeView: View {
         .onChange(of: code) {
             code = String(code.prefix(6))
         }
-        .onReceive(viewModel.$error) { error in
-            guard error != nil else { return }
-
-            UIDevice.feedback(.error)
-        }
         .onReceive(viewModel.events) { event in
             switch event {
             case .authorized:
                 UIDevice.feedback(.success)
                 isPresentingSuccess = true
+
+            case .error:
+                UIDevice.feedback(.error)
             }
         }
         .topBarTrailing {

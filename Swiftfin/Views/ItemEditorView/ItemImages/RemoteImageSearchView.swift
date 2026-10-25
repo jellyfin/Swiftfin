@@ -47,6 +47,7 @@ struct RemoteImageSearchView: View {
 
     init(viewModel: ItemImageViewModel, imageType: ImageType) {
         self.viewModel = viewModel
+
         self._remoteImageInfoViewModel = StateObject(
             wrappedValue: .init(
                 itemID: viewModel.item.id ?? "unknown",
@@ -134,7 +135,6 @@ extension RemoteImageSearchView {
             }
         }
 
-        @ViewBuilder
         private func imageButton(_ image: RemoteImageInfo) -> some View {
             PosterButton(
                 item: image,

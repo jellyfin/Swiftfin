@@ -84,7 +84,6 @@ struct ServerUserParentalRatingView: View {
         .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
     private var maxParentalRatingsView: some View {
         Section(
             L10n.maxParentalRating,
@@ -104,7 +103,6 @@ struct ServerUserParentalRatingView: View {
         )
     }
 
-    @ViewBuilder
     private var blockUnratedItemsView: some View {
         Section {
             ForEach(UnratedItem.allCases.sorted(using: \.displayTitle), id: \.self) { item in

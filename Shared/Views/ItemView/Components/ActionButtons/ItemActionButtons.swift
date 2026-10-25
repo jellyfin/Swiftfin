@@ -94,7 +94,9 @@ struct ItemActionButtons: View {
         case .trailers:
             hasTrailers(for: provider, enabledTrailers: enabledTrailers)
         case .playback:
-            provider.item.presentPlayButton && provider.mediaPlayerItemProvider?.mediaSource != nil
+            provider.item.presentPlayButton && provider.playbackIntent?.mediaSource != nil
+        case .shuffle:
+            provider.item.canShuffle
         case .record:
             provider.item.canBeRecorded
         case .refresh:
@@ -105,7 +107,7 @@ struct ItemActionButtons: View {
             provider.item.canDelete == true
         #if os(iOS)
         case .cast:
-            provider.mediaPlayerItemProvider != nil
+            provider.playbackIntent != nil
         case .editMetadata:
             provider.item.canEditMetadata
         #endif
@@ -142,7 +144,6 @@ struct ItemActionButtons: View {
         )
     }
 
-    @ViewBuilder
     static func view(for button: ItemActionButton) -> some View {
         Group {
             switch button {
@@ -154,6 +155,8 @@ struct ItemActionButtons: View {
                 Trailers()
             case .playback:
                 Playback()
+            case .shuffle:
+                Shuffle()
             case .record:
                 Record()
             case .refresh:

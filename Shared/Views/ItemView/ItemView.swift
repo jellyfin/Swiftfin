@@ -87,7 +87,6 @@ struct ItemView: View {
         return [header] + viewModel.groups
     }
 
-    @ViewBuilder
     private func contentGroupScrollView(
         isEnhanced: Bool = false
     ) -> some View {
@@ -98,12 +97,10 @@ struct ItemView: View {
         )
     }
 
-    @ViewBuilder
     private var blurredNavigationBarScrollView: some View {
         BlurredNavigationBarScrollView(groups: contentGroups)
     }
 
-    @ViewBuilder
     private var content: some View {
         Group {
             switch (isEnhanced, isCompact) {

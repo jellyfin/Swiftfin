@@ -23,7 +23,7 @@ Jellyfin caters to a “hacker” audience, and older devices are often perfectl
 
 ## OS Support Timeline
 
-Decisions to drop OS versions will aim to be communicated **months in advance**. Work targeting the latest Swiftfin version for a given OS may also delay these changes.
+Decisions to drop OS versions will aim to be communicated **in advance**. Work targeting the latest Swiftfin version for a given OS may also delay these changes.
 
 Older OS versions may still receive **limited support**:
 

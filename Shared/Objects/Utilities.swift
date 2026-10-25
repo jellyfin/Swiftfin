@@ -6,10 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 @_exported import CasePaths
 @_exported import Engine
+import Foundation
 @_exported import StatefulMacros
 @_exported import SwiftfinMacros
 
@@ -22,6 +21,7 @@ func clamp<T: Comparable>(_ x: T, min y: T, max z: T) -> T {
 func copy<P, Value>(_ p: P, modifying keyPath: WritableKeyPath<P, Value>, to newValue: Value) -> P {
     var copy = p
     copy[keyPath: keyPath] = newValue
+
     return copy
 }
 
@@ -36,8 +36,9 @@ func round<T: BinaryInteger>(_ value: T, toNearest: T) -> T {
 }
 
 @inlinable
-func with<V>(_ value: V, modify: @escaping (inout V) -> Void) -> V {
+func with<V>(_ value: V, modify: @escaping (inout V) throws -> Void) rethrows -> V {
     var value = value
-    modify(&value)
+    try modify(&value)
+
     return value
 }

@@ -24,7 +24,6 @@ struct ServerTaskDetailsView: View {
         viewModel.task.state == .running || viewModel.task.state == .cancelling
     }
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(

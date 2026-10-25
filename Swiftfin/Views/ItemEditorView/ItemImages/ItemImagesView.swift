@@ -100,7 +100,6 @@ struct ItemImagesView: View {
         .errorMessage($uploadError)
     }
 
-    @ViewBuilder
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -158,7 +157,6 @@ struct ItemImagesView: View {
         }
     }
 
-    @ViewBuilder
     private var typePicker: some View {
         Menu {
             ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
@@ -230,7 +228,6 @@ struct ItemImagesView: View {
         }
     }
 
-    @ViewBuilder
     private var addImageButton: some View {
         Menu {
             addImageMenu

@@ -38,9 +38,9 @@ extension ItemActionButtons {
                 ItemActionButton.cast.displayTitle,
                 systemImage: systemImage
             ) {
-                guard let mediaPlayerItemProvider = provider.mediaPlayerItemProvider else { return }
+                guard let playbackIntent = provider.playbackIntent else { return }
 
-                router.route(to: .remoteControl(provider: mediaPlayerItemProvider))
+                router.route(to: .remoteControl(intent: playbackIntent))
             }
             .isSelected(isPlaying)
             .onFirstAppear {

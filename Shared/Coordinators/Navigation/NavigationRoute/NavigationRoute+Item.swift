@@ -41,12 +41,12 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    static func remoteControl(provider: MediaPlayerItemProvider? = nil) -> NavigationRoute {
+    static func remoteControl(intent: PlaybackIntent? = nil) -> NavigationRoute {
         NavigationRoute(
             id: "remoteControl",
             style: .sheet
         ) {
-            RemoteView(provider: provider)
+            RemoteView(intent: intent)
         }
     }
 

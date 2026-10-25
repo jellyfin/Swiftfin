@@ -33,7 +33,6 @@ struct SearchView: View {
     @TabItemSelected
     private var tabItemSelected
 
-    @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions) { item in

@@ -124,9 +124,7 @@ struct EditServerConnectionView: View {
 
                 if locationPermissionStatus == .denied {
                     Button(L10n.permissions) {
-                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-
-                        UIApplication.shared.open(url)
+                        Task { try? await SystemSettings.application.open() }
                     }
                     .foregroundStyle(Color.accentColor)
                     .buttonStyle(.plain)
@@ -331,6 +329,7 @@ struct EditServerConnectionView: View {
 }
 
 private struct ServerConnectionDraft: Equatable {
+
     let id: String
     var name: String
     var urlString: String

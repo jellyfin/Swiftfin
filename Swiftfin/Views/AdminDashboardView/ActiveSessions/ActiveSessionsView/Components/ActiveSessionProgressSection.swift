@@ -29,7 +29,6 @@ extension ActiveSessionsView {
             return clamp(c / 100.0, min: 0, max: 1)
         }
 
-        @ViewBuilder
         private var playbackInformation: some View {
             HStack(alignment: .top) {
                 FlowLayout(

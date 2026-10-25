@@ -37,18 +37,21 @@ struct BackportGlass {
         var copy = self
         copy.tint = tint
         copy.selectionAppearance = nil
+
         return copy
     }
 
     func shadow(_ isEnabled: Bool = true) -> Self {
         var copy = self
         copy.drawsLegacyShadow = isEnabled
+
         return copy
     }
 
     func interactive(_ isInteractive: Bool = true) -> Self {
         var copy = self
         copy.isInteractive = isInteractive
+
         return copy
     }
 
@@ -58,9 +61,11 @@ struct BackportGlass {
     ) -> Self {
         var copy = self
         copy.tint = tint
+
         copy.selectionAppearance = SelectionAppearance(
             foregroundColor: foregroundColor
         )
+
         return copy
     }
 }
@@ -77,7 +82,6 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
         Color.gray.opacity(0.3)
     }
 
-    @ViewBuilder
     func body(content: Content) -> some View {
         if glass.selectionAppearance != nil {
             appearanceBody(
