@@ -17,6 +17,7 @@ struct ResetUserPasswordView: View {
     private var accentColor
 
     private enum Field: Hashable {
+
         case currentPassword
         case newPassword
         case confirmNewPassword
@@ -124,16 +125,14 @@ struct ResetUserPasswordView: View {
                 focusedField = .newPassword
             }
         }
-        .onReceive(viewModel.$error) { error in
-            guard error != nil else { return }
-
-            UIDevice.feedback(.error)
-        }
         .onReceive(viewModel.events) { event in
             switch event {
             case .success:
                 UIDevice.feedback(.success)
                 isPresentingSuccess = true
+
+            case .error:
+                UIDevice.feedback(.error)
             }
         }
         .topBarTrailing {

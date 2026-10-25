@@ -20,13 +20,13 @@ extension VideoPlayer.UIContainerViewController {
             viewState.cancelTapGesture()
         }
 
-        guard checkGestureLock() else { return }
-        guard !viewState.isPresentingSupplement else { return }
+        guard checkGestureLock(), !viewState.isPresentingSupplement else { return }
 
         let action = Defaults[.VideoPlayer.Gesture.pinchGesture]
 
         switch action {
-        case .none: ()
+        case .none:
+            ()
 
         case .aspectFill:
             guard state == .ended else { return }
@@ -67,11 +67,13 @@ extension VideoPlayer.UIContainerViewController {
             withAnimation(.spring(response: 0.3, dampingFraction: 1)) {
                 viewState.zoom.endPinch()
             }
+
             viewState.setInteraction(.pinch, active: false)
 
         default:
             return
         }
+
         updateZoomHaptics()
         presentZoomAmount()
     }
@@ -80,6 +82,7 @@ extension VideoPlayer.UIContainerViewController {
         guard let transform = viewState.zoom.transform else { return }
 
         let scale = VideoZoom.displayedScale(transform.scale)
+
         if scale <= 1.0001 {
             viewState.toastProxy.present(L10n.original)
         } else if let geometry = viewState.zoom.geometry, abs(scale - geometry.fillScale) < 0.0001 {

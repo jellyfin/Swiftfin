@@ -14,6 +14,7 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
     case favorited
     case trailers
     case playback
+    case shuffle
     case record
     case subtitles
     case refresh
@@ -32,6 +33,8 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
             L10n.trailers
         case .playback:
             L10n.playback
+        case .shuffle:
+            L10n.shuffle
         case .record:
             L10n.record
         case .refresh:
@@ -61,6 +64,8 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
             "movieclapper"
         case .playback:
             "list.and.film"
+        case .shuffle:
+            "shuffle"
         case .record:
             "record.circle.fill"
         case .refresh:
@@ -103,6 +108,7 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
     static let defaultBarActionButtons: [ItemActionButton] = [
         .played,
         .favorited,
+        .shuffle,
         .record,
         .trailers,
         .playback

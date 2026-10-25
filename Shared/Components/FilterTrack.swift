@@ -12,11 +12,13 @@ import SwiftUI
 struct FilterTrack: View {
 
     enum Style {
+
         case compact
         case regular
     }
 
     enum FocusTarget: Hashable {
+
         case reset
         case filter(ItemFilterType)
 
@@ -70,6 +72,7 @@ struct FilterTrack: View {
         #if os(tvOS)
         focus.wrappedValue = types.first.map(FocusTarget.filter)
         #endif
+
         viewModel.reset(filterType: nil)
     }
 
@@ -119,7 +122,6 @@ struct FilterTrack: View {
         #endif
     }
 
-    @ViewBuilder
     private func button(for target: FocusTarget) -> some View {
         Group {
             switch target {

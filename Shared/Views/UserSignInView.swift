@@ -15,6 +15,7 @@ import SwiftUI
 struct UserSignInView: View {
 
     private enum Field: Hashable {
+
         case username
         case password
     }
@@ -228,7 +229,6 @@ struct UserSignInView: View {
 
     // MARK: - Public Users Section
 
-    @ViewBuilder
     private var publicUsersSection: some View {
         Section(L10n.publicUsers) {
             if viewModel.publicUsers.isEmpty {

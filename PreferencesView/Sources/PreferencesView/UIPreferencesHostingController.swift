@@ -18,6 +18,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
         _ = UIViewController.swizzle
 
         let box = Box()
+
         let rootView = AnyView(
             content()
                 #if os(iOS)
@@ -105,7 +106,9 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
     // MARK: Defer Edges
 
     private var _preferredScreenEdgesDeferringSystemGestures: UIRectEdge = [.left, .right] {
-        didSet { setNeedsUpdateOfScreenEdgesDeferringSystemGestures() }
+        didSet {
+            setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
+        }
     }
 
     override public var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
@@ -115,7 +118,9 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
     // MARK: Home Indicator Auto Hidden
 
     private var _prefersHomeIndicatorAutoHidden = false {
-        didSet { setNeedsUpdateOfHomeIndicatorAutoHidden() }
+        didSet {
+            setNeedsUpdateOfHomeIndicatorAutoHidden()
+        }
     }
 
     override public var prefersHomeIndicatorAutoHidden: Bool {
@@ -139,8 +144,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
     private var _pressCommandActions: [PressCommandAction] = []
 
     override public func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-        guard let buttonPress = presses.first?.type else { return }
-        guard let action = _pressCommandActions
+        guard let buttonPress = presses.first?.type, let action = _pressCommandActions
             .first(where: { $0.press == buttonPress }) else { return }
 
         action.action()

@@ -15,7 +15,6 @@ struct Backport<Content> {
 
 extension Backport where Content: View {
 
-    @ViewBuilder
     func buttonStyle(
         _ style: some BackportButtonStyle
     ) -> some View {
@@ -24,7 +23,6 @@ extension Backport where Content: View {
         )
     }
 
-    @ViewBuilder
     func glassEffect(
         _ glass: BackportGlass = .regular,
         in shape: some Shape

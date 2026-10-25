@@ -61,14 +61,9 @@ private struct StringLibraryListElement: View {
                         isEditing ? (isSelected ? .primary : .secondary) : .primary
                     )
 
-                if isEditing {
-                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .resizable()
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(isSelected ? Color.accentColor : .secondary)
-                }
+                ListRowCheckbox()
             }
+            .padding(.edgeInsets)
         }
         .foregroundStyle(.primary, .secondary)
     }

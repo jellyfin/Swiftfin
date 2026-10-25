@@ -28,7 +28,6 @@ struct ServerTaskTriggerView: View {
         viewModel.task.triggers?.contains(where: { $0 == taskTriggerInfo }) == true
     }
 
-    @ViewBuilder
     private var dayPicker: some View {
         Picker(
             L10n.dayOfWeek,
@@ -36,7 +35,6 @@ struct ServerTaskTriggerView: View {
         )
     }
 
-    @ViewBuilder
     private var timePicker: some View {
         DatePicker(
             L10n.time,
@@ -55,7 +53,6 @@ struct ServerTaskTriggerView: View {
         )
     }
 
-    @ViewBuilder
     private var intervalPicker: some View {
         HourMinutePicker(
             title: L10n.every,
@@ -68,7 +65,6 @@ struct ServerTaskTriggerView: View {
         )
     }
 
-    @ViewBuilder
     private var contentView: some View {
         Form {
             Section {

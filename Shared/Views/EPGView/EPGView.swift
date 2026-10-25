@@ -17,7 +17,6 @@ struct EPGView: View {
     @StateObject
     private var viewModel = EPGViewModel()
 
-    @ViewBuilder
     private var contentView: some View {
         VStack(spacing: 0) {
             #if os(tvOS)
