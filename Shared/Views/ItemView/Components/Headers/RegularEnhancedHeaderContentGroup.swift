@@ -76,18 +76,36 @@ extension ItemView {
                 .accessibilityRemoveTraits(.isImage)
             }
 
+            private var title: some View {
+                VStack(alignment: .leading) {
+                    if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
+                        ParentButton(title: parentTitle, id: parentID)
+                    }
+
+                    logo
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
             @ViewBuilder
             private var overlay: some View {
+                #if os(tvOS)
+                VStack(alignment: .leading, spacing: 30) {
+                    title
+                    detailsRow
+                }
+                .focusSection()
+                #else
+                detailsRow
+                #endif
+            }
+
+            private var detailsRow: some View {
                 HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                     VStack(alignment: .center, spacing: UIDevice.isTV ? 30 : 5) {
-                        VStack(alignment: .leading) {
-                            if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
-                                ParentButton(title: parentTitle, id: parentID)
-                            }
-
-                            logo
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        #if !os(tvOS)
+                        title
+                        #endif
 
                         ItemView.ActionBar(provider: provider)
                     }
@@ -110,10 +128,8 @@ extension ItemView {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                #if os(tvOS)
-                .focusSection()
-                #else
-                    .edgePadding(.bottom)
+                #if !os(tvOS)
+                .edgePadding(.bottom)
                     .background(
                         alignment: .bottom,
                         extendedBy: .init(horizontal: EdgeInsets.edgePadding)
