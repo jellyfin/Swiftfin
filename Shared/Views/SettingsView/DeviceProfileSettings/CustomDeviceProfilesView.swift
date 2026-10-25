@@ -14,8 +14,8 @@ struct CustomDeviceProfilesView: View {
 
     @Default(.VideoPlayer.Playback.customDeviceProfileAction)
     private var customDeviceProfileAction
-    @Default(.VideoPlayer.videoPlayerType)
-    private var videoPlayerType
+    @Default(.VideoPlayer.mediaPlayerType)
+    private var mediaPlayerType
 
     @StoredValue(.User.customDeviceProfiles)
     private var customProfiles: [CustomDeviceProfile]
@@ -27,14 +27,12 @@ struct CustomDeviceProfilesView: View {
         customDeviceProfileAction == .add || customProfiles.isNotEmpty
     }
 
-    @ViewBuilder
     private var addButton: some View {
         Button(L10n.add) {
             router.route(to: .createDeviceProfile)
         }
     }
 
-    @ViewBuilder
     private func deleteButton(profile: CustomDeviceProfile) -> some View {
         Button(L10n.delete, systemImage: "trash", role: .destructive) {
             customProfiles.removeFirst(equalTo: profile)
@@ -60,7 +58,6 @@ struct CustomDeviceProfilesView: View {
         }
     }
 
-    @ViewBuilder
     private var behaviorView: some View {
         Section(L10n.behavior) {
             #if os(iOS)
@@ -86,7 +83,6 @@ struct CustomDeviceProfilesView: View {
         }
     }
 
-    @ViewBuilder
     private var customProfileView: some View {
         Section(customDeviceProfileAction == .add ? L10n.custom : L10n.profiles) {
 
@@ -122,7 +118,7 @@ struct CustomDeviceProfilesView: View {
     private var defaultProfileView: some View {
         if customDeviceProfileAction == .add {
             Section(L10n.default) {
-                ForEach(Array(videoPlayerType.directPlayProfiles.enumerated()), id: \.offset) { _, profile in
+                ForEach(Array(mediaPlayerType.directPlayProfiles.filter { $0.type == .video }.enumerated()), id: \.offset) { _, profile in
                     Button {} label: {
                         profileView(
                             useAsTranscodingProfile: false,
@@ -134,7 +130,7 @@ struct CustomDeviceProfilesView: View {
                     .foregroundStyle(.primary, .secondary)
                 }
 
-                ForEach(Array(videoPlayerType.transcodingProfiles.enumerated()), id: \.offset) { _, profile in
+                ForEach(Array(mediaPlayerType.transcodingProfiles.filter { $0.type == .video }.enumerated()), id: \.offset) { _, profile in
                     Button {} label: {
                         profileView(
                             useAsTranscodingProfile: true,
@@ -149,7 +145,6 @@ struct CustomDeviceProfilesView: View {
         }
     }
 
-    @ViewBuilder
     private func profileView(
         useAsTranscodingProfile: Bool,
         audio: [AudioCodec],

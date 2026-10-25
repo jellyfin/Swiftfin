@@ -72,8 +72,6 @@
 		E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3C52716499E009D4DAF /* CoreStore */; };
 		E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3CC27164CA7009D4DAF /* CoreStore */; };
 		E13DD3D327168E65009D4DAF /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3D227168E65009D4DAF /* Defaults */; };
-		E144DBF930464F3A009B85B5 /* SwiftVLC in Frameworks */ = {isa = PBXBuildFile; productRef = E144DBF830464F3A009B85B5 /* SwiftVLC */; };
-		E144DBFA30464F3A009B85B5 /* SwiftVLC in Frameworks */ = {isa = PBXBuildFile; productRef = E144DBFB30464F3A009B85B5 /* SwiftVLC */; };
 		E145EB4B2BE16849003BF6F3 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E145EB4A2BE16849003BF6F3 /* KeychainSwift */; };
 		E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */ = {isa = PBXBuildFile; productRef = E14EA1642BF70A8E00DE757A /* Mantis */; };
 		E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E15210552946DF1B00375CC2 /* PulseLogHandler */; };
@@ -99,6 +97,7 @@
 		E19005020000000000000002 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19005020000000000000004 /* MediaAccessibilityKit */; };
 		E19009260000000000000001 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000003 /* SwiftfinMacros */; };
 		E19009260000000000000002 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000004 /* SwiftfinMacros */; };
+		E19010180000000000000001 /* GoogleCastDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = E19010180000000000000002 /* GoogleCastDynamic */; };
 		E19138CA2E7E7FA20061E464 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19138C92E7E7FA20061E464 /* StatefulMacros */; };
 		E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E19D41B12BF2BFA50082B8B2 /* KeychainSwift */; };
 		E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E19DDEC62948EF9900954E10 /* OrderedCollections */; };
@@ -242,7 +241,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E144DBFA30464F3A009B85B5 /* SwiftVLC in Frameworks */,
 				E19005010000000000000002 /* MPVUI in Frameworks */,
 				E19005020000000000000002 /* MediaAccessibilityKit in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
@@ -338,7 +336,6 @@
 				E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */,
 				E16C08F7305A385900895062 /* CollectionHStack in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
-				E144DBF930464F3A009B85B5 /* SwiftVLC in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
 				E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */,
 				E114DB332B1944FA00B75FB3 /* CollectionVGrid in Frameworks */,
@@ -358,6 +355,7 @@
 				E1153DAC2BBA6AD200424D36 /* CollectionHStack in Frameworks */,
 				62666E0D27E501AA00EC0ECD /* QuartzCore.framework in Frameworks */,
 				E15D4F052B1B0C3C00442DB8 /* PreferencesView in Frameworks */,
+				E19010180000000000000001 /* GoogleCastDynamic in Frameworks */,
 				E19009260000000000000001 /* SwiftfinMacros in Frameworks */,
 				E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */,
 				E134DD2C2E7F4DC300AED027 /* StatefulMacros in Frameworks */,
@@ -499,7 +497,6 @@
 				E1079FD92FC6FFCE004B5C54 /* StatefulMacros */,
 				E1BE3EBD2FE8DEAA00327990 /* FactoryKit */,
 				E12CDBC02FFB593800828742 /* CollectionVGrid */,
-				E144DBFB30464F3A009B85B5 /* SwiftVLC */,
 				E16C08F8305A386900895062 /* CollectionHStack */,
 			);
 			productName = "JellyfinPlayer tvOS";
@@ -545,6 +542,7 @@
 				E1523F812B132C350062821A /* CollectionHStack */,
 				E114DB322B1944FA00B75FB3 /* CollectionVGrid */,
 				E15D4F042B1B0C3C00442DB8 /* PreferencesView */,
+				E19010180000000000000002 /* GoogleCastDynamic */,
 				E19009260000000000000003 /* SwiftfinMacros */,
 				E113A2A62B5A178D009CAAAA /* CollectionHStack */,
 				E113A2A92B5A179A009CAAAA /* CollectionVGrid */,
@@ -580,7 +578,6 @@
 				E1240A282FEA4F69004E6588 /* StatefulMacros */,
 				E12CDBBB2FFB532800828742 /* CollectionVGrid */,
 				E12CDBBE2FFB592A00828742 /* CollectionVGrid */,
-				E144DBF830464F3A009B85B5 /* SwiftVLC */,
 				E16C08F3305A350C00895062 /* CollectionHStack */,
 				E16C08F6305A385900895062 /* CollectionHStack */,
 			);
@@ -670,6 +667,7 @@
 				gl,
 				ka,
 				ml,
+				af,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
@@ -685,6 +683,7 @@
 				E19DDEC52948EF9900954E10 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */,
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
+				E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */,
 				E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */,
 				E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
 				E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
@@ -698,7 +697,6 @@
 				E1BD95B02FBE8E44001CDA57 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E1240A272FEA4F69004E6588 /* XCRemoteSwiftPackageReference "StatefulMacro" */,
 				E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
-				E144DBF730464F3A009B85B5 /* XCRemoteSwiftPackageReference "SwiftVLC" */,
 				E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
@@ -1261,7 +1259,7 @@
 			repositoryURL = "https://github.com/LePips/StatefulMacro";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.7;
+				minimumVersion = 0.2.0;
 			};
 		};
 		E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
@@ -1294,14 +1292,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 9.0.0;
-			};
-		};
-		E144DBF730464F3A009B85B5 /* XCRemoteSwiftPackageReference "SwiftVLC" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/harflabs/SwiftVLC";
-			requirement = {
-				kind = exactVersion;
-				version = 1.0.0;
 			};
 		};
 		E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
@@ -1365,7 +1355,7 @@
 			repositoryURL = "https://github.com/LePips/MPVUI";
 			requirement = {
 				kind = exactVersion;
-				version = 0.5.0;
+				version = 0.7.0;
 			};
 		};
 		E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */ = {
@@ -1373,7 +1363,15 @@
 			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
 			requirement = {
 				kind = exactVersion;
-				version = 0.2.0;
+				version = 0.3.0;
+			};
+		};
+		E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googlecast/google-cast-ios-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 4.8.6;
 			};
 		};
 		E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */ = {
@@ -1581,16 +1579,6 @@
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
-		E144DBF830464F3A009B85B5 /* SwiftVLC */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E144DBF730464F3A009B85B5 /* XCRemoteSwiftPackageReference "SwiftVLC" */;
-			productName = SwiftVLC;
-		};
-		E144DBFB30464F3A009B85B5 /* SwiftVLC */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E144DBF730464F3A009B85B5 /* XCRemoteSwiftPackageReference "SwiftVLC" */;
-			productName = SwiftVLC;
-		};
 		E145EB4A2BE16849003BF6F3 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */;
@@ -1713,6 +1701,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */;
 			productName = SwiftfinMacros;
+		};
+		E19010180000000000000002 /* GoogleCastDynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */;
+			productName = GoogleCastDynamic;
 		};
 		E19138C92E7E7FA20061E464 /* StatefulMacros */ = {
 			isa = XCSwiftPackageProductDependency;

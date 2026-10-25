@@ -75,7 +75,6 @@ extension SelectUserView {
             }
         }
 
-        @ViewBuilder
         private var regularView: some View {
             HStack(alignment: .top, spacing: UIDevice.isTV ? 32 : nil) {
                 if isEditing {

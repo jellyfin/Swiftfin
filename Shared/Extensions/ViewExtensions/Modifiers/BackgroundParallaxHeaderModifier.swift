@@ -10,7 +10,6 @@ import SwiftUI
 
 extension View {
 
-    @ViewBuilder
     func backgroundParallaxHeader(
         multiplier: CGFloat = 1,
         @ViewBuilder header: @escaping () -> some View

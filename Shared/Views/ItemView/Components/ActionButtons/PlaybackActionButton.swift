@@ -24,27 +24,27 @@ extension ItemActionButtons {
         private var isInMenu
 
         private var mediaSources: [MediaSourceInfo] {
-            provider.mediaPlayerItemProvider?.item.mediaSources ?? []
+            provider.playbackIntent?.item.mediaSources ?? []
         }
 
         // TODO: Fix External Audio Tracks & Re-Enable
         private var audioStreams: [MediaStream] {
-            provider.mediaPlayerItemProvider?.mediaSource?.audioStreams?.filter { $0.isExternal != true } ?? []
+            provider.playbackIntent?.mediaSource?.audioStreams?.filter { $0.isExternal != true } ?? []
         }
 
         private var subtitleStreams: [MediaStream] {
-            provider.mediaPlayerItemProvider?.mediaSource?.subtitleStreams ?? []
+            provider.playbackIntent?.mediaSource?.subtitleStreams ?? []
         }
 
         private var supportedBitrates: [PlaybackBitrate] {
-            provider.mediaPlayerItemProvider?.mediaSource?.supportedBitrates ?? []
+            provider.playbackIntent?.mediaSource?.supportedBitrates ?? []
         }
 
         private var audioStreamSelection: Binding<Int?> {
             Binding(
                 get: {
-                    provider.mediaPlayerItemProvider?.audioStreamIndex
-                        ?? provider.mediaPlayerItemProvider?.mediaSource?.defaultAudioStreamIndex
+                    provider.playbackIntent?.configuration.audioStreamIndex
+                        ?? provider.playbackIntent?.mediaSource?.defaultAudioStreamIndex
                         ?? audioStreams.first?.index
                 },
                 set: { provider.select(.audioStreamIndex($0)) }
@@ -54,19 +54,18 @@ extension ItemActionButtons {
         private var subtitleStreamSelection: Binding<Int?> {
             Binding(
                 get: {
-                    provider.mediaPlayerItemProvider?.subtitleStreamIndex
-                        ?? provider.mediaPlayerItemProvider?.mediaSource?.defaultSubtitleStreamIndex
+                    provider.playbackIntent?.configuration.subtitleStreamIndex
+                        ?? provider.playbackIntent?.mediaSource?.defaultSubtitleStreamIndex
                         ?? -1
                 },
                 set: { provider.select(.subtitleStreamIndex($0)) }
             )
         }
 
-        @ViewBuilder
         private var versionPicker: some View {
             Picker(
                 selection: Binding(
-                    get: { provider.mediaPlayerItemProvider?.mediaSource },
+                    get: { provider.playbackIntent?.mediaSource },
                     set: { provider.select(.mediaSource($0)) }
                 )
             ) {
@@ -77,16 +76,15 @@ extension ItemActionButtons {
             } label: {
                 Text(L10n.version)
 
-                Text(provider.mediaPlayerItemProvider?.mediaSource?.displayTitle ?? L10n.none)
+                Text(provider.playbackIntent?.mediaSource?.displayTitle ?? L10n.none)
             }
             .pickerStyle(.menu)
         }
 
-        @ViewBuilder
         private var qualityPicker: some View {
             Picker(
                 selection: Binding(
-                    get: { provider.mediaPlayerItemProvider?.requestedBitrate ?? appMaximumBitrate },
+                    get: { provider.playbackIntent?.configuration.requestedBitrate ?? appMaximumBitrate },
                     set: { provider.select(.bitrate($0)) }
                 )
             ) {
@@ -96,12 +94,11 @@ extension ItemActionButtons {
                 }
             } label: {
                 Text(L10n.playbackQuality)
-                Text(provider.mediaPlayerItemProvider?.requestedBitrate.displayTitle)
+                Text(provider.playbackIntent?.configuration.requestedBitrate.displayTitle)
             }
             .pickerStyle(.menu)
         }
 
-        @ViewBuilder
         private func trackPicker(
             _ title: String,
             streams: [MediaStream],
@@ -131,6 +128,7 @@ extension ItemActionButtons {
                     if mediaSources.count > 1 {
                         versionPicker
                     }
+
                     qualityPicker
                 }
 

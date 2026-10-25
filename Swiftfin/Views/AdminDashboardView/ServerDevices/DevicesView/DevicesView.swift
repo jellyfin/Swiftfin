@@ -57,11 +57,13 @@ struct DevicesView: View {
                     navigationBarSelectView
                 }
             }
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 if viewModel.devices.isNotEmpty {
                     navigationBarEditView
                 }
             }
+
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
                     Button(L10n.delete, role: .destructive) {
@@ -104,7 +106,6 @@ struct DevicesView: View {
 
     // MARK: - Device List View
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             InsetGroupedListHeader(

@@ -41,7 +41,6 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
-        @ViewBuilder
         private func userGridButton(for item: UserItem) -> some View {
             UserButton(
                 user: item.user,

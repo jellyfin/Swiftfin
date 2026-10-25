@@ -16,7 +16,6 @@ extension SelectUserView {
 
         private let columns: CGFloat = UIDevice.isPhone ? 2 : 5
 
-        @ViewBuilder
         private var imageView: some View {
             RelativeSystemImageView(systemName: "plus")
                 .foregroundStyle(Color.secondary)

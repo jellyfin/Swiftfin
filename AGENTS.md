@@ -1,3 +1,3 @@
 # AGENTS.md
 
-- If using XcodeBuildMCP, use the installed XcodeBuildMCP skill before calling XcodeBuildMCP tools.
+- Do not open Pull Requests against the upstream repo.

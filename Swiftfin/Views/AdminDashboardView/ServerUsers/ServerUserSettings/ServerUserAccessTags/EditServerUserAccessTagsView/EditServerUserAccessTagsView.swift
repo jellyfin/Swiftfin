@@ -12,6 +12,7 @@ import SwiftUI
 struct EditServerUserAccessTagsView: View {
 
     private struct TagWithAccess: Hashable {
+
         let tag: String
         let access: Bool
     }
@@ -77,6 +78,7 @@ struct EditServerUserAccessTagsView: View {
                     navigationBarSelectView
                 }
             }
+
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
                     Button(L10n.cancel, role: .cancel) {
@@ -97,6 +99,7 @@ struct EditServerUserAccessTagsView: View {
                     .controlSize(.small)
                 }
             }
+
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
                     Button(L10n.delete, role: .destructive) {
@@ -132,7 +135,6 @@ struct EditServerUserAccessTagsView: View {
         .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
     private func makeRow(tag: TagWithAccess) -> some View {
         EditAccessTagRow(tag: tag.tag) {
             if isEditing {
@@ -146,7 +148,6 @@ struct EditServerUserAccessTagsView: View {
         .isSelected(selectedTags.contains(tag))
     }
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -172,6 +173,7 @@ struct EditServerUserAccessTagsView: View {
                         }
                     }
                 }
+
                 if blockedTags.isNotEmpty {
                     Section {
                         DisclosureGroup(L10n.blocked) {

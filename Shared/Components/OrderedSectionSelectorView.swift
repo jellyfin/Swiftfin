@@ -63,7 +63,6 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
         #endif
     }
 
-    @ViewBuilder
     private func button(
         for element: Element,
         @ViewBuilder content: () -> some View
