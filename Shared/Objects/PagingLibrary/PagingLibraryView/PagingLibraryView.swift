@@ -25,6 +25,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @Default(.Customization.Library.style)
     private var defaultLibraryStyle
 
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
+
     @Environment(\.tabSafeAreaInsets)
     private var tabSafeAreaInsets
 
@@ -123,7 +126,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 layout: Element.layout(
                     for: libraryStyle,
                     options: libraryStyleOptions,
-                    insets: contentInsets(for: frame)
+                    insets: contentInsets(for: frame),
+                    horizontalSizeClass: horizontalSizeClass
                 )
             ) { element in
                 element.makeBody(libraryStyle: libraryStyle)
@@ -152,6 +156,14 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             .proxy(gridProxy)
             .onRefresh {
                 await viewModel.background.refresh()
+            }
+            .onChange(of: frame.frame.width) { _, width in
+                guard width.isFinite, width > 0 else { return }
+
+                // Poster art scales with width, but title line heights do not.
+                // Remeasure the card after a display transition instead of
+                // scaling its previously cached whole-card aspect ratio.
+                gridProxy.redraw()
             }
             #if os(tvOS)
             .introspect(.scrollView, on: .tvOS(.v26...)) { collectionView in
@@ -238,8 +250,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             viewModel.refreshForEnvironmentChange()
         }
         .onChange(of: libraryStyle) { oldStyle, newStyle in
-            if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==
-                Element.layout(for: newStyle, options: libraryStyleOptions, insets: .zero)
+            if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero, horizontalSizeClass: horizontalSizeClass) ==
+                Element.layout(for: newStyle, options: libraryStyleOptions, insets: .zero, horizontalSizeClass: horizontalSizeClass)
             {
                 gridProxy.redraw()
             }

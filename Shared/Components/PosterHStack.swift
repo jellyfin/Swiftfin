@@ -13,6 +13,14 @@ struct PosterHStack<
     Data: Collection
 >: View where Data.Element: Poster, Data.Index == Int {
 
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
+
+    @State
+    private var availableWidth: CGFloat = 0
+    @State
+    private var leadingElementID: Data.Element.ID?
+
     let elements: Data
     let displayType: PosterDisplayType
     let size: PosterDisplayType.Size
@@ -26,13 +34,13 @@ struct PosterHStack<
             columnTrailingInset: 0
         )
         #else
-        if UIDevice.isPad {
+        if horizontalSizeClass == .regular {
             let minWidth: CGFloat = {
                 switch (displayType, size) {
                 case (.landscape, .small):
                     220
                 case (.landscape, .medium):
-                    300
+                    260
                 case (_, .small):
                     140
 //                case (_, .medium):
@@ -86,6 +94,18 @@ struct PosterHStack<
         .insets(horizontal: EdgeInsets.edgePadding)
         .itemSpacing(EdgeInsets.itemSpacing)
         .scrollBehavior(.continuousLeadingEdge)
+        .initialElement(id: leadingElementID)
+        .alignedLeadingElement(id: $leadingElementID)
+        // Recreate only the collection, retaining the loaded media and scroll anchor.
+        // Avoid reusing snapshot and sizing state across scene-width transitions.
+        .id(availableWidth)
+        .onGeometryChange(for: CGFloat.self) { geometry in
+            geometry.size.width
+        } action: { width in
+            guard width.isFinite, width > 0 else { return }
+
+            availableWidth = width
+        }
         .withViewContext(.isThumb)
     }
 }
