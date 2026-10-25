@@ -141,7 +141,6 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         }
     }
 
-    @ViewBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?

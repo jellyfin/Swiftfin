@@ -11,9 +11,9 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+@MainActor
 extension BaseItemDto {
 
-    @MainActor
     func imageSource(
         _ type: ImageType,
         itemID: String?,

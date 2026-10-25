@@ -12,7 +12,7 @@ import JellyfinAPI
 struct PlaybackIntent {
 
     let entry: ItemEntry
-    var queue: (any MediaPlayerQueue)?
+    var queue: any MediaPlayerQueue?
     var configuration: MediaPlaybackConfiguration
 
     var item: BaseItemDto {
@@ -23,11 +23,11 @@ struct PlaybackIntent {
         configuration.mediaSource(in: item)
     }
 
-    init(item: BaseItemDto, queue: (any MediaPlayerQueue)? = nil) {
+    init(item: BaseItemDto, queue: any MediaPlayerQueue? = nil) {
         self.init(item: item, configuration: .init(), queue: queue)
     }
 
-    init(item: BaseItemDto, configuration: MediaPlaybackConfiguration, queue: (any MediaPlayerQueue)? = nil) {
+    init(item: BaseItemDto, configuration: MediaPlaybackConfiguration, queue: any MediaPlayerQueue? = nil) {
         self.entry = SharedBaseItem(wrappedValue: item).entry
         self.queue = queue
         self.configuration = configuration

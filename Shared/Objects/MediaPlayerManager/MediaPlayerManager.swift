@@ -43,7 +43,7 @@ final class MediaPlayerManager {
     }
 
     init(
-        nowPlayableObserver: (any MediaSessionObserver)? = nil,
+        nowPlayableObserver: any MediaSessionObserver? = nil,
         resolveItem: @escaping MediaSession.ItemResolver = { try await MediaPlayerItemResolver.resolve($0, for: $1, userSession: $2) }
     ) {
         self.nowPlayableObserver = nowPlayableObserver ?? NowPlayableObserver()

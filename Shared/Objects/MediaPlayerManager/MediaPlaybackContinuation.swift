@@ -57,10 +57,9 @@ struct MediaPlaybackContinuation {
     private func match(_ previous: MediaStream, in source: MediaSourceInfo, defaultIndex: Int?) -> Int? {
         let language = languageCode(previous.language)
         let candidates = (source.mediaStreams ?? []).filter { stream in
-            guard stream.type == previous.type, let index = stream.index, index >= 0 else { return false }
-            guard stream.type != .audio || stream.isExternal != true else { return false }
-            guard stream.type != .subtitle || stream.deliveryMethod != .drop else { return false }
-            guard (stream.isForced == true) == (previous.isForced == true) else { return false }
+            guard stream.type == previous.type, let index = stream.index, index >= 0, stream.type != .audio || stream.isExternal != true,
+                  stream.type != .subtitle || stream.deliveryMethod != .drop,
+                  (stream.isForced == true) == (previous.isForced == true) else { return false }
 
             if let language {
                 return languageCode(stream.language) == language

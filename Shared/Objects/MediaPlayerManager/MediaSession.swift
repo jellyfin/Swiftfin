@@ -83,7 +83,7 @@ final class MediaSession {
     private(set) var playbackItem: MediaPlayerItem?
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     private(set) var playbackState = PlaybackState()
-    private(set) var player: (any MediaPlayer)?
+    private(set) var player: any MediaPlayer?
     private let progressReporter: MediaProgressReporter
     let queue: any MediaPlayerQueue?
 
@@ -108,7 +108,7 @@ final class MediaSession {
     }
 
     @ObservationIgnored
-    private var localPlayer: (any MediaPlayer)?
+    private var localPlayer: any MediaPlayer?
     @ObservationIgnored
     private var handoffRecovery: (player: any MediaPlayer, intent: PlaybackIntent)?
     @ObservationIgnored
@@ -304,7 +304,7 @@ final class MediaSession {
 
     /// A single cancellable request owns installation. Superseded results cannot restart playback.
     @discardableResult
-    private func resolve(_ intent: PlaybackIntent, using destination: (any MediaPlayer)? = nil) -> Task<Void, Never>? {
+    private func resolve(_ intent: PlaybackIntent, using destination: any MediaPlayer? = nil) -> Task<Void, Never>? {
         guard let player, state != .stopped else { return nil }
 
         var intent = intent

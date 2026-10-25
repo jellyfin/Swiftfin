@@ -35,10 +35,10 @@ extension VideoPlayerSupplement {
     }
 }
 
+@MainActor
 extension VideoPlayerSupplementType {
 
-    @MainActor
-    func makeSupplement(for item: MediaPlayerItem, queue: (any MediaPlayerQueue)?) -> (any VideoPlayerSupplement)? {
+    func makeSupplement(for item: MediaPlayerItem, queue: any MediaPlayerQueue?) -> (any VideoPlayerSupplement)? {
         switch self {
         case .info:
             return MediaInfoSupplement(item: item.baseItem)

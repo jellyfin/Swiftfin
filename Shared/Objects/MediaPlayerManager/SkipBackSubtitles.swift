@@ -32,7 +32,6 @@ struct SkipBackSubtitles {
 
     mutating func hasFinished(at position: Duration, cues: Set<SubtitleCue>) -> Bool {
         guard position >= end else { return false }
-
         guard position < end + .seconds(5) else { return true }
 
         if let finishingCues {

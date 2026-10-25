@@ -78,8 +78,8 @@ extension MediaPlayerItem {
         secondary: Int? = nil,
         preservingTrackPreferences: Bool = false
     ) {
-        guard canSelectTracks else { return }
-        guard audio == nil || audioStreams.contains(where: { $0.index == audio }),
+        guard canSelectTracks,
+              audio == nil || audioStreams.contains(where: { $0.index == audio }),
               subtitle == nil || subtitle == -1 || subtitleStreams.contains(where: { $0.index == subtitle }),
               secondary == nil || secondary == -1
               || (supportsSecondarySubtitles && secondarySubtitleStreams.contains(where: { $0.index == secondary }))
