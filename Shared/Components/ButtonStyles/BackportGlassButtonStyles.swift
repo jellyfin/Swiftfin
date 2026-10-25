@@ -81,7 +81,6 @@ private struct BackportGlassButtonStyleBody: View {
     let legacyGlass: BackportGlass
     let prominence: Prominence
 
-    @ViewBuilder
     var body: some View {
         if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
             nativeBody

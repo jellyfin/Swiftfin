@@ -77,17 +77,14 @@ extension BaseItemDto: Poster {
         }
     }
 
-    @ViewBuilder
     var posterLabel: some View {
         BaseItemDtoPosterLabel(item: self)
     }
 
-    @ViewBuilder
     var posterContextMenu: some View {
         BaseItemDtoPosterContextMenu(item: self)
     }
 
-    @ViewBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         ZStack {
             PosterIndicatorsOverlay(
@@ -247,6 +244,8 @@ private struct BaseItemDtoPosterContextMenu: View {
                 router.route(to: .item(id: seriesID))
             }
         }
+
+        ShuffleButton(item: item)
 
         if item.canBePlayed {
             Button(isPlayed ? L10n.markAsUnplayed : L10n.markAsPlayed, systemImage: isPlayed ? "circle" : "checkmark.circle") {

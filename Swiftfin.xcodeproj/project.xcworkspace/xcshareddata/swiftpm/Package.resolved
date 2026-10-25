@@ -1,5 +1,5 @@
 {
-  "originHash" : "172fa81da963fb365f44b7771b055ebb784420e1a02316cadc96e02e818d401f",
+  "originHash" : "44f58fdeea6e76bcce3fff6bca28ca9c80c66c1dc291bfe7237b799a94fbe046",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -101,6 +101,24 @@
       }
     },
     {
+      "identity" : "google-cast-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googlecast/google-cast-ios-sdk",
+      "state" : {
+        "revision" : "104500df8ce2a827ca3b3392bf16877fae413a33",
+        "version" : "4.8.6"
+      }
+    },
+    {
+      "identity" : "gtm-session-fetcher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/gtm-session-fetcher.git",
+      "state" : {
+        "revision" : "a2ab612cb980066ee56d90d60d8462992c07f24b",
+        "version" : "3.5.0"
+      }
+    },
+    {
       "identity" : "jellyfin-sdk-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
@@ -159,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/MediaAccessibilityKit",
       "state" : {
-        "revision" : "fb4073607e083964d746b6533afddabc6fb4f2d1",
-        "version" : "0.2.0"
+        "revision" : "6c2b50d3f2b6ccfa0105cf5fc6315f1d431ca92a",
+        "version" : "0.3.0"
       }
     },
     {
@@ -168,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/MPVUI",
       "state" : {
-        "revision" : "cf277d979465b919b34bbdb33d62fdb24c377fbe",
-        "version" : "0.5.0"
+        "revision" : "23ba5a72375d7472a15898418a49de2c2e9d0d9a",
+        "version" : "0.7.0"
       }
     },
     {
@@ -204,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/StatefulMacro",
       "state" : {
-        "revision" : "12d7ee449891457e8cc73074ac7aeba4b50f48ca",
-        "version" : "0.1.7"
+        "revision" : "afb27fb5d49e1ee92097286a712e2f448be28fb2",
+        "version" : "0.2.0"
       }
     },
     {
@@ -332,15 +350,6 @@
       "state" : {
         "revision" : "a37eca1db7bebc9437ee89508e7b4433ff34adb4",
         "version" : "27.0.0"
-      }
-    },
-    {
-      "identity" : "swiftvlc",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/harflabs/SwiftVLC",
-      "state" : {
-        "revision" : "192393a45cdcd7ebb6befac26586360b8b1676b3",
-        "version" : "1.0.0"
       }
     },
     {

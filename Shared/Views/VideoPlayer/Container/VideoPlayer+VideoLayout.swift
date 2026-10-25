@@ -13,15 +13,11 @@ extension VideoPlayer {
     struct VideoLayout {
 
         private let aspectRatio: CGFloat?
-        let behavior: ViewState.AspectFillBehavior
+        private let behavior: ViewState.AspectFillBehavior
         let renderSize: CGSize
         let renderScale: CGFloat
         let renderOffset: CGSize
         private let zoomFrame: CGRect?
-
-        var isZoomed: Bool {
-            zoomFrame != nil
-        }
 
         init(
             videoSize: CGSize,
@@ -36,10 +32,12 @@ extension VideoPlayer {
                 self.behavior = .fit
                 self.renderSize = geometry.fitFrame.size
                 self.renderScale = transform.scale
+
                 self.renderOffset = CGSize(
                     width: frame.midX - geometry.viewportSize.width / 2,
                     height: frame.midY - geometry.viewportSize.height / 2
                 )
+
                 self.zoomFrame = frame
             } else {
                 let geometry = Self.renderGeometry(aspectRatio: aspectRatio, viewportSize: viewportSize, behavior: behavior)
@@ -67,6 +65,7 @@ extension VideoPlayer {
                     )
                 }
             }
+
             return (viewportSize, 1)
         }
 
@@ -74,6 +73,7 @@ extension VideoPlayer {
             if let zoomFrame {
                 return zoomFrame.offsetBy(dx: bounds.minX, dy: bounds.minY)
             }
+
             let geometry = Self.renderGeometry(aspectRatio: aspectRatio, viewportSize: bounds.size, behavior: behavior)
             let size = CGSize(width: geometry.size.width * geometry.scale, height: geometry.size.height * geometry.scale)
             guard size.width.isFinite, size.height.isFinite else { return bounds }
@@ -94,6 +94,7 @@ extension VideoPlayer {
             guard behavior == .fit else { return .init() }
 
             let horizontalInset = max(insets.leading, insets.trailing)
+
             return EdgeInsets(
                 top: insets.top,
                 leading: horizontalInset,
@@ -109,8 +110,7 @@ extension VideoPlayer {
         @Environment(ViewState.self)
         private var viewState
 
-        @ObservedObject
-        var videoSize: PublishedBox<CGSize>
+        let videoSize: () -> CGSize
 
         @ViewBuilder
         let content: (VideoLayout) -> Content
@@ -118,7 +118,7 @@ extension VideoPlayer {
         private var viewport: some View {
             GeometryReader { viewport in
                 content(VideoLayout(
-                    videoSize: videoSize.value,
+                    videoSize: videoSize(),
                     viewportSize: viewport.size,
                     behavior: viewState.aspectFillBehavior,
                     zoom: viewState.zoom
@@ -141,8 +141,9 @@ extension VideoPlayer {
                     let fitInsets = usesSystemSafeArea
                         ? (notchMeasurement?.systemInsets ?? geometry.safeAreaInsets)
                         : VideoLayout.padding(insets: notchMeasurement?.insets ?? .init(), behavior: .fit)
+
                     let zoomGeometry = VideoZoom.Geometry(
-                        videoSize: videoSize.value,
+                        videoSize: videoSize(),
                         viewportSize: geometry.size,
                         fitViewport: CGRect(
                             x: fitInsets.leading,

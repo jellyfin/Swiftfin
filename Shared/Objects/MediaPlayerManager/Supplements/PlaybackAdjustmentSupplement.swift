@@ -8,11 +8,12 @@
 
 import SwiftUI
 
-struct PlaybackAdjustmentSupplement: MediaPlayerSupplement {
+@MainActor
+struct PlaybackAdjustmentSupplement {
 
     let id: String
     let displayTitle: String
-    let value: (MediaPlayerManager) -> Binding<Double>
+    let value: (MediaSession) -> Binding<Double>
     let range: ClosedRange<Double>
     let step: Double
     let presets: [Double]
@@ -22,28 +23,27 @@ struct PlaybackAdjustmentSupplement: MediaPlayerSupplement {
     var preferredFocusID: String {
         "\(VideoPlayer.ViewState.Focus.supplementContent(id)).slider"
     }
-
-    var videoPlayerBody: some PlatformView {
-        AdjustmentView(supplement: self)
-    }
 }
 
-extension PlaybackAdjustmentSupplement {
+extension PlaybackAdjustmentSupplement: VideoPlayerSupplement {
+
+    var body: some View {
+        AdjustmentView(supplement: self)
+    }
 
     private struct AdjustmentView: PlatformView {
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         let supplement: PlaybackAdjustmentSupplement
 
-        @ViewBuilder
         private var content: some View {
             PlaybackAdjustmentSlider(
-                value: supplement.value(manager),
+                value: supplement.value(mediaSession),
                 title: supplement.displayTitle,
                 range: supplement.range,
                 step: supplement.step,
@@ -76,21 +76,37 @@ extension PlaybackAdjustmentSupplement {
 extension PlaybackAdjustmentSupplement {
 
     static var audioOffset: Self {
-        offset(id: "PlaybackAdjustment-audioOffset", title: L10n.audioOffset, keyPath: \.audioOffset)
+        offset(
+            id: "PlaybackAdjustment-audioOffset",
+            title: L10n.audioOffset,
+            keyPath: \.audioOffset
+        )
     }
 
     static var subtitleOffset: Self {
-        offset(id: "PlaybackAdjustment-subtitleOffset", title: L10n.subtitleOffset, keyPath: \.subtitleOffset)
+        offset(
+            id: "PlaybackAdjustment-subtitleOffset",
+            title: L10n.subtitleOffset,
+            keyPath: \.subtitleOffset
+        )
     }
 
-    static var playbackSpeed: Self {
+    static var secondarySubtitleOffset: Self {
+        offset(
+            id: "PlaybackAdjustment-secondarySubtitleOffset",
+            title: L10n.secondarySubtitleOffset,
+            keyPath: \.secondarySubtitleOffset
+        )
+    }
+
+    static func playbackSpeed(range: ClosedRange<Double>) -> Self {
         Self(
             id: "PlaybackAdjustment-speed",
             displayTitle: L10n.playbackSpeed,
-            value: { manager in
-                Binding(get: { manager.rate }, set: { manager.rate = $0 })
+            value: { mediaSession in
+                Binding(get: { mediaSession.effectiveRate }, set: { mediaSession.rate = $0 })
             },
-            range: 0.1 ... 5,
+            range: range,
             step: 0.05,
             presets: [0.5, 0.75, 1, 1.25, 1.5, 2],
             resetValue: 1,
@@ -101,15 +117,15 @@ extension PlaybackAdjustmentSupplement {
     private static func offset(
         id: String,
         title: String,
-        keyPath: ReferenceWritableKeyPath<MediaPlayerManager, Duration>
+        keyPath: ReferenceWritableKeyPath<MediaPlayerItem, Duration>
     ) -> Self {
         Self(
             id: id,
             displayTitle: title,
-            value: { manager in
+            value: { mediaSession in
                 Binding(
-                    get: { Double(manager[keyPath: keyPath].microseconds) / 1000 },
-                    set: { manager[keyPath: keyPath] = .milliseconds(Int64($0.rounded())) }
+                    get: { Double((mediaSession.playbackItem?[keyPath: keyPath] ?? .zero).microseconds) / 1000 },
+                    set: { mediaSession.playbackItem?[keyPath: keyPath] = .milliseconds(Int64($0.rounded())) }
                 )
             },
             range: -5000 ... 5000,

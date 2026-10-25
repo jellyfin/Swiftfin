@@ -6,42 +6,54 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 
 extension DeviceProfile {
 
+    @MainActor
     static func build(
-        for videoPlayer: VideoPlayerType,
-        compatibilityMode: PlaybackCompatibility,
+        for playerType: MediaPlayerType,
+        configuration: MediaPlaybackConfiguration,
         maxBitrate: Int? = nil,
-        maxResolution: PlaybackResolution = Defaults[.VideoPlayer.Playback.appMaximumResolution]
+        mediaSource: MediaSourceInfo? = nil
     ) -> DeviceProfile {
 
         var deviceProfile: DeviceProfile = .init()
 
-        // MARK: - Video Player Specific Logic
+        // MARK: - Media Player Specific Logic
 
-        deviceProfile.codecProfiles = videoPlayer.codecProfiles
+        deviceProfile.codecProfiles = playerType.codecProfiles(configuration: configuration)
 
-        if StoredValues[.User.forceSubtitleBurnIn] {
+        if configuration.forceSubtitleBurnIn {
             deviceProfile.subtitleProfiles = SubtitleProfile.build(method: .encode) {
                 SubtitleFormat.allCases
             }
         } else {
-            deviceProfile.subtitleProfiles = videoPlayer.subtitleProfiles
+            deviceProfile.subtitleProfiles = playerType.subtitleProfiles
         }
 
-        if let resolutionCodecProfile = maxResolution.codecProfile {
+        // To preserve native Dolby Vision pixels in MPVUI, subtitles must use our text
+        // overlay or server burn-in instead of native ASS/bitmap composition.
+        if playerType == .mpv,
+           mediaSource?.mediaStreams?.contains(where: {
+               $0.type == .video && ($0.dvProfile != nil || $0.videoRangeType?.isDolbyVision == true)
+           }) == true
+        {
+            deviceProfile.subtitleProfiles = deviceProfile.subtitleProfiles?.filter {
+                $0.method == .encode || ($0.method == .external && ["subrip", "vtt"].contains($0.format ?? ""))
+            }
+        }
+
+        if let resolutionCodecProfile = configuration.maxResolution.codecProfile(for: mediaSource) {
             deviceProfile.codecProfiles?.append(resolutionCodecProfile)
         }
 
         // MARK: - DirectPlay & Transcoding Profiles
 
-        switch compatibilityMode {
+        switch configuration.compatibilityMode {
         case .auto:
-            deviceProfile.directPlayProfiles = videoPlayer.directPlayProfiles
-            deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
+            deviceProfile.directPlayProfiles = playerType.directPlayProfiles
+            deviceProfile.transcodingProfiles = playerType.transcodingProfiles
 
         case .mostCompatible:
             deviceProfile.directPlayProfiles = PlaybackCompatibility.Video.compatibilityDirectPlayProfile
@@ -51,12 +63,12 @@ extension DeviceProfile {
             deviceProfile.directPlayProfiles = PlaybackCompatibility.Video.forcedDirectPlayProfile
 
         case .custom:
-            let customProfileMode = Defaults[.VideoPlayer.Playback.customDeviceProfileAction]
-            let playbackDeviceProfile = StoredValues[.User.customDeviceProfiles]
+            let customProfileMode = configuration.customDeviceProfileAction
+            let playbackDeviceProfile = configuration.customDeviceProfiles
 
             if customProfileMode == .add {
-                deviceProfile.directPlayProfiles = videoPlayer.directPlayProfiles
-                deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
+                deviceProfile.directPlayProfiles = playerType.directPlayProfiles
+                deviceProfile.transcodingProfiles = playerType.transcodingProfiles
             } else {
                 deviceProfile.directPlayProfiles = []
 
@@ -64,7 +76,7 @@ extension DeviceProfile {
                 if playbackDeviceProfile.contains(where: { $0.useAsTranscodingProfile == true }) {
                     deviceProfile.transcodingProfiles = []
                 } else {
-                    deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
+                    deviceProfile.transcodingProfiles = playerType.transcodingProfiles
                 }
             }
 
@@ -76,6 +88,30 @@ extension DeviceProfile {
                 }
             }
         }
+
+        // Retain each engine's audio support when applying compatibility and custom video profile settings.
+        if deviceProfile.directPlayProfiles?.contains(where: { $0.type == .audio }) != true {
+            deviceProfile.directPlayProfiles = (deviceProfile.directPlayProfiles ?? [])
+                + playerType.directPlayProfiles.filter { $0.type == .audio }
+        }
+
+        if configuration.compatibilityMode != .directPlay,
+           deviceProfile.transcodingProfiles?.contains(where: { $0.type == .audio }) != true
+        {
+            deviceProfile.transcodingProfiles = (deviceProfile.transcodingProfiles ?? [])
+                + playerType.transcodingProfiles.filter { $0.type == .audio }
+        }
+
+        let sourceAudioCodec = mediaSource?.mediaStreams?
+            .first(where: {
+                $0.type == .audio && $0.index == configuration.audioStreamIndex
+            })?.codec
+        let sourceVideoCodec = mediaSource?.mediaStreams?.first(where: { $0.type == .video })?.codec
+
+        deviceProfile = deviceProfile.limitingTranscodingCodecLists(
+            sourceAudioCodec: sourceAudioCodec,
+            sourceVideoCodec: sourceVideoCodec
+        )
 
         // MARK: - Assign the Bitrate if provided
 

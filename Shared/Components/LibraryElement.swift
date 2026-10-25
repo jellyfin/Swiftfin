@@ -59,8 +59,9 @@ extension LibraryElement {
 
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {}
 
-    @ViewBuilder
     func makeBody(libraryStyle: LibraryStyle) -> Body {
+        // By default, have conformers determine action
+        // internally for navigation with their namespace
         makeBody(libraryStyle: libraryStyle, action: nil)
     }
 

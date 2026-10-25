@@ -58,6 +58,7 @@ struct ServerUserPermissionsView: View {
             if viewModel.background.is(.updating) {
                 ProgressView()
             }
+
             let saveAction: () -> Void = {
                 if tempPolicy != viewModel.user.policy {
                     viewModel.updatePolicy(tempPolicy)
@@ -86,7 +87,6 @@ struct ServerUserPermissionsView: View {
         .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             StatusSection(policy: $tempPolicy)

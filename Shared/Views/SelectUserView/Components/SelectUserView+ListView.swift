@@ -83,7 +83,12 @@ extension SelectUserView {
                         }
                     }
                     .isSelected(selectedUsers.contains(item.user))
-                    #if os(iOS)
+                    #if os(tvOS)
+                    .if(item.user.id == users.first?.user.id) { view in
+                        view
+                            .coordinatedFocus(Focus.focusedUserButton.rawValue)
+                    }
+                    #elseif os(iOS)
                     .swipeActions {
                         if !isEditing {
                             Button(

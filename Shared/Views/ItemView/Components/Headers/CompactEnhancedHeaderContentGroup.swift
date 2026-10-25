@@ -31,7 +31,6 @@ extension ItemView {
 
             private let headerAspectRatio = 1.6
 
-            @ViewBuilder
             private var logo: some View {
                 ImageView(
                     provider.item.imageSource(
@@ -58,7 +57,6 @@ extension ItemView {
                 .accessibilityRemoveTraits(.isImage)
             }
 
-            @ViewBuilder
             private var overlay: some View {
                 VStack(alignment: .center, spacing: 10) {
                     AlternateLayoutView(alignment: .bottom) {
@@ -80,7 +78,7 @@ extension ItemView {
                         ItemView.AttributesHStack(
                             attributes: attributes,
                             item: provider.item,
-                            selectedMediaSource: provider.mediaPlayerItemProvider?.mediaSource,
+                            selectedMediaSource: provider.playbackIntent?.mediaSource,
                             alignment: .leading
                         )
                         .frame(maxWidth: .infinity, alignment: .leading)

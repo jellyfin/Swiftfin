@@ -6,18 +6,27 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import MediaAccessibility
+import Defaults
 import MediaAccessibilityKit
 import MPVUI
 import SwiftUI
 
 struct TextSubtitleOverlay: View {
 
+    @Environment(\.scenePhase)
+    private var scenePhase
+
     let snapshot: TextSubtitleSnapshot
     let videoLayout: VideoPlayer.VideoLayout
+    var reportCaptions: (@MainActor ([String]) -> Void)? = TextSubtitleReporting.reportToSystem
 
     var body: some View {
         TextSubtitleOverlayContent(snapshot: snapshot, videoLayout: videoLayout)
+            .modifier(TextSubtitleReporting(
+                snapshot: snapshot,
+                isVisible: scenePhase == .active,
+                reportCaptions: reportCaptions
+            ))
             .allowsHitTesting(false)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(snapshot.text)
@@ -32,9 +41,24 @@ private struct TextSubtitleOverlayContent: View {
 
     @State
     private var captionStyle = CaptionStyle.current
+    @State
+    private var profiles = CaptionProfile.availableForCurrentPlatform
+
+    @Default(.VideoPlayer.Subtitle.captionProfileID)
+    private var profileID
 
     let snapshot: TextSubtitleSnapshot
     let videoLayout: VideoPlayer.VideoLayout
+
+    private var regions: [TextSubtitleRegion] {
+        snapshot.regions.map { region in
+            guard region.role == .secondary else { return region }
+
+            // Keep the second language at the top, including WebVTT cues whose
+            // authored placement would otherwise overlap the primary captions.
+            return TextSubtitleRegion(text: region.text, trackID: region.trackID, role: region.role)
+        }
+    }
 
     private var basePointSize: CGFloat {
         #if os(tvOS)
@@ -44,12 +68,15 @@ private struct TextSubtitleOverlayContent: View {
         #endif
     }
 
-    private var pointSize: CGFloat {
-        basePointSize * captionStyle.text.sizeScale.resolved(contentValue: nil)
+    private var selectedCaptionStyle: CaptionStyle {
+        profiles.first(property: \.id, equalTo: profileID)?.style ?? captionStyle
     }
 
     @ViewBuilder
     private func subtitleRegions(_ regions: [TextSubtitleRegion]) -> some View {
+        let captionStyle = selectedCaptionStyle
+        let pointSize = basePointSize * captionStyle.text.sizeScale.resolved(contentValue: nil)
+
         SubtitleRegionsLayout(regions: regions, pointSize: pointSize, videoLayout: videoLayout) {
             ForEach(Array(regions.enumerated()), id: \.offset) { _, region in
                 switch region.placement {
@@ -82,21 +109,15 @@ private struct TextSubtitleOverlayContent: View {
     var body: some View {
         Color.clear
             .overlay {
-                subtitleRegions(snapshot.regions)
+                subtitleRegions(regions)
             }
             .clipped()
-            .task {
-                let changes = NotificationCenter.default
-                    .notifications(named: Notification.Name(kMACaptionAppearanceSettingsChangedNotification as String))
+            .task(id: scenePhase) {
+                guard scenePhase == .active else { return }
 
-                captionStyle = .current
-                for await _ in changes {
+                for await _ in CaptionPreferences.updates {
                     captionStyle = .current
-                }
-            }
-            .onChange(of: scenePhase) {
-                if scenePhase == .active {
-                    captionStyle = .current
+                    profiles = CaptionProfile.availableForCurrentPlatform
                 }
             }
     }
@@ -125,16 +146,21 @@ private struct SubtitleRegionsLayout: Layout {
         let count = min(regions.count, subviews.count)
         guard count > 0 else { return }
 
-        let automaticIndices = (0 ..< count).filter {
-            regions[$0].placement == .automatic
+        for isSecondary in [false, true] {
+            let automaticIndices = (0 ..< count).filter {
+                regions[$0].placement == .automatic && (regions[$0].role == .secondary) == isSecondary
+            }
+
+            placeAutomaticRegions(
+                at: automaticIndices,
+                in: bounds,
+                subviews: subviews,
+                atTop: isSecondary
+            )
         }
-        placeAutomaticRegions(
-            at: automaticIndices,
-            in: bounds,
-            subviews: subviews
-        )
 
         let videoFrame = videoLayout.videoFrame(in: bounds)
+
         for index in 0 ..< count {
             guard case let .webVTT(placement) = regions[index].placement else { continue }
 
@@ -149,21 +175,25 @@ private struct SubtitleRegionsLayout: Layout {
     private func placeAutomaticRegions(
         at indices: [Int],
         in bounds: CGRect,
-        subviews: Subviews
+        subviews: Subviews,
+        atTop: Bool
     ) {
         guard indices.isNotEmpty else { return }
 
         let automaticBottom = bounds.maxY - max(24, bounds.height * 0.08)
         let horizontalPadding = max(24, bounds.width * 0.08)
+
         let regionProposal = ProposedViewSize(
             width: max(0, bounds.width - horizontalPadding * 2),
             height: max(0, automaticBottom - bounds.minY)
         )
+
         let sizes = indices.map { subviews[$0].sizeThatFits(regionProposal) }
         let spacing = pointSize * 0.25
         let totalHeight = sizes.reduce(0) { $0 + $1.height }
             + spacing * CGFloat(max(0, sizes.count - 1))
-        var originY = automaticBottom - totalHeight
+
+        var originY = atTop ? bounds.minY + max(24, bounds.height * 0.08) : automaticBottom - totalHeight
 
         for (offset, index) in indices.enumerated() {
             subviews[index].place(
@@ -171,6 +201,7 @@ private struct SubtitleRegionsLayout: Layout {
                 anchor: .top,
                 proposal: regionProposal
             )
+
             originY += sizes[offset].height + spacing
         }
     }
@@ -188,10 +219,12 @@ private struct SubtitleRegionsLayout: Layout {
                 max(0, CGFloat($0) * viewport.height)
             } ?? viewport.height
         )
+
         let anchor = UnitPoint(
             x: placement.horizontalAnchor.unitValue,
             y: placement.verticalAnchor.unitValue
         )
+
         let origin = CGPoint(
             x: viewport.minX + CGFloat(placement.horizontalPosition) * viewport.width,
             y: viewport.minY + CGFloat(placement.verticalPosition) * viewport.height
@@ -224,7 +257,6 @@ private struct SubtitleRegionText: View {
             .joined(separator: "\n")
     }
 
-    @ViewBuilder
     private var styledText: some View {
         CaptionText(presentationText, baseSize: basePointSize, style: captionStyle)
             .multilineTextAlignment(alignment)
@@ -255,6 +287,7 @@ private struct VerticalSubtitleLayout: Layout {
         guard let subview = subviews.first else { return .zero }
 
         let size = subview.sizeThatFits(proposal.rotated)
+
         return CGSize(width: size.height, height: size.width)
     }
 
@@ -273,37 +306,50 @@ private struct VerticalSubtitleLayout: Layout {
 }
 
 private extension ProposedViewSize {
+
     var rotated: ProposedViewSize {
         ProposedViewSize(width: height, height: width)
     }
 }
 
 private extension WebVTTPlacement.HorizontalAnchor {
+
     var unitValue: CGFloat {
         switch self {
-        case .left: 0
-        case .center: 0.5
-        case .right: 1
+        case .left:
+            0
+        case .center:
+            0.5
+        case .right:
+            1
         }
     }
 }
 
 private extension WebVTTPlacement.VerticalAnchor {
+
     var unitValue: CGFloat {
         switch self {
-        case .top: 0
-        case .center: 0.5
-        case .bottom: 1
+        case .top:
+            0
+        case .center:
+            0.5
+        case .bottom:
+            1
         }
     }
 }
 
 private extension WebVTTPlacement.TextAlignment {
+
     var swiftUIValue: SwiftUI.TextAlignment {
         switch self {
-        case .left: .leading
-        case .center: .center
-        case .right: .trailing
+        case .left:
+            .leading
+        case .center:
+            .center
+        case .right:
+            .trailing
         }
     }
 }
