@@ -19,8 +19,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @ViewContextContains(.isInMenu)
         private var isInMenu
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         @State
         private var userConfiguration: UserConfiguration
@@ -32,7 +32,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         private var toaster
 
         private var isAutoPlayEnabled: Bool {
-            manager.userSession?.user.data.configuration?.enableNextEpisodeAutoPlay == true
+            mediaSession.userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true
         }
 
         private var systemImage: String {
@@ -55,7 +55,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 let newValue = !isAutoPlayEnabled
 
                 userConfiguration.enableNextEpisodeAutoPlay = newValue
-                manager.userSession?.user.data.configuration = userConfiguration
+                mediaSession.userSession.user.data.configuration = userConfiguration
                 viewModel.updateConfiguration(userConfiguration)
 
                 if newValue {
@@ -77,7 +77,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 button
                     .id(isAutoPlayEnabled)
             }
-            .disabled(manager.queue == nil)
+            .disabled(mediaSession.queue == nil)
         }
     }
 }

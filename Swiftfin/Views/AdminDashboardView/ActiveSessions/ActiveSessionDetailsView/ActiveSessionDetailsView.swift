@@ -68,7 +68,6 @@ struct ActiveSessionDetailsView: View {
         }
     }
 
-    @ViewBuilder
     private func idleContent(session: SessionInfoDto) -> some View {
         List {
             if let userID = session.userID {

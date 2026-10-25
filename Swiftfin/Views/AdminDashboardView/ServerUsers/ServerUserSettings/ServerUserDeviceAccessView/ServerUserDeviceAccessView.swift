@@ -46,6 +46,7 @@ struct ServerUserDeviceAccessView: View {
                 if viewModel.background.is(.updating) {
                     ProgressView()
                 }
+
                 let saveAction: () -> Void = {
                     if tempPolicy != viewModel.user.policy {
                         viewModel.updatePolicy(tempPolicy)
@@ -80,7 +81,6 @@ struct ServerUserDeviceAccessView: View {
             .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ZStack {
@@ -108,6 +108,7 @@ struct ServerUserDeviceAccessView: View {
                                 if tempPolicy.enabledDevices == nil {
                                     tempPolicy.enabledDevices = []
                                 }
+
                                 tempPolicy.enabledDevices?.append(device.id!)
                             }
                         }

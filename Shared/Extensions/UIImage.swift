@@ -36,72 +36,25 @@ extension UIImage {
         }
     }
 
-    func getTileImage(
-        columns: Int,
-        rows: Int,
-        index: Int
-    ) -> UIImage? {
-        let x = index % columns
-        let y = index / columns
+    /// Crops tile `index` from a sheet of `tileSize`-pixel tiles laid out `columns` per row.
+    ///
+    /// Tiles are measured from the thumbnail size, not the sheet, since a partial sheet may be trimmed to the tiles it holds.
+    func getTileImage(index: Int, columns: Int, tileSize: CGSize) -> UIImage? {
+        guard index >= 0, columns > 0, let cgImage else { return nil }
 
-        // Check if the tile index is within the valid range
-//        guard x >= 0, y >= 0, x < columns, y < rows else {
-//            return nil
-//        }
-
-        // Use integer arithmetic for tile dimensions and positions
-        let imageWidth = Int(size.width)
-        let imageHeight = Int(size.height)
-        let tileWidth = imageWidth / columns
-        let tileHeight = imageHeight / rows
-
-        // Calculate the rectangle using integer values
+        // CGImage crops in pixels, while UIImage.size is measured in points.
         let rect = CGRect(
-            x: x * tileWidth,
-            y: y * tileHeight,
-            width: tileWidth,
-            height: tileHeight
+            x: CGFloat(index % columns) * tileSize.width,
+            y: CGFloat(index / columns) * tileSize.height,
+            width: tileSize.width,
+            height: tileSize.height
         )
 
-        // This check is now redundant because of the earlier guard statement
-        // guard rect.maxX <= imageWidth && rect.maxY <= imageHeight else {
-        //     return nil
-        // }
+        guard !rect.isEmpty,
+              CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height).contains(rect),
+              let tile = cgImage.cropping(to: rect)
+        else { return nil }
 
-        if let cgImage = cgImage?.cropping(to: rect) {
-            return UIImage(cgImage: cgImage)
-        }
-
-        return nil
-
-//        guard index >= 0 else {
-//            return nil
-//        }
-//
-//        let imageWidth = size.width
-//        let imageHeight = size.height
-//
-//        let tileWidth = imageWidth / CGFloat(columns)
-//        let tileHeight = imageHeight / CGFloat(rows)
-//
-//        let x = (index % columns)
-//        let y = (index / columns)
-//
-//        let rect = CGRect(
-//            x: CGFloat(x) * tileWidth,
-//            y: CGFloat(y) * tileHeight,
-//            width: tileWidth,
-//            height: tileHeight
-//        )
-//
-//        guard rect.maxX <= imageWidth && rect.maxY <= imageHeight else {
-//            return nil
-//        }
-//
-//        if let cgImage = cgImage?.cropping(to: rect) {
-//            return UIImage(cgImage: cgImage)
-//        }
-//
-//        return nil
+        return UIImage(cgImage: tile, scale: scale, orientation: imageOrientation)
     }
 }

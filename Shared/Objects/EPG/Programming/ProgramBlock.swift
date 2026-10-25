@@ -40,6 +40,7 @@ struct ProgramBlock: Identifiable {
             start: start,
             end: end
         )
+
         self.programs = programs
         self.start = start
         self.end = end
@@ -54,9 +55,9 @@ struct ProgramBlock: Identifiable {
     }
 }
 
+@MainActor
 extension Collection<BaseItemDto> {
 
-    @MainActor
     func programBlocks(
         startDate: Date,
         endDate: Date
@@ -80,6 +81,7 @@ extension Collection<BaseItemDto> {
             }
 
             currentChunk.append(program)
+
             if let previousEnd = currentEnd {
                 currentEnd = previousEnd > program.end ? previousEnd : program.end
             } else {

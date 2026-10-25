@@ -75,8 +75,7 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
             let publisher = first.asPublisher(in: SwiftfinStore.dataStack)
 
             publisher.addObserver(self) { [weak self] objectPublisher in
-                guard self?.shouldListenToPublish == true else { return }
-                guard let data = objectPublisher.object?.data else { return }
+                guard self?.shouldListenToPublish == true, let data = objectPublisher.object?.data else { return }
                 guard let newValue = try? JSONDecoder().decode(Value.self, from: data) else { fatalError() }
 
                 DispatchQueue.main.async {

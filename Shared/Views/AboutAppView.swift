@@ -63,9 +63,7 @@ struct AboutAppView: View {
                     systemName: "gearshape.fill",
                     external: true
                 ) {
-                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-
-                    UIApplication.shared.open(url)
+                    Task { try? await SystemSettings.application.open() }
                 }
             }
 

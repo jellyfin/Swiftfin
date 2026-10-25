@@ -24,7 +24,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     @Published
     var isPresentingDeleteConfirmation = false
     @Published
-    private(set) var mediaPlayerItemProvider: MediaPlayerItemProvider?
+    private(set) var playbackIntent: PlaybackIntent?
 
     let id: String
 
@@ -44,16 +44,19 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 if update.itemID == self.id, update.metadataChanged {
                     return ()
                 }
+
                 // Series and season playback selection depends on their children's progress
                 guard self.item.type == .series || self.item.type == .season,
                       update.userDataChanged else { return nil }
 
                 let changedItem = store?[update.itemID]?.value
+
                 if update.itemID == self.id || changedItem?.seriesID == self.id || changedItem?.seasonID == self.id ||
                     changedItem?.type == nil
                 {
                     return ()
                 }
+
                 return nil
             }
             .eraseToAnyPublisher()
@@ -75,10 +78,12 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         let userSession = try requireUserSession()
         let entry = try await userSession.getFullItem(item)
         let fullItem = entry.snapshot
-        let newMediaPlayerItemProvider = try await resolveMediaPlayerItemProvider(
+
+        let newPlaybackIntent = try await resolvePlaybackIntent(
             for: fullItem,
             userSession: userSession
         )
+
         let newLocalTrailers = try? await localTrailers(for: fullItem)
         let newRandomBackdropItem = try? await randomBackdropItem(for: fullItem)
 
@@ -86,7 +91,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
         $item = entry
         localTrailers = newLocalTrailers ?? []
-        mediaPlayerItemProvider = newMediaPlayerItemProvider
+        playbackIntent = newPlaybackIntent
         randomBackdropItem = newRandomBackdropItem
 
         return try await _makeGroups(
@@ -123,7 +128,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         case .season, .series:
             SeriesEpisodeContentGroup(
                 parent: item,
-                playButtonItem: mediaPlayerItemProvider?.item
+                playButtonItem: playbackIntent?.item
             )
 
         default:
@@ -220,7 +225,8 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 posterSize: .small
             )
 
-        default: []
+        default:
+            []
         }
 
         if item.type == .episode {
@@ -316,42 +322,26 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     }
 
     func select(_ selection: PlaybackSelection) {
-        guard let provider = mediaPlayerItemProvider, let userSession else { return }
-
-        var mediaSource = provider.mediaSource
-        var audioStreamIndex = provider.audioStreamIndex
-        var subtitleStreamIndex = provider.subtitleStreamIndex
-        var requestedBitrate = provider.requestedBitrate
+        guard var intent = playbackIntent else { return }
 
         switch selection {
         case let .mediaSource(source):
-            mediaSource = source
-            audioStreamIndex = nil
-            subtitleStreamIndex = nil
-
+            intent.configuration.selectMediaSource(id: source?.id)
         case let .audioStreamIndex(index):
-            audioStreamIndex = index
-
+            intent.configuration.selectTracks(audio: index ?? -1)
         case let .subtitleStreamIndex(index):
-            subtitleStreamIndex = index
-
+            intent.configuration.selectTracks(subtitle: index ?? -1)
         case let .bitrate(bitrate):
-            requestedBitrate = bitrate
+            intent.configuration.requestedBitrate = bitrate
         }
 
-        mediaPlayerItemProvider = provider.item.getPlaybackItemProvider(
-            userSession: userSession,
-            mediaSource: mediaSource,
-            audioStreamIndex: audioStreamIndex,
-            subtitleStreamIndex: subtitleStreamIndex,
-            requestedBitrate: requestedBitrate
-        )
+        playbackIntent = intent
     }
 
-    private func resolveMediaPlayerItemProvider(
+    private func resolvePlaybackIntent(
         for item: BaseItemDto,
         userSession: UserSession
-    ) async throws -> MediaPlayerItemProvider? {
+    ) async throws -> PlaybackIntent? {
         let playbackItem: BaseItemDto? = switch item.type {
         case .series:
             if let nextUp = try await nextUpItem(for: item) {
@@ -377,13 +367,14 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
         if item.type == .series || item.type == .season {
             let entry = try await userSession.getFullItem(playbackItem)
-            // Keep the record alive until the playback provider takes ownership
+
+            // Keep the record alive until the playback intent takes ownership
             return withExtendedLifetime(entry) {
-                entry.snapshot.getPlaybackItemProvider(userSession: userSession)
+                entry.snapshot.getPlaybackIntent(userSession: userSession)
             }
         }
 
-        return playbackItem.getPlaybackItemProvider(userSession: userSession)
+        return playbackItem.getPlaybackIntent(userSession: userSession)
     }
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {

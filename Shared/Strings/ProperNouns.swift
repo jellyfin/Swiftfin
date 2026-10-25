@@ -161,7 +161,25 @@ extension L10n {
     static let windows = "Windows"
     static let xbox = "Xbox"
 
-    // MARK: - Video Players
+    // MARK: - Media players
 
     static let avPlayer = "AVPlayer"
+    static let mpv = "MPV"
+
+    // MARK: - Cast Experimental
+
+    static let cast = "Cast"
+    static let castConnectionFailed = "Unable to connect to the Cast device."
+    static let castConnectionSuspended = "Reconnecting to the Cast device"
+    static let noCastDevicesFound = "No Cast devices found. Check Local Network access in Settings."
+    static let playOnThisDevice = "Play on this device"
+    static let remoteCommandFailed = "The Cast device could not complete this command."
+    static let remotePlaybackFailed = "Remote playback failed. Returning to this device."
+    static let remotePlaybackUnavailable = "This media could not be prepared for remote playback."
+    static let unableToStopRemotePlayback = "The remote player did not confirm it stopped. Playback on this device is paused."
+    static let unableToTransferPlayback = "Unable to transfer playback. Returning to the previous player."
+
+    static func castingTo(_ destination: Any) -> String {
+        "Casting to \(destination)"
+    }
 }

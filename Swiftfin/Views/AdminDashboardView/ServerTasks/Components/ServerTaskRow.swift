@@ -26,7 +26,6 @@ extension ServerTasksView {
             viewModel.task.state == .running
         }
 
-        @ViewBuilder
         private var contentView: some View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {

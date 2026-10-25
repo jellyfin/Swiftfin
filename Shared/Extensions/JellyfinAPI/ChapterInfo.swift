@@ -67,6 +67,7 @@ extension ChapterInfo {
 
         func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
             let startTime = PosterAccessibility.duration(chapterInfo.startSeconds ?? .zero)
+
             return PosterAccessibility(
                 label: displayTitle,
                 value: L10n.posterAccessibilityStartTime(startTime)
@@ -85,6 +86,16 @@ extension ChapterInfo {
                     .aspectRatio(contentMode: .fit)
             }
         }
+    }
+}
+
+extension [ChapterInfo.FullInfo] {
+
+    /// Finds the current chapter in a list sorted by start time, including after the final chapter starts.
+    func chapterIndex(at seconds: Duration) -> Int? {
+        guard !isEmpty else { return nil }
+
+        return lastIndex { ($0.chapterInfo.startSeconds ?? .zero) <= seconds } ?? startIndex
     }
 }
 

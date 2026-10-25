@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import FactoryKit
 import JellyfinAPI
 import PreferencesView
 import SwiftUI
@@ -49,34 +48,13 @@ extension NavigationRoute {
     }
 
     @MainActor
-    static func videoPlayer(
-        provider: MediaPlayerItemProvider,
-        queue: (any MediaPlayerQueue)? = nil
-    ) -> NavigationRoute {
-        let manager = MediaPlayerManager(
-            provider: provider,
-            queue: queue
-        )
-
-        return Self.videoPlayer(manager: manager)
-    }
-
-    @MainActor
-    static func videoPlayer(manager: MediaPlayerManager) -> NavigationRoute {
-
-        Container.shared.mediaPlayerManager.register {
-            manager
-        }
-
-        Container.shared
-            .mediaPlayerManagerPublisher()
-            .send(manager)
-
-        return NavigationRoute(
+    static func videoPlayer(session: MediaSession) -> NavigationRoute {
+        NavigationRoute(
             id: "videoPlayer",
             style: .fullscreen
         ) {
-            VideoPlayer()
+            VideoPlayer(mediaSession: session)
+                .id(session.id)
         }
     }
 }
