@@ -162,7 +162,7 @@ private struct FirstTabSettingsBarButton: View {
         {
             if isSocketConnected {
                 Button(L10n.remoteControl, systemImage: "appletvremote.gen4") {
-                    router.route(to: .remoteControl())
+                    router.route(to: .remoteControl)
                 }
                 .labelStyle(.iconOnly)
             }

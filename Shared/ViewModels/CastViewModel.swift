@@ -87,12 +87,6 @@ final class CastViewModel: ViewModel {
         userSessionManager.castDeviceID = target?.session.deviceID
     }
 
-    func isPlaying(item: BaseItemDto) -> Bool {
-        targets.values
-            .map(\.session)
-            .isPlaying(item: item)
-    }
-
     private func updateTargets(_ incomingSessions: [SessionInfoDto], mergeItems: Bool = true) {
         if let pausedSince, Date.now.timeIntervalSince(pausedSince) < 15 {
             return

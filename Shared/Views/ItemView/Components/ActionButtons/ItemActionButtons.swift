@@ -106,8 +106,6 @@ struct ItemActionButtons: View {
         case .delete:
             provider.item.canDelete == true
         #if os(iOS)
-        case .cast:
-            provider.playbackIntent != nil
         case .editMetadata:
             provider.item.canEditMetadata
         #endif
@@ -166,8 +164,6 @@ struct ItemActionButtons: View {
             case .delete:
                 Delete()
             #if os(iOS)
-            case .cast:
-                Cast()
             case .editMetadata:
                 Edit()
             #endif

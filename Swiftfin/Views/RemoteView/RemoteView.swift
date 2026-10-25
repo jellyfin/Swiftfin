@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -16,14 +15,10 @@ struct RemoteView: View {
     private var viewModel = CastViewModel()
 
     @State
-    private var isCastPending = false
-    @State
     private var proxy: CastMediaPlayerProxy?
 
     @Router
     private var router
-
-    let intent: PlaybackIntent?
 
     private var selectedTarget: SessionViewModel? {
         viewModel.selectedTarget
@@ -37,123 +32,34 @@ struct RemoteView: View {
         }
     }
 
-    private func castReplacing(intent: PlaybackIntent, target: SessionViewModel) {
-        guard let itemID = intent.item.id else { return }
-
-        target.error = nil
-
-        Task {
-            await target.remotePlaybackSession(
-                command: .playNow,
-                itemIDs: [itemID],
-                startPositionTicks: intent.item.userData?.playbackPositionTicks,
-                mediaSourceID: intent.mediaSource?.id,
-                audioStreamIndex: nil,
-                subtitleStreamIndex: nil,
-                startIndex: nil
-            )
-
-            await target.refresh()
-        }
-
-        proxy = CastMediaPlayerProxy(item: intent.item, session: target)
-    }
-
     var body: some View {
-        VStack(spacing: 20) {
-            ZStack {
-                if let proxy, let selectedTarget {
-                    ControlsView(
-                        proxy: proxy,
-                        viewModel: viewModel
-                    )
-                    .id(selectedTarget.id)
-                    .transition(.opacity)
-                } else {
-                    VStack(spacing: 20) {
-                        Touchpad { _ in }
+        ZStack {
+            if let proxy, let selectedTarget {
+                ControlsView(
+                    proxy: proxy,
+                    viewModel: viewModel
+                )
+                .id(selectedTarget.id)
+                .transition(.opacity)
+            } else {
+                VStack(spacing: 20) {
+                    Touchpad { _ in }
 
-                        HStack(spacing: 24) {
-                            Button(L10n.back, systemImage: "chevron.backward") {}
-                                .buttonStyle(.remoteControl)
+                    HStack(spacing: 24) {
+                        Button(L10n.back, systemImage: "chevron.backward") {}
+                            .buttonStyle(.remoteControl)
 
-                            Button(L10n.play, systemImage: "play.fill") {}
-                                .buttonStyle(.remoteControl(size: .large))
+                        Button(L10n.play, systemImage: "play.fill") {}
+                            .buttonStyle(.remoteControl(size: .large))
 
-                            Button(L10n.home, systemImage: "house.fill") {}
-                                .buttonStyle(.remoteControl)
-                        }
-                    }
-                    .foregroundStyle(.secondary)
-                    .edgePadding(.horizontal)
-                    .disabled(true)
-                    .transition(.opacity)
-                }
-            }
-
-            if let intent, let selectedTarget,
-               !selectedTarget.session.isPlaying(item: intent.item)
-            {
-                StateAdapter(initialValue: false) { isPresentingReplaceConfirmation in
-                    Button {
-                        isCastPending = true
-
-                        if selectedTarget.session.isPlaying(item: intent.item) {
-                            proxy = CastMediaPlayerProxy(item: intent.item, session: selectedTarget)
-                        } else if let nowPlayingItem = selectedTarget.session.nowPlayingItem {
-                            proxy = CastMediaPlayerProxy(item: nowPlayingItem, session: selectedTarget)
-                            isPresentingReplaceConfirmation.wrappedValue = true
-                        } else {
-                            castReplacing(intent: intent, target: selectedTarget)
-                        }
-                    } label: {
-                        Group {
-                            if isCastPending {
-                                ProgressView()
-                            } else {
-                                Label(
-                                    L10n.castToDevice,
-                                    systemImage: "tv.badge.wifi"
-                                )
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .backport
-                        .glassEffect(
-                            .regular.selection(
-                                tint: .blue,
-                                foregroundColor: Color.blue.overlayColor
-                            ),
-                            in: .capsule
-                        )
-                    }
-                    .buttonStyle(BasicHoverButtonStyle())
-                    .disabled(isCastPending)
-                    .edgePadding(.horizontal)
-                    .alert(
-                        L10n.replace,
-                        isPresented: isPresentingReplaceConfirmation
-                    ) {
-                        Button(L10n.replace, role: .destructive) {
-                            castReplacing(intent: intent, target: selectedTarget)
-                        }
-
-                        Button(L10n.cancel, role: .cancel) {
-                            isCastPending = false
-                        }
-                    } message: {
-                        Text(
-                            // swiftlint:disable:next nested_l10n
-                            L10n.replaceQueueWarning(
-                                selectedTarget.session.nowPlayingItem?.displayTitle ?? L10n.unknown,
-                                intent.item.displayTitle
-                            )
-                        )
+                        Button(L10n.home, systemImage: "house.fill") {}
+                            .buttonStyle(.remoteControl)
                     }
                 }
+                .foregroundStyle(.secondary)
+                .edgePadding(.horizontal)
+                .disabled(true)
+                .transition(.opacity)
             }
         }
         .edgePadding([.top, .bottom])
@@ -220,27 +126,9 @@ struct RemoteView: View {
             viewModel.refresh()
         }
         .onChange(of: selectedTarget?.id) { _, newValue in
-            isCastPending = false
-
             guard newValue != proxy?.session.id else { return }
 
             proxy = selectedTarget.map { CastMediaPlayerProxy(item: nil, session: $0) }
-        }
-        .onChange(of: selectedTarget?.session.nowPlayingItem?.id) { _, _ in
-            isCastPending = false
-        }
-        .onChange(of: selectedTarget?.error != nil) { _, hasError in
-            guard hasError else { return }
-
-            isCastPending = false
-        }
-        .task(id: isCastPending) {
-            guard isCastPending else { return }
-
-            try? await Task.sleep(for: .seconds(10))
-            guard !Task.isCancelled else { return }
-
-            isCastPending = false
         }
     }
 }

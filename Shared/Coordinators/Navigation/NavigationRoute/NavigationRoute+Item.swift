@@ -41,12 +41,12 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    static func remoteControl(intent: PlaybackIntent? = nil) -> NavigationRoute {
+    static var remoteControl: NavigationRoute {
         NavigationRoute(
             id: "remoteControl",
             style: .sheet
         ) {
-            RemoteView(intent: intent)
+            RemoteView()
         }
     }
 
