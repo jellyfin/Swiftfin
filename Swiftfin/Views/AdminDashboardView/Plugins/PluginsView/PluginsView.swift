@@ -17,7 +17,6 @@ struct PluginsView: View {
     @StateObject
     private var viewModel = PluginsViewModel()
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
