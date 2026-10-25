@@ -25,14 +25,29 @@ final class UserSession {
     @MainActor
     var itemChanges: AnyCancellable?
 
-    lazy var client: JellyfinClient = JellyfinClient(
-        configuration: .swiftfinConfiguration(
-            url: server.effectiveServerURL,
-            accessToken: user.accessToken
-        ),
-        sessionConfiguration: .swiftfin,
-        sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
-    )
+    @MainActor
+    private var cachedClient: JellyfinClient?
+
+    @MainActor
+    var client: JellyfinClient {
+        let url = server.effectiveServerURL
+
+        if let cachedClient, cachedClient.configuration.url == url {
+            return cachedClient
+        }
+
+        // Connection changes replace only the transport, never the user session
+        // or the item store retained by views and playback.
+        let client = JellyfinClient(
+            configuration: .swiftfinConfiguration(url: url, accessToken: user.accessToken),
+            sessionConfiguration: .swiftfin,
+            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
+        )
+
+        cachedClient = client
+
+        return client
+    }
 
     @MainActor
     lazy var serverConnectionManager = ServerConnectionManager()
@@ -56,6 +71,7 @@ final class UserSession {
     @MainActor
     func willStart() async {
         observeItemChanges()
+
         for service in services {
             await service.willStart(userSession: self)
         }
@@ -71,6 +87,7 @@ final class UserSession {
     @MainActor
     func willStop() {
         itemChanges = nil
+
         for service in services.reversed() {
             service.willStop(userSession: self)
         }

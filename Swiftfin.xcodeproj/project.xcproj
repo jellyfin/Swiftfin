@@ -1,0 +1,983 @@
+{
+  "default-configuration": "Release",
+  "configurations": [
+    { "name": "Debug", "file": { "anchor": "XcodeConfig", "relative-path": "Shared.xcconfig" } },
+    "Release",
+  ],
+  "localizations": {
+    "development": "en",
+    "supported": [
+      "Base",
+      "af",
+      "ar",
+      "bg",
+      "ca",
+      "cs",
+      "da",
+      "de",
+      "el",
+      "enm",
+      "eo",
+      "es",
+      "et",
+      "eu",
+      "fa",
+      "fi",
+      "fr",
+      "gl",
+      "he",
+      "hi",
+      "hr",
+      "hu",
+      "id",
+      "it",
+      "ja",
+      "ka",
+      "kk",
+      "km",
+      "ko",
+      "lb",
+      "lt",
+      "lv",
+      "mk",
+      "ml",
+      "mn",
+      "nb-NO",
+      "nl",
+      "nn",
+      "peo",
+      "pl",
+      "ps",
+      "pt",
+      "pt-BR",
+      "ro",
+      "ru",
+      "sk",
+      "sl",
+      "sq",
+      "sv",
+      "ta",
+      "th",
+      "tr",
+      "uk",
+      "vi",
+      "zh-Hans",
+      "zh-Hant",
+    ],
+  },
+  "packages": [
+    {
+      "kind": "remote",
+      "repository": "https://github.com/siteline/SwiftUI-Introspect",
+      "version": {
+        "up-to-next-major-version": "27.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/JohnEstropia/CoreStore.git",
+      "version": {
+        "version": "9.2.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/sindresorhus/Defaults",
+      "version": {
+        "up-to-next-major-version": "9.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/apple/swift-algorithms.git",
+      "version": {
+        "up-to-next-major-version": "1.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/kean/Nuke",
+      "version": {
+        "up-to-next-major-version": "13.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/LePips/BlurHashKit",
+      "version": {
+        "up-to-next-major-version": "2.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/hmlongco/Factory",
+      "version": {
+        "up-to-next-major-version": "3.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/JohnSundell/Files",
+      "version": {
+        "up-to-next-major-version": "4.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/kean/Pulse",
+      "version": {
+        "up-to-next-major-version": "5.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/apple/swift-collections.git",
+      "version": {
+        "up-to-next-major-version": "1.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/kean/PulseLogHandler",
+      "version": {
+        "up-to-next-major-version": "5.0.0",
+      },
+    }, {
+      "kind": "local",
+      "path": "PreferencesView",
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/googlecast/google-cast-ios-sdk",
+      "version": {
+        "version": "4.8.6",
+      },
+    }, {
+      "kind": "local",
+      "path": "SwiftfinMacros",
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/SVGKit/SVGKit",
+      "version": {
+        "up-to-next-major-version": "3.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/evgenyneu/keychain-swift",
+      "version": {
+        "up-to-next-major-version": "24.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/guoyingtao/Mantis",
+      "version": {
+        "up-to-next-major-version": "2.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/pointfreeco/swift-identified-collections",
+      "version": {
+        "up-to-next-major-version": "1.1.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/ViacomInc/TVOSPicker",
+      "version": {
+        "up-to-next-minor-version": "0.3.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/LePips/MPVUI",
+      "version": {
+        "version": "0.7.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/LePips/MediaAccessibilityKit",
+      "version": {
+        "version": "0.3.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/nathantannar4/Transmission",
+      "version": {
+        "up-to-next-major-version": "2.13.4",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/LeoNatan/LNPopupUI/",
+      "version": {
+        "up-to-next-minor-version": "2.0.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/jellyfin/jellyfin-sdk-swift.git",
+      "version": {
+        "up-to-next-major-version": "3.3.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/LePips/StatefulMacro",
+      "version": {
+        "up-to-next-major-version": "0.2.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/LePips/CollectionVGrid",
+      "version": {
+        "branch": "main",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/LePips/CollectionHStack",
+      "version": {
+        "branch": "main",
+      },
+    },
+  ],
+  "files": [
+    {
+      "kind": "folder",
+      "path": "Swiftfin",
+      "target-membership": [
+        "Swiftfin iOS",
+      ],
+      "membership-exceptions": [
+        {
+          "target": "Swiftfin iOS",
+          "exclusions": [
+            "Resources/Info.plist",
+          ],
+        },
+      ],
+    }, {
+      "kind": "folder",
+      "path": "Swiftfin tvOS",
+      "target-membership": [
+        "Swiftfin tvOS",
+      ],
+      "membership-exceptions": [
+        {
+          "target": "Swiftfin tvOS",
+          "exclusions": [
+            "Resources/Info.plist",
+          ],
+        },
+      ],
+    }, {
+      "kind": "folder",
+      "path": "Shared",
+      "target-membership": [
+        "Swiftfin iOS",
+        "Swiftfin tvOS",
+      ],
+      "membership-exceptions": [
+        {
+          "target": "Swiftfin tvOS",
+          "exclusions": [
+            "Extensions/JellyfinAPI/TaskTriggerInfoType.swift",
+            "ViewModels/AdminDashboard/APIKeysViewModel.swift",
+            "ViewModels/AdminDashboard/DevicesViewModel.swift",
+            "ViewModels/AdminDashboard/ServerActivityDetailViewModel.swift",
+            "ViewModels/AdminDashboard/ServerLogs/ServerLogsViewModel.swift",
+            "ViewModels/AdminDashboard/Tasks/ServerTaskViewModel.swift",
+            "ViewModels/AdminDashboard/Tasks/ServerTasksViewModel.swift",
+            "ViewModels/AdminDashboard/Users/AddServerUserViewModel.swift",
+            "ViewModels/AdminDashboard/Users/ServerUsersViewModel.swift",
+            "ViewModels/ItemAdministration/IdentifyItemViewModel.swift",
+            "ViewModels/ItemAdministration/RemoteImageInfoViewModel.swift",
+            "ViewModels/QuickConnectAuthorizeViewModel.swift",
+            "Views/ItemView/Components/ActionButtons/EditActionButton.swift",
+            "Views/VideoPlayer/Components/Toolbar/ActionButtons/GestureLockActionButton.swift",
+          ],
+        },
+      ],
+    },
+    { "kind": "folder", "path": "Translations", "target-membership": [ "Swiftfin iOS", "Swiftfin tvOS" ] },
+    {
+      "kind": "group",
+      "name": "Products",
+      "children": [
+        { "path": "<PRODUCTS>/Swiftfin.app", "id": "5377CBF1263B596A003A4E83", "type": "wrapper.application", "index": false },
+        { "path": "<PRODUCTS>/Swiftfin.app", "id": "535870602669D21600D05A09", "type": "wrapper.application", "index": false },
+      ],
+    }, {
+      "kind": "group",
+      "name": "Frameworks",
+      "children": [
+        { "path": "Carthage/Build/UDPBroadcast.xcframework" },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/UIKit.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/VideoToolbox.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Security.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/QuartzCore.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/OpenGLES.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libxml2.tbd" },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libiconv.tbd" },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libc++.tbd" },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libbz2.tbd" },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Foundation.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreVideo.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreText.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreMedia.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreGraphics.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreFoundation.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CFNetwork.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/AVFoundation.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/AudioToolbox.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/VideoToolbox.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/OpenGLES.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/usr/lib/libxml2.tbd" },
+        { "path": "<SDK>/usr/lib/libiconv.tbd" },
+        { "path": "<SDK>/usr/lib/libc++.tbd" },
+        { "path": "<SDK>/usr/lib/libbz2.tbd" },
+        { "path": "<SDK>/System/Library/Frameworks/CoreVideo.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/CoreFoundation.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/UIKit.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/SystemConfiguration.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/Security.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/QuartzCore.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/MediaPlayer.framework" },
+        { "path": "<SDK>/System/Library/Frameworks/MediaAccessibility.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/Foundation.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/CoreText.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/CoreMedia.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/CoreGraphics.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/CoreData.framework" },
+        { "path": "<SDK>/System/Library/Frameworks/CoreBluetooth.framework" },
+        { "path": "<SDK>/System/Library/Frameworks/CFNetwork.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/AudioToolbox.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/Accelerate.framework" },
+        { "path": "<SDK>/System/Library/Frameworks/AVFoundation.framework", "target-membership": [ "Swiftfin iOS/frameworks" ] },
+        { "path": "<DEVELOPER>/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/System/Library/Frameworks/TVServices.framework", "target-membership": [ "Swiftfin tvOS/frameworks" ] },
+        { "path": "<SDK>/System/Library/Frameworks/WidgetKit.framework" },
+        { "path": "<SDK>/System/Library/Frameworks/SwiftUI.framework" },
+      ],
+    },
+    { "kind": "folder", "path": "Scripts" },
+    {
+      "kind": "folder",
+      "path": "XcodeConfig",
+      "target-membership": [
+        "Swiftfin iOS",
+        "Swiftfin tvOS",
+      ],
+      "membership-exceptions": [
+        {
+          "target": "Swiftfin iOS",
+          "exclusions": [
+            "DevelopmentTeam.xcconfig",
+            "Shared.xcconfig",
+          ],
+        }, {
+          "target": "Swiftfin tvOS",
+          "exclusions": [
+            "DevelopmentTeam.xcconfig",
+            "Shared.xcconfig",
+          ],
+        },
+      ],
+    },
+  ],
+  "targets": [
+    {
+      "name": "Swiftfin iOS",
+      "id": "5377CBF0263B596A003A4E83",
+      "product": "id:5377CBF1263B596A003A4E83",
+      "product-type": "application",
+      "build-phases": [
+        {
+          "kind": "script",
+          "name": "Generate Strings",
+          "log-environment-variables": true,
+          "input-paths": [
+            "$(SRCROOT)/Translations/en.lproj/Localizable.strings",
+            "$(SRCROOT)/Scripts/Translations/GenerateStrings.swift",
+          ],
+          "run-on-every-build": true,
+          "shell": "/bin/sh",
+          "script": [
+            "set -eu",
+            "cd \"${SRCROOT}\"",
+            "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/GenerateStrings.swift\"",
+            "",
+          ],
+        }, {
+          "kind": "script",
+          "name": "Run SwiftFormat",
+          "log-environment-variables": true,
+          "run-on-every-build": true,
+          "shell": "/bin/sh",
+          "script": [
+            "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftFormat installations",
+            "export PATH=/opt/homebrew/bin:$PATH",
+            "",
+            "# Skip phase if the action is not build (ie. analyze, archive, etc).",
+            "if [ \"$ACTION\" != \"build\" ]; then",
+            "    exit 0",
+            "fi",
+            "",
+            "if which swiftformat >/dev/null; then",
+            "    swiftformat .",
+            "else",
+            "    echo \"error: SwiftFormat not installed, check contributing.md for installation instructions.\"",
+            "fi",
+            "",
+          ],
+        }, {
+          "kind": "script",
+          "name": "Run SwiftLint",
+          "log-environment-variables": true,
+          "run-on-every-build": true,
+          "shell": "/bin/sh",
+          "script": [
+            "export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"",
+            "",
+            "if command -v swiftlint >/dev/null; then",
+            "  swiftlint lint",
+            "else",
+            "  echo \"warning: SwiftLint not installed. Run 'brew bundle --file Brewfile' from the repository root.\"",
+            "fi",
+            "",
+          ],
+        },
+        "compile-sources",
+        "frameworks",
+        "resources",
+        {
+          "kind": "script",
+          "name": "Write Git Branch",
+          "log-environment-variables": true,
+          "input-paths": [
+            "$(SRCROOT)/Scripts/WriteGitBranch.sh",
+          ],
+          "output-paths": [
+            "$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GitBranch.txt",
+          ],
+          "run-on-every-build": true,
+          "shell": "/bin/sh",
+          "script": "/bin/sh \"${SRCROOT}/Scripts/WriteGitBranch.sh\"\n",
+        },
+      ],
+      "package-product-members": [
+        {
+          "product-name": "CollectionHStack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionHStack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionHStack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionHStack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionHStack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionHStack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionHStack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionVGrid",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionVGrid",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionVGrid",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionVGrid",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionVGrid",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "CollectionVGrid",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "PreferencesView",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "BlurHashKit",
+          "product-name": "BlurHashKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "CollectionHStack",
+          "product-name": "CollectionHStack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "CollectionVGrid",
+          "product-name": "CollectionVGrid",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "CoreStore",
+          "product-name": "CoreStore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Defaults",
+          "product-name": "Defaults",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Factory",
+          "product-name": "FactoryKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Files",
+          "product-name": "Files",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LNPopupUI",
+          "product-name": "LNPopupUI-Static",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MPVUI",
+          "product-name": "MPVUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Mantis",
+          "product-name": "Mantis",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MediaAccessibilityKit",
+          "product-name": "MediaAccessibilityKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Nuke",
+          "product-name": "Nuke",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Nuke",
+          "product-name": "NukeUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Pulse",
+          "product-name": "Pulse",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Pulse",
+          "product-name": "Pulse",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Pulse",
+          "product-name": "PulseLogHandler",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Pulse",
+          "product-name": "PulseLogHandler",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Pulse",
+          "product-name": "PulseUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Pulse",
+          "product-name": "PulseUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PulseLogHandler",
+          "product-name": "PulseLogHandler",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "SVGKit",
+          "product-name": "SVGKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "StatefulMacro",
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "SwiftUI-Introspect",
+          "product-name": "SwiftUIIntrospect",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "SwiftfinMacros",
+          "product-name": "SwiftfinMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Transmission",
+          "product-name": "Transmission",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "google-cast-ios-sdk",
+          "product-name": "GoogleCastDynamic",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "jellyfin-sdk-swift",
+          "product-name": "JellyfinAPI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "keychain-swift",
+          "product-name": "KeychainSwift",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "swift-algorithms",
+          "product-name": "Algorithms",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "swift-collections",
+          "product-name": "OrderedCollections",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "swift-identified-collections",
+          "product-name": "CollectionHStack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "swift-identified-collections",
+          "product-name": "IdentifiedCollections",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+      ],
+      "build-settings": {
+        "ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES": "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow",
+        "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon-dark-blue",
+        "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "",
+        "ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS": "NO",
+        "CODE_SIGN_ENTITLEMENTS": "Swiftfin/Resources/Swiftfin.entitlements",
+        "CODE_SIGN_IDENTITY": "Apple Development",
+        "CODE_SIGN_STYLE": "Automatic",
+        "CURRENT_PROJECT_VERSION": "1",
+        "DEBUG_INFORMATION_FORMAT[config=Release]": "dwarf-with-dsym",
+        "DEVELOPMENT_ASSET_PATHS": "",
+        "ENABLE_APP_SANDBOX": "YES",
+        "ENABLE_BITCODE": "NO",
+        "ENABLE_OUTGOING_NETWORK_CONNECTIONS": "YES",
+        "ENABLE_PREVIEWS": "YES",
+        "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
+        "EXCLUDED_ARCHS": "",
+        "FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+        "INFOPLIST_FILE": "Swiftfin/Resources/Info.plist",
+        "INFOPLIST_KEY_LSApplicationCategoryType": "public.app-category.entertainment",
+        "IPHONEOS_DEPLOYMENT_TARGET": "18.6",
+        "LD_RUNPATH_SEARCH_PATHS": [
+          "$(inherited)",
+          "@executable_path/Frameworks",
+        ],
+        "MARKETING_VERSION": "1.0",
+        "OTHER_CFLAGS": "",
+        "PRODUCT_BUNDLE_IDENTIFIER[config=Release]": "org.jellyfin.swiftfin",
+        "PRODUCT_NAME": "Swiftfin",
+        "PROVISIONING_PROFILE_SPECIFIER": "",
+        "SUPPORTS_MACCATALYST": "NO",
+        "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "NO",
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[config=Debug]": "DEBUG",
+        "SWIFT_EMIT_LOC_STRINGS": "YES",
+        "SWIFT_VERSION": "5.0",
+        "TARGETED_DEVICE_FAMILY": "1,2",
+      },
+    }, {
+      "name": "Swiftfin tvOS",
+      "id": "5358705F2669D21600D05A09",
+      "product": "id:535870602669D21600D05A09",
+      "product-type": "application",
+      "specialized-configurations": [
+        { "name": "Debug", "file": { "anchor": "XcodeConfig", "relative-path": "Shared.xcconfig" } },
+        { "name": "Release", "file": { "anchor": "XcodeConfig", "relative-path": "Shared.xcconfig" } },
+      ],
+      "build-phases": [
+        {
+          "kind": "script",
+          "name": "Generate Strings",
+          "log-environment-variables": true,
+          "input-paths": [
+            "$(SRCROOT)/Translations/en.lproj/Localizable.strings",
+            "$(SRCROOT)/Scripts/Translations/GenerateStrings.swift",
+          ],
+          "run-on-every-build": true,
+          "shell": "/bin/sh",
+          "script": [
+            "set -eu",
+            "cd \"${SRCROOT}\"",
+            "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/GenerateStrings.swift\"",
+            "",
+          ],
+        }, {
+          "kind": "script",
+          "name": "Run SwiftFormat",
+          "log-environment-variables": true,
+          "run-on-every-build": true,
+          "shell": "/bin/sh",
+          "script": [
+            "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftFormat installations",
+            "export PATH=/opt/homebrew/bin:$PATH",
+            "",
+            "# Skip phase if the action is not build (ie. analyze, archive, etc).",
+            "if [ \"$ACTION\" != \"build\" ]; then",
+            "    exit 0",
+            "fi",
+            "",
+            "if which swiftformat >/dev/null; then",
+            "    swiftformat .",
+            "else",
+            "    echo \"error: SwiftFormat not installed, check contributing.md for installation instructions.\"",
+            "fi",
+            "",
+          ],
+        }, {
+          "kind": "script",
+          "name": "Run SwiftLint",
+          "log-environment-variables": true,
+          "run-on-every-build": true,
+          "shell": "/bin/sh",
+          "script": [
+            "export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"",
+            "",
+            "if command -v swiftlint >/dev/null; then",
+            "  swiftlint lint",
+            "else",
+            "  echo \"warning: SwiftLint not installed. Run 'brew bundle --file Brewfile' from the repository root.\"",
+            "fi",
+            "",
+          ],
+        },
+        "compile-sources",
+        "frameworks",
+        "resources",
+        {
+          "kind": "script",
+          "name": "Write Git Branch",
+          "log-environment-variables": true,
+          "input-paths": [
+            "$(SRCROOT)/Scripts/WriteGitBranch.sh",
+          ],
+          "output-paths": [
+            "$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GitBranch.txt",
+          ],
+          "run-on-every-build": true,
+          "shell": "/bin/sh",
+          "script": "/bin/sh \"${SRCROOT}/Scripts/WriteGitBranch.sh\"\n",
+        },
+      ],
+      "package-product-members": [
+        {
+          "product-name": "StatefulMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "BlurHashKit",
+          "product-name": "BlurHashKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "CollectionHStack",
+          "product-name": "CollectionHStack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "CollectionVGrid",
+          "product-name": "CollectionVGrid",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "CoreStore",
+          "product-name": "CoreStore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Defaults",
+          "product-name": "Defaults",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Factory",
+          "product-name": "FactoryKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Files",
+          "product-name": "Files",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MPVUI",
+          "product-name": "MPVUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MediaAccessibilityKit",
+          "product-name": "MediaAccessibilityKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Nuke",
+          "product-name": "Nuke",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Nuke",
+          "product-name": "NukeExtensions",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Nuke",
+          "product-name": "NukeUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PreferencesView",
+          "product-name": "PreferencesView",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Pulse",
+          "product-name": "Pulse",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Pulse",
+          "product-name": "PulseLogHandler",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Pulse",
+          "product-name": "PulseUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "SVGKit",
+          "product-name": "SVGKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "SwiftUI-Introspect",
+          "product-name": "SwiftUIIntrospect",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "SwiftfinMacros",
+          "product-name": "SwiftfinMacros",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "TVOSPicker",
+          "product-name": "TVOSPicker",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "Transmission",
+          "product-name": "Transmission",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "jellyfin-sdk-swift",
+          "product-name": "JellyfinAPI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "keychain-swift",
+          "product-name": "KeychainSwift",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "swift-algorithms",
+          "product-name": "Algorithms",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "swift-collections",
+          "product-name": "OrderedCollections",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "swift-identified-collections",
+          "product-name": "IdentifiedCollections",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+      ],
+      "build-settings": {
+        "ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES": "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow",
+        "ASSETCATALOG_COMPILER_APPICON_NAME": "App Icon & Top Shelf Image",
+        "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "",
+        "ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS": "YES",
+        "CODE_SIGN_STYLE": "Automatic",
+        "CURRENT_PROJECT_VERSION": "70",
+        "DEVELOPMENT_ASSET_PATHS": "",
+        "ENABLE_PREVIEWS": "YES",
+        "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
+        "FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+        "INFOPLIST_FILE": "Swiftfin tvOS/Resources/Info.plist",
+        "LD_RUNPATH_SEARCH_PATHS": [
+          "$(inherited)",
+          "@executable_path/Frameworks",
+        ],
+        "MARKETING_VERSION": "1.4.1",
+        "PRODUCT_NAME": "Swiftfin",
+        "SDKROOT": "appletvos",
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[config=Debug]": "DEBUG",
+        "SWIFT_EMIT_LOC_STRINGS": "YES",
+        "SWIFT_VERSION": "5.0",
+        "TARGETED_DEVICE_FAMILY": "3",
+        "TVOS_DEPLOYMENT_TARGET": "26.1",
+      },
+    },
+  ],
+  "build-settings": {
+    "ALWAYS_SEARCH_USER_PATHS": "NO",
+    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
+    "CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED": "YES",
+    "CLANG_ANALYZER_NONNULL": "YES",
+    "CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION": "YES_AGGRESSIVE",
+    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++14",
+    "CLANG_CXX_LIBRARY": "libc++",
+    "CLANG_ENABLE_MODULES": "YES",
+    "CLANG_ENABLE_OBJC_ARC": "YES",
+    "CLANG_ENABLE_OBJC_WEAK": "YES",
+    "CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING": "YES",
+    "CLANG_WARN_BOOL_CONVERSION": "YES",
+    "CLANG_WARN_COMMA": "YES",
+    "CLANG_WARN_CONSTANT_CONVERSION": "YES",
+    "CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS": "YES",
+    "CLANG_WARN_DIRECT_OBJC_ISA_USAGE": "YES_ERROR",
+    "CLANG_WARN_DOCUMENTATION_COMMENTS": "YES",
+    "CLANG_WARN_EMPTY_BODY": "YES",
+    "CLANG_WARN_ENUM_CONVERSION": "YES",
+    "CLANG_WARN_INFINITE_RECURSION": "YES",
+    "CLANG_WARN_INT_CONVERSION": "YES",
+    "CLANG_WARN_NON_LITERAL_NULL_CONVERSION": "YES",
+    "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "YES",
+    "CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
+    "CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
+    "CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
+    "CLANG_WARN_RANGE_LOOP_ANALYSIS": "YES",
+    "CLANG_WARN_STRICT_PROTOTYPES": "YES",
+    "CLANG_WARN_SUSPICIOUS_MOVE": "YES",
+    "CLANG_WARN_UNGUARDED_AVAILABILITY": "YES_AGGRESSIVE",
+    "CLANG_WARN_UNREACHABLE_CODE": "YES",
+    "CLANG_WARN__DUPLICATE_METHOD_MATCH": "YES",
+    "COPY_PHASE_STRIP": "NO",
+    "DEBUG_INFORMATION_FORMAT[config=Debug]": "dwarf",
+    "DEBUG_INFORMATION_FORMAT[config=Release]": "dwarf-with-dsym",
+    "ENABLE_NS_ASSERTIONS[config=Release]": "NO",
+    "ENABLE_STRICT_OBJC_MSGSEND": "YES",
+    "ENABLE_TESTABILITY[config=Debug]": "YES",
+    "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+    "EXCLUDED_ARCHS[config=Debug]": "",
+    "EXCLUDED_ARCHS[config=Debug][sdk=*]": "",
+    "EXCLUDED_ARCHS[config=Release]": "",
+    "GCC_C_LANGUAGE_STANDARD": "gnu11",
+    "GCC_DYNAMIC_NO_PIC[config=Debug]": "NO",
+    "GCC_NO_COMMON_BLOCKS": "YES",
+    "GCC_OPTIMIZATION_LEVEL[config=Debug]": "0",
+    "GCC_PREPROCESSOR_DEFINITIONS[config=Debug]": [
+      "DEBUG=1",
+      "$(inherited)",
+    ],
+    "GCC_WARN_64_TO_32_BIT_CONVERSION": "YES",
+    "GCC_WARN_ABOUT_RETURN_TYPE": "YES_ERROR",
+    "GCC_WARN_UNDECLARED_SELECTOR": "YES",
+    "GCC_WARN_UNINITIALIZED_AUTOS": "YES_AGGRESSIVE",
+    "GCC_WARN_UNUSED_FUNCTION": "YES",
+    "GCC_WARN_UNUSED_VARIABLE": "YES",
+    "IPHONEOS_DEPLOYMENT_TARGET": "18.6",
+    "MTL_ENABLE_DEBUG_INFO[config=Debug]": "INCLUDE_SOURCE",
+    "MTL_ENABLE_DEBUG_INFO[config=Release]": "NO",
+    "MTL_FAST_MATH": "YES",
+    "ONLY_ACTIVE_ARCH[config=Debug]": "YES",
+    "OTHER_SWIFT_FLAGS": "-Xfrontend -warn-long-expression-type-checking=200",
+    "SDKROOT": "iphoneos",
+    "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[config=Debug]": "DEBUG",
+    "SWIFT_COMPILATION_MODE[config=Release]": "wholemodule",
+    "SWIFT_OPTIMIZATION_LEVEL[config=Debug]": "-Onone",
+    "SWIFT_OPTIMIZATION_LEVEL[config=Release]": "-O",
+    "VALIDATE_PRODUCT[config=Release]": "YES",
+  },
+  "last-upgrade": "26.3",
+  "last-swift-update": "12.5",
+}

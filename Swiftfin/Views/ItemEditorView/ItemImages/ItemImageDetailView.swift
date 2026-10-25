@@ -20,8 +20,7 @@ struct ItemImageDetailView: View {
     let imageInfo: ImageInfo
 
     private var imageSource: ImageSource? {
-        guard let itemID = viewModel.item.id else { return nil }
-        guard let userSession = viewModel.userSession else { return nil }
+        guard let itemID = viewModel.item.id, let userSession = viewModel.userSession else { return nil }
 
         return imageInfo.itemImageSource(
             itemID: itemID,

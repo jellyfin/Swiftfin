@@ -48,7 +48,6 @@ extension EditMetadataView {
 
         // MARK: - Series Status View
 
-        @ViewBuilder
         private var seriesStatusView: some View {
             Picker(
                 L10n.status,
@@ -67,7 +66,6 @@ extension EditMetadataView {
 
         // MARK: - Air Time View
 
-        @ViewBuilder
         private var airTimeView: some View {
             DatePicker(
                 L10n.airTime,
@@ -83,7 +81,6 @@ extension EditMetadataView {
 
         // MARK: - Air Days View
 
-        @ViewBuilder
         private var airDaysView: some View {
             ForEach(DayOfWeek.allCases, id: \.self) { field in
                 Toggle(
@@ -97,7 +94,6 @@ extension EditMetadataView {
 
         // MARK: - Run Time View
 
-        @ViewBuilder
         private var runTimeView: some View {
             StateAdapter(initialValue: false) { isPresented in
                 ChevronButton(
@@ -142,6 +138,7 @@ extension EditMetadataView {
         private func parseAirTimeToDate(_ airTime: String) -> Date {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "HH:mm"
+
             return dateFormatter.date(from: airTime) ?? Date()
         }
 
@@ -150,6 +147,7 @@ extension EditMetadataView {
         private func formatDateToString(_ date: Date) -> String {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "HH:mm"
+
             return dateFormatter.string(from: date)
         }
     }

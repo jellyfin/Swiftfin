@@ -86,41 +86,41 @@ extension UserSessionManager {
 
     @MainActor
     private func onReceive(playstateCommand: PlaystateRequest) {
-        guard let mediaPlayerManager else { return }
+        guard let mediaSession = mediaPlayerManager.currentSession else { return }
 
         switch playstateCommand.command {
         case .fastForward:
-            mediaPlayerManager.proxy?.jumpForward(Defaults[.VideoPlayer.jumpForwardInterval].rawValue)
+            mediaSession.seek(by: Defaults[.VideoPlayer.jumpForwardInterval].rawValue)
 
         case .nextTrack:
-            guard let nextItem = mediaPlayerManager.queue?.nextItem else { return }
+            guard let nextItem = mediaSession.queue?.nextItem else { return }
 
-            mediaPlayerManager.playNewItem(provider: nextItem)
+            mediaSession.playNewItem(intent: nextItem)
 
         case .pause:
-            mediaPlayerManager.setPlaybackRequestStatus(status: .paused)
+            mediaSession.setPlaybackRequestStatus(status: .paused)
 
         case .playPause:
-            mediaPlayerManager.togglePlayPause()
+            mediaSession.togglePlayPause()
 
         case .previousTrack:
-            guard let previousItem = mediaPlayerManager.queue?.previousItem else { return }
+            guard let previousItem = mediaSession.queue?.previousItem else { return }
 
-            mediaPlayerManager.playNewItem(provider: previousItem)
+            mediaSession.playNewItem(intent: previousItem)
 
         case .rewind:
-            mediaPlayerManager.proxy?.jumpBackward(Defaults[.VideoPlayer.jumpBackwardInterval].rawValue)
+            mediaSession.seek(by: .zero - (Defaults[.VideoPlayer.jumpBackwardInterval].rawValue))
 
         case .seek:
             guard let ticks = playstateCommand.seekPositionTicks else { return }
 
-            mediaPlayerManager.proxy?.setSeconds(.ticks(ticks))
+            mediaSession.seek(to: .ticks(ticks))
 
         case .stop:
-            mediaPlayerManager.stop()
+            mediaSession.stop()
 
         case .unpause:
-            mediaPlayerManager.setPlaybackRequestStatus(status: .playing)
+            mediaSession.setPlaybackRequestStatus(status: .playing)
 
         case .none:
             return
@@ -135,17 +135,17 @@ extension UserSessionManager {
         case .setAudioStreamIndex:
             guard let index = generalCommand.arguments?["Index"], let index = Int(index) else { return }
 
-            mediaPlayerManager?.playbackItem?.selectedAudioStreamIndex = index
+            mediaPlayerManager.currentSession?.playbackItem?.selectedAudioStreamIndex = index
 
         case .setMaxStreamingBitrate:
             guard let bitrate = generalCommand.arguments?["Bitrate"], let bitrate = Int(bitrate) else { return }
 
-            mediaPlayerManager?.setBitrate(bitrate: PlaybackBitrate(for: bitrate))
+            mediaPlayerManager.currentSession?.setBitrate(bitrate: PlaybackBitrate(for: bitrate))
 
         case .setSubtitleStreamIndex:
             guard let index = generalCommand.arguments?["Index"], let index = Int(index) else { return }
 
-            mediaPlayerManager?.playbackItem?.selectedSubtitleStreamIndex = index
+            mediaPlayerManager.currentSession?.playbackItem?.selectedSubtitleStreamIndex = index
 
         case .displayContent:
             guard let itemID = generalCommand.arguments?["ItemId"] else { return }
@@ -194,32 +194,32 @@ extension UserSessionManager {
         Task { @MainActor in
             do {
                 let entry = try await userSession.getFullItem(id: id)
+
                 let mediaSource = entry.value?.mediaSources?.first {
                     $0.id == mediaSourceID
                 }
 
-                // Keep the record alive until the playback provider takes ownership
-                guard var provider = withExtendedLifetime(entry, {
-                    entry.snapshot.getPlaybackItemProvider(
+                let configuration = with(MediaPlaybackConfiguration()) {
+                    $0.selectMediaSource(id: mediaSource?.id)
+                    $0.startSeconds = startPositionTicks.map { .ticks($0) }
+                }
+
+                // Keep the record alive until the playback intent takes ownership
+                guard let intent = withExtendedLifetime(entry, {
+                    entry.snapshot.getPlaybackIntent(
                         userSession: userSession,
-                        mediaSource: mediaSource
+                        configuration: configuration
                     )
                 }) else { return }
 
-                if let startPositionTicks {
-                    provider = provider.modifyingItem { item in
-                        if item.userData == nil {
-                            item.userData = UserItemDataDto(key: "")
-                        }
-                        item.userData?.playbackPositionTicks = startPositionTicks
-                    }
+                // A command fetched for a previous login cannot start playback for the new user.
+                guard currentSession === userSession else { return }
+
+                let action = PlayMediaAction { [routePublisher] route in
+                    routePublisher.send(route)
                 }
 
-                if hasActivePlayback, let mediaPlayerManager {
-                    await mediaPlayerManager.playNewItem(provider: provider)
-                } else {
-                    routePublisher.send(.videoPlayer(provider: provider))
-                }
+                action(intent: intent)
             } catch {
                 logger.error(
                     "Unable to play item from socket command",

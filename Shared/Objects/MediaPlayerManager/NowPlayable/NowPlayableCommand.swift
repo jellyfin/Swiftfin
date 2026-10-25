@@ -9,7 +9,21 @@
 import Foundation
 import MediaPlayer
 
-enum NowPlayableCommand: CaseIterable {
+enum NowPlayableCommand: CaseIterable, Hashable, Sendable {
+
+    enum Action {
+
+        case play
+        case pause
+        case stop
+        case togglePausePlay
+        case nextTrack
+        case previousTrack
+        case skip(Duration)
+        case seek(Duration)
+        case rate(Double)
+        case language(MPNowPlayingInfoLanguageOption, enabled: Bool)
+    }
 
     // Play/Pause
     case pause
@@ -90,23 +104,78 @@ enum NowPlayableCommand: CaseIterable {
         }
     }
 
-    func removeHandler() {
-        remoteCommand.removeTarget(nil)
+    func action(for event: MPRemoteCommandEvent) -> Action? {
+        switch self {
+        case .play:
+            return .play
+
+        case .pause:
+            return .pause
+
+        case .stop:
+            return .stop
+
+        case .togglePausePlay:
+            return .togglePausePlay
+
+        case .nextTrack:
+            return .nextTrack
+
+        case .previousTrack:
+            return .previousTrack
+
+        case .skipBackward, .skipForward:
+            guard let event = event as? MPSkipIntervalCommandEvent, event.interval.isFinite, event.interval > 0 else { return nil }
+
+            return .skip(.seconds(self == .skipBackward ? -event.interval : event.interval))
+
+        case .changePlaybackPosition:
+            guard let event = event as? MPChangePlaybackPositionCommandEvent, event.positionTime.isFinite else { return nil }
+
+            return .seek(.seconds(event.positionTime))
+
+        case .changePlaybackRate:
+            guard let event = event as? MPChangePlaybackRateCommandEvent else { return nil }
+
+            return .rate(Double(event.playbackRate))
+
+        case .enableLanguageOption, .disableLanguageOption:
+            guard let event = event as? MPChangeLanguageOptionCommandEvent else { return nil }
+
+            return .language(event.languageOption, enabled: self == .enableLanguageOption)
+
+        default:
+            return nil
+        }
     }
 
-    func addHandler(_ handler: @escaping (NowPlayableCommand, MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus) {
-
-        remoteCommand.removeTarget(nil)
-
+    @MainActor
+    func addHandler(_ handler: @escaping @MainActor @Sendable (Action) -> MPRemoteCommandHandlerStatus) -> Any {
         switch self {
         case .skipBackward:
             MPRemoteCommandCenter.shared().skipBackwardCommand.preferredIntervals = [15.0]
         case .skipForward:
             MPRemoteCommandCenter.shared().skipForwardCommand.preferredIntervals = [15.0]
-        default: ()
+        default:
+            ()
         }
 
-        remoteCommand.addTarget { handler(self, $0) }
+        return remoteCommand.addTarget { @Sendable event in
+            // Remote commands can arrive outside the main actor. Return the actual result synchronously.
+            if Thread.isMainThread {
+                return MainActor.assumeIsolated {
+                    guard let action = action(for: event) else { return .commandFailed }
+
+                    return handler(action)
+                }
+            }
+
+            return DispatchQueue.main.sync {
+                guard let action = action(for: event) else { return .commandFailed }
+
+                return handler(action)
+            }
+        }
     }
 
     func isEnabled(_ isEnabled: Bool) {

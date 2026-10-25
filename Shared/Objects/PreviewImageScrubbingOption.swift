@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-// TODO: chapters fallback
 enum PreviewImageScrubbingOption: CaseIterable, Displayable, Hashable, Storable {
 
     case trickplay(fallbackToChapters: Bool = true)
@@ -21,15 +20,6 @@ enum PreviewImageScrubbingOption: CaseIterable, Displayable, Hashable, Storable 
             L10n.disabled
         case .chapters:
             L10n.chapters
-        }
-    }
-
-    // TODO: enhance full screen determination
-    //       - allow checking against image size?
-    var supportsFullscreen: Bool {
-        switch self {
-        case .trickplay: true
-        case .disabled, .chapters: false
         }
     }
 

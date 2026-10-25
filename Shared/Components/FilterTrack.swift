@@ -39,11 +39,13 @@ private struct FilterTrackLabelStyle: LabelStyle {
 struct FilterTrack: View {
 
     enum Style {
+
         case compact
         case regular
     }
 
     enum FocusTarget: Hashable {
+
         case options
         case filter(ItemFilterType)
 
@@ -99,6 +101,7 @@ struct FilterTrack: View {
             focus.wrappedValue = types.first.map(FocusTarget.filter)
         }
         #endif
+
         viewModel.reset(filterType: nil)
     }
 
@@ -134,7 +137,6 @@ struct FilterTrack: View {
         Button(L10n.clear, systemImage: "text.badge.xmark", role: .destructive, action: reset)
     }
 
-    @ViewBuilder
     private func button(for target: FocusTarget) -> some View {
         Group {
             switch target {

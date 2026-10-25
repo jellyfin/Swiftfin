@@ -18,13 +18,15 @@ final class FilterViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case cancel
         case getQueryFilters
         case reset(filterType: ItemFilterType?)
 
         var transition: Transition {
             switch self {
-            case .cancel, .reset: .none
+            case .cancel, .reset:
+                .none
             case .getQueryFilters:
                 .background(.retrievingQueryFilters)
             }
@@ -32,6 +34,7 @@ final class FilterViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case retrievingQueryFilters
     }
 
@@ -45,7 +48,7 @@ final class FilterViewModel: ViewModel {
     /// Fixed filters, excluded from selection state and reset actions
     let staticFilters: ItemFilterCollection
 
-    let parent: (any LibraryParent)?
+    let parent: any LibraryParent?
 
     var savableFilters: ItemFilterCollection {
         currentFilters
@@ -93,7 +96,7 @@ final class FilterViewModel: ViewModel {
     }
 
     init(
-        parent: (any LibraryParent)? = nil,
+        parent: any LibraryParent? = nil,
         currentFilters: ItemFilterCollection = .default,
         staticFilters: ItemFilterCollection = .default
     ) {

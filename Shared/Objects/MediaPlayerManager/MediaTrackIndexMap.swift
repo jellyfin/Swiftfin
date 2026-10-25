@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import CryptoKit
 import Foundation
 import JellyfinAPI
 
@@ -29,7 +28,7 @@ struct MediaTrackIndexMap {
     }
 
     /// Maps Jellyfin stream indexes to positions in each player track array.
-    /// Embedded tracks keep their order; transcoding exposes only the selected audio track.
+    /// Embedded tracks keep their order, while transcoding exposes only the selected audio track.
     /// Sidecar subtitles are resolved after loading.
     static func build(
         from mediaStreams: [MediaStream],
@@ -62,26 +61,5 @@ struct MediaTrackIndexMap {
         }
 
         return indexMap
-    }
-
-    /// Maps each sidecar to its loaded subtitle track.
-    func resolvingSidecarSubtitles(
-        _ sidecars: [(jellyfinIndex: Int, url: URL)],
-        subtitleTracks: [(playerIndex: Int, id: String)]
-    ) -> MediaTrackIndexMap {
-        var resolvedMap = self
-
-        for subtitle in sidecars {
-            // Match libVLC's MD5(full URL)/spu/... track IDs in SwiftVLC 1.0.0.
-            // https://github.com/videolan/vlc/blob/c833c4be0/src/input/input.c#L2742-L2765
-            let urlHash = Insecure.MD5.hash(data: Data(subtitle.url.absoluteString.utf8))
-                .map { String(format: "%02x", $0) }
-                .joined()
-            resolvedMap.playerIndexesByJellyfinIndex[subtitle.jellyfinIndex] = subtitleTracks.first {
-                $0.playerIndex >= 0 && $0.id.hasPrefix("\(urlHash)/spu/")
-            }?.playerIndex
-        }
-
-        return resolvedMap
     }
 }

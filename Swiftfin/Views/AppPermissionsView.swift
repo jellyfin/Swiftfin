@@ -24,7 +24,8 @@ struct AppPermissionsView: View {
                     StateAdapter(initialValue: nil as String?) { errorMessage in
                         Button {
                             switch status {
-                            case .authorized: ()
+                            case .authorized:
+                                ()
                             default:
                                 Task { @MainActor in
                                     do {
@@ -86,9 +87,7 @@ struct AppPermissionsView: View {
                     systemName: "gearshape.fill",
                     external: true
                 ) {
-                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-
-                    UIApplication.shared.open(url)
+                    Task { try? await SystemSettings.application.open() }
                 }
             } footer: {
                 Text(L10n.permissionsSettingsAppFooter)

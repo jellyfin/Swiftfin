@@ -33,6 +33,10 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
 
     @State
     private var needsToSetTranslationStartState: Bool = true
+    @GestureState
+    private var isDragging = false
+    @State
+    private var isInteractionActive = false
 
     @State
     private var hapticGenerator: UIImpactFeedbackGenerator = .init(style: .light)
@@ -44,6 +48,7 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
     let valueDamping: Double
     let gesturePadding: CGFloat
     let onEditingChanged: (Bool) -> Void
+    let onEditingCancelled: () -> Void
 
     private var gestureHeight: CGFloat {
         guard contentSize.height.isFinite else { return 0 }
@@ -55,7 +60,8 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
     }
 
     private var dragGesture: some Gesture {
-        DragGesture(coordinateSpace: .global)
+        DragGesture(minimumDistance: 0, coordinateSpace: .global)
+            .updating($isDragging) { _, active, _ in active = true }
             .onChanged { newValue in
                 guard isScrollingEnabled,
                       contentSize.width.isFinite,
@@ -67,6 +73,8 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
                 }
 
                 if needsToSetTranslationStartState {
+                    isInteractionActive = true
+                    onEditingChanged(true)
                     translationStartLocation = newValue.location
                     needsToSetTranslationStartState = false
 
@@ -103,6 +111,12 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
 
                 value = clamp(newProgress, min: 0, max: total)
             }
+            .onEnded { _ in
+                guard isInteractionActive else { return }
+
+                isInteractionActive = false
+                onEditingChanged(false)
+            }
     }
 
     func body(content: Content) -> some View {
@@ -113,17 +127,13 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
                     .frame(height: gestureHeight)
                     .contentShape(Rectangle())
                     .highPriorityGesture(dragGesture)
-                    .onLongPressGesture(minimumDuration: 0.01, perform: {}) { isPressing in
-                        if isPressing {
-                            guard isScrollingEnabled else { return }
-
-                            onEditingChanged(true)
-                            needsToSetTranslationStartState = true
-                        } else {
-                            onEditingChanged(false)
-                        }
-                    }
             }
+            .onChange(of: isDragging) {
+                if !isDragging, isInteractionActive {
+                    cancelEditing()
+                }
+            }
+            .onDisappear { cancelEditing() }
             .trackingSize($contentSize)
             .onChange(of: value) {
                 let newValue = value
@@ -146,5 +156,13 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
                     needsToSetTranslationStartState = true
                 }
             }
+    }
+
+    private func cancelEditing() {
+        guard isInteractionActive else { return }
+
+        isInteractionActive = false
+        onEditingCancelled()
+        onEditingChanged(false)
     }
 }

@@ -16,7 +16,6 @@ struct LetterPickerBarModifier: ViewModifier {
 
     let viewModel: FilterViewModel?
 
-    @ViewBuilder
     func body(content: Content) -> some View {
         if let edge = letterPickerOrientation.edge,
            let viewModel,

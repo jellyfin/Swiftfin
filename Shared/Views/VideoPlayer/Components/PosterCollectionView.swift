@@ -55,7 +55,6 @@ extension VideoPlayer {
             return element.id == currentElementID
         }
 
-        @ViewBuilder
         private func elementRow(_ element: Data.Element) -> some View {
             ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
                 PosterImage(item: element, type: displayType, size: size)
@@ -75,7 +74,6 @@ extension VideoPlayer {
             .accessibilityAddTraits(isCurrent(element) ? .isSelected : [])
         }
 
-        @ViewBuilder
         private func elementButton(_ element: Data.Element) -> some View {
             PosterButton(item: element, displayType: displayType, size: size) { _ in
                 action(element)

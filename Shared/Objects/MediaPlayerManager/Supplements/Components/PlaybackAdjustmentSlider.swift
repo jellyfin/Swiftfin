@@ -58,7 +58,6 @@ struct PlaybackAdjustmentSlider: View {
         #endif
     }
 
-    @ViewBuilder
     private var presetButtons: some View {
         ForEach(presets, id: \.self) { preset in
             Button {
@@ -98,9 +97,12 @@ struct PlaybackAdjustmentSlider: View {
                         .accessibilityValue(formatValue(value))
                         .accessibilityAdjustableAction { direction in
                             switch direction {
-                            case .increment: sliderValue.wrappedValue = value + step
-                            case .decrement: sliderValue.wrappedValue = value - step
-                            @unknown default: break
+                            case .increment:
+                                sliderValue.wrappedValue = value + step
+                            case .decrement:
+                                sliderValue.wrappedValue = value - step
+                            @unknown default:
+                                break
                             }
                         }
 

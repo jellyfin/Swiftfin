@@ -41,7 +41,6 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
-        @ViewBuilder
         private func userGridButton(for item: UserItem) -> some View {
             UserButton(
                 user: item.user,
@@ -57,6 +56,12 @@ extension SelectUserView {
                 onDelete(item.user)
             }
             .isSelected(selectedUsers.contains(item.user))
+            #if os(tvOS)
+            .if(item.user.id == userItems.first?.user.id) { view in
+                view
+                    .coordinatedFocus(Focus.focusedUserButton.rawValue)
+            }
+            #endif
         }
 
         var iOSView: some View {

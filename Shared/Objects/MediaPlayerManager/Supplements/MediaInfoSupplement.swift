@@ -10,24 +10,27 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: scroll if description too long
-// TODO: move currentProgram tracking to a MediaPlayerObserver
 
-struct MediaInfoSupplement: MediaPlayerSupplement {
+@MainActor
+struct MediaInfoSupplement {
 
     let displayTitle: String = L10n.info
     @SharedBaseItem
     var item: BaseItemDto
 
-    var id: String {
-        "MediaInfo-\(item.id ?? "any")"
-    }
+    nonisolated let id: String
 
-    var videoPlayerBody: some PlatformView {
-        InfoOverlay(item: item)
+    init(item: BaseItemDto) {
+        self.item = item
+        self.id = "MediaInfo-\(item.id ?? "any")"
     }
 }
 
-extension MediaInfoSupplement {
+extension MediaInfoSupplement: VideoPlayerSupplement {
+
+    var body: some View {
+        InfoOverlay(item: item)
+    }
 
     private struct InfoOverlay: PlatformView {
 
@@ -36,8 +39,8 @@ extension MediaInfoSupplement {
 
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         @SharedBaseItem
         private var item: BaseItemDto
@@ -45,12 +48,14 @@ extension MediaInfoSupplement {
         @StateObject
         private var recordingViewModel: RecordingTimerViewModel
 
+        @State
+        private var endsAtLabel: String?
+
         init(item: BaseItemDto) {
             self.item = item
             self._recordingViewModel = StateObject(wrappedValue: RecordingTimerViewModel(item: item))
         }
 
-        @ViewBuilder
         private var accessoryView: some View {
             VStack(alignment: .leading) {
                 DotHStack {
@@ -58,6 +63,7 @@ extension MediaInfoSupplement {
                         if let premiereDateLabel = item.premiereDateLabel {
                             Text(premiereDateLabel)
                         }
+
                         if let seasonEpisodeLocator = item.seasonEpisodeLabel {
                             Text(seasonEpisodeLocator)
                         }
@@ -72,6 +78,17 @@ extension MediaInfoSupplement {
                     if let officialRating = item.officialRating {
                         Text(officialRating)
                     }
+
+                    if let endsAtLabel {
+                        Text(endsAtLabel)
+                    }
+                }
+            }
+            .onChange(of: mediaSession.seconds, initial: true) { _, seconds in
+                let newLabel = makeEndsAtLabel(seconds: seconds)
+
+                if newLabel != endsAtLabel {
+                    endsAtLabel = newLabel
                 }
             }
         }
@@ -129,11 +146,10 @@ extension MediaInfoSupplement {
             .errorMessage($recordingViewModel.error)
         }
 
-        @ViewBuilder
         private var fromBeginningButton: some View {
             Button {
-                manager.proxy?.setSeconds(.zero)
-                manager.setPlaybackRequestStatus(status: .playing)
+                mediaSession.seek(to: .zero)
+                mediaSession.setPlaybackRequestStatus(status: .playing)
                 viewState.selectedSupplementID = nil
             } label: {
                 Label(L10n.fromBeginning, systemImage: "play.fill")
@@ -157,12 +173,11 @@ extension MediaInfoSupplement {
             }
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
-            .task(id: item.currentProgram?.endDate) {
-                await updateCurrentProgram()
+            .task(id: item.currentProgram?.id) {
+                await recordingViewModel.refresh()
             }
         }
 
-        @ViewBuilder
         private var iOSCompactView: some View {
             VStack(alignment: .leading) {
                 Text(item.displayTitle)
@@ -203,7 +218,6 @@ extension MediaInfoSupplement {
             .edgePadding()
         }
 
-        @ViewBuilder
         private var regularContent: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                 // TODO: determine what to do with non-portrait (channel, home video) images
@@ -274,20 +288,23 @@ extension MediaInfoSupplement {
                 .edgePadding()
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .focusSection()
-                .task(id: item.currentProgram?.endDate) {
-                    await updateCurrentProgram()
+                .task(id: item.currentProgram?.id) {
+                    await recordingViewModel.refresh()
                 }
         }
 
-        private func updateCurrentProgram() async {
-            guard let userSession = manager.userSession,
-                  let endDate = item.currentProgram?.endDate
-            else { return }
+        private func makeEndsAtLabel(seconds: Duration) -> String? {
+            guard !item.isLiveStream,
+                  item.type != .recording,
+                  let runtime = item.runtime,
+                  runtime > .zero,
+                  mediaSession.rate > 0
+            else { return nil }
 
-            try? await Task.sleep(for: .seconds(max(endDate.timeIntervalSinceNow + 1, 1)))
+            let remaining = max(runtime - seconds, .zero)
+            let endDate = Date.now.addingTimeInterval(remaining.seconds / mediaSession.rate)
 
-            _ = try? await userSession.getFullItem(item)
-            await recordingViewModel.refresh()
+            return L10n.endsAt(endDate.formatted(date: .omitted, time: .shortened))
         }
     }
 }

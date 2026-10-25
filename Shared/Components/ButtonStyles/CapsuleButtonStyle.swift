@@ -120,7 +120,6 @@ struct CapsuleButtonStyle: ButtonStyle {
         return isFocused || isSelectionActive ? 1 : 0.8
     }
 
-    @ViewBuilder
     private var background: some View {
         // Keep the glass configuration stable as focus and selection change.
         Color.clear

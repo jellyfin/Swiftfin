@@ -21,16 +21,30 @@ extension VideoPlayer.PlaybackControls {
 
     struct PlaybackProgress: View {
 
+        private struct GlassSliderStyle: SliderContainerStyle {
+
+            func makeBody(configuration: SliderContainerStyleConfiguration) -> some View {
+                CapsuleSliderStyle()
+                    .makeBody(configuration: configuration)
+                    .background {
+                        // Glass must not composite or clip the expanding progress fill.
+                        Color.clear
+                            .backport
+                            .glassEffect(.regular.interactive(false), in: .capsule)
+                            .allowsHitTesting(false)
+                    }
+            }
+        }
+
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<Duration>
-
+        @Environment(\.accessibilityReduceMotion)
+        private var reduceMotion
+        @Environment(MediaSession.self)
+        private var mediaSession
         @State
         private var currentTranslation: CGPoint = .zero
 
@@ -38,12 +52,11 @@ extension VideoPlayer.PlaybackControls {
         private var sliderSize: CGSize = .zero
 
         private var isScrubbing: Bool {
-            get {
-                viewState.isScrubbing
-            }
-            nonmutating set {
-                viewState.isScrubbing = newValue
-            }
+            viewState.isScrubbing
+        }
+
+        private var isLoading: Bool {
+            mediaSession.activity == .loading || mediaSession.playbackState.isBuffering
         }
 
         private var isSlowScrubbing: Bool {
@@ -61,11 +74,12 @@ extension VideoPlayer.PlaybackControls {
 
             let videoWidth = 85 * videoSizeAspectRatio
             let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
+
             return clamp(p, min: 0, max: max(0, sliderSize.width - videoWidth))
         }
 
         private var scrubbedProgress: Double {
-            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+            guard let runtime = mediaSession.item.runtime, runtime > .zero else { return 0 }
 
             let progress = scrubbedSeconds / runtime
             guard progress.isFinite else { return 0 }
@@ -74,13 +88,13 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var scrubbedSeconds: Duration {
-            scrubbedSecondsBox.value
+            viewState.scrubbedSeconds
         }
 
         private var videoSizeAspectRatio: CGFloat {
-            guard let aspectRatio = (manager.proxy as? any VideoMediaPlayerProxy)?
+            guard let aspectRatio = (mediaSession.player as? any VideoMediaPlayer)?
+                .videoState
                 .videoSize
-                .value
                 .aspectRatio
             else {
                 return 1.77
@@ -90,13 +104,12 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var sliderTotal: Double {
-            let total = (manager.item.runtime ?? .zero).seconds
+            let total = (mediaSession.item.runtime ?? .zero).seconds
             guard total.isFinite, total > 0 else { return 1 }
 
             return total
         }
 
-        @ViewBuilder
         private var liveIndicator: some View {
             Text(L10n.live)
                 .font(.subheadline)
@@ -110,7 +123,6 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
-        @ViewBuilder
         private var slowScrubbingIndicator: some View {
             HStack {
                 Image(systemName: "backward.fill")
@@ -120,7 +132,6 @@ extension VideoPlayer.PlaybackControls {
             .font(.caption)
         }
 
-        @ViewBuilder
         private var capsuleSlider: some View {
             AlternateLayoutView {
                 EmptyHitTestView()
@@ -131,40 +142,52 @@ extension VideoPlayer.PlaybackControls {
                 let xScale = insetSliderWidth > 0 ? max(1, sliderSize.width / insetSliderWidth) : 1
 
                 SliderContainer(
-                    value: $scrubbedSecondsBox.value.map(
+                    value: Bindable(viewState).scrubbedSeconds.map(
                         getter: { $0.seconds },
                         setter: { .seconds($0) }
                     ),
-                    total: sliderTotal
+                    total: sliderTotal,
+                    isScrollingEnabled: mediaSession.canSeek
                 )
                 .translation($currentTranslation)
                 .valueDamping(isSlowScrubbing ? 0.1 : 1)
                 .gesturePadding(30)
                 .onEditingChanged { newValue in
-                    isScrubbing = newValue
+                    if newValue {
+                        viewState.beginScrub()
+                    } else {
+                        viewState.commitScrub()
+                    }
                 }
+                .onEditingCancelled { viewState.cancelScrub() }
+                .sliderContainerStyle(GlassSliderStyle())
                 .if(chapterSlider) { view in
-                    view.ifLet(manager.item.chapters) { view, chapters in
+                    view.ifLet(mediaSession.item.chapters) { view, chapters in
                         if chapters.isEmpty {
                             view
                         } else {
-                            view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
+                            view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: mediaSession.item.runtime ?? .zero) }
                         }
                     }
                 }
                 .frame(maxWidth: sliderSize != .zero ? insetSliderWidth : .infinity)
                 .scaleEffect(x: isScrubbing ? xScale : 1, y: 1, anchor: .center)
                 .frame(height: isScrubbing ? 20 : 10)
-                .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
+                .foregroundStyle(mediaSession.canSeek ? Color.white : Color.gray)
+                .phaseAnimator(isLoading && !reduceMotion ? [false, true] : [false]) { content, dimmed in
+                    content.opacity(dimmed ? 0.8 : 1)
+                } animation: { _ in
+                    .easeInOut(duration: 1.1)
+                }
             }
             .animation(.linear(duration: 0.05), value: scrubbedSeconds)
             .frame(height: 10)
-            .disabled(manager.state == .loadingItem)
+            .disabled(!mediaSession.canSeek)
         }
 
         var body: some View {
             VStack(spacing: 5) {
-                if manager.item.isLiveStream {
+                if mediaSession.item.isLiveStream {
                     liveIndicator
                         .edgePadding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -180,7 +203,7 @@ extension VideoPlayer.PlaybackControls {
             .frame(maxWidth: .infinity)
             .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
             .overlay(alignment: .topLeading) {
-                if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
+                if isScrubbing, let previewImageProvider = mediaSession.playbackItem?.previewImageProvider {
                     PreviewImageView(previewImageProvider: previewImageProvider)
                         .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
                         .frame(height: 85)
