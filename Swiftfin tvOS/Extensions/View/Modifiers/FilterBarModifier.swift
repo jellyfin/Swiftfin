@@ -26,7 +26,6 @@ struct FilterBarModifier: ViewModifier {
         letterPickerOrientation == .trailing ? .leading : .trailing
     }
 
-    @ViewBuilder
     private var filters: some View {
         VStack(spacing: 20) {
             ForEach(subviews: FilterTrack(

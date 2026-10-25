@@ -9,17 +9,30 @@
 import SwiftfinMacros
 import SwiftUI
 
-extension UIInterfaceOrientationMask: @retroactive CustomDebugStringConvertible {
-    public var debugDescription: String {
+#if os(iOS)
+extension UIInterfaceOrientationMask: @retroactive CustomDebugStringConvertible {}
+#endif
+
+public extension UIInterfaceOrientationMask {
+
+    var debugDescription: String {
         switch self {
-        case .all: "All Orientations"
-        case .allButUpsideDown: "All But Upside Down"
-        case .portrait: "Portrait"
-        case .portraitUpsideDown: "Portrait Upside Down"
-        case .landscape: "Landscape"
-        case .landscapeLeft: "Landscape Left"
-        case .landscapeRight: "Landscape Right"
-        default: "Unknown"
+        case .all:
+            "All Orientations"
+        case .allButUpsideDown:
+            "All But Upside Down"
+        case .portrait:
+            "Portrait"
+        case .portraitUpsideDown:
+            "Portrait Upside Down"
+        case .landscape:
+            "Landscape"
+        case .landscapeLeft:
+            "Landscape Left"
+        case .landscapeRight:
+            "Landscape Right"
+        default:
+            "Unknown"
         }
     }
 }
@@ -50,9 +63,10 @@ public extension View {
 
 #if os(tvOS)
 @OptionSet<Int>
-public struct UIInterfaceOrientationMask {
+public struct UIInterfaceOrientationMask: CustomDebugStringConvertible {
 
     private enum Options: Int {
+
         case portrait = 1
         case landscapeLeft = 4
         case landscapeRight = 3

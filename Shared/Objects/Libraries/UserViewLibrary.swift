@@ -42,6 +42,7 @@ struct UserViewLibrary: PagingLibrary {
 
         let excludedLibraryIDs = try await currentUser.value.configuration?.myMediaExcludes ?? []
         let response = try await userViews
+
         return try pageState.items(from: response)
             .filter { patch in
                 CollectionType.supportedCases.contains(patch.value.collectionType ?? .folders) &&
@@ -55,6 +56,7 @@ struct UserViewLibrary: PagingLibrary {
 
             return .userView(ItemEntry(item: record))
         }
+
         return elements.prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
     }
 }
@@ -139,16 +141,22 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         }
     }
 
-    @ViewBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
     ) -> some View {
-        switch libraryStyle.displayType {
-        case .grid:
-            UserViewLibraryGridElement(element: self)
-        case .list:
-            UserViewLibraryListElement(element: self)
+        Group {
+            switch libraryStyle.displayType {
+            case .grid:
+                UserViewLibraryGridElement(element: self)
+            case .list:
+                UserViewLibraryListElement(element: self)
+            }
+        }
+        .contextMenu {
+            if case let .userView(item) = self {
+                ShuffleButton(item: item.snapshot)
+            }
         }
     }
 }
@@ -215,7 +223,6 @@ private struct UserViewLibraryGridElement: View {
         .accessibilityLabel(element.displayTitle)
     }
 
-    @ViewBuilder
     private var titleLabel: some View {
         Text(element.displayTitle)
             .font(.title2)
@@ -225,7 +232,6 @@ private struct UserViewLibraryGridElement: View {
             .frame(alignment: .center)
     }
 
-    @ViewBuilder
     private func titleLabelOverlay(with content: some View) -> some View {
         ZStack {
             content
@@ -284,7 +290,6 @@ private struct UserViewLibraryListElement: View {
         }
     }
 
-    @ViewBuilder
     private var imageView: some View {
         ZStack {
             Color.secondarySystemFill
@@ -312,9 +317,9 @@ private struct UserViewLibraryListElement: View {
     }
 }
 
+@MainActor
 private extension UserViewLibraryElement {
 
-    @MainActor
     func libraryImageSources(useRandomImage: Bool) async -> [ImageSource] {
         switch self {
         case .favorites:
@@ -329,7 +334,6 @@ private extension UserViewLibraryElement {
         }
     }
 
-    @MainActor
     func randomItemImageSources() async throws -> [ImageSource] {
         guard let userSession = Container.shared.currentUserSession() else {
             throw UserSessionError.missingCurrentSession

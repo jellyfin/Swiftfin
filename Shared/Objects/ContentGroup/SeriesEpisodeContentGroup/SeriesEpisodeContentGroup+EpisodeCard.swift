@@ -19,6 +19,9 @@ extension SeriesEpisodeContentGroup {
         @Router
         private var router
 
+        @PlayMedia
+        private var playMedia
+
         @SharedBaseItem
         var episode: BaseItemDto
 
@@ -36,16 +39,11 @@ extension SeriesEpisodeContentGroup {
                 subHeader: episode.episodeLocator ?? .emptyDash,
                 content: episodeContent,
                 artworkAction: {
-                    guard let provider = episode.getPlaybackItemProvider(userSession: nil) else {
+                    guard let intent = episode.getPlaybackIntent(userSession: nil) else {
                         return
                     }
 
-                    router.route(
-                        to: .videoPlayer(
-                            provider: provider,
-                            queue: EpisodeMediaPlayerQueue(episode: episode)
-                        )
-                    )
+                    playMedia(intent: intent)
                 },
                 contentAction: {
                     router.route(to: .item(item: episode), in: namespace)
@@ -136,6 +134,7 @@ extension SeriesEpisodeContentGroup {
 
         private var contentAccessibilityLabel: String {
             let title = contextMenuItem?.posterAccessibility(configuration: posterConfiguration).label
+
             return PosterAccessibility.joined([title ?? header, contextMenuItem == nil ? subHeader : nil, content])
         }
 
@@ -157,7 +156,6 @@ extension SeriesEpisodeContentGroup {
             self.artwork = artwork()
         }
 
-        @ViewBuilder
         private func contextMenuPreview(for item: BaseItemDto) -> some View {
             VStack(alignment: .leading) {
                 PosterImage(

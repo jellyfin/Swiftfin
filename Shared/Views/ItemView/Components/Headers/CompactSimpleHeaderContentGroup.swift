@@ -57,7 +57,6 @@ extension ItemView {
                 }
             }
 
-            @ViewBuilder
             private var peopleContent: some View {
                 HStack(alignment: .bottom, spacing: 12) {
                     PosterImage(
@@ -97,7 +96,7 @@ extension ItemView {
                     ItemView.AttributesHStack(
                         attributes: attributes,
                         item: provider.item,
-                        selectedMediaSource: provider.mediaPlayerItemProvider?.mediaSource,
+                        selectedMediaSource: provider.playbackIntent?.mediaSource,
                         alignment: .leading
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)

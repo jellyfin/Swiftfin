@@ -19,19 +19,18 @@ extension VideoPlayer.PlaybackControls {
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         @Router
         private var router
 
-        @ViewBuilder
         private var closeButton: some View {
             Button {
                 if viewState.isPresentingSupplement {
                     viewState.selectedSupplementID = nil
                 } else {
-                    manager.stop()
+                    mediaSession.stop()
                     router.dismiss()
                 }
             } label: {
@@ -44,7 +43,6 @@ extension VideoPlayer.PlaybackControls {
             .frame(width: Self.buttonSize, height: Self.buttonSize)
         }
 
-        @ViewBuilder
         private var content: some View {
             HStack(alignment: UIDevice.isTV ? .bottom : .center) {
 
@@ -53,7 +51,7 @@ extension VideoPlayer.PlaybackControls {
                         .modifier(OverlayBarButtonStyleModifier())
                 }
 
-                TitleView(item: manager.item)
+                TitleView(item: mediaSession.item)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 ActionButtons()
@@ -86,16 +84,13 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         var item: BaseItemDto
 
         private var _titleSubtitle: (title: String, subtitle: String?) {
-            if item.type == .episode {
-                if let parentTitle = item.parentTitle {
-                    return (title: parentTitle, subtitle: item.seasonEpisodeLabel)
-                }
+            if item.type == .episode, let parentTitle = item.parentTitle {
+                return (title: parentTitle, subtitle: item.seasonEpisodeLabel)
             }
 
             return (title: item.displayTitle, subtitle: nil)
         }
 
-        @ViewBuilder
         private func _subtitle(_ subtitle: String) -> some View {
             Text(subtitle)
                 .font(UIDevice.isTV ? .caption : .subheadline)

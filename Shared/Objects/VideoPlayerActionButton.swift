@@ -6,6 +6,8 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
+
 enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable {
 
     case aspectFill
@@ -20,6 +22,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     case subtitles
     #if os(iOS)
     case gestureLock
+    case playbackDestination
     #endif
     case subtitleOffset
 
@@ -48,6 +51,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         #if os(iOS)
         case .gestureLock:
             L10n.gestureLock
+        case .playbackDestination:
+            L10n.cast
         #endif
         case .subtitleOffset:
             L10n.subtitleOffset
@@ -99,6 +104,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .audio: "speaker.wave.2.fill"
         case .audioOffset: "waveform.path"
         case .autoPlay: usesLiquidGlassSymbols ? "play.fill" : "play.circle.fill"
+        case .playbackDestination: "airplayvideo"
         case .gestureLock: usesLiquidGlassSymbols ? "lock.fill" : "lock.circle.fill"
         case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
@@ -135,12 +141,28 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     }
     #endif
 
-    static let defaultBarActionButtons: [VideoPlayerActionButton] = [
-        .aspectFill,
-        .autoPlay,
-        .playPreviousItem,
-        .playNextItem,
-    ]
+    static var supportedCases: [Self] {
+        #if os(iOS)
+        allCases.filter { $0 != .playbackDestination || Defaults[.Experimental.chromecast] }
+        #elseif os(tvOS)
+        allCases.filter { $0 != .pictureInPicture }
+        #else
+        allCases
+        #endif
+    }
+
+    static let defaultBarActionButtons: [VideoPlayerActionButton] = {
+        var buttons: [VideoPlayerActionButton] = [
+            .aspectFill,
+            .autoPlay,
+            .playPreviousItem,
+            .playNextItem,
+        ]
+        #if os(iOS)
+        buttons.append(.playbackDestination)
+        #endif
+        return buttons
+    }()
 
     static let defaultMenuActionButtons: [VideoPlayerActionButton] = [
         .audio,
@@ -150,5 +172,5 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         .playbackSpeed,
         .pictureInPicture,
         .playbackSettings,
-    ]
+    ].filter { supportedCases.contains($0) }
 }

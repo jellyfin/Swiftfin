@@ -43,31 +43,29 @@ extension BaseItemDto: LibraryElement {
         }
     }
 
-    @ViewBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
     ) -> some View {
         switch libraryStyle.displayType {
         case .grid:
-            BaseItemDtoLibraryGridElement(item: self, libraryStyle: libraryStyle)
+            BaseItemDtoLibraryGridElement(item: self, libraryStyle: libraryStyle, action: action)
         case .list:
-            BaseItemDtoLibraryListElement(item: self, libraryStyle: libraryStyle)
+            BaseItemDtoLibraryListElement(item: self, libraryStyle: libraryStyle, action: action)
         }
     }
 }
 
 private struct BaseItemDtoLibraryGridElement: View {
 
-    @Namespace
-    private var namespace
-
     @Router
     private var router
 
     @SharedBaseItem
     var item: BaseItemDto
+
     let libraryStyle: LibraryStyle
+    let action: (() -> Void)?
 
     private var resolvedLibraryStyle: LibraryStyle {
         item.resolvedLibraryStyle(libraryStyle)
@@ -78,12 +76,21 @@ private struct BaseItemDtoLibraryGridElement: View {
             item: item,
             displayType: resolvedLibraryStyle.posterDisplayType
         ) { namespace in
-            item.libraryDidSelectElement(router: router, in: namespace)
+            if let action {
+                action()
+            } else {
+                item.libraryDidSelectElement(router: router, in: namespace)
+            }
         }
     }
 }
 
 private struct BaseItemDtoLibraryListElement: View {
+
+    @Environment(\.isEditing)
+    private var isEditing
+    @Environment(\.isSelected)
+    private var isSelected
 
     @Namespace
     private var namespace
@@ -93,53 +100,14 @@ private struct BaseItemDtoLibraryListElement: View {
 
     @SharedBaseItem
     var item: BaseItemDto
+
     let libraryStyle: LibraryStyle
+    let action: (() -> Void)?
 
     private var resolvedLibraryStyle: LibraryStyle {
         item.resolvedLibraryStyle(libraryStyle)
     }
 
-    var body: some View {
-        ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
-            PosterImage(
-                item: item,
-                type: resolvedLibraryStyle.posterDisplayType,
-                size: .extraSmall
-            )
-            .subtleShadow()
-            .frame(width: resolvedLibraryStyle.posterDisplayType == .landscape ? baseItemListLandscapeWidth : baseItemListPortraitWidth)
-        } content: {
-            VStack(alignment: .leading, spacing: 5) {
-                Text(item.displayTitle)
-                    .font(.callout)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.primary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-
-                if let program = item.currentProgram {
-                    currentProgramView(program)
-                } else if item.type == .program {
-                    currentProgramView(item)
-                } else {
-                    accessoryView
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        } action: {
-            item.libraryDidSelectElement(router: router, in: namespace)
-        }
-        #if !os(tvOS)
-        .matchedTransitionSource(id: "item", in: namespace)
-        #endif
-        #if os(tvOS)
-        .focusedValue(\.focusedPoster, AnyPoster(item))
-        #endif
-    }
-
-    @ViewBuilder
     private func currentProgramView(_ program: BaseItemDto) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             if program.id != item.id {
@@ -163,6 +131,7 @@ private struct BaseItemDtoLibraryListElement: View {
                     }
 
                     Text(start, style: .time)
+
                     Text(end, style: .time)
 
                     if program.isRecording && program.isAiring {
@@ -176,7 +145,6 @@ private struct BaseItemDtoLibraryListElement: View {
         }
     }
 
-    @ViewBuilder
     private var accessoryView: some View {
         DotHStack {
             if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLabel {
@@ -193,5 +161,58 @@ private struct BaseItemDtoLibraryListElement: View {
                 Text(officialRating)
             }
         }
+    }
+
+    var body: some View {
+        ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+            PosterImage(
+                item: item,
+                type: resolvedLibraryStyle.posterDisplayType,
+                size: .extraSmall
+            )
+            .subtleShadow()
+            .frame(width: resolvedLibraryStyle.posterDisplayType == .landscape ? baseItemListLandscapeWidth : baseItemListPortraitWidth)
+            .overlay {
+                Color.black
+                    .opacity(isEditing && !isSelected ? 0.5 : 0.0)
+            }
+        } content: {
+            HStack {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(item.displayTitle)
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(
+                            isEditing ? (isSelected ? .primary : .secondary) : .primary
+                        )
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+
+                    if let program = item.currentProgram {
+                        currentProgramView(program)
+                    } else if item.type == .program {
+                        currentProgramView(item)
+                    } else {
+                        accessoryView
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                ListRowCheckbox()
+            }
+        } action: {
+            if let action {
+                action()
+            } else {
+                item.libraryDidSelectElement(router: router, in: namespace)
+            }
+        }
+        #if os(tvOS)
+        .focusedValue(\.focusedPoster, AnyPoster(item))
+        #else
+            .matchedTransitionSource(id: "item", in: namespace)
+        #endif
     }
 }

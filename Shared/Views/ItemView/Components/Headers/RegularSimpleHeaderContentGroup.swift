@@ -32,7 +32,6 @@ extension ItemView {
                 provider.item.type == .person ? .portrait : .landscape
             }
 
-            @ViewBuilder
             private var title: some View {
                 VStack(alignment: .leading, spacing: 5) {
                     if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
@@ -91,7 +90,7 @@ extension ItemView {
                         ItemView.AttributesHStack(
                             attributes: attributes,
                             item: provider.item,
-                            selectedMediaSource: provider.mediaPlayerItemProvider?.mediaSource,
+                            selectedMediaSource: provider.playbackIntent?.mediaSource,
                             alignment: .leading
                         )
                         .foregroundStyle(.secondary)

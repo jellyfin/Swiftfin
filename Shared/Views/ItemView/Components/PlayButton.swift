@@ -19,38 +19,26 @@ struct PlayButton: View {
     @ObservedObject
     var provider: ItemContentGroupProvider
 
-    @Router
-    private var router
+    @PlayMedia
+    private var playMedia
 
     private var mediaSource: String? {
-        guard provider.mediaPlayerItemProvider?.item.mediaSources?.count ?? 0 > 1 else { return nil }
+        guard provider.playbackIntent?.item.mediaSources?.count ?? 0 > 1 else { return nil }
 
-        return provider.mediaPlayerItemProvider?.mediaSource?.displayTitle
+        return provider.playbackIntent?.mediaSource?.displayTitle
     }
 
     private func play(fromBeginning: Bool = false) {
-        let mediaPlayerItemProvider = if fromBeginning {
-            provider.mediaPlayerItemProvider?.modifyingItem {
-                $0.userData?.playbackPositionTicks = 0
-            }
-        } else {
-            provider.mediaPlayerItemProvider
-        }
-
-        guard let mediaPlayerItemProvider else {
-            provider.logger.error("Play selected with no playback item provider")
+        guard var playbackIntent = provider.playbackIntent else {
+            provider.logger.error("Play selected with no playback intent")
             return
         }
 
-        let queue: (any MediaPlayerQueue)? = mediaPlayerItemProvider.item.type == .episode ?
-            EpisodeMediaPlayerQueue(episode: mediaPlayerItemProvider.item) : nil
+        if fromBeginning {
+            playbackIntent.configuration.startSeconds = .zero
+        }
 
-        router.route(
-            to: .videoPlayer(
-                provider: mediaPlayerItemProvider,
-                queue: queue
-            )
-        )
+        playMedia(intent: playbackIntent)
     }
 
     var body: some View {
@@ -61,7 +49,7 @@ struct PlayButton: View {
                 Image(systemName: "play.fill")
 
                 VStack(spacing: 2) {
-                    Text(provider.mediaPlayerItemProvider?.item.playButtonLabel ?? L10n.play)
+                    Text(provider.playbackIntent?.item.playButtonLabel ?? L10n.play)
 
                     if let mediaSource {
                         Marquee(mediaSource, speed: 40, delay: 3, fade: 5)
@@ -85,14 +73,14 @@ struct PlayButton: View {
         .buttonBorderShape(.capsule)
         .buttonStyle(BasicHoverButtonStyle())
         .accessibilityLabel(L10n.play)
-        .accessibilityValue(provider.mediaPlayerItemProvider?.item.playButtonLabel ?? L10n.play)
+        .accessibilityValue(provider.playbackIntent?.item.playButtonLabel ?? L10n.play)
         .contextMenu {
-            if provider.mediaPlayerItemProvider?.item.userData?.playbackPositionTicks != 0 {
+            if (provider.playbackIntent?.item.userData?.playbackPositionTicks ?? 0) > 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
                     play(fromBeginning: true)
                 }
             }
         }
-        .disabled(provider.mediaPlayerItemProvider == nil)
+        .disabled(provider.playbackIntent == nil)
     }
 }
