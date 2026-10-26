@@ -23,26 +23,6 @@ class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
         self.id = "Chapters-\(chapters.hashValue)"
     }
 
-    func nextChapterStart(after seconds: Duration) -> Duration? {
-        chapters.lazy
-            .compactMap(\.chapterInfo.startSeconds)
-            .first(where: { $0 > seconds })
-    }
-
-    func previousChapterStart(before seconds: Duration) -> Duration? {
-        let starts = chapters.compactMap(\.chapterInfo.startSeconds)
-
-        guard let currentIndex = starts.lastIndex(where: { $0 <= seconds }) else {
-            return starts.first
-        }
-
-        if seconds - starts[currentIndex] > .seconds(3) {
-            return starts[currentIndex]
-        }
-
-        return currentIndex > 0 ? starts[currentIndex - 1] : starts[currentIndex]
-    }
-
     func chapterID(at seconds: Duration) -> ChapterInfo.FullInfo.ID? {
         guard let nextIndex = chapters.firstIndex(where: {
             guard let startSeconds = $0.chapterInfo.startSeconds else { return false }

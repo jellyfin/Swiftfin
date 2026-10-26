@@ -88,6 +88,33 @@ extension ChapterInfo {
     }
 }
 
+extension [ChapterInfo.FullInfo] {
+
+    /// The start time of the first chapter that begins after the given time, if any.
+    func nextChapterStart(after seconds: Duration) -> Duration? {
+        lazy
+            .compactMap(\.chapterInfo.startSeconds)
+            .first(where: { $0 > seconds })
+    }
+
+    /// The start time to skip back to from the given time: the current
+    /// chapter's start when more than 3 seconds into it, otherwise the
+    /// previous chapter's start.
+    func previousChapterStart(before seconds: Duration) -> Duration? {
+        let starts = compactMap(\.chapterInfo.startSeconds)
+
+        guard let currentIndex = starts.lastIndex(where: { $0 <= seconds }) else {
+            return starts.first
+        }
+
+        if seconds - starts[currentIndex] > .seconds(3) {
+            return starts[currentIndex]
+        }
+
+        return currentIndex > 0 ? starts[currentIndex - 1] : starts[currentIndex]
+    }
+}
+
 // TODO: have label match what BaseItemDto does in PosterCollectionView
 //       - different height, causes clipping
 

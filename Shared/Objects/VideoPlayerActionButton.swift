@@ -160,7 +160,5 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         .playbackSpeed,
         .pictureInPicture,
         .playbackSettings,
-        .previousChapter,
-        .nextChapter,
     ]
 }

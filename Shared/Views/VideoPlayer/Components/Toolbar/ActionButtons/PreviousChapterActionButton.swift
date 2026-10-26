@@ -41,12 +41,12 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 L10n.previousChapter,
                 systemImage: VideoPlayerActionButton.previousChapter.systemImage
             ) {
-                guard let start = supplement.previousChapterStart(before: currentSeconds) else { return }
+                guard let start = supplement.chapters.previousChapterStart(before: currentSeconds) else { return }
 
                 manager.proxy?.setSeconds(start)
                 manager.setPlaybackRequestStatus(status: .playing)
             }
-            .disabled(supplement.previousChapterStart(before: currentSeconds) == nil)
+            .disabled(supplement.chapters.previousChapterStart(before: currentSeconds) == nil)
             .onReceive(manager.secondsBox.$value) { seconds in
                 currentSeconds = seconds
             }
