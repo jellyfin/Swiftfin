@@ -18,6 +18,9 @@ extension VideoPlayer {
         @FocusState
         private var focusedAction: String?
 
+        @State
+        private var offsets: [ViewState.OverlayAction.ID: CGFloat] = [:]
+
         private var actions: [ViewState.OverlayAction] {
             viewState.visibleElements.contains(.overlayActions) ? viewState.overlayActions : []
         }
@@ -40,7 +43,11 @@ extension VideoPlayer {
             #if os(tvOS)
             .focusSection()
             .onMoveCommand { direction in
-                if viewState.presentation == .hidden, direction == .up || direction == .down {
+                if direction == .left || direction == .right,
+                   let action = actions.first(where: { $0.id.focusID == focusedAction })
+                {
+                    dismissOverlayAction(action, towards: direction == .left ? .left : .right)
+                } else if viewState.presentation == .hidden, direction == .up || direction == .down {
                     viewState.showControls()
                 }
             }
@@ -76,7 +83,35 @@ extension VideoPlayer {
                     }
                     .buttonStyle(OverlayActionButtonStyle())
                     .coordinatedFocus(action.id.focusID, selection: $focusedAction)
+                    .offset(x: offsets[action.id] ?? 0)
+                    .opacity(1 - min(abs(offsets[action.id] ?? 0) / 200, 1))
+                    #if os(iOS)
+                    .highPriorityGesture(
+                        DragGesture(minimumDistance: 10)
+                            .onChanged { value in
+                                offsets[action.id] = value.translation.width
+                            }
+                            .onEnded { value in
+                                if abs(value.predictedEndTranslation.width) > 120 {
+                                    dismissOverlayAction(action, towards: value.predictedEndTranslation.width < 0 ? .left : .right)
+                                } else {
+                                    withAnimation(.spring(duration: 0.3)) {
+                                        offsets[action.id] = 0
+                                    }
+                                }
+                            }
+                    )
+                    #endif
                 }
+            }
+        }
+
+        private func dismissOverlayAction(_ action: ViewState.OverlayAction, towards direction: Direction) {
+            withAnimation(.easeOut(duration: 0.25)) {
+                offsets[action.id] = direction == .left ? -400 : 400
+            } completion: {
+                viewState.dismissOverlayAction(action.id)
+                offsets[action.id] = nil
             }
         }
     }

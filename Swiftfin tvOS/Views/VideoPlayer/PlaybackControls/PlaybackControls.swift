@@ -53,6 +53,9 @@ extension VideoPlayer {
                     .fixedSize(horizontal: false, vertical: true)
                     .isVisible(viewState.isPresentingProgress)
                     .enabled(viewState.isPresentingProgress)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: {
+                        viewState.bottomControlsHeight = $0 + Toolbar.buttonSize
+                    }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             .edgePadding(.horizontal)

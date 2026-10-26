@@ -359,6 +359,8 @@ extension VideoPlayer {
         private var playerRegularBottomAnchor: NSLayoutConstraint?
         private var supplementHeightAnchor: NSLayoutConstraint?
         private var supplementBottomAnchor: NSLayoutConstraint?
+        private var overlayActionsDockedConstraints: [NSLayoutConstraint] = []
+        private var overlayActionsRaisedAnchor: NSLayoutConstraint?
 
         private var centerOffset: CGFloat {
             compactPlayerOverlap.map { max(50, $0) } ?? dismissedSupplementContainerOffset
@@ -599,6 +601,23 @@ extension VideoPlayer {
             } completion: { completion($0) }
         }
 
+        func presentOverlayActions() {
+            guard let overlayActionsRaisedAnchor else { return }
+
+            if viewState.presentation == .controls {
+                NSLayoutConstraint.deactivate(overlayActionsDockedConstraints)
+                overlayActionsRaisedAnchor.constant = -(viewState.bottomControlsHeight + EdgeInsets.edgePadding)
+                overlayActionsRaisedAnchor.isActive = true
+            } else {
+                overlayActionsRaisedAnchor.isActive = false
+                NSLayoutConstraint.activate(overlayActionsDockedConstraints)
+            }
+
+            UIView.animate(withDuration: 0.25, delay: 0, options: .allowUserInteraction) { [weak self] in
+                self?.view.layoutIfNeeded()
+            }
+        }
+
         // MARK: - viewDidAppear
 
         override func viewDidAppear(_ animated: Bool) {
@@ -718,24 +737,36 @@ extension VideoPlayer {
 
             playbackControlsBottomAnchor.priority = .defaultHigh
 
+            let playbackControlsAboveOverlayActionsAnchor = playbackControlsView.bottomAnchor.constraint(
+                lessThanOrEqualTo: overlayActionsView.topAnchor,
+                constant: -EdgeInsets.edgePadding
+            )
+
             NSLayoutConstraint.activate([
                 playbackControlsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 playbackControlsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 playbackControlsView.topAnchor.constraint(equalTo: view.topAnchor),
                 playbackControlsBottomAnchor,
-                playbackControlsView.bottomAnchor.constraint(
-                    lessThanOrEqualTo: overlayActionsView.topAnchor,
-                    constant: -EdgeInsets.edgePadding
-                ),
+                playbackControlsAboveOverlayActionsAnchor,
             ])
 
             #if os(tvOS)
+            let overlayActionsBottomAnchor = overlayActionsView.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: -EdgeInsets.edgePadding
+            )
+
             NSLayoutConstraint.activate([
                 overlayActionsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: EdgeInsets.edgePadding),
                 overlayActionsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -EdgeInsets.edgePadding),
-                overlayActionsView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -EdgeInsets.edgePadding),
+                overlayActionsBottomAnchor,
             ])
             #else
+            let overlayActionsBottomAnchor = overlayActionsView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -EdgeInsets.edgePadding
+            )
+
             NSLayoutConstraint.activate([
                 overlayActionsView.leadingAnchor.constraint(
                     equalTo: view.safeAreaLayoutGuide.leadingAnchor,
@@ -745,12 +776,12 @@ extension VideoPlayer {
                     equalTo: view.safeAreaLayoutGuide.trailingAnchor,
                     constant: -EdgeInsets.edgePadding
                 ),
-                overlayActionsView.bottomAnchor.constraint(
-                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                    constant: -EdgeInsets.edgePadding
-                ),
+                overlayActionsBottomAnchor,
             ])
             #endif
+
+            overlayActionsDockedConstraints = [overlayActionsBottomAnchor, playbackControlsAboveOverlayActionsAnchor]
+            overlayActionsRaisedAnchor = overlayActionsView.bottomAnchor.constraint(equalTo: playbackControlsView.bottomAnchor)
 
             NSLayoutConstraint.activate([
                 initialHitBlockView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -1064,7 +1095,9 @@ extension VideoPlayer {
             }
 
             if viewState.presentation == .hidden {
-                viewState.showControls()
+                if !viewState.isPresentingOverlayActions {
+                    viewState.showControls()
+                }
                 return
             }
 
