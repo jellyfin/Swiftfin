@@ -103,6 +103,7 @@ struct Layout {
     let headlineSize: CGFloat
     let subtitleSize: CGFloat
     let deviceTop: CGFloat
+    let deviceBottom: CGFloat
     let deviceWidth: CGFloat
 
     static let portrait = Layout(
@@ -112,6 +113,7 @@ struct Layout {
         headlineSize: 0.095,
         subtitleSize: 0.045,
         deviceTop: 0.19,
+        deviceBottom: 0.97,
         deviceWidth: 0.92
     )
 
@@ -122,6 +124,7 @@ struct Layout {
         headlineSize: 0.08,
         subtitleSize: 0.036,
         deviceTop: 0.27,
+        deviceBottom: 0.96,
         deviceWidth: 0.8
     )
 }
@@ -247,8 +250,9 @@ func card(caption: [String: String], raw: CGImage, framed: CGImage?, textScale: 
     )
 
     let device = framed ?? raw
-    let deviceWidth = size.width * layout.deviceWidth
-    let deviceHeight = deviceWidth * CGFloat(device.height) / CGFloat(device.width)
+    let deviceAspectRatio = CGFloat(device.width) / CGFloat(device.height)
+    let deviceHeight = min(size.width * layout.deviceWidth / deviceAspectRatio, size.height * (layout.deviceBottom - layout.deviceTop))
+    let deviceWidth = deviceHeight * deviceAspectRatio
     let deviceRect = CGRect(
         x: (size.width - deviceWidth) / 2,
         y: size.height * (1 - layout.deviceTop) - deviceHeight,

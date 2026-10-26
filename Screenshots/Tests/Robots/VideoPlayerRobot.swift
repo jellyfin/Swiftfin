@@ -11,7 +11,7 @@ import XCTest
 final class VideoPlayerRobot: Robot {
 
     private var closeButton: XCUIElement {
-        button(L10n.close)
+        button("closePlayerButton")
     }
 
     @discardableResult
@@ -20,6 +20,12 @@ final class VideoPlayerRobot: Robot {
         XCUIRemote.shared.press(.select)
         sleep(1)
         #else
+        let isHidden = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == false OR isEnabled == false"),
+            object: closeButton
+        )
+        _ = XCTWaiter().wait(for: [isHidden], timeout: 10)
+
         revealControls()
         #endif
 
@@ -42,7 +48,7 @@ final class VideoPlayerRobot: Robot {
         #if os(iOS)
         revealControls()
 
-        let remaining = waitFor(app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH '-'")).firstMatch)
+        let remaining = waitFor(app.staticTexts["playbackRemainingTime"])
         let width = remaining.frame.maxX - (app.frame.width - remaining.frame.maxX)
         let start = app.coordinate(withNormalizedOffset: .zero)
             .withOffset(CGVector(dx: app.frame.midX, dy: remaining.frame.minY - 10))
@@ -52,6 +58,8 @@ final class VideoPlayerRobot: Robot {
 
         sleep(2)
         #else
+        waitForControlsToHide()
+
         for _ in 0 ..< 200 {
             XCUIRemote.shared.press(.right)
             usleep(500_000)
@@ -61,32 +69,45 @@ final class VideoPlayerRobot: Robot {
             }
         }
 
-        sleep(2)
+        waitForControlsToHide()
         #endif
 
         return self
     }
 
     #if os(tvOS)
+    func waitForPlayback() -> Bool {
+        sleep(3)
+
+        for _ in 0 ..< 20 {
+            if !snapshotElements().contains(where: { $0.label == L10n.playerLoading }) {
+                return true
+            }
+
+            sleep(1)
+        }
+
+        return false
+    }
+
+    // Presses act on the controls while they are up.
+    private func waitForControlsToHide() {
+        for _ in 0 ..< 15 where elapsedProgress() != nil {
+            sleep(1)
+        }
+    }
+
     private func elapsedProgress() -> Double? {
-        guard let root = try? app.snapshot() else { return nil }
+        let elements = snapshotElements()
 
-        let texts = staticTexts(in: root)
-
-        guard let remaining = texts.first(where: { $0.label.hasPrefix("-") }),
-              let elapsed = texts
-                  .filter({ abs($0.frame.midY - remaining.frame.midY) < 5 && $0.frame.maxX < remaining.frame.minX })
-                  .min(by: { $0.frame.minX < $1.frame.minX })
+        guard let elapsed = elements.first(where: { $0.identifier == "playbackElapsedTime" }),
+              let remaining = elements.first(where: { $0.identifier == "playbackRemainingTime" })
         else { return nil }
 
         let elapsedSeconds = seconds(elapsed.label)
         let totalSeconds = elapsedSeconds + seconds(remaining.label)
 
         return totalSeconds > 0 ? elapsedSeconds / totalSeconds : nil
-    }
-
-    private func staticTexts(in snapshot: XCUIElementSnapshot) -> [XCUIElementSnapshot] {
-        (snapshot.elementType == .staticText ? [snapshot] : []) + snapshot.children.flatMap(staticTexts)
     }
 
     private func seconds(_ timestamp: String) -> Double {
@@ -99,17 +120,18 @@ final class VideoPlayerRobot: Robot {
     #endif
 
     #if os(iOS)
+    // Hidden controls stay in the hierarchy and are only disabled.
     private func revealControls() {
         for _ in 0 ..< 3 {
-            if closeButton.exists, closeButton.isHittable {
+            if closeButton.exists, closeButton.isEnabled {
                 return
             }
 
             app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 
-            let isHittable = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isHittable == true"), object: closeButton)
+            let isEnabled = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isEnabled == true"), object: closeButton)
 
-            if XCTWaiter().wait(for: [isHittable], timeout: 3) == .completed {
+            if XCTWaiter().wait(for: [isEnabled], timeout: 3) == .completed {
                 return
             }
         }

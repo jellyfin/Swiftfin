@@ -40,6 +40,7 @@ extension VideoPlayer.PlaybackControls {
                 )
                 .labelStyle(.iconOnly)
             }
+            .accessibilityIdentifier("closePlayerButton")
             .frame(width: Self.buttonSize, height: Self.buttonSize)
         }
 

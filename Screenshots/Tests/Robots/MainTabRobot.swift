@@ -21,6 +21,23 @@ final class MainTabRobot: Robot {
         return LibraryRobot(app: app)
     }
 
+    func search(_ query: String) -> LibraryRobot {
+        selectTab(L10n.search)
+
+        #if os(tvOS)
+        // The search keyboard takes focus instead of the field.
+        waitFor(app.searchFields.firstMatch)
+        sleep(2)
+        app.typeText(query)
+        #else
+        type(query + "\n", into: waitFor(app.searchFields.firstMatch))
+        #endif
+
+        sleep(3)
+
+        return LibraryRobot(app: app)
+    }
+
     func settings() -> SettingsRobot {
         #if os(iOS)
         home()
@@ -36,7 +53,13 @@ final class MainTabRobot: Robot {
         let tab = button(name)
 
         #if os(tvOS)
-        for _ in 0 ..< 6 where tab.frame.width < 1 {
+        if waitFor(tab).isSelected {
+            return
+        }
+
+        sleep(2)
+
+        for _ in 0 ..< 6 where tab.frame.width < 10 {
             XCUIRemote.shared.press(.menu)
             sleep(3) // wait for animations
         }

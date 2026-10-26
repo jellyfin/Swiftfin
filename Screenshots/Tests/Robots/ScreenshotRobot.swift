@@ -45,7 +45,9 @@ final class ScreenshotRobot: Robot {
                 .screenshot(.series)
 
         case .episode:
-            item = item.firstEpisode()
+            // The series page keeps rebuilding its episode row, so reach the episode through search.
+            item = tabs.search("Earthfall")
+                .item("Earthfall")
                 .screenshot(.episode)
 
         case .playback:

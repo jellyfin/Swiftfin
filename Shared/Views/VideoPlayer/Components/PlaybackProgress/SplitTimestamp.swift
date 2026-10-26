@@ -81,6 +81,7 @@ extension VideoPlayer.PlaybackControls {
             HStack(spacing: 2) {
 
                 Text(scrubbedSeconds, format: .runtime)
+                    .accessibilityIdentifier("playbackElapsedTime")
 
                 Group {
                     // swiftlint:disable:next hard_coded_display_string
@@ -112,6 +113,8 @@ extension VideoPlayer.PlaybackControls {
                     switch trailingTimestampType {
                     case .timeLeft:
                         Text(.zero - (runtime - scrubbedSeconds), format: .runtime)
+                            .accessibilityIdentifier("playbackRemainingTime")
+
                     case .totalTime:
                         Text(runtime, format: .runtime)
                     }
@@ -159,6 +162,7 @@ extension VideoPlayer.PlaybackControls {
             ZStack {
                 if let runtime = mediaSession.item.runtime {
                     Text(.zero - (runtime - scrubbedSeconds), format: .runtime)
+                        .accessibilityIdentifier("playbackRemainingTime")
                 } else {
                     Text(verbatim: .emptyRuntime)
                 }
@@ -171,6 +175,7 @@ extension VideoPlayer.PlaybackControls {
                 HStack(spacing: 8) {
                     playbackStatusIndicator
                     Text(scrubbedSeconds, format: .runtime)
+                        .accessibilityIdentifier("playbackElapsedTime")
                 }
                 .trackingSize($leadingTimestampSize)
                 .offset(x: previewXOffset)

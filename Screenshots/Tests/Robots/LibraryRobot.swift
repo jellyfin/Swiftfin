@@ -16,7 +16,7 @@ final class LibraryRobot: Robot {
     }
 
     func item(_ title: String) -> ItemRobot {
-        let itemButton = button(title)
+        let itemButton = buttons(containing: title).firstMatch
         reveal(itemButton)
         tap(itemButton)
         return ItemRobot(app: app)

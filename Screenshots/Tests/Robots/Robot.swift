@@ -22,11 +22,21 @@ class Robot {
     }
 
     func buttons(containing text: String) -> XCUIElementQuery {
-        app.buttons.matching(NSPredicate(format: "label CONTAINS %@", text))
+        buttons(matching: NSPredicate(format: "label CONTAINS %@", text))
     }
 
     func buttons(labeled label: String) -> XCUIElementQuery {
-        app.buttons.matching(NSPredicate(format: "label == %@", label))
+        buttons(matching: NSPredicate(format: "label == %@", label))
+    }
+
+    // Buttons with a context menu are exposed as pop up buttons.
+    private func buttons(matching predicate: NSPredicate) -> XCUIElementQuery {
+        app.descendants(matching: .any)
+            .matching(NSPredicate(
+                format: "elementType IN %@",
+                [XCUIElement.ElementType.button, .popUpButton].map(\.rawValue)
+            ))
+            .matching(predicate)
     }
 
     func largest(_ query: XCUIElementQuery) -> XCUIElement {
@@ -99,9 +109,9 @@ class Robot {
 
     @discardableResult
     func screenshot(_ screenshot: Screenshot, waitForIdle: Bool = true) -> Self {
-        #if os(tvOS)
-        sleep(2)
-        #endif
+        if waitForIdle {
+            sleep(3)
+        }
 
         snapshot(screenshot.rawValue, timeWaitingForIdle: waitForIdle ? 20 : 0)
         screenshot.saveCaption()
@@ -147,6 +157,21 @@ extension Robot {
         XCTFail(
             "Unable to focus \(element) at \(element.frame), focused: \(focusedElement.exists ? focusedElement.debugDescription : "nothing")"
         )
+    }
+
+    // Containers of the focused element also report focus, so take the innermost one.
+    var focusedLabel: String? {
+        snapshotElements().last(where: \.hasFocus)?.label
+    }
+
+    func snapshotElements() -> [XCUIElementSnapshot] {
+        guard let root = try? app.snapshot() else { return [] }
+
+        return flattened(root)
+    }
+
+    private func flattened(_ snapshot: XCUIElementSnapshot) -> [XCUIElementSnapshot] {
+        [snapshot] + snapshot.children.flatMap(flattened)
     }
 }
 #endif
