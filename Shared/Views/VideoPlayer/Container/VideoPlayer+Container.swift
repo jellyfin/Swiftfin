@@ -512,6 +512,7 @@ extension VideoPlayer {
             division: CGRect?,
             toolbarHeight: CGFloat
         )?
+        private var postureChanges = 0
 
         private var usesCompactPlayerLayout: Bool {
             #if os(tvOS)
@@ -929,9 +930,34 @@ extension VideoPlayer {
                 viewState.resetZoom()
             }
             #endif
+            let divisionChanged = lastSupplementLayout.map { $0.division != horizontalDivision } ?? false
             lastSupplementLayout = (size, safeAreaInsets, isCompact, horizontalDivision, viewState.tabletopToolbarHeight)
             cancelSupplementPan()
-            adjustConstraints(isCompact: isCompact)
+
+            guard divisionChanged else {
+                adjustConstraints(isCompact: isCompact)
+                return
+            }
+
+            // The controls change layout outright, so they stay hidden while the video moves.
+            viewState.isChangingPosture = true
+            postureChanges += 1
+            let postureChange = postureChanges
+            UIView.animate(
+                withDuration: 0.4,
+                delay: 0,
+                usingSpringWithDamping: 1,
+                initialSpringVelocity: 0,
+                options: [.beginFromCurrentState, .allowUserInteraction]
+            ) {
+                self.adjustConstraints(isCompact: isCompact)
+                self.view.layoutIfNeeded()
+            } completion: { [weak self] _ in
+                // Only the latest posture change ends the transition.
+                guard let self, postureChange == postureChanges else { return }
+
+                viewState.isChangingPosture = false
+            }
         }
 
         private func adjustConstraints(isCompact: Bool) {

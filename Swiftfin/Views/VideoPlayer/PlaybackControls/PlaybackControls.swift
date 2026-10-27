@@ -46,6 +46,8 @@ extension VideoPlayer {
                 }
             }
             .modifier(VideoPlayer.KeyCommandsModifier())
+            .opacity(viewState.isChangingPosture ? 0 : 1)
+            .animation(viewState.isChangingPosture ? nil : .easeOut(duration: 0.2), value: viewState.isChangingPosture)
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: viewState.isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: viewState.presentation)

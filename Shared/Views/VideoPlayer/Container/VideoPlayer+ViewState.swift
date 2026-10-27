@@ -363,6 +363,8 @@ extension VideoPlayer {
         var originalPlaybackRate: Double?
 
         var centerOffset: CGFloat = 0
+        /// True while the video moves between the flat and tabletop layouts.
+        var isChangingPosture = false
         let focusCoordinator: FocusCoordinator = .init()
         let jumpProgressObserver: JumpProgressObserver = .init()
 
