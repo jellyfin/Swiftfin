@@ -97,7 +97,7 @@ struct VideoPlayer: View {
         }
         .environment(\.safeAreaInsets, safeAreaInsets)
         .colorScheme(.dark)
-        .supportedOrientations(.allButUpsideDown)
+        .supportedOrientations(UIDevice.rotatesFreely ? .all : .allButUpsideDown)
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)

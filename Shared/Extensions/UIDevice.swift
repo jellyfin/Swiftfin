@@ -26,6 +26,12 @@ extension UIDevice {
         current.userInterfaceIdiom == .tv
     }
 
+    /// Whether the device is an iPad or has a near-square screen, like the iPhone Duo.
+    static let rotatesFreely: Bool = {
+        let bounds = UIScreen.main.nativeBounds
+        return isPad || max(bounds.width, bounds.height) < min(bounds.width, bounds.height) * 1.6
+    }()
+
     static let supportsLiquidGlass: Bool = {
         #if os(tvOS)
         var systemInfo = utsname()
