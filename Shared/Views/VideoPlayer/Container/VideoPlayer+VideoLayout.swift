@@ -87,6 +87,22 @@ extension VideoPlayer {
         }
 
         #if os(iOS)
+        static func fitPadding(
+            videoSize: CGSize,
+            viewportSize: CGSize,
+            cutout: CGRect?,
+            insets: EdgeInsets
+        ) -> EdgeInsets {
+            guard let cutout else { return .zero }
+
+            let bounds = CGRect(origin: .zero, size: viewportSize)
+            let frame = VideoLayout(videoSize: videoSize, viewportSize: viewportSize, behavior: .fit).videoFrame(in: bounds)
+            // Letterboxing may already keep the picture clear of the camera.
+            guard frame.intersects(cutout) else { return .zero }
+
+            return padding(insets: insets, behavior: .fit)
+        }
+
         static func padding(
             insets: EdgeInsets,
             behavior: ViewState.AspectFillBehavior
@@ -138,9 +154,23 @@ extension VideoPlayer {
             NotchReader { notchMeasurement in
                 GeometryReader { geometry in
                     let usesSystemSafeArea = viewState.isCompact && notchMeasurement?.cutout == nil
-                    let fitInsets = usesSystemSafeArea
-                        ? (notchMeasurement?.systemInsets ?? geometry.safeAreaInsets)
-                        : VideoLayout.padding(insets: notchMeasurement?.insets ?? .init(), behavior: .fit)
+                    let fitInsets: EdgeInsets = {
+                        if #available(iOS 27.1, *), UIDevice.isPhone, UIDevice.rotatesFreely {
+                            // The Duo's camera only meets the toolbar corner, so keep the full width.
+                            guard !viewState.isCompact else { return .zero }
+
+                            return VideoLayout.fitPadding(
+                                videoSize: videoSize(),
+                                viewportSize: geometry.size,
+                                cutout: notchMeasurement?.cutout,
+                                insets: notchMeasurement?.insets ?? .zero
+                            )
+                        }
+
+                        return usesSystemSafeArea
+                            ? (notchMeasurement?.systemInsets ?? geometry.safeAreaInsets)
+                            : VideoLayout.padding(insets: notchMeasurement?.insets ?? .init(), behavior: .fit)
+                    }()
 
                     let zoomGeometry = VideoZoom.Geometry(
                         videoSize: videoSize(),

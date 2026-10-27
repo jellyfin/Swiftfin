@@ -86,15 +86,34 @@ enum NotchDeviceReader {
         let screen = window.screen
 
         let displayFrame = view.convert(bounds, to: screen.coordinateSpace)
-        guard abs(displayFrame.minX) < 1,
-              abs(displayFrame.minY) < 1,
-              abs(displayFrame.width - screen.bounds.width) < 1,
-              abs(displayFrame.height - screen.bounds.height) < 1
-        else { return fallback }
+        let coversDisplay = abs(displayFrame.minX) < 1 &&
+            abs(displayFrame.minY) < 1 &&
+            abs(displayFrame.width - screen.bounds.width) < 1 &&
+            abs(displayFrame.height - screen.bounds.height) < 1
 
-        fallback.displayCornerRadius = privateCornerRadius(screen)
+        if coversDisplay {
+            fallback.displayCornerRadius = privateCornerRadius(screen)
+        }
 
-        guard screen === UIScreen.main,
+        if #available(iOS 27.1, *) {
+            for region in view.reservedRegions(kind: .occlusion) {
+                let rect = region.frame
+                    .intersection(bounds)
+                    .offsetBy(dx: -bounds.minX, dy: -bounds.minY)
+                guard let insets = cutoutInsets(enclosing: rect, in: bounds.size, layoutDirection: layoutDirection) else { continue }
+
+                return NotchMeasurement(
+                    size: bounds.size,
+                    displayCornerRadius: fallback.displayCornerRadius,
+                    cutout: rect,
+                    systemInsets: system,
+                    insets: insets
+                )
+            }
+        }
+
+        guard coversDisplay,
+              screen === UIScreen.main,
               let orientation = window.windowScene?.effectiveGeometry.interfaceOrientation,
               orientation != .unknown,
               let portrait = privateRect(screen)
@@ -195,6 +214,12 @@ private final class NotchProbe: UIView {
     private var geometryObservation: NSKeyValueObservation?
 
     var onLayout: (() -> Void)?
+
+    override func updateConstraints() {
+        // UIKit tracks reserved-region reads from this update pass.
+        onLayout?()
+        super.updateConstraints()
+    }
 
     override func layoutSubviews() {
         super.layoutSubviews()

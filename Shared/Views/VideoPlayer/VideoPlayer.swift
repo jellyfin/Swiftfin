@@ -43,6 +43,20 @@ struct VideoPlayer: View {
     #endif
 
     var body: some View {
+        #if os(iOS)
+        if #available(iOS 27.1, *) {
+            // A fullscreen player keeps horizontal bars instead of the Duo's vertical bar.
+            playerContent
+                .toolbarVerticalBehavior(.disabled)
+        } else {
+            playerContent
+        }
+        #else
+        playerContent
+        #endif
+    }
+
+    private var playerContent: some View {
         Container(
             viewState: viewState,
             mediaSession: mediaSession,
