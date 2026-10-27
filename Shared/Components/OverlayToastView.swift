@@ -25,6 +25,7 @@ struct OverlayToastView<Content: View>: View {
     private var toastProxy: ToastProxy
 
     private let content: Content
+    private let presentsToasts: Bool
 
     @Environment(\.safeAreaInsets)
     private var safeAreaInsets
@@ -42,14 +43,17 @@ struct OverlayToastView<Content: View>: View {
     ) {
         self._toastProxy = StateObject(wrappedValue: .init())
         self.content = content()
+        self.presentsToasts = true
     }
 
     init(
         proxy: ToastProxy,
+        presentsToasts: Bool = true,
         @ViewBuilder content: () -> Content
     ) {
         self._toastProxy = StateObject(wrappedValue: proxy)
         self.content = content()
+        self.presentsToasts = presentsToasts
     }
 
     var body: some View {
@@ -57,7 +61,7 @@ struct OverlayToastView<Content: View>: View {
             content
                 .environmentObject(toastProxy)
 
-            if toastProxy.isPresenting {
+            if presentsToasts, toastProxy.isPresenting {
                 VStack {
                     OverlayToastContent()
                         .environmentObject(toastProxy)

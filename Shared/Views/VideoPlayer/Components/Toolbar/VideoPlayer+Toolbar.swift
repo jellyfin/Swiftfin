@@ -27,7 +27,7 @@ extension VideoPlayer.PlaybackControls {
 
         private var closeButton: some View {
             Button {
-                if viewState.isPresentingSupplement {
+                if viewState.isPresentingSupplement, !viewState.isTabletop {
                     viewState.selectedSupplementID = nil
                 } else {
                     mediaSession.stop()
@@ -36,7 +36,7 @@ extension VideoPlayer.PlaybackControls {
             } label: {
                 Label(
                     L10n.close,
-                    systemImage: viewState.isPresentingSupplement ? "chevron.down" : "xmark"
+                    systemImage: viewState.isPresentingSupplement && !viewState.isTabletop ? "chevron.down" : "xmark"
                 )
                 .labelStyle(.iconOnly)
             }

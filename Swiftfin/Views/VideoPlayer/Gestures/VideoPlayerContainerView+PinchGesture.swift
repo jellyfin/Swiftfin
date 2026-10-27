@@ -20,7 +20,7 @@ extension VideoPlayer.UIContainerViewController {
             viewState.cancelTapGesture()
         }
 
-        guard checkGestureLock(), !viewState.isPresentingSupplement else { return }
+        guard checkGestureLock(), !viewState.isPresentingSupplement || viewState.isTabletop else { return }
 
         let action = Defaults[.VideoPlayer.Gesture.pinchGesture]
 
@@ -38,7 +38,7 @@ extension VideoPlayer.UIContainerViewController {
             }
 
         case .zoom:
-            handleZoomGesture(scale: scale, location: playerLocation(fromControls: location), state: state)
+            handleZoomGesture(scale: scale, location: playerLocation(fromGesture: location), state: state)
         }
     }
 

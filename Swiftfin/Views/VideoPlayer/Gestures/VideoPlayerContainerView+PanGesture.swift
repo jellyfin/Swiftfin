@@ -18,7 +18,8 @@ extension VideoPlayer.UIContainerViewController {
         velocity: CGPoint,
         location: CGPoint,
         unitPoint: UnitPoint,
-        state: UIGestureRecognizer.State
+        state: UIGestureRecognizer.State,
+        isSupplementGesture: Bool = false
     ) {
         guard checkGestureLock() else { return }
 
@@ -31,7 +32,7 @@ extension VideoPlayer.UIContainerViewController {
             viewState.setInteraction(.pan, active: false)
         }
 
-        if viewState.isPresentingSupplement {
+        if isSupplementGesture || (viewState.isPresentingSupplement && !viewState.isTabletop) {
             handleSupplementPanAction(
                 translation: translation,
                 velocity: velocity.y,
@@ -142,7 +143,8 @@ extension VideoPlayer.UIContainerViewController {
         unitPoint: UnitPoint
     ) -> any _PanHandlingAction {
         let newAction: any _PanHandlingAction = {
-            if viewState.isPresentingControls {
+            // Tabletop controls stay up, so pans act on the video.
+            if viewState.isPresentingControls, !viewState.isTabletop {
                 Self.SupplementPanHandlingAction
             } else if direction.isVertical {
                 if unitPoint.x < 0.5 {
@@ -334,6 +336,9 @@ extension VideoPlayer.UIContainerViewController {
         PanHandlingAction<CGFloat>(
             startValue: 0
         ) { _, handlingState, viewState in
+            // Tabletop panels only pan from the lower pane.
+            guard !viewState.isTabletop else { return }
+
             viewState.containerView?.handleSupplementPanAction(
                 translation: handlingState.translation,
                 velocity: handlingState.velocity.y,

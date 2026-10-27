@@ -84,7 +84,9 @@ extension VideoPlayer.UIContainerViewController {
                     guard viewState.mediaSession?.canSeek == true else { return }
 
                     isMultiTap = true
-                    viewState.hideControls()
+                    if !viewState.isTabletop {
+                        viewState.hideControls()
+                    }
 
                     if isLeftSide {
                         let interval = Defaults[.VideoPlayer.jumpBackwardInterval]
@@ -134,6 +136,8 @@ extension VideoPlayer.UIContainerViewController {
     }
 
     private func performSingleTapGesture() {
+        guard !viewState.isTabletop else { return }
+
         if viewState.isPresentingSupplement {
             if viewState.isCompact {
                 viewState.togglePlaybackButtons()

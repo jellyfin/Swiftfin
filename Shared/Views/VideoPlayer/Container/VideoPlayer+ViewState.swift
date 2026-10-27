@@ -146,7 +146,7 @@ extension VideoPlayer {
         var zoom = VideoZoom()
 
         var canPanZoom: Bool {
-            !isGestureLocked && !isPresentingSupplement && zoom.canPan
+            !isGestureLocked && (!isPresentingSupplement || isTabletop) && zoom.canPan
         }
 
         func resetZoom() {
@@ -166,12 +166,34 @@ extension VideoPlayer {
                     setInteraction(.pan, active: false)
                     setInteraction(.pinch, active: false)
                     hideControls()
+                } else if isTabletop {
+                    showControls()
                 }
             }
         }
 
         var isBeingDismissed = false
         var isCompact: Bool = false
+        var isTabletop: Bool = false {
+            didSet {
+                if isTabletop != oldValue {
+                    if isTabletop {
+                        showControls()
+                    } else {
+                        refreshAutoDismiss()
+                    }
+                }
+            }
+        }
+
+        /// The height of the tabletop toolbar, including its padding.
+        var tabletopToolbarHeight: CGFloat = 0 {
+            didSet {
+                if tabletopToolbarHeight != oldValue {
+                    containerView?.tabletopToolbarHeightDidChange()
+                }
+            }
+        }
 
         var isScrubbing: Bool {
             scrubPosition != nil
@@ -253,11 +275,11 @@ extension VideoPlayer {
         }
 
         var isPresentingFullScreenSupplement: Bool {
-            !isCompact && selectedSupplement?.presentationStyle == .expanded
+            !isCompact && !isTabletop && selectedSupplement?.presentationStyle == .expanded
         }
 
         var isPresentingControls: Bool {
-            presentation == .controls || isPresentingSupplement
+            isTabletop || presentation == .controls || isPresentingSupplement
         }
 
         var isPresentingProgress: Bool {
@@ -278,6 +300,27 @@ extension VideoPlayer {
 
         /// Layout and interaction affect visibility, without writing another state.
         var visibleElements: Set<Element> {
+            if isTabletop {
+                var elements: Set<Element> = [.toolbar, .progress, .playbackButtons]
+                // Locked controls stay visible but disabled.
+                if isGestureLocked {
+                    return elements
+                }
+                if isPresentingSupplement {
+                    return [.toolbar, .supplements]
+                }
+                if supplements.isNotEmpty {
+                    elements.insert(.supplements)
+                }
+                if overlayActions.isNotEmpty {
+                    elements.insert(.overlayActions)
+                }
+                if isScrubbing {
+                    elements.remove(.playbackButtons)
+                }
+                return elements
+            }
+
             guard !isGestureLocked else { return [] }
 
             if isScrubbing {
@@ -566,7 +609,7 @@ extension VideoPlayer {
         func showControls() {
             guard !isGestureLocked else { return }
 
-            if !isPresentingControls {
+            if presentation == .hidden || presentation == .progress {
                 transition(to: .controls)
             } else {
                 refreshAutoDismiss()
@@ -613,7 +656,8 @@ extension VideoPlayer {
         }
 
         private var canAutoDismiss: Bool {
-            guard presentation != .hidden,
+            guard !isTabletop,
+                  presentation != .hidden,
                   !isScrubbing,
                   !isPresentingSupplement,
                   interactions.isEmpty,
@@ -650,6 +694,10 @@ extension VideoPlayer {
         }
 
         private func transition(to presentation: Presentation) {
+            // Tabletop keeps its controls up while gestures are unlocked.
+            let presentation: Presentation = isTabletop && !isGestureLocked &&
+                (presentation == .hidden || presentation == .progress) ? .controls : presentation
+
             #if os(iOS)
             // A presentation change outside the tap handler ends the tap sequence.
             if self.presentation != presentation {
@@ -657,7 +705,7 @@ extension VideoPlayer {
             }
             #endif
 
-            if case .supplement = presentation {
+            if case .supplement = presentation, !isTabletop {
                 resetZoom()
             }
 

@@ -166,13 +166,22 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
         // TODO: may need to be a layout for correct overview frame
         //       with scrolling if too long
         var iOSView: some View {
-            CompactOrRegularView(
-                isCompact: viewState.isCompact
-            ) {
-                iOSCompactView
-            } regularView: {
-                regularContent
-                    .edgePadding()
+            Group {
+                if viewState.isTabletop {
+                    ScrollView(.vertical) {
+                        iOSCompactView
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                } else {
+                    CompactOrRegularView(
+                        isCompact: viewState.isCompact
+                    ) {
+                        iOSCompactView
+                    } regularView: {
+                        regularContent
+                            .edgePadding()
+                    }
+                }
             }
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)

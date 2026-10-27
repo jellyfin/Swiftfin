@@ -83,7 +83,7 @@ extension VideoPlayer.UIContainerViewController {
             } content: { (size: CGSize) in
                 HStack(spacing: Self.buttonSpacing) {
                     #if os(iOS)
-                    if viewState.isPresentingFullScreenSupplement {
+                    if viewState.isPresentingFullScreenSupplement || (viewState.isTabletop && viewState.isPresentingSupplement) {
                         closeButton(size: size.height)
                     }
                     #endif
@@ -215,7 +215,8 @@ extension VideoPlayer.UIContainerViewController {
                             velocity: $1,
                             location: $2,
                             unitPoint: $3,
-                            state: $4
+                            state: $4,
+                            isSupplementGesture: viewState.isTabletop
                         )
                     }
                 )
@@ -224,6 +225,8 @@ extension VideoPlayer.UIContainerViewController {
                 \.tapGestureAction,
                 .init(
                     action: {
+                        guard !viewState.isTabletop else { return }
+
                         viewState.containerView?.handleTapGesture(
                             location: $0,
                             unitPoint: $1,
