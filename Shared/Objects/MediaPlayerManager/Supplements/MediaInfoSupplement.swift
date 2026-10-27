@@ -113,7 +113,8 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                     .fontWeight(.semibold)
                 }
                 .buttonStyle(.supplementAction)
-                .frame(height: UIDevice.isTV ? 80 : 40)
+                .frame(minHeight: UIDevice.isTV ? 80 : 40)
+                .fixedSize(horizontal: false, vertical: true)
 
                 if recordingViewModel.program?.isSeries == true {
                     Button(role: recordingViewModel.seriesRecordingTimer != nil ? .destructive : nil) {
@@ -130,7 +131,8 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                         .fontWeight(.semibold)
                     }
                     .buttonStyle(.supplementAction)
-                    .frame(height: UIDevice.isTV ? 80 : 40)
+                    .frame(minHeight: UIDevice.isTV ? 80 : 40)
+                    .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .enabled(recordingViewModel.canManageRecordings)
@@ -157,7 +159,8 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                     .fontWeight(.semibold)
             }
             .buttonStyle(.supplementAction)
-            .frame(height: UIDevice.isTV ? 80 : 40)
+            .frame(minHeight: UIDevice.isTV ? 80 : 40)
+            .fixedSize(horizontal: false, vertical: true)
         }
 
         // TODO: may need to be a layout for correct overview frame
@@ -206,7 +209,6 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                 if !item.isLiveStream {
                     fromBeginningButton
                         .frame(maxWidth: .infinity)
-                        .frame(height: 40)
                         .padding(.vertical)
                 } else if item.canBeRecorded {
                     recordButtons
