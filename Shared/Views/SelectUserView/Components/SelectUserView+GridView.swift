@@ -15,6 +15,9 @@ extension SelectUserView {
 
     struct GridView: PlatformView {
 
+        @Environment(\.horizontalSizeClass)
+        private var horizontalSizeClass
+
         @Binding
         private var isEditing: Bool
         @Binding
@@ -68,12 +71,12 @@ extension SelectUserView {
             CenteredLazyVGrid(
                 data: userItems,
                 id: \.user.id,
-                columns: UIDevice.isPhone ? 2 : 5,
+                columns: horizontalSizeClass == .regular ? 5 : 2,
                 spacing: EdgeInsets.itemSpacing
             ) { item in
                 userGridButton(for: item)
             }
-            .edgePadding(UIDevice.isPhone ? [.horizontal, .vertical] : .horizontal)
+            .edgePadding(horizontalSizeClass == .regular ? .horizontal : [.horizontal, .vertical])
             .scrollIfLargerThanContainer(axes: .vertical, padding: 100)
         }
 

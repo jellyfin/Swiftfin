@@ -35,6 +35,7 @@ protocol LibraryElement: Displayable, Hashable, Identifiable {
     static func layout(
         for libraryStyle: LibraryStyle,
         options: LibraryStyleOptions,
+        horizontalSizeClass: UserInterfaceSizeClass?,
         insets: EdgeInsets
     ) -> CollectionVGridLayout
 }
@@ -68,6 +69,7 @@ extension LibraryElement {
     static func layout(
         for libraryStyle: LibraryStyle,
         options: LibraryStyleOptions,
+        horizontalSizeClass: UserInterfaceSizeClass?,
         insets: EdgeInsets
     ) -> CollectionVGridLayout {
         let libraryStyle = options.normalized(libraryStyle)
@@ -75,7 +77,7 @@ extension LibraryElement {
         #if os(iOS)
         switch libraryStyle.displayType {
         case .grid:
-            if UIDevice.isPhone {
+            if horizontalSizeClass != .regular {
                 return .columns(
                     libraryStyle.posterDisplayType == .landscape ? 2 : 3,
                     insets: insets,

@@ -12,6 +12,9 @@ extension PagingLibraryView {
 
     struct LibraryStyleSection: View {
 
+        @Environment(\.horizontalSizeClass)
+        private var horizontalSizeClass
+
         @StateOrBinding
         private var libraryStyle: LibraryStyle
 
@@ -46,7 +49,8 @@ extension PagingLibraryView {
             }
 
             if libraryStyle.displayType == .list,
-               UIDevice.isPad,
+               !UIDevice.isTV,
+               horizontalSizeClass == .regular,
                options.displayTypes.contains(.list)
             {
                 Stepper(

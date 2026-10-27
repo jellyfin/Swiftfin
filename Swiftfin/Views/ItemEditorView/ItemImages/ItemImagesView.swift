@@ -140,6 +140,7 @@ struct ItemImagesView: View {
             .scrollBehavior(.continuousLeadingEdge)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.itemSpacing)
+            .clipHorizontalOverflow()
             .id(selectedType)
             .transition(.opacity.animation(.linear(duration: 0.1)))
         } else {

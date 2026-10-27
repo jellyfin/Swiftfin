@@ -35,6 +35,9 @@ extension CustomizeSettingsView {
         @Default(.Customization.Library.rememberSort)
         private var rememberLibrarySort
 
+        @Environment(\.horizontalSizeClass)
+        private var horizontalSizeClass
+
         @Router
         private var router
 
@@ -64,7 +67,7 @@ extension CustomizeSettingsView {
 
                     PlatformPicker(L10n.posters, selection: $libraryStyle.posterDisplayType)
 
-                    if libraryStyle.displayType == .list, !UIDevice.isPhone {
+                    if libraryStyle.displayType == .list, UIDevice.isTV || horizontalSizeClass == .regular {
                         Stepper(L10n.columns, value: $libraryStyle.listColumnCount, in: 1 ... 4, step: 1) {
                             LabeledContent(L10n.columns, value: libraryStyle.listColumnCount.description)
                         }

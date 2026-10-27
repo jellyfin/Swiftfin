@@ -207,6 +207,7 @@ struct AboutItemGroup: ContentGroup {
                 }
                 .scrollIndicators(.hidden)
                 .scrollClipDisabled()
+                .clipHorizontalOverflow()
                 #if os(tvOS)
                 .withViewContext(.isOverComplexContent)
                 #endif

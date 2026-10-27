@@ -62,7 +62,7 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
             .ignoresSafeArea(.container, edges: [.horizontal, .top])
             #else
             .ignoresSafeArea(
-                edges: contentGroupOptions.contains(.ignoreSafeAreaTop) ? [.horizontal, .top] : .horizontal
+                edges: contentGroupOptions.contains(.ignoreSafeAreaTop) ? .top : []
             )
             #endif
             .scrollIndicators(.hidden)

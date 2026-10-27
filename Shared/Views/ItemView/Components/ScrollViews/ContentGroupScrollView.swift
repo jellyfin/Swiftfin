@@ -89,7 +89,7 @@ extension ItemView {
                 #if os(tvOS)
                 .ignoresSafeArea(.container, edges: isEnhanced ? .all : [.horizontal, .top])
                 #else
-                .ignoresSafeArea(edges: isEnhanced ? .all : .horizontal)
+                .ignoresSafeArea(edges: isEnhanced ? .vertical : [])
                 #endif
                 .scrollIndicators(.hidden)
             }

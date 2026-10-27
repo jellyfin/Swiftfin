@@ -12,6 +12,9 @@ import SwiftUI
 
 struct RemoteImageSearchView: View {
 
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
+
     @ObservedObject
     private var viewModel: ItemImageViewModel
 
@@ -26,7 +29,7 @@ struct RemoteImageSearchView: View {
     }
 
     private var layout: CollectionVGridLayout {
-        guard UIDevice.isPhone else {
+        guard horizontalSizeClass != .regular else {
             return .minWidth(
                 150,
                 itemSpacing: EdgeInsets.itemSpacing,

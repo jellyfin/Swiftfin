@@ -107,6 +107,7 @@ extension VideoPlayer {
                 .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
                 .itemSpacing(EdgeInsets.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
+                .clipHorizontalOverflow()
             }
             .onChange(of: currentElementID) { _, newID in
                 if initialElementID == nil {

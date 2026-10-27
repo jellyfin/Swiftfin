@@ -13,6 +13,9 @@ struct PosterHStack<
     Data: Collection
 >: View where Data.Element: Poster, Data.Index == Int {
 
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
+
     let elements: Data
     let displayType: PosterDisplayType
     let size: PosterDisplayType.Size
@@ -26,7 +29,7 @@ struct PosterHStack<
             columnTrailingInset: 0
         )
         #else
-        if UIDevice.isPad {
+        if horizontalSizeClass == .regular {
             let minWidth: CGFloat = {
                 switch (displayType, size) {
                 case (.landscape, .small):
@@ -86,6 +89,7 @@ struct PosterHStack<
         .insets(horizontal: EdgeInsets.edgePadding)
         .itemSpacing(EdgeInsets.itemSpacing)
         .scrollBehavior(.continuousLeadingEdge)
+        .clipHorizontalOverflow()
         .withViewContext(.isThumb)
     }
 }

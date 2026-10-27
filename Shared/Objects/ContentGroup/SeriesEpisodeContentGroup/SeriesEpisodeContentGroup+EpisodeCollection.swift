@@ -127,6 +127,9 @@ extension SeriesEpisodeContentGroup {
             case episodes
         }
 
+        @Environment(\.horizontalSizeClass)
+        private var horizontalSizeClass
+
         @FocusState
         private var focusedSection: FocusedSection?
         @FocusState
@@ -149,7 +152,7 @@ extension SeriesEpisodeContentGroup {
             self.content = content
         }
 
-        private static var layout: CollectionHStackLayout {
+        private var layout: CollectionHStackLayout {
             #if os(tvOS)
             .grid(
                 columns: 3.5,
@@ -157,7 +160,7 @@ extension SeriesEpisodeContentGroup {
                 columnTrailingInset: 0
             )
             #else
-            if UIDevice.isPad {
+            if horizontalSizeClass == .regular {
                 .minimumWidth(
                     columnWidth: 300,
                     rows: 1
@@ -176,7 +179,7 @@ extension SeriesEpisodeContentGroup {
             ContentGroupSection {
                 CollectionHStack(
                     uniqueElements: elements,
-                    layout: Self.layout
+                    layout: layout
                 ) { element in
                     content(element)
                         .focused($focusedElement, equals: element.id)
@@ -189,6 +192,7 @@ extension SeriesEpisodeContentGroup {
                 .insets(horizontal: EdgeInsets.edgePadding)
                 .itemSpacing(EdgeInsets.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
+                .clipHorizontalOverflow()
                 .focusSection()
                 .focused($focusedSection, equals: .episodes)
                 .defaultFocus(

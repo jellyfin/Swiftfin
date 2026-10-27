@@ -26,6 +26,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @Default(.Customization.Library.style)
     private var defaultLibraryStyle
 
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
+
     @Environment(\.tabSafeAreaInsets)
     private var tabSafeAreaInsets
 
@@ -65,7 +68,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         libraryStyleOptions.hasVisibleControls ||
             (
                 libraryStyle.displayType == .list &&
-                    UIDevice.isPad &&
+                    !UIDevice.isTV && horizontalSizeClass == .regular &&
                     libraryStyleOptions.displayTypes.contains(.list)
             )
     }
@@ -94,20 +97,25 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         return insets + EdgeInsets.itemSpacing
         #else
         var insets: EdgeInsets = if isSafeAreaBarApplied {
-            frame.safeAreaInsets + EdgeInsets.itemSpacing
+            EdgeInsets(
+                top: frame.safeAreaInsets.top,
+                leading: 0,
+                bottom: frame.safeAreaInsets.bottom,
+                trailing: 0
+            ) + EdgeInsets.itemSpacing
         } else {
             EdgeInsets(
                 top: 0,
-                leading: frame.safeAreaInsets.leading,
+                leading: 0,
                 bottom: 0,
-                trailing: frame.safeAreaInsets.trailing
+                trailing: 0
             ) + EdgeInsets.itemSpacing
         }
 
-        // TODO: shouldn't need explicitly for list, find fix
+        // The collection already occupies the horizontal safe area.
         if libraryStyle.displayType == .list {
-            insets.leading = frame.safeAreaInsets.leading
-            insets.trailing = frame.safeAreaInsets.trailing
+            insets.leading = 0
+            insets.trailing = 0
         }
 
         return insets
@@ -124,6 +132,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 layout: Element.layout(
                     for: libraryStyle,
                     options: libraryStyleOptions,
+                    horizontalSizeClass: horizontalSizeClass,
                     insets: contentInsets(for: frame)
                 )
             ) { element in
@@ -160,7 +169,11 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 collectionView.contentInsetAdjustmentBehavior = .never
             }
             #endif
+            #if os(tvOS)
             .ignoresSafeArea()
+            #else
+            .ignoresSafeArea(.container, edges: .vertical)
+            #endif
         }
         .scrollIndicators(.hidden)
         .withViewContext(.isListRowSeparatorVisible)
@@ -243,9 +256,17 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             viewModel.refreshForEnvironmentChange()
         }
         .onChange(of: libraryStyle) { oldStyle, newStyle in
-            if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==
-                Element.layout(for: newStyle, options: libraryStyleOptions, insets: .zero)
-            {
+            if Element.layout(
+                for: oldStyle,
+                options: libraryStyleOptions,
+                horizontalSizeClass: horizontalSizeClass,
+                insets: .zero
+            ) == Element.layout(
+                for: newStyle,
+                options: libraryStyleOptions,
+                horizontalSizeClass: horizontalSizeClass,
+                insets: .zero
+            ) {
                 gridProxy.redraw()
             }
         }

@@ -392,7 +392,15 @@ extension VideoPlayer {
 
         private var isDismissing = false
         private var didInitiallyAppear: Bool = false
-        private var lastSupplementLayout: (size: CGSize, safeAreaInsets: UIEdgeInsets)?
+        private var lastSupplementLayout: (size: CGSize, safeAreaInsets: UIEdgeInsets, isCompact: Bool)?
+
+        private var usesCompactPlayerLayout: Bool {
+            #if os(tvOS)
+            false
+            #else
+            traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .regular
+            #endif
+        }
 
         #if os(tvOS)
         let onPressEvent = OnPressEvent()
@@ -619,13 +627,18 @@ extension VideoPlayer {
 
             view.backgroundColor = .black
 
-            let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
+            #if os(iOS)
+            registerForTraitChanges([UITraitHorizontalSizeClass.self, UITraitVerticalSizeClass.self]) {
+                (controller: UIContainerViewController, _: UITraitCollection) in
+                controller.view.setNeedsLayout()
+            }
+            #endif
 
             setupOnLoadViews()
             setupOnLoadConstraints()
 
             Task { @MainActor in
-                viewState.isCompact = isCompact
+                viewState.isCompact = usesCompactPlayerLayout
                 viewState.centerOffset = centerOffset
             }
 
@@ -685,7 +698,7 @@ extension VideoPlayer {
 
         private func setupOnLoadConstraints() {
 
-            let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
+            let isCompact = usesCompactPlayerLayout
 
             let bottomAnchor = supplementContainerView.topAnchor.constraint(
                 equalTo: view.bottomAnchor,
@@ -765,13 +778,15 @@ extension VideoPlayer {
 
             let size = view.bounds.size
             let safeAreaInsets = view.safeAreaInsets
+            let isCompact = usesCompactPlayerLayout
             guard playerCompactBottomAnchor != nil,
-                  lastSupplementLayout?.size != size || lastSupplementLayout?.safeAreaInsets != safeAreaInsets
+                  lastSupplementLayout?.size != size || lastSupplementLayout?.safeAreaInsets != safeAreaInsets ||
+                  lastSupplementLayout?.isCompact != isCompact
             else { return }
 
-            lastSupplementLayout = (size, safeAreaInsets)
+            lastSupplementLayout = (size, safeAreaInsets, isCompact)
             cancelSupplementPan()
-            adjustConstraints(isCompact: UIDevice.isPhone && size.isPortrait)
+            adjustConstraints(isCompact: isCompact)
         }
 
         private func adjustConstraints(isCompact: Bool) {

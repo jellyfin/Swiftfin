@@ -87,6 +87,7 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.itemSpacing)
             .scrollBehavior(.continuousLeadingEdge)
+            .clipHorizontalOverflow()
         }
 
         var tvOSView: some View {

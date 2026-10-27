@@ -18,7 +18,11 @@ extension ItemView {
             WithBlurNavigationBar {
                 _Body(groups: groups)
             }
+            #if os(tvOS)
             .ignoresSafeArea()
+            #else
+                .ignoresSafeArea(.container, edges: .vertical)
+            #endif
             .trackingFrame(for: .scrollView)
         }
     }
@@ -35,7 +39,9 @@ extension ItemView {
                 ContentGroupVStack(groups: groups)
                     .edgePadding(.bottom)
             }
+            #if os(tvOS)
             .ignoresSafeArea(edges: .horizontal)
+            #endif
             .scrollIndicators(.hidden)
             .backport
             .scrollEdgeEffectStyle(.soft, for: .top)

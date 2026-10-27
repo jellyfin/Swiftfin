@@ -49,10 +49,6 @@ extension EPGSupplement: VideoPlayerSupplement {
                     action: select
                 )
             }
-            .if(UIDevice.isPhone) { view in
-                view
-                    .padding(.leading, safeAreaInsets.leading)
-            }
             .onFirstAppear {
                 viewModel.refresh(startDate: nil)
             }
@@ -85,6 +81,8 @@ extension EPGSupplement: VideoPlayerSupplement {
 
         var iOSView: some View {
             content
+                .padding(.leading, safeAreaInsets.leading)
+                .padding(.trailing, safeAreaInsets.trailing)
         }
 
         var tvOSView: some View {

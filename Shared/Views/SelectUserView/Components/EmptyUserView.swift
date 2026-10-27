@@ -14,7 +14,16 @@ extension SelectUserView {
 
         let action: () -> Void
 
-        private let columns: CGFloat = UIDevice.isPhone ? 2 : 5
+        @Environment(\.horizontalSizeClass)
+        private var horizontalSizeClass
+
+        private var columns: CGFloat {
+            #if os(tvOS)
+            5
+            #else
+            horizontalSizeClass == .regular ? 5 : 2
+            #endif
+        }
 
         private var imageView: some View {
             RelativeSystemImageView(systemName: "plus")

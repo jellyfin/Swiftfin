@@ -28,6 +28,7 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
         .padding(.bottom, 5)
         .scrollIndicators(.hidden)
         .scrollClipDisabled()
+        .clipHorizontalOverflow()
     }
 
     func body(content: Content) -> some View {
@@ -43,11 +44,11 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
             } else {
                 NavigationBarDrawerView {
                     drawer
-                        .ignoresSafeArea()
+                        .ignoresSafeArea(.container, edges: .vertical)
                 } content: {
                     content
                 }
-                .ignoresSafeArea()
+                .ignoresSafeArea(.container, edges: .vertical)
             }
         }
     }

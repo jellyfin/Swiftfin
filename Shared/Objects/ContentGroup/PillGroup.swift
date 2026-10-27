@@ -73,6 +73,7 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                 }
                 .scrollIndicators(.hidden)
                 .scrollClipDisabled()
+                .clipHorizontalOverflow()
             } header: {
                 if displayTitle.isNotEmpty {
                     Text(displayTitle)
