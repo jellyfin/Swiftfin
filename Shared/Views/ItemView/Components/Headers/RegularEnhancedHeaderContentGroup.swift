@@ -89,27 +89,19 @@ extension ItemView {
 
             @ViewBuilder
             private var overlay: some View {
-                #if os(tvOS)
-                VStack(alignment: .leading, spacing: 30) {
+                VStack(alignment: .leading, spacing: UIDevice.isTV ? 30 : 5) {
                     title
                     detailsRow
                 }
+                #if os(tvOS)
                 .focusSection()
-                #else
-                detailsRow
                 #endif
             }
 
             private var detailsRow: some View {
-                HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                    VStack(alignment: .center, spacing: UIDevice.isTV ? 30 : 5) {
-                        #if !os(tvOS)
-                        title
-                        #endif
-
-                        ItemView.ActionBar(provider: provider)
-                    }
-                    .frame(width: UIDevice.isTV ? 450 : 300)
+                HStack(alignment: .top, spacing: EdgeInsets.edgePadding) {
+                    ItemView.ActionBar(provider: provider)
+                        .frame(width: UIDevice.isTV ? 450 : 300)
 
                     VStack(alignment: .leading, spacing: 10) {
                         ItemView.Description(item: provider.item)
