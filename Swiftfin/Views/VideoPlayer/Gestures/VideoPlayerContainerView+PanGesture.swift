@@ -184,12 +184,20 @@ extension VideoPlayer.UIContainerViewController {
         switch (gestureAction, isLiveStream) {
         case (.none, _), (.scrub, true), (.slowScrub, true):
             return Self.SupplementPanHandlingAction
+
         case (.brightness, _):
-            return Self.BrightnessPanHandlingAction
+            guard let screen = view.window?.windowScene?.screen else {
+                return Self.SupplementPanHandlingAction
+            }
+
+            return Self.BrightnessPanHandlingAction(screen: screen)
+
         case (.scrub, false):
             return Self.ScrubPanHandlingAction()
+
         case (.slowScrub, false):
             return Self.ScrubPanHandlingAction(damping: 0.1)
+
         case (.volume, _):
             return Self.VolumePanHandlingAction
         }
@@ -235,9 +243,9 @@ extension VideoPlayer.UIContainerViewController {
 
     // MARK: - Brightness
 
-    private static var BrightnessPanHandlingAction: PanHandlingAction<CGFloat> {
+    private static func BrightnessPanHandlingAction(screen: UIScreen) -> PanHandlingAction<CGFloat> {
         PanHandlingAction<CGFloat>(
-            startValue: UIScreen.main.brightness
+            startValue: screen.brightness
         ) { startState, handlingState, viewState in
             guard handlingState.gestureState != .ended else { return }
 
@@ -261,7 +269,7 @@ extension VideoPlayer.UIContainerViewController {
             )
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                UIScreen.main.brightness = newBrightness
+                screen.brightness = newBrightness
             }
         }
     }
