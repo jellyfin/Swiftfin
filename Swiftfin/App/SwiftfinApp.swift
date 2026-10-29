@@ -29,13 +29,10 @@ struct SwiftfinApp: App {
             OverlayToastView {
                 PreferencesView {
                     WithLocalUserAuthentication {
-                        // Duo's inner display ignores this mask; its outer display
-                        // follows the same portrait policy as other iPhones.
                         RootView()
-                            .supportedOrientations(UIDevice.current.userInterfaceIdiom == .phone ? .portrait : .all)
+                            .supportedOrientations(UIDevice.isPhone ? .portrait : .all)
                     }
                 }
-                // The hosted navigation hierarchy handles its own safe areas.
                 .ignoresSafeArea(.container)
             }
             .trackingFrame(for: .layoutContainer)

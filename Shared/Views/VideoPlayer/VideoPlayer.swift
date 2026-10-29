@@ -70,7 +70,7 @@ struct VideoPlayer: View {
                 mediaSession.attach(player: Defaults[.VideoPlayer.mediaPlayerType].makePlayer())
             }
         }
-        .prefersStatusBarHidden(!viewState.isPresentingControls)
+        .prefersStatusBarHidden(UIDevice.isPad || !viewState.isPresentingControls)
         .onChange(of: mediaSession.commandError, initial: true) { _, message in
             guard let message else { return }
 

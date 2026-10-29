@@ -104,9 +104,16 @@ struct NavigationInjectionView: View {
                 ),
                 options: .init(
                     isInteractive: isPresentationInteractive,
+                    modalPresentationCapturesStatusBarAppearance: true,
                     preferredPresentationSafeAreaInsets: .zero,
                 ),
-                otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
+                otherwise: .slide(
+                    .init(edge: .bottom),
+                    options: .init(
+                        isInteractive: isPresentationInteractive,
+                        modalPresentationCapturesStatusBarAppearance: true
+                    )
+                )
             )
         ) { presentedRouteBinding, _ in
             let vc = UIPreferencesHostingController {

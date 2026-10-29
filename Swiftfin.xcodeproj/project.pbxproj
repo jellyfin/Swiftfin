@@ -696,8 +696,8 @@
 				E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */,
 				E1BD95B02FBE8E44001CDA57 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E1240A272FEA4F69004E6588 /* XCRemoteSwiftPackageReference "StatefulMacro" */,
-				E12CDBBD2FFB592A00828742 /* XCLocalSwiftPackageReference "CollectionVGrid" */,
-				E16C08F5305A385900895062 /* XCLocalSwiftPackageReference "CollectionHStack" */,
+				E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
+				E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -1211,14 +1211,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = SwiftfinMacros;
 		};
-		E12CDBBD2FFB592A00828742 /* XCLocalSwiftPackageReference "CollectionVGrid" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../CollectionVGrid;
-		};
-		E16C08F5305A385900895062 /* XCLocalSwiftPackageReference "CollectionHStack" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../CollectionHStack;
-		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1268,6 +1260,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.2.0;
+			};
+		};
+		E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/CollectionVGrid";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */ = {
@@ -1332,6 +1332,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.13.4;
+			};
+		};
+		E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/CollectionHStack";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
@@ -1506,12 +1514,12 @@
 		};
 		E12CDBBE2FFB592A00828742 /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E12CDBBD2FFB592A00828742 /* XCLocalSwiftPackageReference "CollectionVGrid" */;
+			package = E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
 		};
 		E12CDBC02FFB593800828742 /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E12CDBBD2FFB592A00828742 /* XCLocalSwiftPackageReference "CollectionVGrid" */;
+			package = E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
 		};
 		E132D3C72BD200C10058A2DF /* CollectionVGrid */ = {
@@ -1634,12 +1642,12 @@
 		};
 		E16C08F6305A385900895062 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E16C08F5305A385900895062 /* XCLocalSwiftPackageReference "CollectionHStack" */;
+			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
 		};
 		E16C08F8305A386900895062 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E16C08F5305A385900895062 /* XCLocalSwiftPackageReference "CollectionHStack" */;
+			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
 		};
 		E176EBDD2D050067009F4CF1 /* IdentifiedCollections */ = {

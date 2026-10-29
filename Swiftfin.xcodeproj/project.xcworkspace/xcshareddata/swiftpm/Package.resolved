@@ -1,5 +1,5 @@
 {
-  "originHash" : "c4015ba6593b494224f3608f298a0ba3896bdbea31b3644268d17f170cecb3cf",
+  "originHash" : "44f58fdeea6e76bcce3fff6bca28ca9c80c66c1dc291bfe7237b799a94fbe046",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -17,6 +17,24 @@
       "state" : {
         "revision" : "c5f2ed4d219866117e135cf648180dc7b66739d3",
         "version" : "3.9.1"
+      }
+    },
+    {
+      "identity" : "collectionhstack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/CollectionHStack",
+      "state" : {
+        "branch" : "main",
+        "revision" : "be93b8c846df6aeec9b39d47cc1031b671842f0b"
+      }
+    },
+    {
+      "identity" : "collectionvgrid",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/CollectionVGrid",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ae139c76a1877e4f34e14bc4017ae615e2434635"
       }
     },
     {

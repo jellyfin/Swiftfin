@@ -14,6 +14,18 @@ extension UIDevice {
         current.identifierForVendor!.uuidString
     }
 
+    static var isPad: Bool {
+        current.userInterfaceIdiom == .pad
+    }
+
+    static var isPhone: Bool {
+        current.userInterfaceIdiom == .phone
+    }
+
+    static var isTV: Bool {
+        current.userInterfaceIdiom == .tv
+    }
+
     static let supportsLiquidGlass: Bool = {
         #if os(tvOS)
         var systemInfo = utsname()
@@ -38,7 +50,7 @@ extension UIDevice {
         #if os(tvOS)
         L10n.tvOS
         #else
-        if current.userInterfaceIdiom == .pad {
+        if UIDevice.isPad {
             return L10n.iPadOS
         } else {
             return L10n.iOS
