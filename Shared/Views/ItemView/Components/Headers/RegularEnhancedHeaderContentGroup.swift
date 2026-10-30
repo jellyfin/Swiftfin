@@ -76,22 +76,32 @@ extension ItemView {
                 .accessibilityRemoveTraits(.isImage)
             }
 
+            private var title: some View {
+                VStack(alignment: .leading) {
+                    if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
+                        ParentButton(title: parentTitle, id: parentID)
+                    }
+
+                    logo
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
             @ViewBuilder
             private var overlay: some View {
-                HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                    VStack(alignment: .center, spacing: UIDevice.isTV ? 30 : 5) {
-                        VStack(alignment: .leading) {
-                            if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
-                                ParentButton(title: parentTitle, id: parentID)
-                            }
+                VStack(alignment: .leading, spacing: UIDevice.isTV ? 30 : 5) {
+                    title
+                    detailsRow
+                }
+                #if os(tvOS)
+                .focusSection()
+                #endif
+            }
 
-                            logo
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                        ItemView.ActionBar(provider: provider)
-                    }
-                    .frame(width: UIDevice.isTV ? 450 : 300)
+            private var detailsRow: some View {
+                HStack(alignment: .top, spacing: EdgeInsets.edgePadding) {
+                    ItemView.ActionBar(provider: provider)
+                        .frame(width: UIDevice.isTV ? 450 : 300)
 
                     VStack(alignment: .leading, spacing: 10) {
                         ItemView.Description(item: provider.item)
@@ -110,10 +120,8 @@ extension ItemView {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                #if os(tvOS)
-                .focusSection()
-                #else
-                    .edgePadding(.bottom)
+                #if !os(tvOS)
+                .edgePadding(.bottom)
                     .background(
                         alignment: .bottom,
                         extendedBy: .init(horizontal: EdgeInsets.edgePadding)
