@@ -213,8 +213,8 @@ extension Defaults.Keys {
                 UserKey("libraryRememberLayout", default: false)
             }
 
-            static var rememberSort: Key<Bool> {
-                UserKey("libraryRememberSort", default: false)
+            static var rememberFilters: Key<Bool> {
+                UserKey("libraryRememberFilters", default: false)
             }
         }
 

@@ -24,6 +24,16 @@ extension NavigationRoute {
     }
 
     @MainActor
+    static func savedFilterEditor(viewModel: FilterViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "saved-filter-editor",
+            style: .sheet
+        ) {
+            StoredFilterEditorView(viewModel: viewModel, filters: viewModel.savableFilters)
+        }
+    }
+
+    @MainActor
     static func contentGroup(
         provider: some ContentGroupProvider
     ) -> NavigationRoute {

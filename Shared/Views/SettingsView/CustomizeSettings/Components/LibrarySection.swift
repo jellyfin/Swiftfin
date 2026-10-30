@@ -32,8 +32,8 @@ extension CustomizeSettingsView {
 
         @Default(.Customization.Library.rememberLayout)
         private var rememberLibraryLayout
-        @Default(.Customization.Library.rememberSort)
-        private var rememberLibrarySort
+        @Default(.Customization.Library.rememberFilters)
+        private var rememberLibraryFilters
 
         @Router
         private var router
@@ -53,10 +53,8 @@ extension CustomizeSettingsView {
                             to: .itemFilterDrawerSelector(selection: $libraryEnabledDrawerFilters)
                         )
                     }
-                }
 
-                Section {
-                    Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
+                    Toggle(L10n.rememberFiltering, isOn: $rememberLibraryFilters)
                 }
 
                 Section(L10n.layout) {
@@ -69,9 +67,7 @@ extension CustomizeSettingsView {
                             LabeledContent(L10n.columns, value: libraryStyle.listColumnCount.description)
                         }
                     }
-                }
 
-                Section {
                     Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
                 }
 
