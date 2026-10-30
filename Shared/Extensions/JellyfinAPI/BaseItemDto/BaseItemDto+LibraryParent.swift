@@ -55,11 +55,18 @@ extension BaseItemDto: LibraryParent {
         case (_, .channel), (_, .liveTvChannel), (_, .tvChannel):
             [.liveTvProgram]
 
+        case (_, .playlist):
+            BaseItemKind.supportedCases
+                .appending([.episode, .audio])
+
         case (.movies, _):
             [.movie]
 
         case (.music, _):
             [.audio, .musicAlbum, .musicArtist]
+
+        case (.playlists, _):
+            [.playlist]
 
         case (.tvshows, _):
             switch grouping {
