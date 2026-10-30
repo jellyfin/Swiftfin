@@ -12,16 +12,13 @@ extension VideoPlayer.UIContainerViewController {
 
     struct SupplementContainerView: View {
 
-        @AdaptiveLayout
-        private var viewLayout
-
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
-
         @Environment(ViewState.self)
         private var viewState
         @Environment(MediaSession.self)
         private var mediaSession
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @FocusState
         private var focusedElement: String?
@@ -108,31 +105,24 @@ extension VideoPlayer.UIContainerViewController {
                 }
                 .scrollIfLargerThanContainer(axes: .horizontal, alignment: .leading)
             }
-            .edgePadding(.horizontal)
             #if os(tvOS)
-            // Menu dismissal can restore a tab before the content finishes appearing.
-            // Keep tabs out of the focus engine until the requested control receives focus.
-            .disabled(viewState.isSupplementFocusPending)
-            .defaultFocus(
-                $focusedElement,
-                defaultTabFocus,
-                priority: .userInitiated
-            )
-            .focusSection()
-            .onMoveCommand { direction in
-                if direction == .up, viewState.isPresentingSupplement {
-                    viewState.selectedSupplementID = nil
-                }
-            }
-            #endif
-            .padding(
-                .init(
-                    top: 0,
-                    leading: viewLayout.isLarge ? 0 : safeAreaInsets.leading,
-                    bottom: viewLayout.isLarge ? 0 : 8,
-                    trailing: viewLayout.isLarge ? 0 : safeAreaInsets.trailing
+            .edgePadding(.horizontal)
+                // Menu dismissal can restore a tab before the content finishes appearing.
+                // Keep tabs out of the focus engine until the requested control receives focus.
+                .disabled(viewState.isSupplementFocusPending)
+                .defaultFocus(
+                    $focusedElement,
+                    defaultTabFocus,
+                    priority: .userInitiated
                 )
-            )
+                .focusSection()
+                .onMoveCommand { direction in
+                    if direction == .up, viewState.isPresentingSupplement {
+                        viewState.selectedSupplementID = nil
+                    }
+                }
+            #endif
+                .padding(.bottom, viewLayout.isLarge ? 0 : 8)
             .buttonStyle(.capsule)
             .controlSize(.large)
             .foregroundStyle(.white)

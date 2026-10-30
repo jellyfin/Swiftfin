@@ -6,16 +6,19 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import UIKit
+#if os(tvOS)
 import SwiftfinMacros
-import SwiftUI
+#endif
 
 #if os(iOS)
 extension UIInterfaceOrientationMask: @retroactive CustomDebugStringConvertible {}
 #endif
 
-public extension UIInterfaceOrientationMask {
+extension UIInterfaceOrientationMask {
 
-    var debugDescription: String {
+    // swiftformat:disable:next redundantPublic
+    public var debugDescription: String {
         switch self {
         case .all:
             "All Orientations"
@@ -37,33 +40,9 @@ public extension UIInterfaceOrientationMask {
     }
 }
 
-public extension View {
-
-    #if os(iOS)
-    func keyCommands(@KeyCommandsBuilder _ commands: @escaping () -> [KeyCommandAction]) -> some View {
-        preference(key: KeyCommandsPreferenceKey.self, value: commands())
-    }
-    #endif
-
-    #if os(tvOS)
-    func pressCommands(@PressCommandsBuilder _ commands: @escaping () -> [PressCommandAction]) -> some View {
-        preference(key: PressCommandsPreferenceKey.self, value: commands())
-    }
-    #endif
-
-    /// - Important: This does nothing on tvOS.
-    func supportedOrientations(_ supportedOrientations: UIInterfaceOrientationMask) -> some View {
-        #if os(tvOS)
-        self
-        #else
-        preference(key: SupportedOrientationsPreferenceKey.self, value: supportedOrientations)
-        #endif
-    }
-}
-
 #if os(tvOS)
 @OptionSet<Int>
-public struct UIInterfaceOrientationMask: CustomDebugStringConvertible {
+struct UIInterfaceOrientationMask: CustomDebugStringConvertible {
 
     private enum Options: Int {
 
@@ -73,15 +52,15 @@ public struct UIInterfaceOrientationMask: CustomDebugStringConvertible {
         case portraitUpsideDown = 2
     }
 
-    public static var landscape: Self {
+    static var landscape: Self {
         [.landscapeLeft, .landscapeRight]
     }
 
-    public static var all: Self {
+    static var all: Self {
         [.portrait, .landscapeLeft, .landscapeRight, .portraitUpsideDown]
     }
 
-    public static var allButUpsideDown: Self {
+    static var allButUpsideDown: Self {
         [.portrait, .landscapeLeft, .landscapeRight]
     }
 }

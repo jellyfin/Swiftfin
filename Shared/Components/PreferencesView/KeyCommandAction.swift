@@ -8,7 +8,7 @@
 
 import UIKit
 
-public struct KeyCommandAction {
+struct KeyCommandAction {
 
     let title: String
     let subtitle: String?
@@ -16,7 +16,7 @@ public struct KeyCommandAction {
     let modifierFlags: UIKeyModifierFlags
     let action: () -> Void
 
-    public init(
+    init(
         title: String,
         subtitle: String? = nil,
         input: String,
@@ -33,7 +33,7 @@ public struct KeyCommandAction {
 
 extension KeyCommandAction: Equatable {
 
-    public static func == (lhs: KeyCommandAction, rhs: KeyCommandAction) -> Bool {
+    static func == (lhs: KeyCommandAction, rhs: KeyCommandAction) -> Bool {
         lhs.input == rhs.input
     }
 }

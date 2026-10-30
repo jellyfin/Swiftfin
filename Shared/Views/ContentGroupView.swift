@@ -19,8 +19,6 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         case content = "contentGroup-content"
     }
 
-    @Environment(\.tabSafeAreaInsets)
-    private var tabSafeAreaInsets
     @Environment(\.frameForParentView)
     private var frameForParentView
 
@@ -55,7 +53,10 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
                     ContentGroupVStack(groups: viewModel.groups)
                         .edgePadding(viewLayout.isLarge && !contentGroupOptions.contains(.ignoreSafeAreaTop) ? .vertical : .bottom)
-                        .padding(.top, contentGroupOptions.contains(.ignoreSafeAreaTop) ? 0 : tabSafeAreaInsets.top)
+                        .padding(
+                            .top,
+                            contentGroupOptions.contains(.ignoreSafeAreaTop) ? 0 : (frameForParentView[.tabView]?.safeAreaInsets.top ?? 0)
+                        )
                         .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
                             contentGroupOptions = value
                         }

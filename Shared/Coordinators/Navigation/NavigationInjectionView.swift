@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import PreferencesView
 import SwiftUI
 import Transmission
 
@@ -74,7 +73,7 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
                 presentedRoute.route.destination
             }
-            .environment(\.tabSafeAreaInsets, .zero)
+            .transformEnvironment(\.frameForParentView) { $0[.tabView] = nil }
             .background(.regularMaterial)
         }
         .fullScreenCover(
@@ -83,7 +82,7 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
                 presentedRoute.route.destination
             }
-            .environment(\.tabSafeAreaInsets, .zero)
+            .transformEnvironment(\.frameForParentView) { $0[.tabView] = nil }
         }
         #else
         .sheet(

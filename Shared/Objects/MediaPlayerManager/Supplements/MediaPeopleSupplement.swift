@@ -30,9 +30,6 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
         @AdaptiveLayout
         private var viewLayout
 
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets: EdgeInsets
-
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
 
@@ -87,7 +84,7 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
                 personView(for: person)
             }
             .clipsToBounds(false)
-            .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing, viewLayout.edgePadding))
+            .insets(horizontal: max(viewState.supplementInsets.leading, viewState.supplementInsets.trailing, viewLayout.edgePadding))
             .itemSpacing(viewLayout.itemSpacing)
             .scrollBehavior(.continuousLeadingEdge)
             #if os(iOS)

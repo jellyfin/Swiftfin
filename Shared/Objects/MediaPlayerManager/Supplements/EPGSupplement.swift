@@ -25,9 +25,6 @@ extension EPGSupplement: VideoPlayerSupplement {
 
     private struct GuideOverlay: PresentationView {
 
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
-
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
         @Environment(MediaSession.self)
@@ -49,8 +46,8 @@ extension EPGSupplement: VideoPlayerSupplement {
                     action: select
                 )
             }
-            .padding(.leading, safeAreaInsets.leading)
-            .padding(.trailing, safeAreaInsets.trailing)
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
             .onFirstAppear {
                 viewModel.refresh(startDate: nil)
             }

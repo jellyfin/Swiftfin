@@ -92,10 +92,10 @@ struct MainTabView: View {
                     role: tab.item.id == TabItem.search.id ? .search : nil
                 ) {
                     #if os(tvOS)
-                    GeometryReader { proxy in
+                    GeometryReader { _ in
                         tabRoot(tab)
-                            .environment(\.tabSafeAreaInsets, proxy.safeAreaInsets)
                     }
+                    .trackingFrame(for: .tabView)
                     #else
                     tabRoot(tab)
                     #endif

@@ -19,7 +19,22 @@ extension VideoPlayer {
     final class ViewState {
 
         var layoutSize: CGSize = .zero
-        var safeAreaInsets: EdgeInsets = .zero
+        var systemInsets: EdgeInsets = .zero
+
+        var supplementInsets: EdgeInsets {
+            #if os(tvOS)
+            systemInsets.max(ViewLayout.platformDefault.edgePadding)
+            #else
+            // The controls' safe region already consumes the horizontal insets.
+            EdgeInsets(top: 0, leading: 0, bottom: systemInsets.bottom, trailing: 0)
+            #endif
+        }
+
+        #if os(iOS)
+        var supplementHeight: CGFloat = 0
+        var supplementVisibleHeight: CGFloat = 0
+        var playbackButtonsInsets: EdgeInsets = .zero
+        #endif
 
         enum Presentation: Equatable {
 
@@ -297,6 +312,12 @@ extension VideoPlayer {
             case .controls:
                 var elements: Set<Element> = [.progress, .toolbar, .playbackButtons, .dimming]
 
+                #if os(iOS)
+                if overlayActions.isNotEmpty {
+                    elements.insert(.overlayActions)
+                }
+                #endif
+
                 if supplements.isNotEmpty {
                     elements.insert(.supplements)
                 }
@@ -322,7 +343,6 @@ extension VideoPlayer {
 
         var originalPlaybackRate: Double?
 
-        var centerOffset: CGFloat = 0
         let focusCoordinator: FocusCoordinator = .init()
         let jumpProgressObserver: JumpProgressObserver = .init()
 

@@ -16,11 +16,11 @@ extension VideoPlayer {
         where Data.Element: Poster, Data.Index == Int
     {
 
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
+
         @AdaptiveLayout
         private var viewLayout
-
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
 
         @State
         private var initialElementID: Data.Element.ID?
@@ -107,7 +107,7 @@ extension VideoPlayer {
                 )
                 .initialElement(id: initialElementID)
                 .clipsToBounds(false)
-                .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing, viewLayout.edgePadding))
+                .insets(horizontal: max(viewState.supplementInsets.leading, viewState.supplementInsets.trailing, viewLayout.edgePadding))
                 .itemSpacing(viewLayout.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
                 #if os(iOS)

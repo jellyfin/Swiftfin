@@ -36,8 +36,8 @@ extension PlaybackAdjustmentSupplement: VideoPlayerSupplement {
         @AdaptiveLayout
         private var viewLayout
 
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
 
         @Environment(MediaSession.self)
         private var mediaSession
@@ -59,10 +59,10 @@ extension PlaybackAdjustmentSupplement: VideoPlayerSupplement {
             .frame(maxWidth: .infinity)
             .edgePadding(.horizontal)
             .padding(.vertical, viewLayout.isLarge ? 24 : 12)
-            .padding(.leading, safeAreaInsets.leading)
-            .padding(.trailing, safeAreaInsets.trailing)
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
             .scrollIfLargerThanContainer()
-            .padding(.bottom, safeAreaInsets.bottom)
+            .padding(.bottom, viewState.supplementInsets.bottom)
         }
 
         var standardView: some View {

@@ -18,71 +18,78 @@ extension VideoPlayer {
         @AdaptiveLayout
         private var viewLayout
 
-        // since this view ignores safe area, it must
-        // get safe area insets from parent views
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
-
         @Environment(ViewState.self)
         private var viewState
         @Environment(MediaSession.self)
         private var mediaSession
 
-        @State
-        private var bottomContentFrame: CGRect = .zero
-
         private var isScrubbing: Bool {
             viewState.isScrubbing
+        }
+
+        private var supplementContent: some View {
+            // The panel draws through the bottom system gap; its reservation excludes it.
+            VideoPlayer.UIContainerViewController.SupplementContainerView()
+                .frame(height: viewState.supplementHeight)
+                .frame(
+                    height: max(0, viewState.supplementVisibleHeight - viewState.systemInsets.bottom),
+                    alignment: .top
+                )
+                .allowsHitTesting(viewState.visibleElements.contains(.supplements))
         }
 
         // MARK: body
 
         var body: some View {
-            ZStack {
-                VStack {
-                    Toolbar()
-                        .frame(height: 50)
-                        .isVisible(viewState.visibleElements.contains(.toolbar))
-                        .enabled(viewState.visibleElements.contains(.toolbar))
-                        .padding(.top, safeAreaInsets.top)
-                        .padding(.leading, safeAreaInsets.leading)
-                        .padding(.trailing, safeAreaInsets.trailing)
-                        .offset(y: viewState.isPresentingControls ? 0 : -20)
-
-                    Spacer()
-                        .allowsHitTesting(false)
-
-                    PlaybackProgress()
-                        .isVisible(viewState.isPresentingProgress)
-                        .enabled(viewState.isPresentingProgress)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.leading, safeAreaInsets.leading)
-                        .padding(.trailing, safeAreaInsets.trailing)
-                        .trackingFrame($bottomContentFrame)
-                        .background {
-                            if viewState.isPresentingProgress {
-                                EmptyHitTestView()
-                            }
-                        }
-                        .background(alignment: .top) {
-                            Color.black
-                                .mask(gradient: .linear) {
-                                    (location: 0, opacity: 0)
-                                    (location: 1, opacity: 0.5)
-                                }
-                                .isVisible(isScrubbing)
-                                .frame(height: bottomContentFrame.height + 50 + viewLayout.edgePadding * 2)
-                        }
-                }
-
+            VideoPlayerControlsLayout(
+                systemInsets: viewState.systemInsets,
+                edgePadding: viewLayout.edgePadding,
+                showsProgress: viewState.isPresentingProgress,
+                showsSupplements: viewState.visibleElements.contains(.supplements),
+                buttonsInsets: viewState.playbackButtonsInsets
+            ) {
+                Toolbar()
+                    .frame(height: 50)
+                    .isVisible(viewState.visibleElements.contains(.toolbar))
+                    .enabled(viewState.visibleElements.contains(.toolbar))
+                    .offset(y: viewState.isPresentingControls ? 0 : -20)
+            } buttons: {
                 PlaybackButtons()
                     .isVisible(viewState.visibleElements.contains(.playbackButtons))
                     .enabled(viewState.visibleElements.contains(.playbackButtons))
+            } progress: {
+                PlaybackProgress()
+                    .isVisible(viewState.isPresentingProgress)
+                    .enabled(viewState.isPresentingProgress)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background {
+                        if viewState.isPresentingProgress {
+                            EmptyHitTestView()
+                        }
+                    }
+            } progressBackground: {
+                Color.black
+                    .mask(gradient: .linear) {
+                        (location: 0, opacity: 0)
+                        (location: 1, opacity: 0.5)
+                    }
+                    .isVisible(isScrubbing)
+            } actions: {
+                OverlayActions()
+            } supplements: {
+                supplementContent
+            } toast: {
+                if viewState.toastProxy.isPresenting {
+                    OverlayToastContent()
+                        .environmentObject(viewState.toastProxy)
+                        .transition(.offset(y: -20).combined(with: .opacity))
+                }
             }
+            .environmentObject(viewState.toastProxy)
             .modifier(VideoPlayer.KeyCommandsModifier())
             .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.bouncy(duration: 0.4), value: viewState.isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: viewState.presentation)
+            .animation(.easeInOut(duration: 0.2), value: viewState.toastProxy.isPresenting)
             .disabled(mediaSession.state == .error)
         }
     }

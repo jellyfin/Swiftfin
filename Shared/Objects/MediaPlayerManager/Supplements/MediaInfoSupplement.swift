@@ -37,9 +37,6 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
         @AdaptiveLayout
         private var viewLayout
 
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets: EdgeInsets
-
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
         @Environment(MediaSession.self)
@@ -174,8 +171,6 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                 regularContent
                     .edgePadding()
             }
-            .padding(.leading, safeAreaInsets.leading)
-            .padding(.trailing, safeAreaInsets.trailing)
             .task(id: item.currentProgram?.id) {
                 await recordingViewModel.refresh()
             }

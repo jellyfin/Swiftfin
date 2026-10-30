@@ -15,8 +15,8 @@ extension ItemView {
 
     struct ContentGroupScrollView: View {
 
-        @Environment(\.tabSafeAreaInsets)
-        private var tabSafeAreaInsets
+        @Environment(\.frameForParentView)
+        private var frameForParentView
 
         @AdaptiveLayout
         private var viewLayout
@@ -84,7 +84,7 @@ extension ItemView {
                 ScrollView {
                     ContentGroupVStack(groups: groups)
                         .edgePadding(.bottom)
-                        .padding(.top, isEnhanced ? 0 : tabSafeAreaInsets.top)
+                        .padding(.top, isEnhanced ? 0 : (frameForParentView[.tabView]?.safeAreaInsets.top ?? 0))
                 }
                 .trackingFrame(for: .scrollView)
                 .ignoresSafeArea(.container, edges: viewLayout.value(standard: [], large: isEnhanced ? .all : [.horizontal, .top]))

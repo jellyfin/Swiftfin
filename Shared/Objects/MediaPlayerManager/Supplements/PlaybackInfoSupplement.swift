@@ -33,9 +33,6 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
 
     private struct OverlayView: PresentationView {
 
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets: EdgeInsets
-
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
         @Environment(MediaSession.self)
@@ -230,9 +227,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
             .onFirstAppear { viewModel.observe(itemID: itemID) }
             .labeledContentStyle(.playbackInfo)
-            .padding(.leading, safeAreaInsets.leading)
-            .padding(.trailing, safeAreaInsets.trailing)
-            .padding(.bottom, safeAreaInsets.bottom)
+            .padding(.bottom, viewState.systemInsets.bottom)
         }
 
         private var compactView: some View {

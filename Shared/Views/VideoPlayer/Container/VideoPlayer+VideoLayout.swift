@@ -88,11 +88,12 @@ extension VideoPlayer {
 
         #if os(iOS)
         static func padding(
-            insets: EdgeInsets,
+            notch: NotchMeasurement?,
             behavior: ViewState.AspectFillBehavior
         ) -> EdgeInsets {
-            guard behavior == .fit else { return .init() }
+            guard behavior == .fit, let notch, notch.cutout != nil else { return .init() }
 
+            let insets = notch.insets
             let horizontalInset = max(insets.leading, insets.trailing)
 
             return EdgeInsets(
@@ -137,10 +138,7 @@ extension VideoPlayer {
             #if os(iOS)
             NotchReader { notchMeasurement in
                 GeometryReader { geometry in
-                    let usesSystemSafeArea = viewState.isCompact && notchMeasurement?.cutout == nil
-                    let fitInsets = usesSystemSafeArea
-                        ? (notchMeasurement?.systemInsets ?? geometry.safeAreaInsets)
-                        : VideoLayout.padding(insets: notchMeasurement?.insets ?? .init(), behavior: .fit)
+                    let fitInsets = VideoLayout.padding(notch: notchMeasurement, behavior: .fit)
 
                     let zoomGeometry = VideoZoom.Geometry(
                         videoSize: videoSize(),

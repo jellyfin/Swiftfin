@@ -11,14 +11,9 @@ import SwiftUI
 
 struct VideoPlayer: View {
 
-    @AdaptiveLayout
-    private var viewLayout
-
     @Router
     private var router
 
-    @State
-    private var safeAreaInsets: EdgeInsets = .init()
     @State
     private var viewState: ViewState = .init()
 
@@ -98,15 +93,11 @@ struct VideoPlayer: View {
         } message: {
             Text(L10n.unableToLoadThisItem)
         }
-        .environment(\.safeAreaInsets, safeAreaInsets)
         .colorScheme(.dark)
         .trackingFrame(for: .layoutContainer)
         .supportedOrientations(.all)
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
-        .onSizeChanged { size, safeArea in
-            self.safeAreaInsets = safeArea.max(viewLayout.resolving(size: size).edgePadding)
-        }
     }
 }

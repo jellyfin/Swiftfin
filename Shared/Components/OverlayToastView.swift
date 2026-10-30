@@ -29,11 +29,8 @@ struct OverlayToastView<Content: View>: View {
 
     private let content: Content
 
-    @Environment(\.safeAreaInsets)
-    private var safeAreaInsets
-
     private var topPadding: CGFloat {
-        viewLayout.value(standard: safeAreaInsets.top + 10, large: 60)
+        viewLayout.value(standard: 10, large: 60)
     }
 
     init(
@@ -71,7 +68,7 @@ struct OverlayToastView<Content: View>: View {
     }
 }
 
-private struct OverlayToastContent: View {
+struct OverlayToastContent: View {
 
     @AdaptiveLayout
     private var viewLayout

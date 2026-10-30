@@ -7,7 +7,6 @@
 //
 
 import JellyfinAPI
-import PreferencesView
 import SwiftUI
 import Transmission
 

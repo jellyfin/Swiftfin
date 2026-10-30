@@ -31,8 +31,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     @Environment(\.frameForParentView)
     private var frameForParentView
-    @Environment(\.tabSafeAreaInsets)
-    private var tabSafeAreaInsets
 
     @Namespace
     private var namespace
@@ -91,7 +89,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         // The collection disables automatic adjustment, so include both the local
         // safe area (including filter bars) and the tab's measured top inset.
         var insets = frame.safeAreaInsets
-        insets.top = max(insets.top, tabSafeAreaInsets.top)
+        insets.top = max(insets.top, frameForParentView[.tabView]?.safeAreaInsets.top ?? 0)
         return insets + viewLayout.itemSpacing
         #else
         // The outer container consumes horizontal safe areas for both tab roots

@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import PreferencesView
 import SwiftUI
 
 // TODO: protect against holding down

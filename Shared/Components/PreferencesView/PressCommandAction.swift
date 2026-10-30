@@ -6,29 +6,18 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-import SwiftUI
+import UIKit
 
-public struct PressCommandAction {
+struct PressCommandAction {
 
     let title: String
     let press: UIPress.PressType
     let action: () -> Void
-
-    public init(
-        title: String,
-        press: UIPress.PressType,
-        action: @escaping () -> Void
-    ) {
-        self.title = title
-        self.press = press
-        self.action = action
-    }
 }
 
 extension PressCommandAction: Equatable {
 
-    public static func == (lhs: PressCommandAction, rhs: PressCommandAction) -> Bool {
+    static func == (lhs: PressCommandAction, rhs: PressCommandAction) -> Bool {
         lhs.press == rhs.press
     }
 }
