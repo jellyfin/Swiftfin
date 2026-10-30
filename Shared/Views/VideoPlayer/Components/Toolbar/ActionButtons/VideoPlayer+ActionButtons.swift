@@ -37,22 +37,13 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         @Environment(MediaSession.self)
         private var mediaSession
 
-        #if os(iOS)
-        @Default(.Experimental.chromecast)
-        private var isChromecastEnabled
-        #endif
-
         @FocusState
         private var focusedButton: String?
 
         private func resolvedActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
             var filteredButtons = rawButtons
 
-            #if os(iOS)
-            if !isChromecastEnabled {
-                filteredButtons.removeAll(equalTo: .playbackDestination)
-            }
-            #elseif os(tvOS)
+            #if os(tvOS)
             filteredButtons.removeAll(equalTo: .pictureInPicture)
             #endif
             if mediaSession.isRemotePlayback {

@@ -142,9 +142,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     #endif
 
     static var supportedCases: [Self] {
-        #if os(iOS)
-        allCases.filter { $0 != .playbackDestination || Defaults[.Experimental.chromecast] }
-        #elseif os(tvOS)
+        #if os(tvOS)
         allCases.filter { $0 != .pictureInPicture }
         #else
         allCases

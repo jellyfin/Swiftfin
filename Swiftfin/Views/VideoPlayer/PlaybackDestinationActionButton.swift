@@ -20,34 +20,66 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @State
         private var controller: ChromecastController?
 
+        @StateObject
+        private var castViewModel = CastViewModel()
+
         private var selectedDeviceID: String? {
             (mediaSession.player as? ChromecastMediaPlayer)?.session.device.uniqueID
         }
 
+        private var selectedSessionID: String? {
+            (mediaSession.player as? JellyfinCastMediaPlayer)?.sessionID
+        }
+
+        private func select(_ target: SessionViewModel) {
+            guard mediaSession.canControlPlayback, mediaSession.item.mediaType == .video,
+                  selectedSessionID != target.id else { return }
+
+            mediaSession.transfer(to: JellyfinCastMediaPlayer(session: target.session))
+        }
+
         var body: some View {
             Menu(L10n.cast, systemImage: VideoPlayerActionButton.playbackDestination.systemImage) {
-                Button(L10n.playOnThisDevice, systemImage: selectedDeviceID == nil ? "checkmark" : "iphone") {
+                Button(L10n.playOnThisDevice, systemImage: mediaSession.isRemotePlayback ? "iphone" : "checkmark") {
                     mediaSession.returnToLocalPlayback()
                 }
                 .disabled(!mediaSession.canReturnToLocalPlayback)
 
                 Divider()
 
-                if let controller, controller.devices.isNotEmpty {
-                    ForEach(controller.devices, id: \.uniqueID) { device in
-                        Button(
-                            device.friendlyName ?? L10n.cast,
-                            systemImage: selectedDeviceID == device.uniqueID ? "checkmark" : "tv"
-                        ) {
-                            controller.select(device, for: mediaSession)
+                if castViewModel.targets.isNotEmpty {
+                    Section(L10n.jellyfin) {
+                        ForEach(castViewModel.targets.values.elements, id: \.id) { target in
+                            Button(
+                                target.session.deviceName ?? L10n.unknown,
+                                systemImage: selectedSessionID == target.id ? "checkmark" : "tv"
+                            ) {
+                                select(target)
+                            }
+                            .disabled(!mediaSession.canControlPlayback)
                         }
-                        .disabled(!mediaSession.canControlPlayback)
                     }
-                } else {
+                }
+
+                if let controller, controller.devices.isNotEmpty {
+                    Section(L10n.cast) {
+                        ForEach(controller.devices, id: \.uniqueID) { device in
+                            Button(
+                                device.friendlyName ?? L10n.cast,
+                                systemImage: selectedDeviceID == device.uniqueID ? "checkmark" : "tv"
+                            ) {
+                                controller.select(device, for: mediaSession)
+                            }
+                            .disabled(!mediaSession.canControlPlayback)
+                        }
+                    }
+                } else if castViewModel.targets.isEmpty {
                     Text(L10n.noCastDevicesFound)
                 }
             }
             .onAppear {
+                castViewModel.refresh()
+
                 guard Defaults[.Experimental.chromecast] else { return }
 
                 let controller = ChromecastController.shared

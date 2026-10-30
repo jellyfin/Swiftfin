@@ -110,19 +110,6 @@ extension VideoPlayer.PlaybackControls {
             return total
         }
 
-        private var liveIndicator: some View {
-            Text(L10n.live)
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundStyle(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 2)
-                .background {
-                    Capsule()
-                        .fill(Color.gray)
-                }
-        }
-
         private var slowScrubbingIndicator: some View {
             HStack {
                 Image(systemName: "backward.fill")
@@ -188,7 +175,7 @@ extension VideoPlayer.PlaybackControls {
         var body: some View {
             VStack(spacing: 5) {
                 if mediaSession.item.isLiveStream {
-                    liveIndicator
+                    LiveIndicator()
                         .edgePadding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
