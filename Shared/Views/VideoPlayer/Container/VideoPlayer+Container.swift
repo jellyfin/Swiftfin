@@ -106,29 +106,29 @@ extension VideoPlayer {
             var body: some View {
                 VideoViewport(videoSize: videoSize) { videoLayout in
                     player(videoLayout)
-                        #if os(iOS)
-                            .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
-                        #endif
-                        .overlay {
-                            Group {
-                                if viewState.isPresentingFullScreenSupplement {
-                                    Color.black.opacity(0.8)
-                                } else {
-                                    EasedGradient(
-                                        colors: [.clear, .black],
-                                        startPoint: .center,
-                                        endPoint: .bottom
-                                    )
-                                }
-                            }
-                            .isVisible(shouldPresentDimOverlay)
-                        }
-                        .allowsHitTesting(false)
                 }
                 #if os(iOS)
+                .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
+                #endif
                 .overlay {
-                        VideoZoomBorder(isVisible: viewState.zoom.isFillBorderPresented)
+                    Group {
+                        if viewState.isPresentingFullScreenSupplement {
+                            Color.black.opacity(0.8)
+                        } else {
+                            EasedGradient(
+                                colors: [.clear, .black],
+                                startPoint: .center,
+                                endPoint: .bottom
+                            )
+                        }
                     }
+                    .isVisible(shouldPresentDimOverlay)
+                }
+                .allowsHitTesting(false)
+                #if os(iOS)
+                .overlay {
+                    VideoZoomBorder(isVisible: viewState.zoom.isFillBorderPresented)
+                }
                 #endif
             }
         }

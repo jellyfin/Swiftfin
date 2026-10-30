@@ -69,8 +69,6 @@ extension SelectUserView {
 
         var standardView: some View {
             GeometryReader { geometry in
-                let visibleHeight = max(0, geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom)
-
                 ScrollView {
                     CenteredLazyVGrid(
                         data: userItems,
@@ -81,8 +79,8 @@ extension SelectUserView {
                         userGridButton(for: item)
                     }
                     .edgePadding(.vertical)
-                    .frame(minHeight: visibleHeight)
                 }
+                .defaultScrollAnchor(.center, for: .alignment)
                 .scrollBounceBehavior(.basedOnSize)
             }
             .edgePadding(.horizontal)

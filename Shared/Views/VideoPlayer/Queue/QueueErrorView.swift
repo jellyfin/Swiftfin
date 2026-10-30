@@ -69,6 +69,8 @@ struct QueueErrorView: PresentationView {
         } regularView: {
             errorCard
         }
+        .padding(.leading, viewState.supplementInsets.leading)
+        .padding(.trailing, viewState.supplementInsets.trailing)
     }
 
     var largeView: some View {

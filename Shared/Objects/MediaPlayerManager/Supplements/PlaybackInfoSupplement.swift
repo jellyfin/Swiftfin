@@ -227,6 +227,8 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
             .onFirstAppear { viewModel.observe(itemID: itemID) }
             .labeledContentStyle(.playbackInfo)
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
             .padding(.bottom, viewState.systemInsets.bottom)
         }
 

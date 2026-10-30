@@ -48,6 +48,7 @@ struct SearchView: View {
                 #endif
             }
         }
+        .multilineTextAlignment(.center)
     }
 
     var body: some View {
@@ -100,6 +101,7 @@ struct SearchView: View {
             }
         }
         .ignoresSafeArea(edges: viewLayout.scrollContentEdges(extendsTop: false))
+        .defaultScrollAnchor(viewModel.canSearch ? .top : .center, for: .alignment)
         .scrollIndicators(.hidden)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard)

@@ -8,31 +8,30 @@
 
 import SwiftUI
 
-/// Safe-area sources an item can ignore.
-struct SafeRegionAreas: OptionSet, Sendable {
+@OptionSet<Int>
+struct SafeRegionAreas: OptionSet {
 
-    let rawValue: Int
+    private enum Options: Int {
+        case custom
+        case system
+    }
 
-    static let custom = Self(rawValue: 1 << 0)
-    static let system = Self(rawValue: 1 << 1)
     static let all: Self = [.custom, .system]
 }
 
-/// Insets are always relative to the receiving container's bounds.
 enum SafeRegionSystemInsets {
 
     /// Use the local GeometryProxy's safe area.
     case automatic
+
     /// Use insets captured before native safe-area handling was disabled.
     case forwarded(EdgeInsets)
+
     /// Apply no system insets.
     case none
 }
 
-/// Fills the available size and lays out items around system and custom insets.
-/// Use `SafeRegionItem` and `SafeRegionInset` as direct children.
-/// Named insets and observers use the container's ID type.
-/// Empty space passes touches through; content defines its own hit areas.
+/// Create a SafeRegion with a specific ID type to allow items to observe named insets.
 struct SafeRegion<ID: Hashable, Content: View>: View {
 
     private let systemInsets: SafeRegionSystemInsets
@@ -88,14 +87,12 @@ struct SafeRegionItem<ID: Hashable, Content: View>: View {
         self.content = content()
     }
 
-    /// Nil observes every reservation; an empty set observes only the system.
     func observingSafeRegion(_ regions: Set<ID>?) -> Self {
         with(self) {
             $0.observedRegions = regions
         }
     }
 
-    /// Ignores selected sources and edges. Multiple calls accumulate.
     func ignoresSafeRegion(_ areas: SafeRegionAreas = .custom, edges: Edge.Set = .all) -> Self {
         with(self) {
             if areas.contains(.custom) {
@@ -118,8 +115,6 @@ struct SafeRegionItem<ID: Hashable, Content: View>: View {
     }
 }
 
-/// Reserves space for an edge control. Insets stack in declaration order;
-/// empty controls reserve no space or spacing.
 struct SafeRegionInset<ID: Hashable, Content: View>: View {
 
     private let edge: Edge
@@ -146,7 +141,6 @@ struct SafeRegionInset<ID: Hashable, Content: View>: View {
         self.content = content()
     }
 
-    /// Ignores system edges while respecting earlier reservations.
     func ignoresSystemSafeRegion(edges: Edge.Set) -> Self {
         with(self) {
             $0.ignoredSystem.formUnion(edges)
@@ -154,23 +148,12 @@ struct SafeRegionInset<ID: Hashable, Content: View>: View {
     }
 
     var body: some View {
-        BoundedContentLayout(fillsProposal: false, anchor: regionAnchor(alignment)) {
-            ZStack {
-                content
-            }
+        BoundedContentLayout(fillsProposal: false, anchor: regionAnchor(edge.alignment)) {
+            content
         }
         .modifier(RegionClipping(isEnabled: clipsContent))
         .layoutValue(key: RegionRoleKey.self, value: .inset(edge, spacing, isActive, ignoredSystem))
         .layoutValue(key: RegionIDKey<ID>.self, value: id)
-    }
-
-    private var alignment: Alignment {
-        switch edge {
-        case .top: .top
-        case .bottom: .bottom
-        case .leading: .leading
-        case .trailing: .trailing
-        }
     }
 }
 

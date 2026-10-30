@@ -121,8 +121,11 @@ extension VideoPlayer.UIContainerViewController {
                         viewState.selectedSupplementID = nil
                     }
                 }
+            #else
+                .padding(.leading, max(viewState.supplementInsets.leading, viewLayout.edgePadding))
+                .padding(.trailing, max(viewState.supplementInsets.trailing, viewLayout.edgePadding))
             #endif
-                .padding(.bottom, viewLayout.isLarge ? 0 : 8)
+            .padding(.bottom, viewLayout.isLarge ? 0 : 8)
             .buttonStyle(.capsule)
             .controlSize(.large)
             .foregroundStyle(.white)

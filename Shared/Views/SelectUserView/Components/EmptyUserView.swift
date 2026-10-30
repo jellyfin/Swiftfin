@@ -59,14 +59,13 @@ extension SelectUserView {
         var body: some View {
             GeometryReader { geometry in
                 #if os(iOS)
-                let visibleHeight = max(0, geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom)
-
                 ScrollView {
                     addUserButton
                         .frame(maxWidth: viewLayout.userGridColumns.itemWidth(for: geometry.size.width))
                         .edgePadding(.vertical)
-                        .frame(maxWidth: .infinity, minHeight: visibleHeight)
+                        .frame(maxWidth: .infinity)
                 }
+                .defaultScrollAnchor(.center, for: .alignment)
                 .scrollBounceBehavior(.basedOnSize)
                 #else
                 addUserButton

@@ -24,16 +24,13 @@ extension SelectUserView {
 
         var body: some View {
             #if os(iOS)
-            GeometryReader { geometry in
-                let visibleHeight = max(0, geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom)
-
-                ScrollView {
-                    content
-                        .edgePadding(.vertical)
-                        .frame(maxWidth: .infinity, minHeight: visibleHeight)
-                }
-                .scrollBounceBehavior(.basedOnSize)
+            ScrollView {
+                content
+                    .edgePadding(.vertical)
+                    .frame(maxWidth: .infinity)
             }
+            .defaultScrollAnchor(.center, for: .alignment)
+            .scrollBounceBehavior(.basedOnSize)
             .edgePadding(.horizontal)
             #else
             content

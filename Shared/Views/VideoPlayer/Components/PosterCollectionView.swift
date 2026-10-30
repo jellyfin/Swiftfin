@@ -98,6 +98,8 @@ extension VideoPlayer {
                     ),
                     viewProvider: elementRow
                 )
+                .padding(.leading, viewState.supplementInsets.leading)
+                .padding(.trailing, viewState.supplementInsets.trailing)
             } regularView: {
                 CollectionHStack(
                     uniqueElements: data,
@@ -107,7 +109,12 @@ extension VideoPlayer {
                 )
                 .initialElement(id: initialElementID)
                 .clipsToBounds(false)
-                .insets(horizontal: max(viewState.supplementInsets.leading, viewState.supplementInsets.trailing, viewLayout.edgePadding))
+                .insets(EdgeInsets(
+                    top: 0,
+                    leading: max(viewState.supplementInsets.leading, viewLayout.edgePadding),
+                    bottom: 0,
+                    trailing: max(viewState.supplementInsets.trailing, viewLayout.edgePadding)
+                ))
                 .itemSpacing(viewLayout.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
                 #if os(iOS)

@@ -171,6 +171,8 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                 regularContent
                     .edgePadding()
             }
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
             .task(id: item.currentProgram?.id) {
                 await recordingViewModel.refresh()
             }

@@ -66,6 +66,8 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
             ) { person, _ in
                 PersonRow(person: person)
             }
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
         }
 
         private func personView(for person: BaseItemPerson) -> some View {
@@ -84,7 +86,12 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
                 personView(for: person)
             }
             .clipsToBounds(false)
-            .insets(horizontal: max(viewState.supplementInsets.leading, viewState.supplementInsets.trailing, viewLayout.edgePadding))
+            .insets(EdgeInsets(
+                top: 0,
+                leading: max(viewState.supplementInsets.leading, viewLayout.edgePadding),
+                bottom: 0,
+                trailing: max(viewState.supplementInsets.trailing, viewLayout.edgePadding)
+            ))
             .itemSpacing(viewLayout.itemSpacing)
             .scrollBehavior(.continuousLeadingEdge)
             #if os(iOS)

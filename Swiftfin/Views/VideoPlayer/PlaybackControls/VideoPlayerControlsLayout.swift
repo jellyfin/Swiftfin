@@ -100,7 +100,6 @@ struct VideoPlayerControlsLayout<
             .ignoresSafeRegion(.system, edges: .top)
             .observingSafeRegion(actionRegions)
 
-            // Keep bottom controls in place while visibility changes.
             SafeRegionInset(
                 edge: .bottom,
                 id: Region.supplements,
@@ -108,7 +107,7 @@ struct VideoPlayerControlsLayout<
             ) {
                 supplements
             }
-            .ignoresSystemSafeRegion(edges: .top)
+            .ignoresSystemSafeRegion(edges: [.top, .horizontal])
 
             SafeRegionInset(edge: .bottom, id: Region.progress, clipsContent: false) {
                 progress
