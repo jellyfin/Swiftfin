@@ -9,12 +9,12 @@
 import JellyfinAPI
 import SwiftUI
 
-struct FormItemSection<Item: Poster>: PlatformView {
+struct FormItemSection<Item: Poster>: PresentationView {
 
     @SharedPoster
     var item: Item
 
-    var iOSView: some View {
+    var standardView: some View {
         Section {
             HStack(alignment: .bottom, spacing: 12) {
                 PosterImage(
@@ -58,7 +58,7 @@ struct FormItemSection<Item: Poster>: PlatformView {
         #endif
     }
 
-    var tvOSView: some View {
+    var largeView: some View {
         Section(L10n.media) {
             if let baseItem = item as? BaseItemDto,
                let parentLabel = baseItem.parentLabel,

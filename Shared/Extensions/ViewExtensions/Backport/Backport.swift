@@ -15,6 +15,15 @@ struct Backport<Content> {
 
 extension Backport where Content: View {
 
+    @ViewBuilder
+    func backgroundExtensionEffect() -> some View {
+        if #available(iOS 26.0, tvOS 26.0, *) {
+            content.backgroundExtensionEffect()
+        } else {
+            content
+        }
+    }
+
     func buttonStyle(
         _ style: some BackportButtonStyle
     ) -> some View {

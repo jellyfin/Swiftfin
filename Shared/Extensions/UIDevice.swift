@@ -79,16 +79,6 @@ extension UIDevice {
         UIImpactFeedbackGenerator(style: type).impactOccurred()
         #endif
     }
-
-    #if os(iOS)
-    static var isPortrait: Bool {
-        current.orientation.isPortrait
-    }
-
-    static var isLandscape: Bool {
-        isPad || current.orientation.isLandscape
-    }
-    #endif
 }
 
 #if os(tvOS)

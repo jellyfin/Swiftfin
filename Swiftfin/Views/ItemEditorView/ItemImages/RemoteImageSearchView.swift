@@ -12,6 +12,9 @@ import SwiftUI
 
 struct RemoteImageSearchView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @ObservedObject
     private var viewModel: ItemImageViewModel
 
@@ -26,18 +29,10 @@ struct RemoteImageSearchView: View {
     }
 
     private var layout: CollectionVGridLayout {
-        guard UIDevice.isPhone else {
-            return .minWidth(
-                150,
-                itemSpacing: EdgeInsets.itemSpacing,
-                lineSpacing: EdgeInsets.itemSpacing
-            )
-        }
-
-        return .columns(
-            posterType == .landscape ? 2 : 3,
-            itemSpacing: EdgeInsets.itemSpacing,
-            lineSpacing: EdgeInsets.itemSpacing
+        .minWidth(
+            posterType == .landscape ? 170 : 120,
+            itemSpacing: viewLayout.itemSpacing,
+            lineSpacing: viewLayout.itemSpacing
         )
     }
 

@@ -12,9 +12,10 @@ extension SelectUserView {
 
     struct EmptyUserView: View {
 
-        let action: () -> Void
+        @AdaptiveLayout
+        private var viewLayout
 
-        private let columns: CGFloat = UIDevice.isPhone ? 2 : 5
+        let action: () -> Void
 
         private var imageView: some View {
             RelativeSystemImageView(systemName: "plus")
@@ -26,24 +27,25 @@ extension SelectUserView {
 
         private var addUserButton: some View {
             Button(action: action) {
-                #if os(tvOS)
-                imageView
-                    .hoverEffect(.highlight)
-
-                Text(L10n.addUser)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
-                #else
-                VStack {
+                if viewLayout.isLarge {
                     imageView
+                        .hoverEffect(.highlight)
 
                     Text(L10n.addUser)
                         .font(.headline)
                         .fontWeight(.semibold)
                         .lineLimit(1)
+                } else {
+                    VStack {
+                        imageView
+
+                        Text(L10n.addUser)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
-                #endif
             }
             .foregroundStyle(.primary, .secondary)
             .buttonBorderShape(.circle)
@@ -55,11 +57,23 @@ extension SelectUserView {
 
         var body: some View {
             GeometryReader { geometry in
+                #if os(iOS)
+                ScrollView {
+                    addUserButton
+                        .frame(maxWidth: viewLayout.userGridColumns.itemWidth(for: geometry.size.width))
+                        .edgePadding(.vertical)
+                        .frame(maxWidth: .infinity)
+                }
+                .defaultScrollAnchor(.center, for: .alignment)
+                .scrollBounceBehavior(.basedOnSize)
+                #else
                 addUserButton
-                    .frame(maxWidth: (geometry.size.width - EdgeInsets.edgePadding * (columns + 1)) / columns)
+                    .frame(maxWidth: viewLayout.userGridColumns.itemWidth(for: geometry.size.width))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .focusSection()
+                #endif
             }
+            .edgePadding(.horizontal)
         }
     }
 }

@@ -11,9 +11,6 @@ import SwiftUI
 extension EnvironmentValues {
 
     @Entry
-    var posterConfiguration: PosterConfiguration = .default
-
-    @Entry
     var frameForParentView: [CoordinateSpace: FrameAndSafeAreaInsets] = [:]
 
     @Entry
@@ -25,19 +22,13 @@ extension EnvironmentValues {
     @Entry
     var isSelected: Bool = false
 
-    @Entry
-    var playbackSpeed: Binding<Double> = .constant(1)
-
-    @Entry
-    var posterDisplayType: PosterDisplayType = .portrait
-
-    @Entry
-    var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
-
-    @Entry
-    var tabSafeAreaInsets: EdgeInsets = .zero
-
     // TODO: figure out this directional response stuff
     @Entry
     var panGestureDirection: Direction = .all
+
+    @Entry
+    var posterConfiguration: PosterConfiguration = .default
+
+    @Entry
+    var posterDisplayType: PosterDisplayType = .portrait
 }

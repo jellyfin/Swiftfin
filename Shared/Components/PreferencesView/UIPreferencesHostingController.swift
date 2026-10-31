@@ -11,13 +11,15 @@ import SwiftUI
 // TODO: Button recognizers for tvOS?
 //       - .menu, .select
 
-public class UIPreferencesHostingController: UIHostingController<AnyView> {
+class UIPreferencesHostingController: UIHostingController<AnyView> {
 
-    public init(@ViewBuilder content: @escaping () -> some View) {
+    init(@ViewBuilder content: () -> some View) {
 
-        _ = UIViewController.swizzle
+        #if os(iOS)
+        _ = UIViewController.forwardOrientationPreferences
+        #endif
 
-        let box = Box()
+        var box = WeakBox<UIPreferencesHostingController>(value: nil)
 
         let rootView = AnyView(
             content()
@@ -61,7 +63,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
                 let keyCommand = UIKeyCommand(
                     title: action.title,
                     action: #selector(keyCommandHit),
-                    input: String(action.input),
+                    input: action.input,
                     modifierFlags: action.modifierFlags
                 )
 
@@ -75,7 +77,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
     private var _keyCommands: [UIKeyCommand] = []
 
-    override public var keyCommands: [UIKeyCommand]? {
+    override var keyCommands: [UIKeyCommand]? {
         _keyCommands
     }
 
@@ -89,17 +91,17 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
     // MARK: Orientation
 
-    var _orientations: UIInterfaceOrientationMask = .all {
+    private var _orientations: UIInterfaceOrientationMask = .all {
         didSet {
             setNeedsUpdateOfSupportedInterfaceOrientations()
         }
     }
 
-    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         _orientations
     }
 
-    override public var shouldAutorotate: Bool {
+    override var shouldAutorotate: Bool {
         true
     }
 
@@ -111,7 +113,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
         }
     }
 
-    override public var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
+    override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
         _preferredScreenEdgesDeferringSystemGestures
     }
 
@@ -123,14 +125,14 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
         }
     }
 
-    override public var prefersHomeIndicatorAutoHidden: Bool {
+    override var prefersHomeIndicatorAutoHidden: Bool {
         _prefersHomeIndicatorAutoHidden
     }
     #endif
 
     #if os(tvOS)
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         let gesture = UITapGestureRecognizer(target: self, action: #selector(ignorePress))
@@ -143,7 +145,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
     private var _pressCommandActions: [PressCommandAction] = []
 
-    override public func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         guard let buttonPress = presses.first?.type, let action = _pressCommandActions
             .first(where: { $0.press == buttonPress }) else { return }
 

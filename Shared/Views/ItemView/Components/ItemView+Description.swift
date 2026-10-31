@@ -35,7 +35,7 @@ extension ItemView {
                     }
 
                     if let itemOverview = item.overview, itemOverview.isNotEmpty {
-                        InlinePlatformView {
+                        PresentationContent {
                             Button {
                                 router.route(to: .itemOverview(item: item))
                             } label: {
@@ -44,7 +44,7 @@ extension ItemView {
                                     .lineLimit(3)
                             }
                             .buttonStyle(.plain)
-                        } tvOSView: {
+                        } largeView: {
                             Text(itemOverview)
                                 .font(.footnote)
                                 .lineLimit(3)

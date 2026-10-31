@@ -11,6 +11,9 @@ import SwiftUI
 
 struct EPGView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -19,11 +22,11 @@ struct EPGView: View {
 
     private var contentView: some View {
         VStack(spacing: 0) {
-            #if os(tvOS)
-            EPGDateBar(viewModel: viewModel)
-                .frame(maxWidth: .infinity)
-                .padding(.bottom, 8)
-            #endif
+            if viewLayout.isLarge {
+                EPGDateBar(viewModel: viewModel)
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 8)
+            }
 
             EPGContentView(
                 viewModel: viewModel
@@ -55,8 +58,7 @@ struct EPGView: View {
         .navigationTitle(L10n.guide)
         .toolbarTitleDisplayMode(.inline)
         .toolbarBackground(.visible, for: .navigationBar)
-        #else
-        .ignoresSafeArea(edges: [.horizontal])
         #endif
+        .ignoresSafeArea(edges: viewLayout.scrollContentEdges(extendsTop: false))
     }
 }

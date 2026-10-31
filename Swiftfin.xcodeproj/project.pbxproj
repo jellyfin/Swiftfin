@@ -79,7 +79,6 @@
 		E1523F822B132C350062821A /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1523F812B132C350062821A /* CollectionHStack */; };
 		E1575E3C293C6B15001665B1 /* Files in Frameworks */ = {isa = PBXBuildFile; productRef = E1575E3B293C6B15001665B1 /* Files */; };
 		E1575E58293E7685001665B1 /* Files in Frameworks */ = {isa = PBXBuildFile; productRef = E1575E57293E7685001665B1 /* Files */; };
-		E15D4F052B1B0C3C00442DB8 /* PreferencesView in Frameworks */ = {isa = PBXBuildFile; productRef = E15D4F042B1B0C3C00442DB8 /* PreferencesView */; };
 		E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA832BA167350080E926 /* CollectionHStack */; };
 		E15EFA862BA1685F0080E926 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */; };
 		E164308C2E3AA9710028D4E8 /* Transmission in Frameworks */ = {isa = PBXBuildFile; productRef = E164308B2E3AA9710028D4E8 /* Transmission */; };
@@ -106,7 +105,6 @@
 		E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0928A0BEFF005C10C8 /* BlurHashKit */; };
 		E19FA1A02E84F0A800F5A60D /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19FA19F2E84F0A800F5A60D /* StatefulMacros */; };
 		E1A76F1A2E8369A500A5F2C1 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1A76F192E8369A500A5F2C1 /* StatefulMacros */; };
-		E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */ = {isa = PBXBuildFile; productRef = E1A7B1642B9A9F7800152546 /* PreferencesView */; };
 		E1B354BB2FC4BB0600827DC1 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1B354BA2FC4BB0600827DC1 /* StatefulMacros */; };
 		E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A629577BCE004B26CF /* Pulse */; };
 		E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A829577BCE004B26CF /* PulseLogHandler */; };
@@ -273,7 +271,6 @@
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				62666E1F27E501DF00EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
-				E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */,
 				E19009260000000000000002 /* SwiftfinMacros in Frameworks */,
 				E12CDBC12FFB593800828742 /* CollectionVGrid in Frameworks */,
 				E1153DD22BBB649C00424D36 /* SVGKit in Frameworks */,
@@ -354,7 +351,6 @@
 				E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */,
 				E1153DAC2BBA6AD200424D36 /* CollectionHStack in Frameworks */,
 				62666E0D27E501AA00EC0ECD /* QuartzCore.framework in Frameworks */,
-				E15D4F052B1B0C3C00442DB8 /* PreferencesView in Frameworks */,
 				E19010180000000000000001 /* GoogleCastDynamic in Frameworks */,
 				E19009260000000000000001 /* SwiftfinMacros in Frameworks */,
 				E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */,
@@ -483,7 +479,6 @@
 				E1B5F7A829577BCE004B26CF /* PulseLogHandler */,
 				E1B5F7AA29577BCE004B26CF /* PulseUI */,
 				E1B5F7AC29577BDD004B26CF /* OrderedCollections */,
-				E1A7B1642B9A9F7800152546 /* PreferencesView */,
 				E19009260000000000000004 /* SwiftfinMacros */,
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
 				E1153DD12BBB649C00424D36 /* SVGKit */,
@@ -541,7 +536,6 @@
 				E1DC9813296DC06200982F06 /* PulseLogHandler */,
 				E1523F812B132C350062821A /* CollectionHStack */,
 				E114DB322B1944FA00B75FB3 /* CollectionVGrid */,
-				E15D4F042B1B0C3C00442DB8 /* PreferencesView */,
 				E19010180000000000000002 /* GoogleCastDynamic */,
 				E19009260000000000000003 /* SwiftfinMacros */,
 				E113A2A62B5A178D009CAAAA /* CollectionHStack */,
@@ -668,6 +662,7 @@
 				ka,
 				ml,
 				af,
+				"yue-Hant",
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
@@ -682,7 +677,6 @@
 				E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */,
 				E19DDEC52948EF9900954E10 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */,
-				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
 				E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */,
 				E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */,
 				E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
@@ -1203,10 +1197,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = PreferencesView;
-		};
 		E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = SwiftfinMacros;
@@ -1618,10 +1608,6 @@
 			package = E1575E3A293C6B15001665B1 /* XCRemoteSwiftPackageReference "Files" */;
 			productName = Files;
 		};
-		E15D4F042B1B0C3C00442DB8 /* PreferencesView */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PreferencesView;
-		};
 		E15EFA832BA167350080E926 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CollectionHStack;
@@ -1743,11 +1729,6 @@
 		E1A76F192E8369A500A5F2C1 /* StatefulMacros */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StatefulMacros;
-		};
-		E1A7B1642B9A9F7800152546 /* PreferencesView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */;
-			productName = PreferencesView;
 		};
 		E1B354BA2FC4BB0600827DC1 /* StatefulMacros */ = {
 			isa = XCSwiftPackageProductDependency;

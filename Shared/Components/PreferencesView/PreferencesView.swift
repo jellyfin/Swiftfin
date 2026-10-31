@@ -8,17 +8,17 @@
 
 import SwiftUI
 
-public struct PreferencesView<Content: View>: UIViewControllerRepresentable {
+struct PreferencesView<Content: View>: UIViewControllerRepresentable {
 
     private let content: Content
 
-    public init(@ViewBuilder content: @escaping () -> Content) {
+    init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
 
-    public func makeUIViewController(context: Context) -> some UIViewController {
+    func makeUIViewController(context: Context) -> some UIViewController {
         UIPreferencesHostingController { content }
     }
 
-    public func updateUIViewController(_ uiViewController: some UIViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: some UIViewController, context: Context) {}
 }

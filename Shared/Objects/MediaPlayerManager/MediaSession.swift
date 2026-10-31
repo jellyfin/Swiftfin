@@ -227,8 +227,6 @@ final class MediaSession {
         player?.stop()
     }
 
-    /// The session retains the engine independently of any mounted video surface.
-    /// Reattaching the same engine is harmless; destinations change through transfer(to:).
     @discardableResult
     func attach(player: any MediaPlayer) -> Bool {
         guard state != .stopped else { return false }

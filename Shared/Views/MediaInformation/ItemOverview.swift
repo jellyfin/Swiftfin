@@ -11,6 +11,9 @@ import SwiftUI
 
 struct ItemOverviewView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -19,7 +22,7 @@ struct ItemOverviewView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: UIDevice.isTV ? .center : .leading, spacing: 10) {
+            VStack(alignment: viewLayout.value(standard: .leading, large: .center), spacing: 10) {
                 if let firstTagline = item.taglines?.first {
                     Text(firstTagline)
                         .font(.title3)

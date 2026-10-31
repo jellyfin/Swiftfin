@@ -26,6 +26,9 @@ extension ItemActionButtons.Record {
 
     private struct Content: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @ViewContextContains(.isInMenu)
         private var isInMenu
 
@@ -110,7 +113,7 @@ extension ItemActionButtons.Record {
                             }
                         }
                     }
-                    .if(!isInMenu && UIDevice.isTV) { menu in
+                    .if(!isInMenu && viewLayout.isLarge) { menu in
                         menu.menuStyle(.button)
                     }
                 } else {

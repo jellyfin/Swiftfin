@@ -13,6 +13,9 @@ extension ItemView {
 
     struct AttributesHStack: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         let attributes: [ItemViewAttribute]
         @SharedBaseItem
         var item: BaseItemDto
@@ -26,7 +29,7 @@ extension ItemView {
                 FlowLayout(
                     alignment: alignment,
                     direction: flowDirection,
-                    spacing: UIDevice.isTV ? 20 : 8
+                    spacing: viewLayout.value(standard: 8, large: 20)
                 ) {
                     ForEach(attributes, id: \.self) { attribute in
                         switch attribute {

@@ -27,7 +27,7 @@ struct CinematicContentGroupContainer<Content: View>: View {
 
     var body: some View {
         content
-            .frame(height: resolvedHeight, alignment: .bottomLeading)
+            .frame(minHeight: resolvedHeight, alignment: .bottomLeading)
             .frame(maxWidth: .infinity)
     }
 }

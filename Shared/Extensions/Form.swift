@@ -49,7 +49,7 @@ func Form(
 
 // MARK: - Platform Form
 
-private struct PlatformForm<Image: View, Content: View>: PlatformView {
+private struct PlatformForm<Image: View, Content: View>: PresentationView {
 
     @FocusedValue(\.formLearnMore)
     private var focusedLearnMore
@@ -65,14 +65,14 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
         self.image = image()
     }
 
-    var iOSView: some View {
+    var standardView: some View {
         Form {
             content
         }
         .toolbarTitleDisplayMode(.inline)
     }
 
-    var tvOSView: some View {
+    var largeView: some View {
         HStack {
             descriptionView
                 .frame(maxWidth: .infinity)
