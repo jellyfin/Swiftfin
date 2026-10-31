@@ -38,6 +38,7 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
         displayTitle: String? = nil,
         posterDisplayType: PosterDisplayType = .portrait,
         posterSize: PosterDisplayType.Size = .small,
+        pageSize: Int = 20,
         environment: Environment
     ) {
         self.displayTitle = displayTitle ?? library.parent.displayTitle
@@ -46,7 +47,7 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
         self.library = library
         self.posterDisplayType = posterDisplayType
         self.posterSize = posterSize
-        self.viewModel = .init(library: library, pageSize: 20)
+        self.viewModel = .init(library: library, pageSize: min(max(pageSize, 1), 100))
     }
 
     init(
@@ -55,6 +56,7 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
         displayTitle: String? = nil,
         posterDisplayType: PosterDisplayType = .portrait,
         posterSize: PosterDisplayType.Size = .small,
+        pageSize: Int = 20,
         _viewContext: ViewContext? = nil
     ) {
         self.init(
@@ -63,6 +65,7 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
             displayTitle: displayTitle,
             posterDisplayType: posterDisplayType,
             posterSize: posterSize,
+            pageSize: pageSize,
             environment: .init(viewContext: _viewContext ?? .init())
         )
     }

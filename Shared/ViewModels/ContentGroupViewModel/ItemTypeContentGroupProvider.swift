@@ -27,15 +27,18 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
     let displayTitle: String
     var environment: Environment
     let itemTypes: [BaseItemKind]
+    let pageSize: Int
 
     init(
         itemTypes: [BaseItemKind],
         parent: BaseItemDto? = nil,
+        pageSize: Int = 20,
         environment: Environment = .default
     ) {
         self.id = UUID().uuidString
         self.displayTitle = parent?.displayTitle ?? ""
         self.itemTypes = itemTypes
+        self.pageSize = pageSize
         self.environment = environment
         self.parent = parent
     }
@@ -60,7 +63,8 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
                 id: "\(parent?.id ?? "unknown")-\(itemType.rawValue)",
                 library: library,
                 displayTitle: itemType.pluralDisplayTitle,
-                posterDisplayType: itemType.preferredPosterDisplayType
+                posterDisplayType: itemType.preferredPosterDisplayType,
+                pageSize: pageSize
             )
         }
     }
