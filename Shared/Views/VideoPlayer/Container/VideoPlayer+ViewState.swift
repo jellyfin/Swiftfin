@@ -305,10 +305,6 @@ extension VideoPlayer {
                     elements.insert(.supplements)
                 }
 
-                if overlayActions.isNotEmpty {
-                    elements.insert(.overlayActions)
-                }
-
                 return elements
 
             case let .supplement(_, showsPlaybackButtons):
@@ -329,12 +325,6 @@ extension VideoPlayer {
         }
 
         var originalPlaybackRate: Double?
-
-        var bottomControlsHeight: CGFloat = 0 {
-            didSet {
-                containerView?.presentOverlayActions()
-            }
-        }
 
         var centerOffset: CGFloat = 0
         let focusCoordinator: FocusCoordinator = .init()
@@ -698,8 +688,6 @@ extension VideoPlayer {
             if wasPresentingSupplement || isPresentingSupplement {
                 containerView?.presentSupplementContainer(isPresentingSupplement)
             }
-
-            containerView?.presentOverlayActions()
 
             #if os(tvOS)
             if isPresentingProgress, !wasPresentingProgress {

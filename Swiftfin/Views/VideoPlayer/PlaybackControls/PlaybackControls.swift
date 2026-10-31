@@ -56,9 +56,6 @@ extension VideoPlayer {
                         .padding(.leading, safeAreaInsets.leading)
                         .padding(.trailing, safeAreaInsets.trailing)
                         .trackingFrame($bottomContentFrame)
-                        .onChange(of: bottomContentFrame.height, initial: true) {
-                            viewState.bottomControlsHeight = bottomContentFrame.height
-                        }
                         .background {
                             if viewState.isPresentingProgress {
                                 EmptyHitTestView()
