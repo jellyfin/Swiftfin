@@ -51,9 +51,9 @@ extension UIDevice {
         L10n.tvOS
         #else
         if UIDevice.isPad {
-            return L10n.iPadOS
+            L10n.iPadOS
         } else {
-            return L10n.iOS
+            L10n.iOS
         }
         #endif
     }
