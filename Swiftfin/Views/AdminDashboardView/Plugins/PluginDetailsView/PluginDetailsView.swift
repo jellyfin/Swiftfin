@@ -105,27 +105,13 @@ struct PluginDetailsView: View {
                     }
                 }
             }
-        }
-        .animation(.linear(duration: 0.1), value: viewModel.package)
-        .navigationTitle(viewModel.plugin.displayTitle)
-        .toolbarTitleDisplayMode(.inline)
-        .onFirstAppear {
-            viewModel.refresh()
-        }
-        .topBarTrailing {
-            if viewModel.background.is(.updating) {
-                ProgressView()
-            }
 
-            if viewModel.plugin.isInstalled {
-                if viewModel.plugin.canUninstall == true {
+            if viewModel.plugin.isInstalled, viewModel.plugin.canUninstall == true {
+                Section {
                     StateAdapter(initialValue: false) { isPresentingConfirmation in
                         Button(L10n.uninstall, role: .destructive) {
                             isPresentingConfirmation.wrappedValue = true
                         }
-                        .backport
-                        .buttonStyle(.glassProminent)
-                        .controlSize(.small)
                         .disabled(viewModel.background.is(.updating))
                         .confirmationDialog(
                             L10n.uninstall,
@@ -142,7 +128,20 @@ struct PluginDetailsView: View {
                         }
                     }
                 }
-            } else {
+            }
+        }
+        .animation(.linear(duration: 0.1), value: viewModel.package)
+        .navigationTitle(viewModel.plugin.displayTitle)
+        .toolbarTitleDisplayMode(.inline)
+        .onFirstAppear {
+            viewModel.refresh()
+        }
+        .topBarTrailing {
+            if viewModel.background.is(.updating) {
+                ProgressView()
+            }
+
+            if !viewModel.plugin.isInstalled {
                 Button(L10n.install) {
                     viewModel.install()
                 }

@@ -17,7 +17,7 @@ struct PluginRepositoriesView: View {
     @Router
     private var router
 
-    var body: some View {
+    private var contentView: some View {
         List {
             ListTitleSection(
                 L10n.repositories,
@@ -66,16 +66,35 @@ struct PluginRepositoriesView: View {
                 }
             }
         }
+        .disabled(viewModel.background.is(.updating) || viewModel.background.is(.refreshing))
+    }
+
+    var body: some View {
+        ZStack {
+            switch viewModel.state {
+            case .content:
+                contentView
+
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
+
+            case .initial:
+                ProgressView()
+            }
+        }
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.1), value: viewModel.repositories)
         .navigationTitle(L10n.repositories)
         .toolbarTitleDisplayMode(.inline)
         .topBarTrailing {
 
-            if viewModel.background.is(.updating) {
+            if viewModel.background.is(.updating) || viewModel.background.is(.refreshing) {
                 ProgressView()
             }
 
-            if viewModel.repositories.isNotEmpty {
+            if viewModel.state == .content, viewModel.repositories.isNotEmpty {
                 Button(L10n.add) {
                     router.route(to: .addPluginRepository(viewModel: viewModel))
                     UIDevice.impact(.light)
@@ -83,7 +102,13 @@ struct PluginRepositoriesView: View {
                 .backport
                 .buttonStyle(.glassProminent)
                 .controlSize(.small)
+                .disabled(viewModel.background.is(.updating) || viewModel.background.is(.refreshing))
             }
+        }
+        .refreshable {
+            guard !viewModel.background.is(.updating) else { return }
+
+            await viewModel.refresh()
         }
         .onFirstAppear {
             viewModel.refresh()

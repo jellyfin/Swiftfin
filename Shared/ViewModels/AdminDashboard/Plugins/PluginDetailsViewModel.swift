@@ -11,21 +11,18 @@ import JellyfinAPI
 
 @MainActor
 @Stateful
-final class PluginDetailsViewModel: ViewModel, @preconcurrency Identifiable {
+final class PluginDetailsViewModel: ViewModel, @MainActor Identifiable {
 
     @CasePathable
     enum Action {
         case refresh
-        case getPlugin
-        case getConfigurationPage
-        case getManifest
         case setEnabled(isEnabled: Bool)
         case install
         case uninstall
 
         var transition: Transition {
             switch self {
-            case .refresh, .getPlugin, .getConfigurationPage, .getManifest:
+            case .refresh:
                 .background(.refreshing)
             case .setEnabled, .install, .uninstall:
                 .background(.updating)
@@ -54,7 +51,7 @@ final class PluginDetailsViewModel: ViewModel, @preconcurrency Identifiable {
     private(set) var manifest: VersionInfo?
 
     var id: String? {
-        plugin.id?.uppercased()
+        plugin.normalizedID
     }
 
     var versions: [VersionInfo] {
@@ -72,42 +69,48 @@ final class PluginDetailsViewModel: ViewModel, @preconcurrency Identifiable {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        try await _getPlugin()
-        try await _getConfigurationPage()
-        try await _getManifest()
+        try await getPlugin()
+
+        guard plugin.isInstalled else {
+            configurationPage = nil
+            manifest = nil
+            return
+        }
+
+        try await getConfigurationPage()
+        try await getManifest()
     }
 
-    @Function(\Action.Cases.getPlugin)
-    private func _getPlugin() async throws {
-        guard let id = plugin.id else { return }
+    private func getPlugin() async throws {
+        guard let id else { return }
 
         let request = Paths.getPlugins
         let response = try await send(request)
 
-        let plugins = response.value.filter { $0.id?.caseInsensitiveCompare(id) == .orderedSame }
+        let plugins = response.value.filter { $0.normalizedID == id }
 
         if let current = plugins.first(where: \.isInstalled) ?? plugins.first {
             plugin = current
         } else if let package {
             plugin = PluginInfo(package: package)
+        } else {
+            plugin.status = .deleted
         }
     }
 
-    @Function(\Action.Cases.getConfigurationPage)
-    private func _getConfigurationPage() async throws {
-        guard let id = plugin.id else { return }
+    private func getConfigurationPage() async throws {
+        guard let id else { return }
 
         let request = Paths.getConfigurationPages()
         let response = try await send(request)
 
-        let pages = response.value.filter { $0.pluginID?.caseInsensitiveCompare(id) == .orderedSame }
+        let pages = response.value.filter { $0.pluginID?.uppercased().replacing("-", with: "") == id }
 
         configurationPage = pages.first { $0.enableInMainMenu == true } ?? pages.first
     }
 
-    @Function(\Action.Cases.getManifest)
-    private func _getManifest() async throws {
-        guard plugin.isInstalled, let id = plugin.id else { return }
+    private func getManifest() async throws {
+        guard let id else { return }
 
         let request = Paths.getPluginManifest(pluginID: id).withResponse(VersionInfo.self)
         let response = try await send(request)
@@ -128,7 +131,7 @@ final class PluginDetailsViewModel: ViewModel, @preconcurrency Identifiable {
         try await send(request)
 
         // Don't assume the result as disabling a plugin can vary in outcome
-        try await _getPlugin()
+        try await _refresh()
     }
 
     @Function(\Action.Cases.install)
@@ -144,7 +147,7 @@ final class PluginDetailsViewModel: ViewModel, @preconcurrency Identifiable {
         )
         try await send(request)
 
-        try await _getPlugin()
+        try await _refresh()
     }
 
     @Function(\Action.Cases.uninstall)
@@ -157,6 +160,6 @@ final class PluginDetailsViewModel: ViewModel, @preconcurrency Identifiable {
         let request = Paths.uninstallPluginByVersion(pluginID: id, version: version)
         try await send(request)
 
-        try await _getPlugin()
+        try await _refresh()
     }
 }

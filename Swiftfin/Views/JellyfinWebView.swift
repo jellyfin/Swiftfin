@@ -75,33 +75,42 @@ private struct JellyfinWebUIView: UIViewRepresentable {
         configuration.websiteDataStore = .nonPersistent()
         configuration.defaultWebpagePreferences.preferredContentMode = .mobile
 
-        // Provide Jellyfin-Web our session information
+        // Provide Jellyfin-Web our session information only on the server's origin.
         let serverURL = userSession.client.configuration.url
-        let credentials: [String: Any] = [
-            "Servers": [
-                [
-                    "Id": userSession.server.id,
-                    "Name": userSession.server.name,
-                    "ManualAddress": serverURL.absoluteString.trimmingSuffix("/"),
-                    "LastConnectionMode": 2,
-                    "UserId": userSession.user.id,
-                    "AccessToken": userSession.client.accessToken ?? "",
-                    "DateLastAccessed": Int(Date.now.timeIntervalSince1970 * 1000),
+        let session: [String: Any] = [
+            "serverURL": serverURL.absoluteString,
+            "deviceID": userSession.client.configuration.deviceID,
+            "credentials": [
+                "Servers": [
+                    [
+                        "Id": userSession.server.id,
+                        "Name": userSession.server.name,
+                        "ManualAddress": serverURL.absoluteString.trimmingSuffix("/"),
+                        "LastConnectionMode": 2,
+                        "UserId": userSession.user.id,
+                        "AccessToken": userSession.client.accessToken ?? "",
+                        "DateLastAccessed": Int(Date.now.timeIntervalSince1970 * 1000),
+                    ],
                 ],
             ],
         ]
 
-        if let credentialsData = try? JSONSerialization.data(withJSONObject: credentials),
-           let credentialsJSON = String(data: credentialsData, encoding: .utf8),
-           let deviceIDData = try? JSONSerialization.data(withJSONObject: [userSession.client.configuration.deviceID]),
-           let deviceIDJSON = String(data: deviceIDData, encoding: .utf8)
+        if let sessionData = try? JSONSerialization.data(withJSONObject: session),
+           let sessionJSON = String(data: sessionData, encoding: .utf8)
         {
             configuration.userContentController.addUserScript(
                 WKUserScript(
                     source: """
-                    localStorage.setItem('jellyfin_credentials', JSON.stringify(\(credentialsJSON)));
-                    localStorage.setItem('_deviceId2', \(deviceIDJSON)[0]);
-                    localStorage.setItem('layout', 'mobile');
+                    (() => {
+                        const session = \(sessionJSON);
+                        if (window.location.origin !== new URL(session.serverURL).origin) {
+                            return;
+                        }
+
+                        localStorage.setItem('jellyfin_credentials', JSON.stringify(session.credentials));
+                        localStorage.setItem('_deviceId2', session.deviceID);
+                        localStorage.setItem('layout', 'mobile');
+                    })();
                     """,
                     injectionTime: .atDocumentStart,
                     forMainFrameOnly: true

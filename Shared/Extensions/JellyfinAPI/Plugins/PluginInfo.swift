@@ -15,6 +15,10 @@ extension PluginInfo: Displayable {
         name ?? L10n.unknown
     }
 
+    var normalizedID: String? {
+        id?.uppercased().replacing("-", with: "")
+    }
+
     var isInstalled: Bool {
         guard let status else { return false }
 

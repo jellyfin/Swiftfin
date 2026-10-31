@@ -12,7 +12,7 @@ import JellyfinAPI
 extension PackageInfo: @retroactive Identifiable {
 
     public var id: String? {
-        // The Plugin GUID must drop the hyphen(s) to work in URLs & API calls
+        // Match the compact GUIDs returned by the server for installed plugins.
         guid?.uppercased().replacing("-", with: "")
     }
 

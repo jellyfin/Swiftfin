@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension PluginDetailsViewModel: @preconcurrency Poster {
+extension PluginDetailsViewModel: @MainActor Poster {
 
     nonisolated static func == (lhs: PluginDetailsViewModel, rhs: PluginDetailsViewModel) -> Bool {
         lhs === rhs
@@ -35,79 +35,10 @@ extension PluginDetailsViewModel: @preconcurrency Poster {
         for displayType: PosterDisplayType,
         environment: Empty
     ) -> [ImageSource] {
-        switch plugin.isInstalled {
-        case true:
-            if plugin.hasImage == true, let id = plugin.id, let version = plugin.version {
-                ImageSource(url: userSession?.client.url(with: Paths.getPluginImage(pluginID: id, version: version)))
-            }
-
-        case false:
-            ImageSource(url: URL(string: package?.imageURL))
+        if plugin.isInstalled, plugin.hasImage == true, let id = plugin.id, let version = plugin.version {
+            ImageSource(url: userSession?.client.url(with: Paths.getPluginImage(pluginID: id, version: version)))
         }
-    }
-}
 
-extension PluginDetailsViewModel: LibraryElement {
-
-    func makeBody(
-        libraryStyle: LibraryStyle,
-        action: (() -> Void)?
-    ) -> some View {
-        PluginLibraryListElement(
-            viewModel: self,
-            action: action
-        )
-    }
-}
-
-private struct PluginLibraryListElement: View {
-
-    @ObservedObject
-    var viewModel: PluginDetailsViewModel
-    var action: (() -> Void)?
-
-    var body: some View {
-        ListRow {
-            PosterImage(
-                item: viewModel,
-                type: .landscape,
-                size: .extraSmall
-            )
-            .pipeline(.Swiftfin.other)
-            .subtleShadow()
-            .frame(width: 110, height: 110 / 1.77)
-        } content: {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(viewModel.plugin.displayTitle)
-                    .fontWeight(.semibold)
-                    .lineLimit(2)
-
-                Group {
-                    if viewModel.plugin.isInstalled {
-                        if let version = viewModel.plugin.version {
-                            LabeledContent(L10n.version) {
-                                Text(version)
-                            }
-                            .monospacedDigit()
-                        }
-
-                        if let status = viewModel.plugin.status {
-                            LabeledContent(L10n.status) {
-                                Text(status.displayTitle)
-                            }
-                        }
-                    } else if let description = viewModel.plugin.description {
-                        Text(description)
-                            .lineLimit(2)
-                    }
-                }
-                .foregroundStyle(.secondary)
-            }
-            .font(.subheadline)
-            .multilineTextAlignment(.leading)
-            .frame(maxWidth: .infinity, alignment: .leading)
-        } action: {
-            action?()
-        }
+        ImageSource(url: URL(string: package?.imageURL))
     }
 }

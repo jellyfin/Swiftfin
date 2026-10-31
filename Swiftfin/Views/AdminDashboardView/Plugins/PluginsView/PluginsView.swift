@@ -33,9 +33,7 @@ struct PluginsView: View {
                     .listRowBackground(Color.clear)
             } else {
                 ForEach(viewModel.filteredPlugins) { pluginViewModel in
-                    pluginViewModel.makeBody(libraryStyle: .default) {
-                        router.route(to: .pluginDetails(viewModel: pluginViewModel))
-                    }
+                    PluginRow(viewModel: pluginViewModel)
                 }
             }
         }
@@ -62,7 +60,7 @@ struct PluginsView: View {
         .navigationTitle(L10n.plugins)
         .toolbarTitleDisplayMode(.inline)
         .refreshable {
-            viewModel.refresh()
+            await viewModel.refresh()
         }
         .onFirstAppear {
             viewModel.refresh()

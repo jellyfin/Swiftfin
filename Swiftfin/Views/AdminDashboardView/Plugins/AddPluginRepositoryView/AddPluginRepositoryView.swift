@@ -37,19 +37,20 @@ struct AddPluginRepositoryView: View {
     }
 
     private var isDuplicateURL: Bool {
-        let normalizedURL: (String) -> String = {
-            $0.trimmingCharacters(in: .whitespacesAndNewlines).trimmingSuffix("/").lowercased()
-        }
+        guard let repositoryURL else { return false }
 
         return viewModel.repositories.contains {
-            $0.url.map(normalizedURL) == normalizedURL(trimmedURL)
+            URL(string: $0.url?.nilIfBlank)?.normalizedServerConnectionURL == repositoryURL
         }
     }
 
-    private var isValidURL: Bool {
-        guard let components = URLComponents(string: trimmedURL) else { return false }
+    private var repositoryURL: URL? {
+        guard let url = URL(string: trimmedURL),
+              ["http", "https"].contains(url.scheme?.lowercased()),
+              url.host?.isNotEmpty == true
+        else { return nil }
 
-        return ["http", "https"].contains(components.scheme?.lowercased()) && components.host?.isNotEmpty == true
+        return url.normalizedServerConnectionURL
     }
 
     var body: some View {
@@ -80,7 +81,7 @@ struct AddPluginRepositoryView: View {
                 if trimmedURL.isEmpty {
                     Label(L10n.urlRequired, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                } else if !isValidURL {
+                } else if repositoryURL == nil {
                     Label(L10n.invalidURL, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 } else if isDuplicateURL {
@@ -89,12 +90,25 @@ struct AddPluginRepositoryView: View {
                 }
             }
         }
+        .disabled(viewModel.background.is(.updating))
+        .interactiveDismissDisabled(viewModel.background.is(.updating))
         .navigationTitle(L10n.addRepository.localizedCapitalized)
         .toolbarTitleDisplayMode(.inline)
-        .navigationBarCloseButton {
+        .navigationBarCloseButton(disabled: viewModel.background.is(.updating)) {
             router.dismiss()
         }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .updated:
+                UIDevice.feedback(.success)
+                router.dismiss()
+            }
+        }
         .topBarTrailing {
+            if viewModel.background.is(.updating) {
+                ProgressView()
+            }
+
             let saveAction: () -> Void = {
                 UIDevice.impact(.light)
                 viewModel.add(
@@ -104,7 +118,6 @@ struct AddPluginRepositoryView: View {
                         url: trimmedURL
                     )
                 )
-                router.dismiss()
             }
 
             Group {
@@ -117,7 +130,9 @@ struct AddPluginRepositoryView: View {
                         .controlSize(.small)
                 }
             }
-            .enabled(trimmedName.isNotEmpty && !isDuplicateName && isValidURL && !isDuplicateURL)
+            .enabled(trimmedName.isNotEmpty && !isDuplicateName && repositoryURL != nil && !isDuplicateURL)
+            .disabled(viewModel.background.is(.updating))
         }
+        .errorMessage($viewModel.error)
     }
 }

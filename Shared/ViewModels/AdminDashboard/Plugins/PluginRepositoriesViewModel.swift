@@ -59,20 +59,19 @@ final class PluginRepositoriesViewModel: ViewModel {
 
     @Function(\Action.Cases.add)
     private func _add(_ repository: RepositoryInfo) async throws {
-        let request = Paths.setRepositories(repositories + [repository])
-        try await send(request)
-
-        repositories.append(repository)
-
-        events.send(.updated)
+        try await updateRepositories(repositories.appending(repository))
     }
 
     @Function(\Action.Cases.remove)
     private func _remove(_ repository: RepositoryInfo) async throws {
-        let request = Paths.setRepositories(repositories.filter { $0 != repository })
+        try await updateRepositories(repositories.filtering { $0 == repository })
+    }
+
+    private func updateRepositories(_ updatedRepositories: [RepositoryInfo]) async throws {
+        let request = Paths.setRepositories(updatedRepositories)
         try await send(request)
 
-        repositories.removeAll { $0 == repository }
+        repositories = updatedRepositories
 
         events.send(.updated)
     }

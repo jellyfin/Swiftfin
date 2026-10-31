@@ -31,17 +31,12 @@ final class PluginsViewModel: ViewModel {
     @CasePathable
     enum Action {
         case refresh
-        case getPackages
-        case getPlugins
 
         var transition: Transition {
             switch self {
             case .refresh:
                 .to(.initial, then: .content)
                     .whenBackground(.refreshing)
-
-            case .getPackages, .getPlugins:
-                .background(.refreshing)
             }
         }
     }
@@ -62,6 +57,8 @@ final class PluginsViewModel: ViewModel {
     private(set) var packages: [PackageInfo] = []
     @Published
     private(set) var plugins: OrderedDictionary<String, PluginDetailsViewModel> = [:]
+
+    private var pluginCancellables = Set<AnyCancellable>()
 
     let repositoriesViewModel = PluginRepositoriesViewModel()
 
@@ -89,25 +86,23 @@ final class PluginsViewModel: ViewModel {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        try await _getPackages()
-        try await _getPlugins()
+        try await getPackages()
+        try await getPlugins()
     }
 
-    @Function(\Action.Cases.getPackages)
-    private func _getPackages() async throws {
+    private func getPackages() async throws {
         let request = Paths.getPackages
         let response = try await send(request)
 
         packages = response.value
     }
 
-    @Function(\Action.Cases.getPlugins)
-    private func _getPlugins() async throws {
+    private func getPlugins() async throws {
         let request = Paths.getPlugins
         let response = try await send(request)
 
         let installed = response.value.filter(\.isInstalled)
-        let installedIDs = Set(installed.compactMap { $0.id?.uppercased() })
+        let installedIDs = Set(installed.compactMap(\.normalizedID))
 
         let available = packages
             .filter { !installedIDs.contains($0.id ?? "") }
@@ -118,27 +113,24 @@ final class PluginsViewModel: ViewModel {
 
     private func updatePlugins(_ incomingPlugins: [PluginInfo]) {
         var updatedPlugins: OrderedDictionary<String, PluginDetailsViewModel> = [:]
+        pluginCancellables.removeAll()
 
         for plugin in incomingPlugins.sorted(using: \.displayTitle) {
-            guard let id = plugin.id?.uppercased() else { continue }
+            guard let id = plugin.normalizedID, updatedPlugins[id] == nil else { continue }
 
             let package = packages.first { $0.id == id }
+            let viewModel = plugins[id] ?? PluginDetailsViewModel(plugin: plugin, package: package)
 
-            if let existing = plugins[id] {
-                existing.plugin = plugin
-                existing.package = package
-                updatedPlugins[id] = existing
-            } else {
-                let viewModel = PluginDetailsViewModel(plugin: plugin, package: package)
+            viewModel.plugin = plugin
+            viewModel.package = package
 
-                viewModel.objectWillChange
-                    .sink { [weak self] _ in
-                        self?.objectWillChange.send()
-                    }
-                    .store(in: &cancellables)
+            viewModel.objectWillChange
+                .sink { [weak self] _ in
+                    self?.objectWillChange.send()
+                }
+                .store(in: &pluginCancellables)
 
-                updatedPlugins[id] = viewModel
-            }
+            updatedPlugins[id] = viewModel
         }
 
         plugins = updatedPlugins
