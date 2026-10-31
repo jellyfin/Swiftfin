@@ -106,9 +106,13 @@ final class ServerTasksViewModel: ViewModel {
         }
 
         for id in existingIDs {
-            guard let updatedTask = allTasks.first(where: { $0.id == id }) else { continue }
-
-            tasks.values.flattened().first(where: { $0.task.id == id })?.task = updatedTask
+            if let taskViewModel = tasks.values
+                .flattened()
+                .first(where: { $0.task.id == id }),
+               let updatedTask = allTasks.first(where: { $0.id == id })
+            {
+                taskViewModel.task = updatedTask
+            }
         }
 
         for newTask in newTasks {
