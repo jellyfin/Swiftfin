@@ -211,9 +211,11 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             .makeGroups(environment: .default)
 
         case .series:
+            // Same bound as SeriesEpisodeContentGroup. Collections past this still open from the header.
             try await ItemTypeContentGroupProvider(
                 itemTypes: [.season],
-                parent: item
+                parent: item,
+                pageSize: 100
             )
             .makeGroups(environment: .default)
 
