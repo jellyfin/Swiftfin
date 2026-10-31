@@ -28,7 +28,6 @@ struct PlaybackAdjustmentSlider: View {
         )
     }
 
-    @ViewBuilder
     private var slider: some View {
         #if os(tvOS)
         SliderContainer(
