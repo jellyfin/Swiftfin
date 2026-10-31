@@ -10,7 +10,6 @@ import CollectionVGrid
 import Defaults
 import JellyfinAPI
 import SwiftUI
-@_spi(Advanced) import SwiftUIIntrospect
 
 struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: LibraryElement {
 
@@ -19,10 +18,10 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         case firstElement = "pagingLibrary-firstElement"
     }
 
+    typealias Element = Library.Element
+
     @AdaptiveLayout
     private var viewLayout
-
-    typealias Element = Library.Element
 
     @Default(.Customization.Library.rememberLayout)
     private var rememberIndividualLibraryStyle
@@ -92,8 +91,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         insets.top = max(insets.top, frameForParentView[.tabView]?.safeAreaInsets.top ?? 0)
         return insets + viewLayout.itemSpacing
         #else
-        // The outer container consumes horizontal safe areas for both tab roots
-        // and pushed libraries. Keep the collection's own insets stable.
         let horizontalSpacing = libraryStyle.displayType == .list ? 0 : viewLayout.itemSpacing
         return EdgeInsets(
             top: frame.safeAreaInsets.top + viewLayout.itemSpacing,
@@ -123,13 +120,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                                 .coordinatedFocus(Focus.firstElement.rawValue)
                                 .environmentObject(focusCoordinator)
                         }
-                        .introspect(.viewController, on: .tvOS(.v26...)) { controller in
-                            // Do not have hosting controller apply safe regions
-                            // TODO: do in CollectionVGrid instead
-                            if let hostingController = controller as? UIHostingController<AnyView> {
-                                hostingController.safeAreaRegions.remove(.container)
-                            }
-                        }
                     #endif
             }
             .onReachedBottomEdge(offset: .offset(300)) {
@@ -143,16 +133,10 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             .onRefresh {
                 await viewModel.background.refresh()
             }
+            .contentInsetAdjustmentBehavior(.never)
             #if os(tvOS)
-            .introspect(.scrollView, on: .tvOS(.v26...)) { collectionView in
-                // TODO: CollectionVGrid option instead
-                collectionView.contentInsetAdjustmentBehavior = .never
-            }
             .ignoresSafeArea()
             #else
-            // Insets are handled above and by the outer horizontal container.
-            // UIKit's automatic adjustment can reflow rows during sidebar animation.
-            .contentInsetAdjustmentBehavior(.never)
             .ignoresSafeArea(edges: .vertical)
             #endif
         }
@@ -247,8 +231,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .animation(.smooth(duration: 0.35), value: horizontalInsets)
             }
-            // Resize the collection's container instead of changing its layout insets,
-            // which reloads cells and resets their state when the sidebar toggles.
             .ignoresSafeArea(.container, edges: .horizontal)
             #endif
         }

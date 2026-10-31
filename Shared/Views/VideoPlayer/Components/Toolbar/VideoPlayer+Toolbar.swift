@@ -13,10 +13,10 @@ extension VideoPlayer.PlaybackControls {
 
     struct Toolbar: View {
 
+        typealias ViewState = VideoPlayer.ViewState
+
         @AdaptiveLayout
         private var viewLayout
-
-        typealias ViewState = VideoPlayer.ViewState
 
         @Environment(ViewState.self)
         private var viewState

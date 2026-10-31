@@ -19,10 +19,10 @@ struct SelectUserView: View {
         case focusedUserButton
     }
 
+    typealias UserItem = (user: UserState, server: ServerState)
+
     @AdaptiveLayout
     private var viewLayout
-
-    typealias UserItem = (user: UserState, server: ServerState)
 
     @Default(.accentColor)
     private var accentColor
@@ -164,8 +164,6 @@ struct SelectUserView: View {
 
         if selectUserUseSplashscreen, sources.isNotEmpty {
             GeometryReader { geometry in
-                // Keep the view identity stable while resizing; only a new source
-                // list should choose another random server background.
                 ImageView(sources.shuffled())
                     .pipeline(.Swiftfin.local)
                     .image { image in

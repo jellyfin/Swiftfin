@@ -19,8 +19,6 @@ struct BottomEdgeGradientModifier: ViewModifier {
         content
             .trackingSize($contentSize)
             .overlay(alignment: .bottom) {
-                // Continue the artwork beneath the detail controls, fading the
-                // reflection into its resolved color without a seam at the image.
                 content
                     .scaleEffect(y: -1)
                     .blur(radius: 5)

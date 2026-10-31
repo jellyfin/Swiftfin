@@ -13,14 +13,14 @@ extension CustomizeSettingsView {
 
     struct LibrarySection: View {
 
-        @AdaptiveLayout
-        private var viewLayout
-
         #if os(tvOS)
         typealias PlatformPicker = ListRowMenu
         #else
         typealias PlatformPicker = Picker
         #endif
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Default(.Customization.Library.showFavorites)
         private var showFavorites

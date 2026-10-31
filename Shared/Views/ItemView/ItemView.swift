@@ -54,8 +54,6 @@ struct ItemView: View {
     }
 
     private var usesCompactEnhancedHeader: Bool {
-        // The sidebar changes the space for controls, not the artwork's layout.
-        // Include the sidebar's inset so opening it doesn't replace the header.
         guard !viewLayout.isLarge,
               let navigation = frameForParentView[.navigationStack],
               navigation.frame.width > 0
@@ -147,8 +145,6 @@ struct ItemView: View {
                 value: horizontalInsets
             )
         }
-        // The native tab sidebar changes the safe area immediately. Animate our
-        // own horizontal insets inside a stable container to slide the content.
         .ignoresSafeArea(.container, edges: viewLayout.isLarge ? [] : .horizontal)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.linear(duration: 0.2), value: viewModel.state)
@@ -189,7 +185,6 @@ struct ItemView: View {
         .toolbar {
             if isEnhanced {
                 ToolbarItem(placement: .principal) {
-                    // Keep the title for back navigation without drawing it over the artwork.
                     Color.clear.frame(width: 0, height: 0)
                 }
             }

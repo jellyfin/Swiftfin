@@ -25,7 +25,6 @@ extension VideoPlayer {
             #if os(tvOS)
             systemInsets.max(ViewLayout.platformDefault.edgePadding)
             #else
-            // The full-width pager leaves horizontal safe-area handling to its content.
             EdgeInsets(top: 0, leading: systemInsets.leading, bottom: systemInsets.bottom, trailing: systemInsets.trailing)
             #endif
         }

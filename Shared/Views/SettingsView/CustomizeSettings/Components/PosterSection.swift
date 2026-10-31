@@ -14,9 +14,6 @@ extension CustomizeSettingsView {
 
     struct PosterSection: View {
 
-        @AdaptiveLayout
-        private var viewLayout
-
         enum PreviewItemState: CaseIterable, Displayable {
 
             case inProgress
@@ -40,6 +37,9 @@ extension CustomizeSettingsView {
                 }
             }
         }
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Default(.Customization.Poster.configuration)
         private var posterConfiguration

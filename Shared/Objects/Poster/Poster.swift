@@ -160,8 +160,6 @@ extension View {
     }
 }
 
-/// Keep preview geometry out of the poster button's state. A resize should update
-/// the preview's sizing without rebuilding the artwork, labels and overlays.
 private struct SizedPosterContextMenuModifier<Item: Poster, Preview: View>: ViewModifier {
 
     @State

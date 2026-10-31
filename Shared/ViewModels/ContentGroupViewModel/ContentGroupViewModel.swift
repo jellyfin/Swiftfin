@@ -56,8 +56,6 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
         provider.refreshRequests
             .sink { [weak self] request in
-                // Fetching full details and child groups also updates the shared item store.
-                // Those results are already part of this refresh, not a reason to start another.
                 guard let self, request.source != self.refreshSource else { return }
 
                 self.needsGroupRebuild = true

@@ -28,7 +28,6 @@ extension VideoPlayer {
         }
 
         private var supplementContent: some View {
-            // The panel draws through the bottom system gap; its reservation excludes it.
             VideoPlayer.UIContainerViewController.SupplementContainerView()
                 .frame(height: viewState.supplementHeight)
                 .frame(

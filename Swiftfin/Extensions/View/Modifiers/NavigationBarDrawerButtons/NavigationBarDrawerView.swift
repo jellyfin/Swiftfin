@@ -88,7 +88,6 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         view.addSubview(drawerButtonsView.view)
         drawerButtonsView.didMove(toParent: self)
 
-        // Keep scrollable content in the same horizontal safe area as the drawer.
         NSLayoutConstraint.activate([
             contentView.view.topAnchor.constraint(equalTo: view.topAnchor),
             contentView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),

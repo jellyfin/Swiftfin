@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct PosterStyleModifier: ViewModifier {
+
     @AdaptiveLayout
     private var viewLayout
 
@@ -19,8 +20,9 @@ struct PosterStyleModifier: ViewModifier {
         content
             .posterAspectRatio(type, contentMode: contentMode)
             .if(!viewLayout.isLarge) { poster in
-                // Focus button styles supply their own border and clipping shape.
-                poster.posterBorder().posterCornerRadius(type)
+                poster
+                    .posterBorder()
+                    .posterCornerRadius(type)
             }
     }
 }

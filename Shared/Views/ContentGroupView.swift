@@ -142,8 +142,6 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .animation(.smooth(duration: 0.35), value: horizontalInsets)
             }
-            // Give the rows actual changing bounds instead of letting the tab's
-            // safe-area update jump their origin and size in a single layout pass.
             .ignoresSafeArea(.container, edges: .horizontal)
             #endif
         }

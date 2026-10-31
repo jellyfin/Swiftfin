@@ -39,7 +39,6 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
                     .safeAreaBar(edge: .top, spacing: 0) {
                         drawer
                     }
-                    .preference(key: IsSafeAreaBarApplied.self, value: true)
             } else {
                 NavigationBarDrawerView {
                     drawer

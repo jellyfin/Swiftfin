@@ -24,6 +24,7 @@ extension ItemView {
 
             @AdaptiveLayout
             private var viewLayout
+
             @Environment(\.frameForParentView)
             private var frameForParentView
             @Environment(\.layoutDirection)
@@ -79,7 +80,6 @@ extension ItemView {
             }
 
             private var materialHorizontalOffset: CGFloat {
-                // Match the artwork's full canvas when the safe area is asymmetric.
                 let offset = (materialInsets.trailing - materialInsets.leading) / 2
                 return layoutDirection == .leftToRight ? offset : -offset
             }
@@ -209,11 +209,8 @@ extension ItemView {
                                             }
                                     }
                             }
-                            // Keep the image at the navigation container's scale. The
-                            // sidebar reveals/crops it instead of zooming it.
                             .frame(width: artworkWidth, height: artworkHeight)
                             .clipped()
-                            // Keep the reflection outside the native effect's clip.
                             .backport
                             .backgroundExtensionEffect()
                             .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)

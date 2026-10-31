@@ -15,10 +15,10 @@ extension VideoPlayer.PlaybackControls.Toolbar {
 
     struct ActionButtons: View {
 
+        typealias ViewState = VideoPlayer.ViewState
+
         @AdaptiveLayout
         private var viewLayout
-
-        typealias ViewState = VideoPlayer.ViewState
 
         @Default(.VideoPlayer.barActionButtons)
         private var rawBarActionButtons

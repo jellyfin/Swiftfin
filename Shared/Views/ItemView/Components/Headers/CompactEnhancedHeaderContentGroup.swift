@@ -25,6 +25,7 @@ extension ItemView {
 
             @AdaptiveLayout
             private var viewLayout
+
             @Environment(\.frameForParentView)
             private var frameForParentView
             @Environment(\.layoutDirection)
@@ -57,8 +58,6 @@ extension ItemView {
             }
 
             private var materialHorizontalOffset: CGFloat {
-                // The extended background is centered, but a sidebar or device
-                // obstruction can put the entire safe area on one side.
                 let offset = (materialInsets.trailing - materialInsets.leading) / 2
                 return layoutDirection == .leftToRight ? offset : -offset
             }
@@ -178,8 +177,6 @@ extension ItemView {
                             )
                             .clipped()
                             .accessibilityHidden(true)
-                            // The native effect clips to the artwork bounds, so
-                            // apply it before adding the reflected lower edge.
                             .backport
                             .backgroundExtensionEffect()
                             .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)

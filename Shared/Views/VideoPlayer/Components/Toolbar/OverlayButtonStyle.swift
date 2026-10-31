@@ -42,10 +42,10 @@ extension VideoPlayer.PlaybackControls {
 
     struct OverlayButtonStyle: ButtonStyle {
 
+        private static let padding: CGFloat = 8
+
         @AdaptiveLayout
         private var viewLayout
-
-        private static let padding: CGFloat = 8
 
         @Environment(\.isEnabled)
         private var isEnabled

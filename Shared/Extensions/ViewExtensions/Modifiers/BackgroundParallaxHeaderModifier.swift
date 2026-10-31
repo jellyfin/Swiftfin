@@ -47,8 +47,6 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     }
 
     private var scrollViewOffset: CGFloat {
-        // A sheet or window can start anywhere in global coordinates.
-        // Parallax follows scrolling inside this container, not its screen position.
         let scrollView = frameForParentView[.scrollView, default: .zero]
         return scrollView.frame.minY - scrollView.safeAreaInsets.top - contentFrame.minY
     }
@@ -87,8 +85,6 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     }
 
     private var offset: CGFloat {
-        // Keep the original artwork below the device's top inset, with its
-        // extension behind the status bar. Scrolling is relative to this window.
         scrollViewOffset + navigationTopInset - max(0, scrollViewOffset + scrollViewTopInset) * multiplier
     }
 
@@ -107,7 +103,6 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
                 MirrorExtensionView(edges: .top) {
                     background
                         .frame(width: backgroundWidth)
-                        // Measure artwork independently of the foreground header's height.
                         .fixedSize(horizontal: false, vertical: true)
                         .trackingSize($headerSize)
                 }

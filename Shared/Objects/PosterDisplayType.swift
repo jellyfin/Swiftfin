@@ -38,7 +38,6 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
                 if presentation == .large {
                     500
                 } else {
-                    // Standard presentations use smaller thumbnails than large presentations.
                     displayType == .landscape ? 300 : 200
                 }
 
