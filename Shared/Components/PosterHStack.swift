@@ -22,11 +22,19 @@ struct PosterHStack<
     let action: (Data.Element, Namespace.ID) -> Void
 
     private var layout: CollectionHStackLayout {
+        #if os(tvOS)
+        .grid(
+            columns: displayType == .landscape ? 5 : 7,
+            rows: 1,
+            columnTrailingInset: 0
+        )
+        #else
         .minimumWidth(
             columnWidth: viewLayout.posterMinimumWidth(for: displayType, size: size),
             rows: 1,
             columnFraction: 0.5
         )
+        #endif
     }
 
     var body: some View {

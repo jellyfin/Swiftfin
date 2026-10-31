@@ -268,9 +268,7 @@ extension VideoPlayer {
                     .eraseToAnyView()
             )
 
-            #if os(iOS)
             controller.disableSafeArea = true
-            #endif
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
             controller.view.translatesAutoresizingMaskIntoConstraints = false
 
