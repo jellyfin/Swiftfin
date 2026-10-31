@@ -276,6 +276,123 @@ class Fastfile: LaneFile {
         )
     }
 
+    // MARK: - screenshotsLane
+
+    private enum ScreenshotPlatform: String, CaseIterable {
+        case iOS
+        case iPadOS
+        case tvOS
+
+        var scheme: String {
+            switch self {
+            case .iOS, .iPadOS:
+                "Swiftfin iOS Screenshots"
+            case .tvOS:
+                "Swiftfin tvOS Screenshots"
+            }
+        }
+
+        var deviceOption: String {
+            "\(rawValue.lowercased())Device"
+        }
+
+        var defaultDeviceType: String {
+            switch self {
+            case .iOS:
+                "iPhone-17-Pro"
+            case .iPadOS:
+                "iPad-Pro-13-inch-M5-12GB"
+            case .tvOS:
+                "Apple-TV-4K-3rd-generation-4K"
+            }
+        }
+    }
+
+    func screenshotsLane(withOptions options: [String: String]?) {
+
+        let options = options ?? [:]
+        let platforms: [ScreenshotPlatform]
+
+        if let platform = options["platform"]?.trimOption() {
+            guard let screenshotPlatform = ScreenshotPlatform.allCases.first(where: {
+                $0.rawValue.lowercased() == platform.lowercased()
+            }) else {
+                fail("invalid platform '\(platform)', expected ios, ipados, or tvos")
+            }
+
+            platforms = [screenshotPlatform]
+        } else {
+            platforms = ScreenshotPlatform.allCases
+        }
+
+        let isRawOnly = options["process"]?.trimOption()?.lowercased() == "false"
+
+        let repositoryDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+        let toolsDirectory = repositoryDirectory.appendingPathComponent("Screenshots/Tools")
+
+        for platform in platforms {
+            let captureDirectory = repositoryDirectory.appendingPathComponent("build/Screenshots/Capture/\(platform.rawValue)")
+            let outputDirectory = repositoryDirectory.appendingPathComponent("Documentation/Screenshots/\(platform.rawValue)")
+            let deviceType = options[platform.deviceOption]?.trimOption() ?? platform.defaultDeviceType
+
+            let device = sh(
+                command: "swift \"\(toolsDirectory.path)/Simulator.swift\" \(deviceType)",
+                log: .userDefined(false)
+            )
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+            captureIosScreenshots(
+                project: .userDefined(xcodeProject),
+                xcargs: .userDefined("-skipMacroValidation -collect-test-diagnostics never"),
+                devices: .userDefined([device]),
+                languages: ["en-US"],
+                outputDirectory: captureDirectory.path,
+                skipOpenSummary: .userDefined(true),
+                clearPreviousScreenshots: .userDefined(true),
+                eraseSimulator: .userDefined(true),
+                overrideStatusBar: .userDefined(platform != .tvOS),
+                overrideStatusBarArguments: .userDefined(
+                    "--time \(statusBarTime) --dataNetwork wifi --wifiMode active --wifiBars 3 --cellularMode active --operatorName '' --cellularBars 4 --batteryState charged --batteryLevel 100"
+                ),
+                darkMode: .userDefined(true),
+                appIdentifier: .userDefined(bundleIdentifier),
+                scheme: .userDefined(platform.scheme),
+                numberOfRetries: 0,
+                stopAfterFirstError: .userDefined(true),
+                derivedDataPath: .userDefined("build/Screenshots"),
+                clonedSourcePackagesPath: .userDefined(sourcePackagesPath),
+                disablePackageAutomaticUpdates: .userDefined(true),
+                xcodebuildFormatter: isInstalled("xcbeautify") ? "xcbeautify" : ""
+            )
+
+            sh(
+                command: [
+                    "swift \"\(toolsDirectory.path)/ProcessScreenshots.swift\"",
+                    platform.rawValue,
+                    deviceType,
+                    "\"\(captureDirectory.path)\"",
+                    "\"\(outputDirectory.path)\"",
+                    isRawOnly ? "--raw-only" : "",
+                ]
+                .joined(separator: " ")
+            )
+        }
+    }
+
+    private var statusBarTime: String {
+        let noon = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: .now) ?? .now
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        formatter.timeZone = .current
+        return formatter.string(from: noon)
+    }
+
+    private func isInstalled(_ executable: String) -> Bool {
+        (ProcessInfo.processInfo.environment["PATH"] ?? "")
+            .split(separator: ":")
+            .contains { FileManager.default.isExecutableFile(atPath: "\($0)/\(executable)") }
+    }
+
     private func decodeBase64(encoded: String) -> String? {
         guard let data = Data(base64Encoded: encoded),
               let decoded = String(data: data, encoding: .utf8) else {

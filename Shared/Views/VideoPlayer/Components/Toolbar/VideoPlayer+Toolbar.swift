@@ -41,6 +41,7 @@ extension VideoPlayer.PlaybackControls {
                 )
                 .labelStyle(.iconOnly)
             }
+            .accessibilityIdentifier("closePlayerButton")
             .frame(width: viewLayout.toolbarButtonSize, height: viewLayout.toolbarButtonSize)
         }
 
