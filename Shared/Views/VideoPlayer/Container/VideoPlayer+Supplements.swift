@@ -54,7 +54,6 @@ extension VideoPlayer.UIContainerViewController {
                 }?.id
         }
 
-        @ViewBuilder
         private func supplementContainer(for supplement: some VideoPlayerSupplement) -> some View {
             AlternateLayoutView(alignment: .topLeading) {
                 Color.clear
@@ -73,7 +72,6 @@ extension VideoPlayer.UIContainerViewController {
             #endif
         }
 
-        @ViewBuilder
         private var tabButtons: some View {
             AlternateLayoutView {
                 // swiftlint:disable:next hard_coded_display_string

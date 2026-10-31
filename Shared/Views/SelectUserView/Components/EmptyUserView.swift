@@ -24,7 +24,6 @@ extension SelectUserView {
                 .glassEffect(in: .circle)
         }
 
-        @ViewBuilder
         private var addUserButton: some View {
             Button(action: action) {
                 #if os(tvOS)

@@ -93,7 +93,6 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
             }
         }
 
-        @ViewBuilder
         private var recordButtons: some View {
             VStack {
                 Button(role: recordingViewModel.recordingTimer != nil ? .destructive : nil) {

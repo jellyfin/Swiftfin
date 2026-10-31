@@ -286,7 +286,6 @@ struct UserSignInView: View {
         .disabled(viewModel.state == .signingIn)
     }
 
-    @ViewBuilder
     private var contentView: some View {
         #if os(iOS)
         List {
