@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import PreferencesView
 import SwiftUI
 import UIKit
 
@@ -30,11 +29,12 @@ struct SwiftfinApp: App {
                 PreferencesView {
                     WithLocalUserAuthentication {
                         RootView()
-                            .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+                            .supportedOrientations(UIDevice.isPhone ? .portrait : .all)
                     }
                 }
+                .ignoresSafeArea(.container)
             }
-            .ignoresSafeArea()
+            .trackingFrame(for: .layoutContainer)
         }
     }
 }

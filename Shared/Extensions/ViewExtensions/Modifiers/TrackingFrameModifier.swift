@@ -19,9 +19,6 @@ private struct EmptyCGRectPreferenceKey: PreferenceKey {
 
 struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value == FrameAndSafeAreaInsets {
 
-    @Environment(\.frameForParentView)
-    private var frameForParentView
-
     @State
     private var frame: CGRect = .zero
     @State
@@ -64,13 +61,9 @@ struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value =
                     $frame,
                     $safeAreaInsets
                 )
-                .environment(
-                    \.frameForParentView,
-                    frameForParentView.inserting(
-                        value: .init(frame: frame, safeAreaInsets: safeAreaInsets),
-                        for: coordinateSpace
-                    )
-                )
+                .transformEnvironment(\.frameForParentView) { frames in
+                    frames[coordinateSpace] = .init(frame: frame, safeAreaInsets: safeAreaInsets)
+                }
         }
     }
 }

@@ -31,10 +31,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
         OverlayView(itemID: itemID)
     }
 
-    private struct OverlayView: PlatformView {
-
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets: EdgeInsets
+    private struct OverlayView: PresentationView {
 
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
@@ -220,7 +217,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
         }
 
-        var iOSView: some View {
+        var standardView: some View {
             CompactOrRegularView(
                 isCompact: viewState.isCompact
             ) {
@@ -230,9 +227,9 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
             .onFirstAppear { viewModel.observe(itemID: itemID) }
             .labeledContentStyle(.playbackInfo)
-            .padding(.leading, safeAreaInsets.leading)
-            .padding(.trailing, safeAreaInsets.trailing)
-            .padding(.bottom, safeAreaInsets.bottom)
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
+            .padding(.bottom, viewState.systemInsets.bottom)
         }
 
         private var compactView: some View {
@@ -271,7 +268,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             .edgePadding()
         }
 
-        var tvOSView: some View {
+        var largeView: some View {
             regularView
                 .onFirstAppear { viewModel.observe(itemID: itemID) }
                 .labeledContentStyle(.playbackInfo)

@@ -91,7 +91,7 @@ extension VideoPlayer.PlaybackControls {
 
         private var liveIndicator: some View {
             Text(L10n.live)
-                .font(UIDevice.isTV ? .caption : .subheadline)
+                .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundStyle(.white)
                 .padding(.horizontal, 16)

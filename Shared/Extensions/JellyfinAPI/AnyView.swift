@@ -8,12 +8,12 @@
 
 import SwiftUI
 
-extension AnyView: PlatformView {
-    var iOSView: some View {
+extension AnyView: PresentationView {
+    var standardView: some View {
         self
     }
 
-    var tvOSView: some View {
+    var largeView: some View {
         self
     }
 }

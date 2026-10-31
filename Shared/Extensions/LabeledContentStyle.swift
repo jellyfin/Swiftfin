@@ -62,6 +62,9 @@ extension LabeledContentStyle where Self == PlaybackInfoLabeledContentStyle {
 
 struct PlaybackInfoLabeledContentStyle: LabeledContentStyle {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @FocusState
     private var isFocused: Bool
 
@@ -81,7 +84,7 @@ struct PlaybackInfoLabeledContentStyle: LabeledContentStyle {
                 .foregroundStyle(.primary)
         }
         .font(.subheadline)
-        .if(UIDevice.isTV) { label in
+        .if(viewLayout.isLarge) { label in
             label
                 .padding(.horizontal, 8)
                 .padding(.vertical, 8)

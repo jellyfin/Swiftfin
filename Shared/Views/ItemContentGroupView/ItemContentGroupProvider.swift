@@ -32,17 +32,17 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         item.displayTitle
     }
 
-    var refreshRequests: AnyPublisher<Void, Never> {
+    var refreshRequests: AnyPublisher<ContentGroupRefreshRequest, Never> {
         guard let store = userSession?.items else {
             return Combine.Empty().eraseToAnyPublisher()
         }
 
         return store.changes
-            .compactMap { [weak self, weak store] change -> Void? in
+            .compactMap { [weak self, weak store] change -> ContentGroupRefreshRequest? in
                 guard let self, case let .updated(update) = change else { return nil }
 
                 if update.itemID == self.id, update.metadataChanged {
-                    return ()
+                    return ContentGroupRefreshRequest()
                 }
 
                 // Series and season playback selection depends on their children's progress
@@ -54,7 +54,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 if update.itemID == self.id || changedItem?.seriesID == self.id || changedItem?.seasonID == self.id ||
                     changedItem?.type == nil
                 {
-                    return ()
+                    return ContentGroupRefreshRequest()
                 }
 
                 return nil

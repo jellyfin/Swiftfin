@@ -11,7 +11,10 @@ import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
-    struct SplitTimeStamp: PlatformView {
+    struct SplitTimeStamp: PresentationView {
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
@@ -124,7 +127,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        var iOSView: some View {
+        var standardView: some View {
             HStack {
                 Button {
                     switch trailingTimestampType {
@@ -158,7 +161,7 @@ extension VideoPlayer.PlaybackControls {
             .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
         }
 
-        var tvOSView: some View {
+        var largeView: some View {
             ZStack {
                 if let runtime = mediaSession.item.runtime {
                     Text(.zero - (runtime - scrubbedSeconds), format: .runtime)
@@ -181,7 +184,7 @@ extension VideoPlayer.PlaybackControls {
                 .offset(x: previewXOffset)
             }
             .font(.caption)
-            .fontWeight(UIDevice.isTV ? .medium : nil)
+            .fontWeight(viewLayout.value(standard: nil, large: .medium))
             .monospacedDigit()
             .trackingSize($contentSize)
             .foregroundStyle(viewState.isProgressBarFocused ? .primary : .secondary)

@@ -27,6 +27,8 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
 
     @Environment(\.frameForParentView)
     private var frameForParentView
+    @Environment(\.layoutDirection)
+    private var layoutDirection
 
     @State
     private var contentFrame: CGRect = .zero
@@ -45,64 +47,72 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     }
 
     private var scrollViewOffset: CGFloat {
-        -contentFrame.minY
+        let scrollView = frameForParentView[.scrollView, default: .zero]
+        return scrollView.frame.minY - scrollView.safeAreaInsets.top - contentFrame.minY
     }
 
-    private var scrollViewSafeAreaInsets: EdgeInsets {
-        frameForParentView[.scrollView, default: .zero].safeAreaInsets
+    private var navigationFrame: CGRect {
+        let navigation = frameForParentView[.navigationStack, default: .zero]
+        let leftInset = layoutDirection == .leftToRight ? navigation.safeAreaInsets.leading : navigation.safeAreaInsets.trailing
+        return CGRect(
+            x: navigation.frame.minX - leftInset,
+            y: navigation.frame.minY,
+            width: navigation.sizeIncludingSafeArea.width,
+            height: navigation.frame.height
+        )
+    }
+
+    private var backgroundWidth: CGFloat? {
+        navigationFrame.width > 0 ? navigationFrame.width : nil
+    }
+
+    private var horizontalOffset: CGFloat {
+        guard navigationFrame.width > 0, contentFrame.width > 0 else { return 0 }
+
+        return navigationFrame.midX - contentFrame.midX
+    }
+
+    private var scrollViewTopInset: CGFloat {
+        frameForParentView[.scrollView, default: .zero].safeAreaInsets.top
+    }
+
+    private var navigationTopInset: CGFloat {
+        frameForParentView[.navigationStack, default: .zero].safeAreaInsets.top
     }
 
     private var maskHeight: CGFloat {
-        max(0, contentFrame.height + scrollViewSafeAreaInsets.top - offset)
+        max(0, contentFrame.height + scrollViewTopInset - offset)
     }
 
     private var offset: CGFloat {
-        let position = scrollViewOffset + frameForParentView[.navigationStack, default: .zero].safeAreaInsets.top
-
-        return if scrollViewOffset < 0, abs(scrollViewOffset) >= scrollViewSafeAreaInsets.top {
-            position
-        } else {
-            position - (abs(scrollViewOffset + scrollViewSafeAreaInsets.top) * multiplier)
-        }
-    }
-
-    private var navigationBarHeight: CGFloat {
-        abs(frameForParentView[.navigationStack, default: .zero].safeAreaInsets.top - scrollViewSafeAreaInsets.top)
-    }
-
-    private var adjustedHeaderHeight: CGFloat {
-        headerSize.height + max(
-            0, navigationBarHeight
-        )
+        scrollViewOffset + navigationTopInset - max(0, scrollViewOffset + scrollViewTopInset) * multiplier
     }
 
     private var scaleEffect: CGFloat {
         guard headerSize.height > 0 else { return 1 }
 
-        var scale: CGFloat {
-            if scrollViewOffset < 0, abs(scrollViewOffset) >= scrollViewSafeAreaInsets.top {
-                (adjustedHeaderHeight + abs(scrollViewOffset + scrollViewSafeAreaInsets.top)) / headerSize.height
-            } else {
-                adjustedHeaderHeight / headerSize.height
-            }
-        }
-
-        return max(1, scale)
+        let navigationBarHeight = max(0, scrollViewTopInset - navigationTopInset)
+        let overscroll = max(0, -scrollViewOffset - scrollViewTopInset)
+        return 1 + (navigationBarHeight + overscroll) / headerSize.height
     }
 
     func body(content: Content) -> some View {
         content
             .trackingFrame($contentFrame)
             .background(alignment: .top) {
-                background
-                    .trackingSize($headerSize)
-                    .scaleEffect(scaleEffect, anchor: .top)
-                    .mask(alignment: .top) {
-                        Color.black
-                            .frame(height: maskHeight)
-                            .offset(y: -scrollViewSafeAreaInsets.top)
-                    }
-                    .offset(y: offset)
+                MirrorExtensionView(edges: .top) {
+                    background
+                        .frame(width: backgroundWidth)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .trackingSize($headerSize)
+                }
+                .scaleEffect(scaleEffect, anchor: .top)
+                .mask(alignment: .top) {
+                    Color.black
+                        .frame(height: maskHeight)
+                        .offset(y: -scrollViewTopInset)
+                }
+                .offset(x: horizontalOffset, y: offset)
             }
     }
 }

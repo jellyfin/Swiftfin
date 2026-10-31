@@ -10,16 +10,19 @@ import SwiftUI
 
 struct Quadrant: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     let corner: QuadrantCorner
-    let size: CGFloat
-    let cornerRadius: CGFloat
+    let size: CGFloat?
+    let cornerRadius: CGFloat?
     let isFloating: Bool
     private let content: [QuadrantItem]
 
     init(
         _ corner: QuadrantCorner,
-        size: CGFloat = UIDevice.isTV ? 45 : 25,
-        cornerRadius: CGFloat = UIDevice.isTV ? 18 : 6,
+        size: CGFloat? = nil,
+        cornerRadius: CGFloat? = nil,
         isFloating: Bool = false,
         @ArrayBuilder<QuadrantItem> content: () -> [QuadrantItem]
     ) {
@@ -31,6 +34,8 @@ struct Quadrant: View {
     }
 
     var body: some View {
+        let size = size ?? viewLayout.indicatorSize
+        let cornerRadius = cornerRadius ?? viewLayout.value(standard: 6, large: 18)
         let entries = Array(content.enumerated())
         let orderedEntries = corner.isTrailing ? Array(entries.reversed()) : entries
 

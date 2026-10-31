@@ -23,10 +23,7 @@ extension EPGSupplement: VideoPlayerSupplement {
         GuideOverlay()
     }
 
-    private struct GuideOverlay: PlatformView {
-
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
+    private struct GuideOverlay: PresentationView {
 
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
@@ -49,10 +46,8 @@ extension EPGSupplement: VideoPlayerSupplement {
                     action: select
                 )
             }
-            .if(UIDevice.isPhone) { view in
-                view
-                    .padding(.leading, safeAreaInsets.leading)
-            }
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
             .onFirstAppear {
                 viewModel.refresh(startDate: nil)
             }
@@ -83,11 +78,11 @@ extension EPGSupplement: VideoPlayerSupplement {
             .focusSection()
         }
 
-        var iOSView: some View {
+        var standardView: some View {
             content
         }
 
-        var tvOSView: some View {
+        var largeView: some View {
             content
                 .focusSection()
         }

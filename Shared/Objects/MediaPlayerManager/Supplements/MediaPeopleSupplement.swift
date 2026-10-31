@@ -25,10 +25,10 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
         PeopleOverlay(supplement: self)
     }
 
-    private struct PeopleOverlay: PlatformView {
+    private struct PeopleOverlay: PresentationView {
 
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets: EdgeInsets
+        @AdaptiveLayout
+        private var viewLayout
 
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
@@ -43,29 +43,31 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
             supplement.people
         }
 
-        var iOSView: some View {
+        var standardView: some View {
             CompactOrRegularView(
                 isCompact: viewState.isCompact
             ) {
-                iOSCompactView
+                compactView
             } regularView: {
-                iOSRegularView
+                regularView
             }
         }
 
-        private var iOSCompactView: some View {
+        private var compactView: some View {
             CollectionVGrid(
                 uniqueElements: people,
                 id: \.hashValue,
                 layout: .columns(
                     1,
-                    insets: .init(EdgeInsets.edgePadding),
-                    itemSpacing: EdgeInsets.itemSpacing,
-                    lineSpacing: EdgeInsets.itemSpacing
+                    insets: .init(viewLayout.edgePadding),
+                    itemSpacing: viewLayout.itemSpacing,
+                    lineSpacing: viewLayout.itemSpacing
                 )
             ) { person, _ in
                 PersonRow(person: person)
             }
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
         }
 
         private func personView(for person: BaseItemPerson) -> some View {
@@ -75,33 +77,31 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
             ) { _ in }
         }
 
-        private var iOSRegularView: some View {
+        private var regularView: some View {
             CollectionHStack(
                 uniqueElements: people,
                 id: \.hashValue,
-                layout: .minimumWidth(columnWidth: 80, rows: 1)
+                layout: .minimumWidth(columnWidth: viewLayout.value(standard: 80, large: 150), rows: 1, columnFraction: 0.5)
             ) { person in
                 personView(for: person)
             }
             .clipsToBounds(false)
-            .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.itemSpacing)
+            .insets(EdgeInsets(
+                top: 0,
+                leading: max(viewState.supplementInsets.leading, viewLayout.edgePadding),
+                bottom: 0,
+                trailing: max(viewState.supplementInsets.trailing, viewLayout.edgePadding)
+            ))
+            .itemSpacing(viewLayout.itemSpacing)
             .scrollBehavior(.continuousLeadingEdge)
+            #if os(iOS)
+            .contentInsetAdjustmentBehavior(.never)
+            #endif
+            .focusSection()
         }
 
-        var tvOSView: some View {
-            CollectionHStack(
-                uniqueElements: people,
-                id: \.hashValue,
-                layout: .grid(columns: 10, rows: 1, columnTrailingInset: 0)
-            ) { person in
-                personView(for: person)
-            }
-            .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.itemSpacing)
-            .ignoresSafeArea(.container, edges: .horizontal)
-            .frame(maxHeight: .infinity)
-            .focusSection()
+        var largeView: some View {
+            standardView
         }
     }
 
@@ -130,10 +130,13 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
 
     private struct PersonRow: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         let person: BaseItemPerson
 
         var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+            ListRow(insets: .init(horizontal: viewLayout.edgePadding)) {
                 PosterImage(
                     item: person,
                     type: .portrait,

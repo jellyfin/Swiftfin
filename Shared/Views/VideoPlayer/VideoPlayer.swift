@@ -15,8 +15,6 @@ struct VideoPlayer: View {
     private var router
 
     @State
-    private var safeAreaInsets: EdgeInsets = .init()
-    @State
     private var viewState: ViewState = .init()
 
     let mediaSession: MediaSession
@@ -67,7 +65,7 @@ struct VideoPlayer: View {
                 mediaSession.attach(player: Defaults[.VideoPlayer.mediaPlayerType].makePlayer())
             }
         }
-        .prefersStatusBarHidden(!viewState.isPresentingControls)
+        .prefersStatusBarHidden(UIDevice.isPad || !viewState.isPresentingControls)
         .onChange(of: mediaSession.commandError, initial: true) { _, message in
             guard let message else { return }
 
@@ -95,14 +93,11 @@ struct VideoPlayer: View {
         } message: {
             Text(L10n.unableToLoadThisItem)
         }
-        .environment(\.safeAreaInsets, safeAreaInsets)
         .colorScheme(.dark)
-        .supportedOrientations(.allButUpsideDown)
+        .trackingFrame(for: .layoutContainer)
+        .supportedOrientations(.all)
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
-        .onSizeChanged { _, safeArea in
-            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
-        }
     }
 }

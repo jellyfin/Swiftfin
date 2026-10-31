@@ -11,6 +11,9 @@ import SwiftUI
 
 struct FilterTrack: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     enum Style {
 
         case compact
@@ -76,7 +79,6 @@ struct FilterTrack: View {
         viewModel.reset(filterType: nil)
     }
 
-    @ViewBuilder
     private func buttonIcon(for target: FocusTarget) -> some View {
         Image(systemName: target.systemImage)
             #if os(tvOS)
@@ -91,7 +93,7 @@ struct FilterTrack: View {
     private func buttonLabel(for target: FocusTarget) -> some View {
         let showsTitle = style == .regular || focus.wrappedValue == target
 
-        HStack(spacing: UIDevice.isTV ? 12 : 4) {
+        HStack(spacing: viewLayout.value(standard: 4, large: 12)) {
             if iconEdge == .leading {
                 buttonIcon(for: target)
             }
@@ -108,7 +110,6 @@ struct FilterTrack: View {
         .frame(width: showsTitle ? nil : 32, alignment: iconEdge == .leading ? .leading : .trailing)
     }
 
-    @ViewBuilder
     private var resetButton: some View {
         #if os(iOS)
         Menu(FocusTarget.reset.title, systemImage: FocusTarget.reset.systemImage) {
@@ -145,9 +146,9 @@ struct FilterTrack: View {
             button(for: target)
                 .fixedSize()
         }
-        .font(UIDevice.isTV ? .callout : .footnote)
-        .controlSize(UIDevice.isTV ? .large : .small)
-        .buttonStyle(.capsule(selectionTint: accentColor, focusTint: UIDevice.isTV ? .white : nil))
+        .font(viewLayout.value(standard: .footnote, large: .callout))
+        .controlSize(viewLayout.value(standard: .small, large: .large))
+        .buttonStyle(.capsule(selectionTint: accentColor, focusTint: viewLayout.value(standard: nil, large: .white)))
         #if os(tvOS)
         .animation(.snappy(duration: 0.2), value: focus.wrappedValue)
         #endif

@@ -8,23 +8,27 @@
 
 import SwiftUI
 
-#if os(tvOS)
-private let dotHStackDotSize: CGFloat = 5
-private let dotHStackPadding: CGFloat = 10
-#else
-private let dotHStackDotSize: CGFloat = 2
-private let dotHStackPadding: CGFloat = 5
-#endif
+struct DotHStack<Content: View>: View {
 
-func DotHStack(
-    padding: CGFloat = dotHStackPadding,
-    @ViewBuilder content: @escaping () -> some View
-) -> some View {
-    SeparatorHStack {
-        Circle()
-            .frame(width: dotHStackDotSize, height: dotHStackDotSize)
-            .padding(.horizontal, padding)
-    } content: {
-        content()
+    @AdaptiveLayout
+    private var viewLayout
+
+    private let padding: CGFloat?
+    private let content: Content
+
+    init(padding: CGFloat? = nil, @ViewBuilder content: () -> Content) {
+        self.padding = padding
+        self.content = content()
+    }
+
+    var body: some View {
+        let dotSize: CGFloat = viewLayout.value(standard: 2, large: 5)
+        SeparatorHStack {
+            Circle()
+                .frame(width: dotSize, height: dotSize)
+                .padding(.horizontal, padding ?? viewLayout.value(standard: 5, large: 10))
+        } content: {
+            content
+        }
     }
 }
