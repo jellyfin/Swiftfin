@@ -51,7 +51,6 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
         UIDevice.impact(.light)
     }
 
-    @ViewBuilder
     private var editButton: some View {
         Button(isReordering ? L10n.done : L10n.edit) {
             editMode?.wrappedValue = isReordering ? .inactive : .active

@@ -14,30 +14,30 @@ extension Font {
         switch self {
         #if os(iOS)
         case .largeTitle:
-            return UIFont.preferredFont(forTextStyle: .largeTitle)
+            UIFont.preferredFont(forTextStyle: .largeTitle)
         #endif
         case .title:
-            return UIFont.preferredFont(forTextStyle: .title1)
+            UIFont.preferredFont(forTextStyle: .title1)
         case .title2:
-            return UIFont.preferredFont(forTextStyle: .title2)
+            UIFont.preferredFont(forTextStyle: .title2)
         case .title3:
-            return UIFont.preferredFont(forTextStyle: .title3)
+            UIFont.preferredFont(forTextStyle: .title3)
         case .headline:
-            return UIFont.preferredFont(forTextStyle: .headline)
+            UIFont.preferredFont(forTextStyle: .headline)
         case .subheadline:
-            return UIFont.preferredFont(forTextStyle: .subheadline)
+            UIFont.preferredFont(forTextStyle: .subheadline)
         case .callout:
-            return UIFont.preferredFont(forTextStyle: .callout)
+            UIFont.preferredFont(forTextStyle: .callout)
         case .caption:
-            return UIFont.preferredFont(forTextStyle: .caption1)
+            UIFont.preferredFont(forTextStyle: .caption1)
         case .caption2:
-            return UIFont.preferredFont(forTextStyle: .caption2)
+            UIFont.preferredFont(forTextStyle: .caption2)
         case .footnote:
-            return UIFont.preferredFont(forTextStyle: .footnote)
+            UIFont.preferredFont(forTextStyle: .footnote)
         case .body:
-            return UIFont.preferredFont(forTextStyle: .body)
+            UIFont.preferredFont(forTextStyle: .body)
         default:
-            return nil
+            nil
         }
     }
 }
