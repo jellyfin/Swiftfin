@@ -300,6 +300,15 @@ struct SelectUserView: View {
         .onFirstAppear {
             viewModel.getServers()
         }
+        .onReceive(userSessionManager.$reauthenticationRequest) { request in
+            guard request != nil else { return }
+
+            Task { @MainActor in
+                guard let request = userSessionManager.consumeReauthenticationRequest() else { return }
+
+                router.route(to: .userSignIn(server: request.server, reauthenticating: request.user))
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Image(.jellyfinBlobBlue)

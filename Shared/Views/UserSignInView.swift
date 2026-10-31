@@ -48,7 +48,11 @@ struct UserSignInView: View {
     @StateObject
     private var viewModel: UserSignInViewModel
 
-    init(server: ServerState) {
+    private let reauthenticatingUser: UserState?
+
+    init(server: ServerState, reauthenticating user: UserState? = nil) {
+        self.reauthenticatingUser = user
+        self._username = State(initialValue: user?.username ?? "")
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
     }
 
@@ -70,8 +74,19 @@ struct UserSignInView: View {
             )
 
         case let .existingUser(existingUser):
-            self.existingUser = existingUser
-            self.isPresentingExistingUser = true
+            if existingUser.state.state == reauthenticatingUser, let authenticationAction {
+                let userState = existingUser.state.state
+                let policy = userState.accessPolicy
+                viewModel.saveExisting(
+                    user: existingUser,
+                    replaceForAccessToken: true,
+                    authenticationAction: (authenticationAction, policy, policy.authenticateReason(user: userState)),
+                    evaluatedPolicyMap: .init(action: processEvaluatedPolicy)
+                )
+            } else {
+                self.existingUser = existingUser
+                self.isPresentingExistingUser = true
+            }
 
         case let .saved(user):
             Task { @MainActor in
@@ -330,7 +345,7 @@ struct UserSignInView: View {
             .interactiveDismissDisabled(viewModel.state == .signingIn)
             .onReceive(viewModel.events, perform: handleEvent)
             .onFirstAppear {
-                focusedTextField = .username
+                focusedTextField = reauthenticatingUser == nil ? .username : .password
                 viewModel.getPublicData()
             }
             .alert(
