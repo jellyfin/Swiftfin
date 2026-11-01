@@ -268,47 +268,30 @@ func loadFrames(for profile: Profile) throws -> [[Int]: DeviceFrame] {
 
 // MARK: - Cards
 
-struct Caption {
+struct Caption: Decodable {
 
     let headline: String
     let subtitle: String
 }
 
-struct LocalizedCaptions {
+struct Captions {
 
-    let locale: Locale
-    let bundles: [Bundle]
+    private let scenes: [String: Caption]
 
-    init(language: String) throws {
-        locale = Locale(identifier: language)
+    init() throws {
+        let file = toolsDirectory.appendingPathComponent("Captions.json")
 
-        let directory = repository.appendingPathComponent("Translations")
-
-        let available = try contents(of: directory)
-            .filter { $0.pathExtension == "lproj" }
-            .map { $0.deletingPathExtension().lastPathComponent }
-
-        let preferred = Bundle.preferredLocalizations(from: available, forPreferences: [language])
-
-        bundles = (preferred + ["en"]).compactMap { Bundle(url: directory.appendingPathComponent("\($0).lproj")) }
+        scenes = try JSONDecoder().decode([String: Caption].self, from: Data(contentsOf: file))
     }
 
     func caption(for scene: String, platform: String) throws -> Caption {
-        func text(_ key: String) throws -> String {
-            for bundle in bundles {
-                let value = bundle.localizedString(forKey: key, value: nil, table: "Localizable")
-
-                if value != key, !value.isEmpty {
-                    return value
-                }
-            }
-
-            throw ScreenshotError(message: "Missing translation for \(key) in \(locale.identifier)")
+        guard let caption = scenes[scene], !caption.headline.isEmpty, !caption.subtitle.isEmpty else {
+            throw ScreenshotError(message: "Missing caption for \(scene) in Captions.json")
         }
 
-        return try Caption(
-            headline: text("screenshotHeadline\(scene)").capitalized(with: locale),
-            subtitle: String(format: text("screenshotSubtitle\(scene)"), locale: locale, arguments: [platform])
+        return Caption(
+            headline: caption.headline,
+            subtitle: caption.subtitle.replacing("{platform}", with: platform)
         )
     }
 }
@@ -507,7 +490,7 @@ func exportRaw(_ language: URL, to output: URL) throws {
 }
 
 func exportGallery(_ language: URL, to output: URL, profile: Profile, frames: [[Int]: DeviceFrame]) throws {
-    let captions = try LocalizedCaptions(language: language.lastPathComponent)
+    let captions = try Captions()
     var scenes: [(name: String, raw: CGImage, caption: Caption)] = []
 
     for source in try contents(of: language) where source.pathExtension == "png" {

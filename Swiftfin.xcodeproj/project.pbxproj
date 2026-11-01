@@ -189,6 +189,7 @@
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
 		BF8A69DD4C0747F69061EC37 /* Swiftfin iOS Screenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swiftfin iOS Screenshots.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2CF090E1C194AED9C84DEBA /* Swiftfin tvOS Screenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swiftfin tvOS Screenshots.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B3F7B422D9C4A08A81E760D /* Captions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Captions.json; sourceTree = "<group>"; };
 		7496CBB76D7A4B7E96A45862 /* CaptureDuo.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CaptureDuo.sh; sourceTree = "<group>"; };
 		6EC6FB560A2546B7AA4ECB12 /* ProcessScreenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessScreenshots.swift; sourceTree = "<group>"; };
 		966A9427F8964C70A70997AB /* Profiles.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Profiles.json; sourceTree = "<group>"; };
@@ -506,6 +507,7 @@
 			isa = PBXGroup;
 			children = (
 				8FED35935A4B40F4AF02F229 /* Tests */,
+				5B3F7B422D9C4A08A81E760D /* Captions.json */,
 				7496CBB76D7A4B7E96A45862 /* CaptureDuo.sh */,
 				51949983A343481190C9A370 /* Fonts */,
 				60CEF4B387DC4AC28A90EA68 /* Frames */,
