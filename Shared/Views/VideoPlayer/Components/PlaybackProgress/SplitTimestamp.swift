@@ -90,7 +90,7 @@ extension VideoPlayer.PlaybackControls {
                     // swiftlint:disable:next hard_coded_display_string
                     Text("/")
 
-                    Text(mediaSession.seconds, format: .runtime)
+                    Text(viewState.playbackSeconds, format: .runtime)
                 }
                 .foregroundStyle(.secondary)
                 .isVisible(isScrubbing)
@@ -101,7 +101,7 @@ extension VideoPlayer.PlaybackControls {
             HStack(spacing: 2) {
                 Group {
                     if let runtime = mediaSession.item.runtime {
-                        Text(runtime - mediaSession.seconds, format: .runtime)
+                        Text(runtime - viewState.playbackSeconds, format: .runtime)
                     } else {
                         Text(verbatim: .emptyRuntime)
                     }

@@ -275,7 +275,9 @@ extension VideoPlayer.UIContainerViewController {
     ) -> PanHandlingAction<Duration> {
         PanHandlingAction<Duration>(
             startValue: { viewState in
-                viewState.scrubbedSeconds
+                viewState.beginScrub()
+
+                return viewState.scrubbedSeconds
             }
         ) { startState, handlingState, viewState in
             if handlingState.gestureState == .cancelled || handlingState.gestureState == .failed {

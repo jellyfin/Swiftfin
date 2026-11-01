@@ -158,6 +158,7 @@
 		5362E4C8267D40F7000E2F71 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5377CBF1263B596A003A4E83 /* Swiftfin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swiftfin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53ABFDDB267972BF00886593 /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/System/Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
+		5B3F7B422D9C4A08A81E760D /* Captions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Captions.json; sourceTree = "<group>"; };
 		62666E0027E5016900EC0ECD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		62666E0527E5017A00EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		62666E0727E5018D00EC0ECD /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
@@ -187,13 +188,12 @@
 		628B95212670CABD0091AF3B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
+		6EC6FB560A2546B7AA4ECB12 /* ProcessScreenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessScreenshots.swift; sourceTree = "<group>"; };
+		7496CBB76D7A4B7E96A45862 /* CaptureDuo.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CaptureDuo.sh; sourceTree = "<group>"; };
+		82CD1975F58E4999B9DE8365 /* WriteGitBranch.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = WriteGitBranch.sh; sourceTree = "<group>"; };
+		966A9427F8964C70A70997AB /* Profiles.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Profiles.json; sourceTree = "<group>"; };
 		BF8A69DD4C0747F69061EC37 /* Swiftfin iOS Screenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swiftfin iOS Screenshots.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2CF090E1C194AED9C84DEBA /* Swiftfin tvOS Screenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swiftfin tvOS Screenshots.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B3F7B422D9C4A08A81E760D /* Captions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Captions.json; sourceTree = "<group>"; };
-		7496CBB76D7A4B7E96A45862 /* CaptureDuo.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CaptureDuo.sh; sourceTree = "<group>"; };
-		6EC6FB560A2546B7AA4ECB12 /* ProcessScreenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessScreenshots.swift; sourceTree = "<group>"; };
-		966A9427F8964C70A70997AB /* Profiles.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Profiles.json; sourceTree = "<group>"; };
-		82CD1975F58E4999B9DE8365 /* WriteGitBranch.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = WriteGitBranch.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -268,11 +268,10 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0E5C86560D5353A06E79ECD9 /* Translations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translations; sourceTree = "<group>"; };
 		3832EB9705E64B7AB6947127 /* Output */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Output; sourceTree = "<group>"; };
 		51949983A343481190C9A370 /* Fonts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Fonts; sourceTree = "<group>"; };
 		60CEF4B387DC4AC28A90EA68 /* Frames */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Frames; sourceTree = "<group>"; };
-		050AFA7B0F554739AD7B83C6 /* Raw */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Raw; sourceTree = "<group>"; };
-		0E5C86560D5353A06E79ECD9 /* Translations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translations; sourceTree = "<group>"; };
 		8FED35935A4B40F4AF02F229 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
 		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 3002B5F683E649EFBCF37FED /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 24EBA6499E0C420F8E5B2D33 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
@@ -514,7 +513,6 @@
 				3832EB9705E64B7AB6947127 /* Output */,
 				6EC6FB560A2546B7AA4ECB12 /* ProcessScreenshots.swift */,
 				966A9427F8964C70A70997AB /* Profiles.json */,
-				050AFA7B0F554739AD7B83C6 /* Raw */,
 			);
 			path = Screenshots;
 			sourceTree = "<group>";
@@ -1625,7 +1623,7 @@
 			repositoryURL = "https://github.com/LePips/MPVUI";
 			requirement = {
 				kind = exactVersion;
-				version = 0.7.0;
+				version = 0.10.0;
 			};
 		};
 		E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */ = {

@@ -74,6 +74,13 @@ protocol MediaPlayerTrackProviding {
 }
 
 @MainActor
+protocol MediaPlayerExternalSubtitleProviding: AnyObject {
+
+    /// Imports a negotiated sidecar without changing the user's subtitle selections.
+    func prepareSubtitle(_ stream: MediaStream) async -> Bool
+}
+
+@MainActor
 protocol MediaPlayerMetadataProviding {
 
     func updateMetadata(for item: MediaPlayerItem, artwork: UIImage?)

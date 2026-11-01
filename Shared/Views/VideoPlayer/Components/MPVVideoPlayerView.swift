@@ -22,7 +22,7 @@ struct MPVVideoPlayerView: View {
     private var videoSurface: MPVVideoPlayer {
         var surface = MPVVideoPlayer(player: player)
 
-        if isPictureInPictureActive {
+        if isPictureInPictureActive, player.videoFeatureCapabilities.pictureInPictureSubtitles.availability == .available {
             surface = surface.videoOverlay {
                 PictureInPictureSubtitleOverlay(presentation: textSubtitles)
             }

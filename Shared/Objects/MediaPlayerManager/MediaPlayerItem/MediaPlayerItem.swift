@@ -87,6 +87,7 @@ final class MediaPlayerItem {
         (mediaSession?.player as? MediaPlayerSecondarySubtitleProviding)?.setSecondarySubtitle(
             indexMap.playerIndex(for: effectiveSecondarySubtitleStreamIndex).flatMap { $0 >= 0 ? $0 : nil }
         )
+        requestSubtitlePreparation(effectiveSecondarySubtitleStreamIndex)
     }
 
     /// Secondary subtitles must play locally without changing the server's burn-in selection.
@@ -266,23 +267,47 @@ final class MediaPlayerItem {
     }
 
     func switchTrack(type: MediaStreamType, index: Int?) {
-        guard let player = mediaSession?.player as? any MediaPlayerTrackProviding else { return }
+        guard let player = mediaSession?.player as? any MediaPlayerTrackProviding else {
+            return
+        }
 
         let playerIndex = indexMap.playerIndex(for: index)
 
         switch type {
         case .audio:
-            guard let playerIndex else { return }
+            guard let playerIndex else {
+                return
+            }
 
             player.setStream(.init(index: playerIndex, type: .audio))
 
         case .subtitle:
             // Disable subtitles until the requested track is available.
             player.setStream(.init(index: playerIndex ?? -1, type: .subtitle))
+            requestSubtitlePreparation(index)
 
         default:
             return
         }
+    }
+
+    /// Makes a requested sidecar available without changing persistent or temporary choices.
+    func prepareSubtitle(at index: Int) async -> Bool {
+        guard !Task.isCancelled, mediaSession?.playbackItem === self else {
+            return false
+        }
+
+        if let playerIndex = indexMap.playerIndex(for: index), playerIndex >= 0 {
+            return true
+        }
+
+        guard let stream = subtitleStreams.first(where: { $0.index == index && $0.isSidecarSubtitle }),
+              let provider = mediaSession?.player as? MediaPlayerExternalSubtitleProviding
+        else {
+            return false
+        }
+
+        return await provider.prepareSubtitle(stream)
     }
 
     /// Replaces estimated track indexes with those reported by the player.
@@ -290,5 +315,15 @@ final class MediaPlayerItem {
         self.indexMap = indexMap
         switchTrack(type: .audio, index: selectedAudioStreamIndex)
         applySelectedSubtitleTracks()
+    }
+
+    private func requestSubtitlePreparation(_ index: Int?) {
+        guard let index, index >= 0, indexMap.playerIndex(for: index) == nil else {
+            return
+        }
+
+        Task { [weak self] in
+            _ = await self?.prepareSubtitle(at: index)
+        }
     }
 }
