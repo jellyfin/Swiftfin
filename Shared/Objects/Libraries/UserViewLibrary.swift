@@ -220,6 +220,7 @@ private struct UserViewLibraryGridElement: View {
             setImageSources()
         }
         .buttonStyle(.card)
+        .accessibilityLabel(element.displayTitle)
     }
 
     private var titleLabel: some View {

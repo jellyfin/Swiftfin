@@ -9,7 +9,7 @@
 import Foundation
 
 let localizationFile = "./Translations/en.lproj/Localizable.strings"
-let directoriesToScan = ["./Shared", "./Swiftfin", "./Swiftfin tvOS"]
+let directoriesToScan = ["./Shared", "./Swiftfin", "./Swiftfin tvOS", "./Tools/Screenshots"]
 let excludedFile = "./Shared/Strings/Strings.swift"
 let keyRegex = #/^\s*"(?<key>[^"\n]+)"\s*=/#
 let usageRegex = #/L10n\.`?(?<key>[a-zA-Z0-9_]+)`?/#
@@ -51,7 +51,7 @@ for key in unused.map(\.key).sorted() {
 }
 
 guard CommandLine.arguments.contains("--purge") else {
-    print("\nRun 'swift Scripts/Translations/FindUnusedStrings.swift --purge' to remove them.")
+    print("\nRun 'swift Tools/Translations/FindUnusedStrings.swift --purge' to remove them.")
     exit(1)
 }
 
