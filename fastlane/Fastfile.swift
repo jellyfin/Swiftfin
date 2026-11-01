@@ -346,7 +346,8 @@ class Fastfile: LaneFile {
         for (runtime, profile, device) in destinations {
             let captureDirectory = root.appendingPathComponent("build/Screenshots/Capture/\(profile)")
             let outputDirectory = tools.appendingPathComponent("Output/\(profile)")
-            let scheme = "Swiftfin \(runtime.platform) Screenshots"
+            let scheme = runtime.platform == "tvOS" ? "Swiftfin tvOS" : "Swiftfin"
+            let testTarget = "Swiftfin \(runtime.platform) Screenshots"
             let isDuo = profile == "iPhoneDuo"
             let duo = Process()
 
@@ -390,7 +391,7 @@ class Fastfile: LaneFile {
                 derivedDataPath: .userDefined("build/Screenshots"),
                 clonedSourcePackagesPath: .userDefined(sourcePackagesPath),
                 disablePackageAutomaticUpdates: .userDefined(true),
-                onlyTesting: ["\(scheme)/ScreenshotTests/testScreenshots"],
+                onlyTesting: ["\(testTarget)/ScreenshotTests/testScreenshots"],
                 xcodebuildFormatter: isInstalled("xcbeautify") ? "xcbeautify" : ""
             )
 
