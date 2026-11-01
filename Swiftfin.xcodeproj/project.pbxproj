@@ -189,6 +189,10 @@
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
 		BF8A69DD4C0747F69061EC37 /* Swiftfin iOS Screenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swiftfin iOS Screenshots.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2CF090E1C194AED9C84DEBA /* Swiftfin tvOS Screenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swiftfin tvOS Screenshots.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7496CBB76D7A4B7E96A45862 /* CaptureDuo.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CaptureDuo.sh; sourceTree = "<group>"; };
+		6EC6FB560A2546B7AA4ECB12 /* ProcessScreenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessScreenshots.swift; sourceTree = "<group>"; };
+		966A9427F8964C70A70997AB /* Profiles.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Profiles.json; sourceTree = "<group>"; };
+		82CD1975F58E4999B9DE8365 /* WriteGitBranch.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = WriteGitBranch.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -263,11 +267,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0E5C86560D5353A06E79ECD9 /* Tools */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tools; sourceTree = "<group>"; };
+		3832EB9705E64B7AB6947127 /* Output */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Output; sourceTree = "<group>"; };
+		51949983A343481190C9A370 /* Fonts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Fonts; sourceTree = "<group>"; };
+		60CEF4B387DC4AC28A90EA68 /* Frames */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Frames; sourceTree = "<group>"; };
+		050AFA7B0F554739AD7B83C6 /* Raw */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Raw; sourceTree = "<group>"; };
+		0E5C86560D5353A06E79ECD9 /* Translations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translations; sourceTree = "<group>"; };
 		8FED35935A4B40F4AF02F229 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
 		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 3002B5F683E649EFBCF37FED /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 24EBA6499E0C420F8E5B2D33 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
-		E14565DD2DFCAE78008FF700 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
 		E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14567272DFCAEFD008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Swiftfin tvOS"; sourceTree = "<group>"; };
 		E1456FC82DFCB323008FF700 /* Translations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translations; sourceTree = "<group>"; };
 		E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E1BE3EDA2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E1BE3EDB2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = XcodeConfig; sourceTree = "<group>"; };
@@ -426,8 +433,7 @@
 				E1456FC82DFCB323008FF700 /* Translations */,
 				5377CBF2263B596A003A4E83 /* Products */,
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
-				E14565DD2DFCAE78008FF700 /* Scripts */,
-				588169D1DE9DA4B4AC9DA475 /* Screenshots */,
+				E14565DD2DFCAE78008FF700 /* Tools */,
 				E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */,
 			);
 			sourceTree = "<group>";
@@ -500,9 +506,25 @@
 			isa = PBXGroup;
 			children = (
 				8FED35935A4B40F4AF02F229 /* Tests */,
-				0E5C86560D5353A06E79ECD9 /* Tools */,
+				7496CBB76D7A4B7E96A45862 /* CaptureDuo.sh */,
+				51949983A343481190C9A370 /* Fonts */,
+				60CEF4B387DC4AC28A90EA68 /* Frames */,
+				3832EB9705E64B7AB6947127 /* Output */,
+				6EC6FB560A2546B7AA4ECB12 /* ProcessScreenshots.swift */,
+				966A9427F8964C70A70997AB /* Profiles.json */,
+				050AFA7B0F554739AD7B83C6 /* Raw */,
 			);
 			path = Screenshots;
+			sourceTree = "<group>";
+		};
+		E14565DD2DFCAE78008FF700 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				588169D1DE9DA4B4AC9DA475 /* Screenshots */,
+				0E5C86560D5353A06E79ECD9 /* Translations */,
+				82CD1975F58E4999B9DE8365 /* WriteGitBranch.sh */,
+			);
+			path = Tools;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -868,7 +890,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
-				"$(SRCROOT)/Scripts/Translations/GenerateStrings.swift",
+				"$(SRCROOT)/Tools/Translations/GenerateStrings.swift",
 			);
 			name = "Generate Strings";
 			outputFileListPaths = (
@@ -877,7 +899,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -eu\ncd \"${SRCROOT}\"\nxcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/GenerateStrings.swift\"\n";
+			shellScript = "set -eu\ncd \"${SRCROOT}\"\nxcrun --sdk macosx swift \"${SRCROOT}/Tools/Translations/GenerateStrings.swift\"\n";
 		};
 		6286F0A3271C0ABA00C40ED5 /* Generate Strings */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -889,7 +911,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
-				"$(SRCROOT)/Scripts/Translations/GenerateStrings.swift",
+				"$(SRCROOT)/Tools/Translations/GenerateStrings.swift",
 			);
 			name = "Generate Strings";
 			outputFileListPaths = (
@@ -898,7 +920,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -eu\ncd \"${SRCROOT}\"\nxcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/GenerateStrings.swift\"\n";
+			shellScript = "set -eu\ncd \"${SRCROOT}\"\nxcrun --sdk macosx swift \"${SRCROOT}/Tools/Translations/GenerateStrings.swift\"\n";
 		};
 		BD0BA2282AD64BB200306A8D /* Run SwiftFormat */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -945,7 +967,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Scripts/WriteGitBranch.sh",
+				"$(SRCROOT)/Tools/WriteGitBranch.sh",
 			);
 			name = "Write Git Branch";
 			outputPaths = (
@@ -953,7 +975,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"${SRCROOT}/Scripts/WriteGitBranch.sh\"\n";
+			shellScript = "/bin/sh \"${SRCROOT}/Tools/WriteGitBranch.sh\"\n";
 		};
 		E19009182F00000000000002 /* Write Git Branch */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -962,7 +984,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Scripts/WriteGitBranch.sh",
+				"$(SRCROOT)/Tools/WriteGitBranch.sh",
 			);
 			name = "Write Git Branch";
 			outputPaths = (
@@ -970,7 +992,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"${SRCROOT}/Scripts/WriteGitBranch.sh\"\n";
+			shellScript = "/bin/sh \"${SRCROOT}/Tools/WriteGitBranch.sh\"\n";
 		};
 		E1A1B5C42F00000000000001 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;

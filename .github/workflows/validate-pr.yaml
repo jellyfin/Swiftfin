@@ -67,4 +67,4 @@ jobs:
         run: swiftlint lint --strict --config ".swiftlint.yml"
 
       - name: Find Unused Strings
-        run: swift Scripts/Translations/FindUnusedStrings.swift
+        run: swift Tools/Translations/FindUnusedStrings.swift
