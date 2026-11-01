@@ -42,9 +42,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
     private var candidateGroups: [any ContentGroup] = []
     private var groupCancellables = Set<AnyCancellable>()
-    private var scheduledRebuild: Task<Void, Never>?
     private var needsGroupRebuild = true
-    private var hasLoadedGroups = false
     private var isRefreshingGroups = false
     private let refreshSource = UUID()
 
@@ -55,29 +53,15 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         super.init()
 
         provider.refreshRequests
-            .sink { [weak self] request in
-                guard let self, request.source != self.refreshSource else { return }
+            .filter { [refreshSource] in $0.source != refreshSource }
+            .handleEvents(receiveOutput: { [weak self] _ in self?.needsGroupRebuild = true })
+            .debounce(for: .milliseconds(350), scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self, self.state == .content else { return }
 
-                self.needsGroupRebuild = true
-                self.scheduleGroupRebuild()
+                self.refreshIfPendingChanges()
             }
             .store(in: &cancellables)
-    }
-
-    deinit {
-        scheduledRebuild?.cancel()
-    }
-
-    private func scheduleGroupRebuild() {
-        guard !isRefreshingGroups, hasLoadedGroups, needsGroupRebuild, scheduledRebuild == nil else { return }
-
-        scheduledRebuild = Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .milliseconds(350))
-            guard !Task.isCancelled, let self else { return }
-
-            self.scheduledRebuild = nil
-            await self.background.refresh()
-        }
     }
 
     func refreshIfNeeded(
@@ -90,7 +74,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     }
 
     func refreshIfPendingChanges() {
-        guard needsGroupRebuild else { return }
+        guard needsGroupRebuild, !isRefreshingGroups else { return }
 
         background.refresh()
     }
@@ -101,14 +85,15 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
             needsGroupRebuild = true
         }
 
-        scheduledRebuild?.cancel()
-        scheduledRebuild = nil
+        guard !isRefreshingGroups else { return }
 
         let rebuildGroups = needsGroupRebuild
         needsGroupRebuild = false
-        isRefreshingGroups = true
 
         do {
+            isRefreshingGroups = true
+            defer { isRefreshingGroups = false }
+
             try await ContentGroupRefreshRequest.$currentSource.withValue(refreshSource) {
                 if rebuildGroups {
                     try await fullRefresh()
@@ -119,13 +104,11 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
                 }
             }
         } catch {
-            isRefreshingGroups = false
             needsGroupRebuild = needsGroupRebuild || rebuildGroups
             throw error
         }
 
-        isRefreshingGroups = false
-        scheduleGroupRebuild()
+        refreshIfPendingChanges()
     }
 
     private func resolveGroups() {
@@ -178,7 +161,6 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
         candidateGroups = newGroups
         observeGroups()
-        hasLoadedGroups = true
 
         // New groups may reuse IDs but own different view models
         groups = candidateGroups.filter(\._shouldBeResolved)
