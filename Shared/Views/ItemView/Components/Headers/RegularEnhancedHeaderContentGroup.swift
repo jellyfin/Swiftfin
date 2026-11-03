@@ -47,11 +47,11 @@ extension ItemView {
                 artworkWidth / headerAspectRatio
             }
 
-            private var overlayLayout: AnyLayout {
+            private var detailsLayout: AnyLayout {
                 if !viewLayout.isLarge, viewLayout.usesCompactDetail {
                     AnyLayout(VStackLayout(alignment: .center, spacing: 10))
                 } else {
-                    AnyLayout(HStackLayout(alignment: .bottom, spacing: viewLayout.edgePadding))
+                    AnyLayout(HStackLayout(alignment: .top, spacing: viewLayout.edgePadding))
                 }
             }
 
@@ -114,21 +114,30 @@ extension ItemView {
                 .accessibilityRemoveTraits(.isImage)
             }
 
-            private var overlay: some View {
-                overlayLayout {
-                    VStack(alignment: .center, spacing: viewLayout.value(standard: 5, large: 30)) {
-                        VStack(alignment: .leading) {
-                            if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
-                                ParentButton(title: parentTitle, id: parentID)
-                            }
-
-                            logo
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                        ItemView.ActionBar(provider: provider)
+            private var title: some View {
+                VStack(alignment: .leading) {
+                    if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
+                        ParentButton(title: parentTitle, id: parentID)
                     }
-                    .frame(width: viewLayout.value(standard: 300, large: 450))
+
+                    logo
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            private var overlay: some View {
+                VStack(alignment: .leading, spacing: viewLayout.value(standard: 5, large: 30)) {
+                    title
+
+                    detailsRow
+                }
+                .focusSection()
+            }
+
+            private var detailsRow: some View {
+                detailsLayout {
+                    ItemView.ActionBar(provider: provider)
+                        .frame(width: viewLayout.value(standard: 300, large: 450))
 
                     VStack(alignment: .leading, spacing: 10) {
                         ItemView.Description(item: provider.item)
@@ -147,7 +156,6 @@ extension ItemView {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .focusSection()
                 .if(!viewLayout.isLarge) { content in
                     content
                         .edgePadding(.bottom)
