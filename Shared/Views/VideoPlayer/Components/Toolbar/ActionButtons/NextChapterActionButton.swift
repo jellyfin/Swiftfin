@@ -23,12 +23,12 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     L10n.nextChapter,
                     systemImage: VideoPlayerActionButton.nextChapter.systemImage
                 ) {
-                    guard let start = supplement.chapters.nextChapterStart(after: mediaSession.seconds) else { return }
+                    guard let start = supplement.nextChapterStart(after: mediaSession.seconds) else { return }
 
                     mediaSession.seek(to: start)
                     mediaSession.setPlaybackRequestStatus(status: .playing)
                 }
-                .disabled(supplement.chapters.nextChapterStart(after: mediaSession.seconds) == nil)
+                .disabled(supplement.nextChapterStart(after: mediaSession.seconds) == nil)
             }
         }
     }

@@ -40,6 +40,10 @@ extension ChapterInfo {
         let preferredPosterDisplayType: PosterDisplayType = .landscape
         let systemImage: String = "film"
 
+        var startSeconds: Duration {
+            chapterInfo.startSeconds ?? .zero
+        }
+
         var subtitle: String?
 
         init(
@@ -66,7 +70,7 @@ extension ChapterInfo {
         }
 
         func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
-            let startTime = PosterAccessibility.duration(chapterInfo.startSeconds ?? .zero)
+            let startTime = PosterAccessibility.duration(startSeconds)
 
             return PosterAccessibility(
                 label: displayTitle,
@@ -89,40 +93,6 @@ extension ChapterInfo {
     }
 }
 
-extension [ChapterInfo.FullInfo] {
-
-    /// The start time of the first chapter that begins after the given time, if any.
-    func nextChapterStart(after seconds: Duration) -> Duration? {
-        lazy
-            .compactMap(\.chapterInfo.startSeconds)
-            .first(where: { $0 > seconds })
-    }
-
-    /// The start time to skip back to from the given time: the current
-    /// chapter's start when more than 3 seconds into it, otherwise the
-    /// previous chapter's start.
-    func previousChapterStart(before seconds: Duration) -> Duration? {
-        let starts = compactMap(\.chapterInfo.startSeconds)
-
-        guard let currentIndex = starts.lastIndex(where: { $0 <= seconds }) else {
-            return starts.first
-        }
-
-        if seconds - starts[currentIndex] > .seconds(3) {
-            return starts[currentIndex]
-        }
-
-        return currentIndex > 0 ? starts[currentIndex - 1] : starts[currentIndex]
-    }
-
-    /// Finds the current chapter in a list sorted by start time, including after the final chapter starts.
-    func chapterIndex(at seconds: Duration) -> Int? {
-        guard !isEmpty else { return nil }
-
-        return lastIndex { ($0.chapterInfo.startSeconds ?? .zero) <= seconds } ?? startIndex
-    }
-}
-
 // TODO: have label match what BaseItemDto does in PosterCollectionView
 //       - different height, causes clipping
 
@@ -141,7 +111,7 @@ private struct ChapterPosterLabel: View {
                 .foregroundStyle(.primary)
                 .lineLimit(1)
 
-            Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+            Text(chapter.startSeconds, format: .runtime)
                 .font(viewLayout.value(standard: .subheadline.weight(.semibold), large: .caption))
                 .foregroundStyle(Color(UIColor.systemBlue))
                 .padding(.horizontal, 4)

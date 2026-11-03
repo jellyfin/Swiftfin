@@ -17,7 +17,24 @@ struct MediaChaptersSupplement {
     let chapters: [ChapterInfo.FullInfo]
 
     func chapterID(at seconds: Duration) -> ChapterInfo.FullInfo.ID? {
-        chapters.chapterIndex(at: seconds).map { chapters[$0].id }
+        let started = chapters.split(after: seconds, sortedBy: \.startSeconds).atOrBefore
+        return (started.last ?? chapters.first)?.id
+    }
+
+    func nextChapterStart(after seconds: Duration) -> Duration? {
+        chapters.split(after: seconds, sortedBy: \.startSeconds).after.first?.startSeconds
+    }
+
+    func previousChapterStart(before seconds: Duration) -> Duration? {
+        let started = chapters.split(after: seconds, sortedBy: \.startSeconds).atOrBefore
+        guard let current = started.last else { return chapters.first?.startSeconds }
+
+        // Restart the current chapter once playback is more than three seconds into it.
+        if seconds - current.startSeconds > .seconds(3) {
+            return current.startSeconds
+        }
+
+        return started.dropLast().last?.startSeconds ?? current.startSeconds
     }
 }
 
