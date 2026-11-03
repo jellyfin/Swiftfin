@@ -123,7 +123,6 @@ struct ConnectToServerView: View {
         }
     }
 
-    @ViewBuilder
     private var contentView: some View {
         #if os(iOS)
         List {

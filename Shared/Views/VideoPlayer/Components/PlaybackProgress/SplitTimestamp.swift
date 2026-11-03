@@ -11,7 +11,10 @@ import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
-    struct SplitTimeStamp: PlatformView {
+    struct SplitTimeStamp: PresentationView {
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
@@ -81,6 +84,7 @@ extension VideoPlayer.PlaybackControls {
             HStack(spacing: 2) {
 
                 Text(scrubbedSeconds, format: .runtime)
+                    .accessibilityIdentifier("playbackElapsedTime")
 
                 Group {
                     // swiftlint:disable:next hard_coded_display_string
@@ -112,6 +116,8 @@ extension VideoPlayer.PlaybackControls {
                     switch trailingTimestampType {
                     case .timeLeft:
                         Text(.zero - (runtime - scrubbedSeconds), format: .runtime)
+                            .accessibilityIdentifier("playbackRemainingTime")
+
                     case .totalTime:
                         Text(runtime, format: .runtime)
                     }
@@ -121,7 +127,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        var iOSView: some View {
+        var standardView: some View {
             HStack {
                 Button {
                     switch trailingTimestampType {
@@ -155,10 +161,11 @@ extension VideoPlayer.PlaybackControls {
             .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
         }
 
-        var tvOSView: some View {
+        var largeView: some View {
             ZStack {
                 if let runtime = mediaSession.item.runtime {
                     Text(.zero - (runtime - scrubbedSeconds), format: .runtime)
+                        .accessibilityIdentifier("playbackRemainingTime")
                 } else {
                     Text(verbatim: .emptyRuntime)
                 }
@@ -171,12 +178,13 @@ extension VideoPlayer.PlaybackControls {
                 HStack(spacing: 8) {
                     playbackStatusIndicator
                     Text(scrubbedSeconds, format: .runtime)
+                        .accessibilityIdentifier("playbackElapsedTime")
                 }
                 .trackingSize($leadingTimestampSize)
                 .offset(x: previewXOffset)
             }
             .font(.caption)
-            .fontWeight(UIDevice.isTV ? .medium : nil)
+            .fontWeight(viewLayout.value(standard: nil, large: .medium))
             .monospacedDigit()
             .trackingSize($contentSize)
             .foregroundStyle(viewState.isProgressBarFocused ? .primary : .secondary)

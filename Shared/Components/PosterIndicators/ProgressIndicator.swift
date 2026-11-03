@@ -11,6 +11,9 @@ import SwiftUI
 
 struct ProgressIndicator: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.accentColor)
     private var accentColor
 
@@ -33,7 +36,7 @@ struct ProgressIndicator: View {
     }
 
     private var inset: CGFloat {
-        UIDevice.isTV ? 10 : 6
+        viewLayout.value(standard: 6, large: 10)
     }
 
     private var normalizedProgress: Double {
@@ -65,8 +68,8 @@ struct ProgressIndicator: View {
             .monospacedDigit()
             .foregroundStyle(.white)
             .lineLimit(1)
-            .padding(.horizontal, UIDevice.isTV ? 12 : 8)
-            .padding(.vertical, UIDevice.isTV ? 5 : 3)
+            .padding(.horizontal, viewLayout.value(standard: 8, large: 12))
+            .padding(.vertical, viewLayout.value(standard: 3, large: 5))
             .background(.black.opacity(0.72), in: Capsule())
             .overlay {
                 Capsule().strokeBorder(.white.opacity(0.18), lineWidth: 0.5)

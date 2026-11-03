@@ -12,6 +12,9 @@ import SwiftUI
 
 struct CustomDeviceProfilesView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.VideoPlayer.Playback.customDeviceProfileAction)
     private var customDeviceProfileAction
     @Default(.VideoPlayer.mediaPlayerType)
@@ -175,7 +178,7 @@ struct CustomDeviceProfilesView: View {
             )
         }
         .labeledContentStyle(.deviceProfile)
-        .if(UIDevice.isTV) { view in
+        .if(viewLayout.isLarge) { view in
             view
                 .padding(.vertical)
         }

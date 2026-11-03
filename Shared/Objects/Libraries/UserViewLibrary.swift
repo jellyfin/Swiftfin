@@ -220,6 +220,7 @@ private struct UserViewLibraryGridElement: View {
             setImageSources()
         }
         .buttonStyle(.card)
+        .accessibilityLabel(element.displayTitle)
     }
 
     private var titleLabel: some View {
@@ -252,6 +253,9 @@ private struct UserViewLibraryGridElement: View {
 
 private struct UserViewLibraryListElement: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.Customization.Library.randomImage)
     private var useRandomImage
 
@@ -267,7 +271,7 @@ private struct UserViewLibraryListElement: View {
     let element: UserViewLibraryElement
 
     var body: some View {
-        ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+        ListRow(insets: .init(vertical: 8, horizontal: viewLayout.edgePadding)) {
             imageView
         } content: {
             Text(element.displayTitle)

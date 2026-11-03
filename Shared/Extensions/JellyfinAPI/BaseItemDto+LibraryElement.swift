@@ -92,6 +92,9 @@ private struct BaseItemDtoLibraryListElement: View {
     @Environment(\.isSelected)
     private var isSelected
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Namespace
     private var namespace
 
@@ -164,7 +167,7 @@ private struct BaseItemDtoLibraryListElement: View {
     }
 
     var body: some View {
-        ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+        ListRow(insets: .init(vertical: 8, horizontal: viewLayout.edgePadding)) {
             PosterImage(
                 item: item,
                 type: resolvedLibraryStyle.posterDisplayType,

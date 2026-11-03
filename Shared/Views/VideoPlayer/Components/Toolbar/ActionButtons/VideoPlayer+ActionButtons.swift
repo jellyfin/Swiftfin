@@ -17,15 +17,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
 
         typealias ViewState = VideoPlayer.ViewState
 
-        private typealias Toolbar = VideoPlayer.PlaybackControls.Toolbar
-
-        private static var buttonSpacing: CGFloat {
-            if UIDevice.isTV {
-                UIDevice.supportsLiquidGlass ? 20 : 16
-            } else {
-                UIDevice.supportsLiquidGlass ? 4 : 0
-            }
-        }
+        @AdaptiveLayout
+        private var viewLayout
 
         @Default(.VideoPlayer.barActionButtons)
         private var rawBarActionButtons
@@ -99,7 +92,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         }
 
         private var menuSystemImage: String {
-            if UIDevice.isTV || UIDevice.supportsLiquidGlass {
+            if viewLayout.isLarge || UIDevice.supportsLiquidGlass {
                 "ellipsis"
             } else {
                 "ellipsis.circle"
@@ -166,15 +159,15 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             } label: {
                 menuLabel
             }
-            .frame(width: Toolbar.buttonSize, height: Toolbar.buttonSize)
+            .frame(width: viewLayout.toolbarButtonSize, height: viewLayout.toolbarButtonSize)
             .withViewContext(.isInMenu)
         }
 
         private var regularView: some View {
-            HStack(spacing: Self.buttonSpacing) {
+            HStack(spacing: viewLayout.toolbarButtonSpacing) {
                 ForEach(barActionButtons) { button in
                     view(for: button)
-                        .frame(width: Toolbar.buttonSize, height: Toolbar.buttonSize)
+                        .frame(width: viewLayout.toolbarButtonSize, height: viewLayout.toolbarButtonSize)
                         .coordinatedFocus(ViewState.Focus.action(button.rawValue), selection: $focusedButton)
                 }
 
@@ -188,7 +181,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                     } label: {
                         menuLabel
                     }
-                    .frame(width: Toolbar.buttonSize, height: Toolbar.buttonSize)
+                    .frame(width: viewLayout.toolbarButtonSize, height: viewLayout.toolbarButtonSize)
                     .coordinatedFocus(ViewState.Focus.action("menu"), selection: $focusedButton)
                 }
             }

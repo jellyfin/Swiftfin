@@ -22,6 +22,14 @@ extension ItemView {
 
         struct Body: View {
 
+            @AdaptiveLayout
+            private var viewLayout
+
+            @Environment(\.frameForParentView)
+            private var frameForParentView
+            @Environment(\.layoutDirection)
+            private var layoutDirection
+
             @ObservedObject
             var provider: ItemContentGroupProvider
 
@@ -30,7 +38,23 @@ extension ItemView {
 
             private let headerAspectRatio = 2.0
 
-            #if !os(tvOS)
+            private var artworkWidth: CGFloat {
+                let navigationWidth = frameForParentView[.navigationStack]?.sizeIncludingSafeArea.width ?? 0
+                return navigationWidth > 0 ? navigationWidth : viewLayout.size.width
+            }
+
+            private var artworkHeight: CGFloat {
+                artworkWidth / headerAspectRatio
+            }
+
+            private var detailsLayout: AnyLayout {
+                if !viewLayout.isLarge, viewLayout.usesCompactDetail {
+                    AnyLayout(VStackLayout(alignment: .center, spacing: 10))
+                } else {
+                    AnyLayout(HStackLayout(alignment: .top, spacing: viewLayout.edgePadding))
+                }
+            }
+
             private var headerImageItem: BaseItemDto {
                 if provider.item.type == .person || provider.item.type == .musicArtist,
                    let randomItem = provider.randomBackdropItem
@@ -40,10 +64,24 @@ extension ItemView {
                     provider.item
                 }
             }
-            #endif
 
             private var logoHeight: CGFloat {
-                UIDevice.isTV ? 100 : 70
+                viewLayout.value(standard: 70, large: 100)
+            }
+
+            private var materialInsets: EdgeInsets {
+                let safeArea = frameForParentView[.navigationStack, default: .zero].safeAreaInsets
+                return EdgeInsets(
+                    top: 0,
+                    leading: viewLayout.edgePadding + safeArea.leading,
+                    bottom: 0,
+                    trailing: viewLayout.edgePadding + safeArea.trailing
+                )
+            }
+
+            private var materialHorizontalOffset: CGFloat {
+                let offset = (materialInsets.trailing - materialInsets.leading) / 2
+                return layoutDirection == .leftToRight ? offset : -offset
             }
 
             private var logo: some View {
@@ -87,21 +125,18 @@ extension ItemView {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            @ViewBuilder
             private var overlay: some View {
-                VStack(alignment: .leading, spacing: UIDevice.isTV ? 30 : 5) {
+                VStack(alignment: .leading, spacing: viewLayout.value(standard: 5, large: 30)) {
                     title
                     detailsRow
                 }
-                #if os(tvOS)
                 .focusSection()
-                #endif
             }
 
             private var detailsRow: some View {
-                HStack(alignment: .top, spacing: EdgeInsets.edgePadding) {
+                detailsLayout {
                     ItemView.ActionBar(provider: provider)
-                        .frame(width: UIDevice.isTV ? 450 : 300)
+                        .frame(width: viewLayout.value(standard: 300, large: 450))
 
                     VStack(alignment: .leading, spacing: 10) {
                         ItemView.Description(item: provider.item)
@@ -120,23 +155,24 @@ extension ItemView {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                #if !os(tvOS)
-                .edgePadding(.bottom)
-                    .background(
-                        alignment: .bottom,
-                        extendedBy: .init(horizontal: EdgeInsets.edgePadding)
-                    ) {
-                        Rectangle()
-                            .fill(Material.ultraThin)
-                            .mask(gradient: .eased(.easeOut)) {
-                                (location: 0, opacity: 0)
-                                (location: 1, opacity: 1)
-                            }
-                    }
-                #endif
+                .if(!viewLayout.isLarge) { content in
+                    content
+                        .edgePadding(.bottom)
+                        .background(
+                            alignment: .bottom,
+                            extendedBy: materialInsets
+                        ) {
+                            Rectangle()
+                                .fill(Material.ultraThin)
+                                .mask(gradient: .eased(.easeOut)) {
+                                    (location: 0, opacity: 0)
+                                    (location: 1, opacity: 1)
+                                }
+                                .offset(x: materialHorizontalOffset)
+                        }
+                }
             }
 
-            #if !os(tvOS)
             private func resolveColor(from image: UIImage, binding: Binding<Color>) {
                 Task.detached(priority: .utility) {
                     guard let color = image.interestingColor() else { return }
@@ -146,47 +182,49 @@ extension ItemView {
                     }
                 }
             }
-            #endif
 
             var body: some View {
-                #if os(tvOS)
-                CinematicContentGroupContainer {
-                    overlay
-                        .edgePadding(.horizontal)
-                        .frame(maxWidth: .infinity)
-                        .colorScheme(.dark)
-                }
-                #else
-                AlternateLayoutView(alignment: .bottom) {
-                    Color.clear
-                        .aspectRatio(headerAspectRatio, contentMode: .fit)
-                } content: {
-                    overlay
-                        .edgePadding(.horizontal)
-                        .frame(maxWidth: .infinity)
-                        .colorScheme(.dark)
-                }
-                .backgroundParallaxHeader(multiplier: 0.3) {
-                    StateAdapter(initialValue: Color.secondarySystemFill) { resolvedColor in
-                        AlternateLayoutView {
-                            Color.clear
-                        } content: {
-                            ImageView(headerImageItem.imageSources(for: .landscape, environment: .init(maxWidth: 1920)))
-                                .image { (image: UIImage) in
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .aspectRatio(1.77, contentMode: .fill)
-                                        .onAppear {
-                                            resolveColor(from: image, binding: resolvedColor)
-                                        }
-                                }
+                if viewLayout.isLarge {
+                    CinematicContentGroupContainer {
+                        overlay
+                            .edgePadding(.horizontal)
+                            .frame(maxWidth: .infinity)
+                            .colorScheme(.dark)
+                    }
+                } else {
+                    ZStack(alignment: .bottom) {
+                        Color.clear
+                            .frame(height: artworkHeight)
+
+                        overlay
+                            .edgePadding(.horizontal)
+                            .frame(maxWidth: .infinity)
+                            .colorScheme(.dark)
+                    }
+                    .backgroundParallaxHeader(multiplier: 0.3) {
+                        StateAdapter(initialValue: Color.secondarySystemFill) { resolvedColor in
+                            AlternateLayoutView {
+                                Color.clear
+                            } content: {
+                                ImageView(headerImageItem.imageSources(for: .landscape, environment: .init(maxWidth: 1920)))
+                                    .image { (image: UIImage) in
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .onAppear {
+                                                resolveColor(from: image, binding: resolvedColor)
+                                            }
+                                    }
+                            }
+                            .frame(width: artworkWidth, height: artworkHeight)
+                            .clipped()
+                            .backport
+                            .backgroundExtensionEffect()
+                            .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
+                            .accessibilityHidden(true)
                         }
-                        .aspectRatio(headerAspectRatio, contentMode: .fit)
-                        .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
-                        .accessibilityHidden(true)
                     }
                 }
-                #endif
             }
         }
     }

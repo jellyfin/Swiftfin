@@ -12,6 +12,9 @@ import SwiftUI
 
 struct DevicesView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -146,7 +149,7 @@ struct DevicesView: View {
                     }
                     .isEditing(isEditing)
                     .isSelected(selectedDevices.contains(device.id ?? ""))
-                    .listRowInsets(.edgeInsets)
+                    .listRowInsets(viewLayout.edgeInsets)
                 }
             }
         }

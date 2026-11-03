@@ -13,6 +13,9 @@ import SwiftUI
 
 struct ListRowCheckbox: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.accentColor)
     private var accentColor
 
@@ -21,11 +24,9 @@ struct ListRowCheckbox: View {
     @Environment(\.isSelected)
     private var isSelected
 
-    #if os(tvOS)
-    private let size: CGFloat = 36
-    #else
-    private let size: CGFloat = 24
-    #endif
+    private var size: CGFloat {
+        viewLayout.value(standard: 24, large: 36)
+    }
 
     var body: some View {
         if isEditing {

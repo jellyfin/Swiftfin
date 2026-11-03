@@ -51,9 +51,9 @@ extension UIDevice {
         L10n.tvOS
         #else
         if UIDevice.isPad {
-            return L10n.iPadOS
+            L10n.iPadOS
         } else {
-            return L10n.iOS
+            L10n.iOS
         }
         #endif
     }
@@ -79,16 +79,6 @@ extension UIDevice {
         UIImpactFeedbackGenerator(style: type).impactOccurred()
         #endif
     }
-
-    #if os(iOS)
-    static var isPortrait: Bool {
-        current.orientation.isPortrait
-    }
-
-    static var isLandscape: Bool {
-        isPad || current.orientation.isLandscape
-    }
-    #endif
 }
 
 #if os(tvOS)

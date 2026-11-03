@@ -12,6 +12,9 @@ import SwiftUI
 
 struct ItemSubtitleSearchView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.accentColor)
     private var accentColor
 
@@ -84,21 +87,21 @@ struct ItemSubtitleSearchView: View {
                 Toggle(L10n.perfectMatch, isOn: $isPerfectMatch)
             }
 
-            #if os(tvOS)
-            Section {
-                Button(action: save) {
-                    Text(L10n.save)
-                        .frame(maxWidth: .infinity)
+            if viewLayout.isLarge {
+                Section {
+                    Button(action: save) {
+                        Text(L10n.save)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .disabled(selectedSubtitles.isEmpty)
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .tint(accentColor)
                 }
-                .disabled(selectedSubtitles.isEmpty)
-                .listRowInsets(.zero)
-                .listRowBackground(Color.clear)
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
             }
-            #endif
 
             Section(L10n.search) {
 

@@ -11,29 +11,32 @@ import SwiftUI
 
 struct AboutAppView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
 
-            #if os(iOS)
-            Section {
-                VStack(alignment: .center, spacing: 10) {
+            if !viewLayout.isLarge {
+                Section {
+                    VStack(alignment: .center, spacing: 10) {
 
-                    Image(.jellyfinBlobBlue)
-                        .resizable()
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(height: 150)
+                        Image(.jellyfinBlobBlue)
+                            .resizable()
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(height: 150)
 
-                    Text(verbatim: "Swiftfin")
-                        .fontWeight(.semibold)
-                        .font(.title2)
+                        Text(verbatim: "Swiftfin")
+                            .fontWeight(.semibold)
+                            .font(.title2)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .listRowBackground(Color.clear)
                 }
-                .frame(maxWidth: .infinity)
-                .listRowBackground(Color.clear)
             }
-            #endif
 
             Section {
                 #if DEBUG

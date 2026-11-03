@@ -12,6 +12,9 @@ import SwiftUI
 
 struct ServerUsersView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -198,7 +201,7 @@ struct ServerUsersView: View {
                         }
                         .isEditing(isEditing)
                         .isSelected(selectedUsers.contains(userID))
-                        .listRowInsets(.edgeInsets)
+                        .listRowInsets(viewLayout.edgeInsets)
                     }
                 }
             }

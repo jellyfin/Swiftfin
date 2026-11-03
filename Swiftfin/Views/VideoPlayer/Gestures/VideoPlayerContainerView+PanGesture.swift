@@ -237,7 +237,9 @@ extension VideoPlayer.UIContainerViewController {
 
     private static var BrightnessPanHandlingAction: PanHandlingAction<CGFloat> {
         PanHandlingAction<CGFloat>(
-            startValue: UIScreen.main.brightness
+            startValue: { state in
+                state.containerView?.view.window?.windowScene?.screen.brightness ?? 0.5
+            }
         ) { startState, handlingState, viewState in
             guard handlingState.gestureState != .ended else { return }
 
@@ -261,7 +263,7 @@ extension VideoPlayer.UIContainerViewController {
             )
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                UIScreen.main.brightness = newBrightness
+                viewState.containerView?.view.window?.windowScene?.screen.brightness = newBrightness
             }
         }
     }

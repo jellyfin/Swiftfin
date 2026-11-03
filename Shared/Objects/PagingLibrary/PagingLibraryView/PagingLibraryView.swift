@@ -10,7 +10,6 @@ import CollectionVGrid
 import Defaults
 import JellyfinAPI
 import SwiftUI
-@_spi(Advanced) import SwiftUIIntrospect
 
 struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: LibraryElement {
 
@@ -21,22 +20,22 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     typealias Element = Library.Element
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.Customization.Library.rememberLayout)
     private var rememberIndividualLibraryStyle
     @Default(.Customization.Library.style)
     private var defaultLibraryStyle
 
-    @Environment(\.tabSafeAreaInsets)
-    private var tabSafeAreaInsets
+    @Environment(\.frameForParentView)
+    private var frameForParentView
 
     @Namespace
     private var namespace
 
     @Router
     private var router
-
-    @State
-    private var isSafeAreaBarApplied: Bool = false
 
     @StateObject
     private var focusCoordinator = FocusCoordinator(waitingFor: Focus.firstElement.rawValue)
@@ -65,8 +64,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         libraryStyleOptions.hasVisibleControls ||
             (
                 libraryStyle.displayType == .list &&
-                    UIDevice.isPad &&
-                    libraryStyleOptions.displayTypes.contains(.list)
+                    libraryStyleOptions.displayTypes.contains(.list) &&
+                    viewLayout.canAdjustLibraryListColumns
             )
     }
 
@@ -84,47 +83,34 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(library: library))
     }
 
-    private func contentInsets(for frame: FrameAndSafeAreaInsets) -> EdgeInsets {
+    private func contentInsets(for frame: GeometryProxy) -> EdgeInsets {
         #if os(tvOS)
         // The collection disables automatic adjustment, so include both the local
         // safe area (including filter bars) and the tab's measured top inset.
         var insets = frame.safeAreaInsets
-        insets.top = max(insets.top, tabSafeAreaInsets.top)
-
-        return insets + EdgeInsets.itemSpacing
+        insets.top = max(insets.top, frameForParentView[.tabView]?.safeAreaInsets.top ?? 0)
+        return insets + viewLayout.itemSpacing
         #else
-        var insets: EdgeInsets = if isSafeAreaBarApplied {
-            frame.safeAreaInsets + EdgeInsets.itemSpacing
-        } else {
-            EdgeInsets(
-                top: 0,
-                leading: frame.safeAreaInsets.leading,
-                bottom: 0,
-                trailing: frame.safeAreaInsets.trailing
-            ) + EdgeInsets.itemSpacing
-        }
-
-        // TODO: shouldn't need explicitly for list, find fix
-        if libraryStyle.displayType == .list {
-            insets.leading = frame.safeAreaInsets.leading
-            insets.trailing = frame.safeAreaInsets.trailing
-        }
-
-        return insets
+        let horizontalSpacing = libraryStyle.displayType == .list ? 0 : viewLayout.itemSpacing
+        return EdgeInsets(
+            top: frame.safeAreaInsets.top + viewLayout.itemSpacing,
+            leading: horizontalSpacing,
+            bottom: frame.safeAreaInsets.bottom + viewLayout.itemSpacing,
+            trailing: horizontalSpacing
+        )
         #endif
     }
 
     private var elementsView: some View {
-        AlternateLayoutView {
-            Color.clear
-        } content: { frame in
+        GeometryReader { geometry in
 
             CollectionVGrid(
                 uniqueElements: viewModel.displayedElements,
                 layout: Element.layout(
                     for: libraryStyle,
                     options: libraryStyleOptions,
-                    insets: contentInsets(for: frame)
+                    insets: contentInsets(for: geometry),
+                    viewLayout: viewLayout.resolving(size: geometry.size)
                 )
             ) { element in
                 element.makeBody(libraryStyle: libraryStyle)
@@ -133,13 +119,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                             view
                                 .coordinatedFocus(Focus.firstElement.rawValue)
                                 .environmentObject(focusCoordinator)
-                        }
-                        .introspect(.viewController, on: .tvOS(.v26...)) { controller in
-                            // Do not have hosting controller apply safe regions
-                            // TODO: do in CollectionVGrid instead
-                            if let hostingController = controller as? UIHostingController<AnyView> {
-                                hostingController.safeAreaRegions.remove(.container)
-                            }
                         }
                     #endif
             }
@@ -154,13 +133,12 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             .onRefresh {
                 await viewModel.background.refresh()
             }
+            .contentInsetAdjustmentBehavior(.never)
             #if os(tvOS)
-            .introspect(.scrollView, on: .tvOS(.v26...)) { collectionView in
-                // TODO: CollectionVGrid option instead
-                collectionView.contentInsetAdjustmentBehavior = .never
-            }
-            #endif
             .ignoresSafeArea()
+            #else
+            .ignoresSafeArea(edges: .vertical)
+            #endif
         }
         .scrollIndicators(.hidden)
         .withViewContext(.isListRowSeparatorVisible)
@@ -177,7 +155,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         if isLibraryStyleSectionVisible {
             LibraryStyleSection(
                 libraryStyle: storedLibraryStyleBinding,
-                options: libraryStyleOptions
+                options: libraryStyleOptions,
+                canAdjustListColumns: viewLayout.canAdjustLibraryListColumns
             )
         }
 
@@ -192,7 +171,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         }
     }
 
-    var body: some View {
+    private var libraryContent: some View {
         viewModel.library.makeLibraryBody(viewModel: viewModel) {
             ZStack {
                 switch viewModel.state {
@@ -227,27 +206,48 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+    }
+
+    var body: some View {
+        Group {
+            #if os(tvOS)
+            libraryContent
+            #else
+            GeometryReader { geometry in
+                let safeArea = frameForParentView[.navigationStack]?.safeAreaInsets ?? geometry.safeAreaInsets
+                let horizontalInsets = EdgeInsets(
+                    top: 0,
+                    leading: safeArea.leading,
+                    bottom: 0,
+                    trailing: safeArea.trailing
+                )
+
+                libraryContent
+                    .layoutContainer(size: CGSize(
+                        width: max(0, geometry.size.width - horizontalInsets.leading - horizontalInsets.trailing),
+                        height: geometry.size.height
+                    ))
+                    .padding(horizontalInsets)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .animation(.smooth(duration: 0.35), value: horizontalInsets)
+            }
+            .ignoresSafeArea(.container, edges: .horizontal)
+            #endif
+        }
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.gettingNextPage))
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.searching))
         .animation(.linear(duration: 0.2), value: viewModel.elements)
         .animation(.linear(duration: 0.2), value: viewModel.searchElements)
         .navigationTitle(displayTitle ?? viewModel.library.parent.displayTitle)
         .errorMessage($viewModel.error)
-        .onPreferenceChange(IsSafeAreaBarApplied.self) { newValue in
-            isSafeAreaBarApplied = newValue
-        }
         #if os(iOS)
         .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
         #endif
         .onChange(of: viewModel.environment) {
             viewModel.refreshForEnvironmentChange()
         }
-        .onChange(of: libraryStyle) { oldStyle, newStyle in
-            if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==
-                Element.layout(for: newStyle, options: libraryStyleOptions, insets: .zero)
-            {
-                gridProxy.redraw()
-            }
+        .onChange(of: libraryStyle) {
+            gridProxy.redraw()
         }
         .onReceive(viewModel.events) { event in
             switch event {

@@ -18,6 +18,23 @@ extension VideoPlayer {
     @Observable
     final class ViewState {
 
+        var layoutSize: CGSize = .zero
+        var systemInsets: EdgeInsets = .zero
+
+        var supplementInsets: EdgeInsets {
+            #if os(tvOS)
+            systemInsets.max(ViewLayout.platformDefault.edgePadding)
+            #else
+            EdgeInsets(top: 0, leading: systemInsets.leading, bottom: systemInsets.bottom, trailing: systemInsets.trailing)
+            #endif
+        }
+
+        #if os(iOS)
+        var supplementHeight: CGFloat = 0
+        var supplementVisibleHeight: CGFloat = 0
+        var playbackButtonsInsets: EdgeInsets = .zero
+        #endif
+
         enum Presentation: Equatable {
 
             case hidden
@@ -294,6 +311,12 @@ extension VideoPlayer {
             case .controls:
                 var elements: Set<Element> = [.progress, .toolbar, .playbackButtons, .dimming]
 
+                #if os(iOS)
+                if overlayActions.isNotEmpty {
+                    elements.insert(.overlayActions)
+                }
+                #endif
+
                 if supplements.isNotEmpty {
                     elements.insert(.supplements)
                 }
@@ -301,7 +324,7 @@ extension VideoPlayer {
                 return elements
 
             case let .supplement(_, showsPlaybackButtons):
-                if UIDevice.isTV {
+                if ViewLayout.platformDefault.isLarge {
                     return [.supplements, .dimming]
                 }
 
@@ -319,7 +342,6 @@ extension VideoPlayer {
 
         var originalPlaybackRate: Double?
 
-        var centerOffset: CGFloat = 0
         let focusCoordinator: FocusCoordinator = .init()
         let jumpProgressObserver: JumpProgressObserver = .init()
 
@@ -406,7 +428,7 @@ extension VideoPlayer {
         }
 
         init(timer: PokeIntervalTimer? = nil) {
-            self.timer = timer ?? .init(defaultInterval: UIDevice.isTV ? 10 : 5)
+            self.timer = timer ?? .init(defaultInterval: ViewLayout.platformDefault.isLarge ? 10 : 5)
 
             self.timer
                 .sink { [weak self] in

@@ -48,7 +48,7 @@ struct SplitLoginWindowView<Leading: View, Trailing: View>: View {
                 Image(uiImage: .jellyfinBlobBlue)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: UIDevice.isTV ? 100 : 30)
+                    .frame(width: 100)
             }
             ToolbarItem(placement: .topBarTrailing) {
                 if isLoading {

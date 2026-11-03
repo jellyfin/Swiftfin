@@ -71,6 +71,9 @@ extension SeriesEpisodeContentGroup {
 
     struct EpisodeStateCard: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         let title: String
         let subHeader: String
         let content: String
@@ -95,15 +98,16 @@ extension SeriesEpisodeContentGroup {
                         }
                     }
                     .posterStyle(.landscape)
-                    #if os(tvOS)
-                    .posterCornerRadius(.landscape)
-                    #endif
+                    .if(viewLayout.isLarge) { $0.posterCornerRadius(.landscape) }
                     .subtleShadow()
             }
         }
     }
 
     private struct EpisodeCardLayout<Artwork: View>: View {
+
+        @AdaptiveLayout
+        private var viewLayout
 
         private enum FocusedElement: Hashable {
 
@@ -223,14 +227,14 @@ extension SeriesEpisodeContentGroup {
                     .accessibilityHint(contextMenuItem == nil ? "" : L10n.posterAccessibilityDetailsHint)
                 }
                 .foregroundStyle(.primary, .secondary)
-                #if os(tvOS)
-                .buttonStyle(
-                    EpisodeContentButtonStyle(
-                        showsMaterial: focusedElement != nil,
-                        isFocused: focusedElement == .content
+                .if(viewLayout.isLarge) { button in
+                    button.buttonStyle(
+                        EpisodeContentButtonStyle(
+                            showsMaterial: focusedElement != nil,
+                            isFocused: focusedElement == .content
+                        )
                     )
-                )
-                #endif
+                }
                 .focused($focusedElement, equals: .content)
             }
             .focusSection()
@@ -271,7 +275,6 @@ extension SeriesEpisodeContentGroup {
         }
     }
 
-    #if os(tvOS)
     private struct EpisodeContentButtonStyle: ButtonStyle {
 
         let showsMaterial: Bool
@@ -287,7 +290,7 @@ extension SeriesEpisodeContentGroup {
                     maxHeight: .infinity,
                     alignment: .topLeading
                 )
-                .frame(height: 200)
+                .frame(minHeight: 200)
                 .backport
                 .glassEffect(
                     showsMaterial ? .regular : .identity,
@@ -310,5 +313,4 @@ extension SeriesEpisodeContentGroup {
                 .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
         }
     }
-    #endif
 }

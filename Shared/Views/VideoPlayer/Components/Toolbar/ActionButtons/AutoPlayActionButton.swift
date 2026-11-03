@@ -16,6 +16,9 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct AutoPlay: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @ViewContextContains(.isInMenu)
         private var isInMenu
 
@@ -73,7 +76,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     Text(isAutoPlayEnabled ? "On" : "Off")
                 }
             }
-            .if(isInMenu && !UIDevice.isTV) { button in
+            .if(isInMenu && !viewLayout.isLarge) { button in
                 button
                     .id(isAutoPlayEnabled)
             }

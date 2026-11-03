@@ -74,6 +74,21 @@ extension VideoPlayer {
 
         typealias ViewState = VideoPlayer.ViewState
 
+        private var viewLayout: ViewLayout {
+            ViewLayout(size: view.bounds.size, traits: traitCollection)
+        }
+
+        private struct LayoutEnvironment: ViewModifier {
+
+            @Environment(ViewState.self)
+            private var viewState
+
+            func body(content: Content) -> some View {
+                content
+                    .layoutContainer(size: viewState.layoutSize)
+            }
+        }
+
         // MARK: - Views
 
         private struct PlayerContainerView: View {
@@ -91,29 +106,29 @@ extension VideoPlayer {
             var body: some View {
                 VideoViewport(videoSize: videoSize) { videoLayout in
                     player(videoLayout)
-                        #if os(iOS)
-                            .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
-                        #endif
-                        .overlay {
-                            Group {
-                                if viewState.isPresentingFullScreenSupplement {
-                                    Color.black.opacity(0.8)
-                                } else {
-                                    EasedGradient(
-                                        colors: [.clear, .black],
-                                        startPoint: .center,
-                                        endPoint: .bottom
-                                    )
-                                }
-                            }
-                            .isVisible(shouldPresentDimOverlay)
-                        }
-                        .allowsHitTesting(false)
                 }
                 #if os(iOS)
+                .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
+                #endif
                 .overlay {
-                        VideoZoomBorder(isVisible: viewState.zoom.isFillBorderPresented)
+                    Group {
+                        if viewState.isPresentingFullScreenSupplement {
+                            Color.black.opacity(0.8)
+                        } else {
+                            EasedGradient(
+                                colors: [.clear, .black],
+                                startPoint: .center,
+                                endPoint: .bottom
+                            )
+                        }
                     }
+                    .isVisible(shouldPresentDimOverlay)
+                }
+                .allowsHitTesting(false)
+                #if os(iOS)
+                .overlay {
+                    VideoZoomBorder(isVisible: viewState.zoom.isFillBorderPresented)
+                }
                 #endif
             }
         }
@@ -146,15 +161,21 @@ extension VideoPlayer {
             }
 
             var body: some View {
-                OverlayToastView(proxy: viewState.toastProxy) {
-                    ZStack {
-                        #if os(iOS)
-                        GestureView()
-                            .environment(\.panGestureDirection, panGestureDirection)
-                        #endif
+                Group {
+                    #if os(iOS)
+                    SafeRegion(systemInsets: .none) {
+                        SafeRegionItem {
+                            GestureView()
+                                .environment(\.panGestureDirection, panGestureDirection)
+                        }
+                        .ignoresSafeRegion(.all)
 
-                        playbackControls
+                        SafeRegionItem { playbackControls }
+                            .ignoresSafeRegion(.all)
                     }
+                    #else
+                    OverlayToastView(proxy: viewState.toastProxy) { playbackControls }
+                    #endif
                 }
                 #if os(iOS)
                 .environment(
@@ -240,21 +261,7 @@ extension VideoPlayer {
         private lazy var playerViewController: HostingController<AnyView> = {
             let controller = HostingController(
                 content: PlayerContainerView(player: player, videoSize: videoSize)
-                    .environment(viewState)
-                    .environmentObject(viewState.focusCoordinator)
-                    .environment(mediaSession)
-                    .eraseToAnyView()
-            )
-
-            controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
-            controller.view.translatesAutoresizingMaskIntoConstraints = false
-
-            return controller
-        }()
-
-        private lazy var playbackControlsViewController: HostingController<AnyView> = {
-            let controller = HostingController(
-                content: PlaybackControlsContainerView(playbackControls: playbackControls)
+                    .modifier(LayoutEnvironment())
                     .environment(viewState)
                     .environmentObject(viewState.focusCoordinator)
                     .environment(mediaSession)
@@ -268,8 +275,27 @@ extension VideoPlayer {
             return controller
         }()
 
+        private lazy var playbackControlsViewController: HostingController<AnyView> = {
+            let controller = HostingController(
+                content: PlaybackControlsContainerView(playbackControls: playbackControls)
+                    .modifier(LayoutEnvironment())
+                    .environment(viewState)
+                    .environmentObject(viewState.focusCoordinator)
+                    .environment(mediaSession)
+                    .eraseToAnyView()
+            )
+
+            controller.disableSafeArea = true
+            controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
+            controller.view.translatesAutoresizingMaskIntoConstraints = false
+
+            return controller
+        }()
+
+        #if os(tvOS)
         private lazy var supplementContainerViewController: HostingController<AnyView> = {
             let content = SupplementContainerView()
+                .modifier(LayoutEnvironment())
                 .environment(viewState)
                 .environmentObject(viewState.focusCoordinator)
                 .environment(mediaSession)
@@ -286,6 +312,7 @@ extension VideoPlayer {
         private lazy var overlayActionsViewController: HostingController<AnyView> = {
             let controller = HostingController(
                 content: OverlayActions()
+                    .modifier(LayoutEnvironment())
                     .environment(viewState)
                     .environmentObject(viewState.focusCoordinator)
                     .eraseToAnyView()
@@ -297,6 +324,8 @@ extension VideoPlayer {
 
             return controller
         }()
+
+        #endif
 
         private var playerView: UIView {
             playerViewController.view
@@ -310,6 +339,7 @@ extension VideoPlayer {
             playbackControlsViewController.view
         }
 
+        #if os(tvOS)
         private var supplementContainerView: UIView {
             supplementContainerViewController.view
         }
@@ -317,6 +347,8 @@ extension VideoPlayer {
         private var overlayActionsView: UIView {
             overlayActionsViewController.view
         }
+
+        #endif
 
         // MARK: - Constants
 
@@ -334,20 +366,20 @@ extension VideoPlayer {
                 return availableHeight
             }
 
-            if !isCompact, !UIDevice.isTV {
-                return min(availableHeight, 200 + EdgeInsets.edgePadding * 2)
+            if !isCompact, !viewLayout.isLarge {
+                return min(availableHeight, 200 + viewLayout.edgePadding * 2)
             }
 
             let bottomInset = min(view.safeAreaInsets.bottom, availableHeight)
             let contentHeight = availableHeight - bottomInset
             let fraction: CGFloat = isCompact ? 0.6 : 1.0 / 3.0
-            let preferredHeight = contentHeight * fraction + bottomInset + EdgeInsets.edgePadding * 2
+            let preferredHeight = contentHeight * fraction + bottomInset + viewLayout.edgePadding * 2
 
             return min(availableHeight, max(dismissedSupplementContainerOffset, preferredHeight))
         }
 
         private var dismissedSupplementContainerOffset: CGFloat {
-            min(availableSupplementHeight, UIDevice.isTV ? 120 : 50.0 + EdgeInsets.edgePadding * 2)
+            min(availableSupplementHeight, viewLayout.isLarge ? 120 : 50.0 + viewLayout.edgePadding * 2)
         }
 
         private let compactMinimumTranslation: CGFloat = 100.0
@@ -357,11 +389,55 @@ extension VideoPlayer {
 
         private var playerCompactBottomAnchor: NSLayoutConstraint?
         private var playerRegularBottomAnchor: NSLayoutConstraint?
+        #if os(tvOS)
         private var supplementHeightAnchor: NSLayoutConstraint?
         private var supplementBottomAnchor: NSLayoutConstraint?
+        #endif
 
-        private var centerOffset: CGFloat {
-            compactPlayerOverlap.map { max(50, $0) } ?? dismissedSupplementContainerOffset
+        private var supplementHeight: CGFloat = 0 {
+            didSet {
+                #if os(tvOS)
+                supplementHeightAnchor?.constant = supplementHeight
+                #else
+                updateSupplementLayoutBounds()
+                #endif
+            }
+        }
+
+        private var supplementOffset: CGFloat = 0 {
+            didSet {
+                #if os(tvOS)
+                supplementBottomAnchor?.constant = supplementOffset
+                #else
+                updateSupplementLayoutBounds()
+                #endif
+            }
+        }
+
+        #if os(iOS)
+        private func updateSupplementLayoutBounds() {
+            viewState.supplementHeight = supplementHeight
+            viewState.supplementVisibleHeight = max(0, -supplementOffset)
+
+            // Keep playback buttons aligned while the panel moves.
+            let centerOffset = compactPlayerOverlap.map { max(50, $0) } ?? dismissedSupplementContainerOffset
+            let bottomInset = -supplementOffset - centerOffset
+
+            viewState.playbackButtonsInsets = EdgeInsets(
+                top: max(0, -bottomInset),
+                leading: 0,
+                bottom: max(0, bottomInset),
+                trailing: 0
+            )
+        }
+        #endif
+
+        private var compactPlayerAnchorOffset: CGFloat {
+            #if os(tvOS)
+            compactPlayerBottomOffset
+            #else
+            supplementOffset + compactPlayerBottomOffset
+            #endif
         }
 
         private var compactPlayerBottomOffset: CGFloat {
@@ -369,18 +445,15 @@ extension VideoPlayer {
         }
 
         private var compactPlayerOverlap: CGFloat? {
-            guard viewState.isCompact,
-                  let supplementBottomAnchor,
-                  let supplementHeightAnchor,
-                  supplementHeightAnchor.constant > 0
+            guard viewState.isCompact, supplementHeight > 0
             else {
                 return nil
             }
 
-            let supplementContainerHeight = supplementHeightAnchor.constant
-            let offsetPercentage = 1 - clamp(supplementBottomAnchor.constant.magnitude / supplementContainerHeight, min: 0, max: 1)
+            let supplementContainerHeight = supplementHeight
+            let offsetPercentage = 1 - clamp(supplementOffset.magnitude / supplementContainerHeight, min: 0, max: 1)
 
-            return (dismissedSupplementContainerOffset + EdgeInsets.edgePadding) * offsetPercentage
+            return (dismissedSupplementContainerOffset + viewLayout.edgePadding) * offsetPercentage
         }
 
         private let logger = Logger.swiftfin()
@@ -392,7 +465,7 @@ extension VideoPlayer {
 
         private var isDismissing = false
         private var didInitiallyAppear: Bool = false
-        private var lastSupplementLayout: (size: CGSize, safeAreaInsets: UIEdgeInsets)?
+        private var lastSupplementLayout: (layout: ViewLayout, safeAreaInsets: UIEdgeInsets)?
 
         #if os(tvOS)
         let onPressEvent = OnPressEvent()
@@ -440,8 +513,7 @@ extension VideoPlayer {
                 cancelSupplementPan()
                 return
             }
-            guard state == .began || isPanning, let supplementBottomAnchor,
-                  let supplementHeightAnchor,
+            guard state == .began || isPanning,
                   let playerCompactBottomAnchor
             else { return }
 
@@ -451,7 +523,7 @@ extension VideoPlayer {
             if state == .began {
                 self.view.layer.removeAllAnimations()
                 didStartPanningWithSupplement = viewState.isPresentingSupplement
-                verticalPanGestureStartConstant = supplementBottomAnchor.constant
+                verticalPanGestureStartConstant = supplementOffset
                 didStartPanningUpWithoutOverlay = !viewState.isPresentingControls
 
                 if didStartPanningUpWithoutOverlay {
@@ -465,7 +537,7 @@ extension VideoPlayer {
                         dismissedSupplementContainerOffset
                     )
 
-                let shouldHaveSupplementPresented = supplementBottomAnchor.constant < minimumTranslation
+                let shouldHaveSupplementPresented = supplementOffset < minimumTranslation
 
                 if shouldHaveSupplementPresented, !viewState.isPresentingSupplement {
                     viewState.selectedSupplementID = viewState.supplements.first?.id
@@ -473,7 +545,7 @@ extension VideoPlayer {
                     viewState.selectedSupplementID = nil
                 }
 
-                supplementHeightAnchor.constant = supplementContainerOffset()
+                supplementHeight = supplementContainerOffset()
             } else {
                 verticalPanGestureStartConstant = nil
 
@@ -514,29 +586,28 @@ extension VideoPlayer {
 
             let clampedOffset = clamp(
                 newOffset,
-                min: -supplementHeightAnchor.constant,
+                min: -supplementHeight,
                 max: -dismissedSupplementContainerOffset
             )
 
             if newOffset < clampedOffset {
                 let excess = clampedOffset - newOffset
                 let resistance = pow(excess, 0.7)
-                supplementBottomAnchor.constant = max(-availableSupplementHeight, clampedOffset - resistance)
+                supplementOffset = max(-availableSupplementHeight, clampedOffset - resistance)
             } else if newOffset > -dismissedSupplementContainerOffset {
                 let excess = newOffset - clampedOffset
                 let resistance = pow(excess, 0.5)
 
-                supplementBottomAnchor.constant = clamp(
+                supplementOffset = clamp(
                     clampedOffset + resistance,
                     min: -dismissedSupplementContainerOffset,
                     max: -min(50, dismissedSupplementContainerOffset)
                 )
             } else {
-                supplementBottomAnchor.constant = clampedOffset
+                supplementOffset = clampedOffset
             }
 
-            playerCompactBottomAnchor.constant = compactPlayerBottomOffset
-            viewState.centerOffset = centerOffset
+            playerCompactBottomAnchor.constant = compactPlayerAnchorOffset
         }
 
         func cancelSupplementPan() {
@@ -556,17 +627,21 @@ extension VideoPlayer {
         // MARK: - present
 
         func presentSupplementContainer(_ didPresent: Bool) {
-            guard !isPanning, let supplementBottomAnchor,
-                  let supplementHeightAnchor,
-                  let playerCompactBottomAnchor
+            guard !isPanning, let playerCompactBottomAnchor
             else { return }
 
             let presentedOffset = supplementContainerOffset()
-            supplementHeightAnchor.constant = presentedOffset
-            supplementBottomAnchor.constant = didPresent ? -presentedOffset : -dismissedSupplementContainerOffset
+            #if os(iOS)
+            withAnimation(.spring(response: viewState.isCompact ? 0.75 : 0.6, dampingFraction: 0.8)) {
+                supplementHeight = presentedOffset
+                supplementOffset = didPresent ? -presentedOffset : -dismissedSupplementContainerOffset
+            }
+            #else
+            supplementHeight = presentedOffset
+            supplementOffset = didPresent ? -presentedOffset : -dismissedSupplementContainerOffset
+            #endif
 
-            playerCompactBottomAnchor.constant = compactPlayerBottomOffset
-            viewState.centerOffset = centerOffset
+            playerCompactBottomAnchor.constant = compactPlayerAnchorOffset
 
             let completion: (Bool) -> Void
 
@@ -619,15 +694,10 @@ extension VideoPlayer {
 
             view.backgroundColor = .black
 
-            let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
+            viewState.isCompact = viewLayout.usesCompactPlayer
 
             setupOnLoadViews()
             setupOnLoadConstraints()
-
-            Task { @MainActor in
-                viewState.isCompact = isCompact
-                viewState.centerOffset = centerOffset
-            }
 
             #if os(tvOS)
             let gesture = UITapGestureRecognizer(target: self, action: #selector(handleMenuEnded))
@@ -645,9 +715,14 @@ extension VideoPlayer {
             playerViewController.didMove(toParent: self)
             playerView.backgroundColor = .black
 
+            #if os(tvOS)
+            let compactBottomAnchor = supplementContainerView.topAnchor
+            #else
+            let compactBottomAnchor = view.bottomAnchor
+            #endif
             let bottomAnchor = playerView.bottomAnchor.constraint(
-                equalTo: supplementContainerView.topAnchor,
-                constant: compactPlayerBottomOffset
+                equalTo: compactBottomAnchor,
+                constant: compactPlayerAnchorOffset
             )
 
             playerCompactBottomAnchor = bottomAnchor
@@ -669,6 +744,7 @@ extension VideoPlayer {
             playbackControlsViewController.didMove(toParent: self)
             playbackControlsView.backgroundColor = .clear
 
+            #if os(tvOS)
             addChild(supplementContainerViewController)
             view.addSubview(supplementContainerView)
             supplementContainerViewController.didMove(toParent: self)
@@ -678,6 +754,7 @@ extension VideoPlayer {
             view.addSubview(overlayActionsView)
             overlayActionsViewController.didMove(toParent: self)
             overlayActionsView.backgroundColor = .clear
+            #endif
 
             view.addSubview(initialHitBlockView)
             view.bringSubviewToFront(initialHitBlockView)
@@ -685,17 +762,13 @@ extension VideoPlayer {
 
         private func setupOnLoadConstraints() {
 
-            let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
+            supplementHeight = supplementContainerOffset(isCompact: viewLayout.usesCompactPlayer)
+            supplementOffset = -dismissedSupplementContainerOffset
 
-            let bottomAnchor = supplementContainerView.topAnchor.constraint(
-                equalTo: view.bottomAnchor,
-                constant: -dismissedSupplementContainerOffset
-            )
-
+            #if os(tvOS)
+            let bottomAnchor = supplementContainerView.topAnchor.constraint(equalTo: view.bottomAnchor, constant: supplementOffset)
             supplementBottomAnchor = bottomAnchor
-
-            let constant = supplementContainerOffset(isCompact: isCompact)
-            let heightAnchor = supplementContainerView.heightAnchor.constraint(equalToConstant: constant)
+            let heightAnchor = supplementContainerView.heightAnchor.constraint(equalToConstant: supplementHeight)
             supplementHeightAnchor = heightAnchor
 
             NSLayoutConstraint.activate([
@@ -705,17 +778,10 @@ extension VideoPlayer {
                 heightAnchor,
             ])
 
-            #if os(tvOS)
             let playbackControlsBottomAnchor = playbackControlsView.bottomAnchor.constraint(
                 equalTo: view.bottomAnchor,
                 constant: -dismissedSupplementContainerOffset
             )
-            #else
-            let playbackControlsBottomAnchor = playbackControlsView.bottomAnchor.constraint(
-                equalTo: supplementContainerView.topAnchor
-            )
-            #endif
-
             playbackControlsBottomAnchor.priority = .defaultHigh
 
             NSLayoutConstraint.activate([
@@ -725,30 +791,18 @@ extension VideoPlayer {
                 playbackControlsBottomAnchor,
                 playbackControlsView.bottomAnchor.constraint(
                     lessThanOrEqualTo: overlayActionsView.topAnchor,
-                    constant: -EdgeInsets.edgePadding
+                    constant: -viewLayout.edgePadding
                 ),
-            ])
-
-            #if os(tvOS)
-            NSLayoutConstraint.activate([
-                overlayActionsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: EdgeInsets.edgePadding),
-                overlayActionsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -EdgeInsets.edgePadding),
-                overlayActionsView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -EdgeInsets.edgePadding),
+                overlayActionsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: viewLayout.edgePadding),
+                overlayActionsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -viewLayout.edgePadding),
+                overlayActionsView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -viewLayout.edgePadding),
             ])
             #else
             NSLayoutConstraint.activate([
-                overlayActionsView.leadingAnchor.constraint(
-                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                    constant: EdgeInsets.edgePadding
-                ),
-                overlayActionsView.trailingAnchor.constraint(
-                    equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                    constant: -EdgeInsets.edgePadding
-                ),
-                overlayActionsView.bottomAnchor.constraint(
-                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                    constant: -EdgeInsets.edgePadding
-                ),
+                playbackControlsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                playbackControlsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                playbackControlsView.topAnchor.constraint(equalTo: view.topAnchor),
+                playbackControlsView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             ])
             #endif
 
@@ -763,23 +817,46 @@ extension VideoPlayer {
         override func viewDidLayoutSubviews() {
             super.viewDidLayoutSubviews()
 
-            let size = view.bounds.size
+            updateSystemSafeArea()
+            let layout = viewLayout
             let safeAreaInsets = view.safeAreaInsets
             guard playerCompactBottomAnchor != nil,
-                  lastSupplementLayout?.size != size || lastSupplementLayout?.safeAreaInsets != safeAreaInsets
+                  lastSupplementLayout?.layout != layout || lastSupplementLayout?.safeAreaInsets != safeAreaInsets
             else { return }
 
-            lastSupplementLayout = (size, safeAreaInsets)
+            lastSupplementLayout = (layout, safeAreaInsets)
+            if viewState.layoutSize != layout.size {
+                viewState.layoutSize = layout.size
+            }
             cancelSupplementPan()
-            adjustConstraints(isCompact: UIDevice.isPhone && size.isPortrait)
+            adjustConstraints(isCompact: layout.usesCompactPlayer)
+        }
+
+        override func viewSafeAreaInsetsDidChange() {
+            super.viewSafeAreaInsetsDidChange()
+            updateSystemSafeArea()
+        }
+
+        private func updateSystemSafeArea() {
+            // Capture system insets before the hosting controller disables them.
+            let insets = view.safeAreaInsets
+            let isRTL = view.effectiveUserInterfaceLayoutDirection == .rightToLeft
+            let system = EdgeInsets(
+                top: insets.top,
+                leading: isRTL ? insets.right : insets.left,
+                bottom: insets.bottom,
+                trailing: isRTL ? insets.left : insets.right
+            )
+
+            if viewState.systemInsets != system {
+                viewState.systemInsets = system
+            }
         }
 
         private func adjustConstraints(isCompact: Bool) {
             viewState.isCompact = isCompact
 
-            guard let supplementBottomAnchor,
-                  let supplementHeightAnchor,
-                  let playerCompactBottomAnchor
+            guard let playerCompactBottomAnchor
             else { return }
 
             let presentedOffset = supplementContainerOffset(isCompact: isCompact)
@@ -792,12 +869,11 @@ extension VideoPlayer {
                 playerRegularBottomAnchor?.isActive = true
             }
 
-            supplementBottomAnchor.constant = viewState
+            supplementOffset = viewState
                 .isPresentingSupplement ? -presentedOffset : -dismissedSupplementContainerOffset
-            supplementHeightAnchor.constant = presentedOffset
+            supplementHeight = presentedOffset
 
-            playerCompactBottomAnchor.constant = compactPlayerBottomOffset
-            viewState.centerOffset = centerOffset
+            playerCompactBottomAnchor.constant = compactPlayerAnchorOffset
         }
 
         override func viewWillAppear(_ animated: Bool) {

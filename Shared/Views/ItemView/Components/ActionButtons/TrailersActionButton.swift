@@ -14,6 +14,9 @@ extension ItemActionButtons {
 
     struct Trailers: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @EnvironmentObject
         private var provider: ItemContentGroupProvider
 
@@ -116,7 +119,7 @@ extension ItemActionButtons {
                 .symbolRenderingMode(.monochrome)
                 .foregroundStyle(.primary)
             }
-            .if(!isInMenu && UIDevice.isTV) { menu in
+            .if(!isInMenu && viewLayout.isLarge) { menu in
                 menu.menuStyle(.button)
             }
             .errorMessage($error)

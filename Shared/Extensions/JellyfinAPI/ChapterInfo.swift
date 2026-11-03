@@ -104,6 +104,9 @@ extension [ChapterInfo.FullInfo] {
 
 private struct ChapterPosterLabel: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     let chapter: ChapterInfo.FullInfo
 
     var body: some View {
@@ -115,7 +118,7 @@ private struct ChapterPosterLabel: View {
                 .lineLimit(1)
 
             Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-                .font(UIDevice.isTV ? .caption : .subheadline.weight(.semibold))
+                .font(viewLayout.value(standard: .subheadline.weight(.semibold), large: .caption))
                 .foregroundStyle(Color(UIColor.systemBlue))
                 .padding(.horizontal, 4)
                 .background {
