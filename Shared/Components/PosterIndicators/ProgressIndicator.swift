@@ -11,6 +11,9 @@ import SwiftUI
 
 struct ProgressIndicator: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.accentColor)
     private var accentColor
 
@@ -33,14 +36,13 @@ struct ProgressIndicator: View {
     }
 
     private var inset: CGFloat {
-        UIDevice.isTV ? 10 : 6
+        viewLayout.value(standard: 6, large: 10)
     }
 
     private var normalizedProgress: Double {
         progress.isFinite ? clamp(progress, min: 0, max: 1) : 0
     }
 
-    @ViewBuilder
     private var progressBar: some View {
         ProgressView(value: normalizedProgress)
             .progressViewStyle(.playback)
@@ -51,7 +53,6 @@ struct ProgressIndicator: View {
             .accessibilityHidden(true)
     }
 
-    @ViewBuilder
     private var compactProgressBar: some View {
         Rectangle()
             .fill(accentColor)
@@ -61,29 +62,26 @@ struct ProgressIndicator: View {
             .accessibilityHidden(true)
     }
 
-    @ViewBuilder
     private var runtime: some View {
         Text(title)
             .font(.system(.footnote, design: .rounded, weight: .semibold))
             .monospacedDigit()
             .foregroundStyle(.white)
             .lineLimit(1)
-            .padding(.horizontal, UIDevice.isTV ? 12 : 8)
-            .padding(.vertical, UIDevice.isTV ? 5 : 3)
+            .padding(.horizontal, viewLayout.value(standard: 8, large: 12))
+            .padding(.vertical, viewLayout.value(standard: 3, large: 5))
             .background(.black.opacity(0.72), in: Capsule())
             .overlay {
                 Capsule().strokeBorder(.white.opacity(0.18), lineWidth: 0.5)
             }
     }
 
-    @ViewBuilder
     private var indicatorTrack: some View {
         Quadrant(.bottomTrailing, isFloating: true) {
             indicators
         }
     }
 
-    @ViewBuilder
     private func landscapeView(showsIndicators: Bool) -> some View {
         VStack(spacing: inset) {
             HStack(spacing: inset) {
@@ -101,7 +99,6 @@ struct ProgressIndicator: View {
         }
     }
 
-    @ViewBuilder
     private func compactView(showsIndicators: Bool) -> some View {
         VStack(alignment: .trailing, spacing: inset) {
             if showsIndicators {

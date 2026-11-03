@@ -15,11 +15,12 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @ViewContextContains(.isInMenu)
         private var isInMenu
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
-        @State
-        private var selectedAudioStreamIndex: Int?
+        private var selectedAudioStreamIndex: Int? {
+            mediaSession.playbackItem?.selectedAudioStreamIndex
+        }
 
         private var systemImage: String {
             if selectedAudioStreamIndex == nil {
@@ -31,7 +32,10 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @ViewBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
-            Picker(selection: $selectedAudioStreamIndex) {
+            @Bindable
+            var playbackItem = playbackItem
+
+            Picker(selection: $playbackItem.selectedAudioStreamIndex) {
                 ForEach(playbackItem.audioStreams, id: \.index) { stream in
                     Text(stream.displayTitle ?? L10n.unknown)
                         .tag(stream.index as Int?)
@@ -46,7 +50,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         }
 
         var body: some View {
-            if let playbackItem = manager.playbackItem {
+            if let playbackItem = mediaSession.playbackItem {
                 Menu(L10n.audio, systemImage: systemImage) {
                     if isInMenu {
                         content(playbackItem: playbackItem)
@@ -57,10 +61,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     }
                 }
                 .menuOrder(.fixed)
-                .assign(playbackItem.$selectedAudioStreamIndex, to: $selectedAudioStreamIndex)
-                .onChange(of: selectedAudioStreamIndex) {
-                    playbackItem.selectedAudioStreamIndex = selectedAudioStreamIndex
-                }
             }
         }
     }

@@ -15,6 +15,7 @@ import Nuke
 //       host and only use path + query which has ids and tags
 
 extension DataCache {
+
     enum Swiftfin {}
 }
 
@@ -50,10 +51,10 @@ extension DataCache.Swiftfin {
             if url.path.contains("Splashscreen") {
 
                 // Account for hosting at a path
-                guard let prefixURL = url.absoluteString.trimmingSuffix("/Branding/Splashscreen?").url else { return nil }
-                guard let server = StoredValues[.Server.servers].first(
-                    where: { $0.hasServerConnection(url: prefixURL) }
-                ) else { return nil }
+                guard let prefixURL = url.absoluteString.trimmingSuffix("/Branding/Splashscreen?").url,
+                      let server = StoredValues[.Server.servers].first(
+                          where: { $0.hasServerConnection(url: prefixURL) }
+                      ) else { return nil }
 
                 return "\(server.id)-splashscreen".sha1
             } else {

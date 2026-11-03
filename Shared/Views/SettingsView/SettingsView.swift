@@ -112,7 +112,6 @@ struct SettingsView: View {
 
     // MARK: - Customization Section
 
-    @ViewBuilder
     private var customizeSection: some View {
         Section {
             #if os(iOS)
@@ -133,7 +132,6 @@ struct SettingsView: View {
 
     // MARK: - Diagnostics Section
 
-    @ViewBuilder
     private var diagnosticsSection: some View {
         Section {
 

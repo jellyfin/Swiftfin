@@ -12,15 +12,19 @@ import SwiftUI
 final class FocusCoordinator: ObservableObject {
 
     fileprivate struct Request: Equatable {
+
         let id: String
         let token = UUID()
     }
 
     enum InitialFocusRole {
+
         /// Holds focus while waiting for the initial content, optionally requesting it once.
         case placeholder
+
         /// Becomes available after the initial target receives focus.
         case secondary
+
         /// Releases secondary controls when there is no initial target, such as an empty or error view.
         case fallback
     }
@@ -56,6 +60,7 @@ final class FocusCoordinator: ObservableObject {
         guard isInitialFocusPending, shouldFocusInitialPlaceholder else { return false }
 
         shouldFocusInitialPlaceholder = false
+
         return true
     }
 
@@ -130,7 +135,6 @@ private struct CoordinatedInitialFocusModifier: ViewModifier {
 
     let role: FocusCoordinator.InitialFocusRole
 
-    @ViewBuilder
     func body(content: Content) -> some View {
         switch role {
         case .placeholder:

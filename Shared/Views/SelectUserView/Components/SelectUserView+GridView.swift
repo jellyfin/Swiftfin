@@ -13,7 +13,10 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct GridView: PlatformView {
+    struct GridView: PresentationView {
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Binding
         private var isEditing: Bool
@@ -41,7 +44,6 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
-        @ViewBuilder
         private func userGridButton(for item: UserItem) -> some View {
             UserButton(
                 user: item.user,
@@ -57,23 +59,35 @@ extension SelectUserView {
                 onDelete(item.user)
             }
             .isSelected(selectedUsers.contains(item.user))
-        }
-
-        var iOSView: some View {
-            CenteredLazyVGrid(
-                data: userItems,
-                id: \.user.id,
-                columns: UIDevice.isPhone ? 2 : 5,
-                spacing: EdgeInsets.itemSpacing
-            ) { item in
-                userGridButton(for: item)
+            #if os(tvOS)
+            .if(item.user.id == userItems.first?.user.id) { view in
+                view
+                    .coordinatedFocus(Focus.focusedUserButton.rawValue)
             }
-            .edgePadding(UIDevice.isPhone ? [.horizontal, .vertical] : .horizontal)
-            .scrollIfLargerThanContainer(axes: .vertical, padding: 100)
+            #endif
         }
 
-        var tvOSView: some View {
-            HStack(spacing: EdgeInsets.itemSpacing) {
+        var standardView: some View {
+            GeometryReader { geometry in
+                ScrollView {
+                    CenteredLazyVGrid(
+                        data: userItems,
+                        id: \.user.id,
+                        columns: viewLayout.userGridColumns.count(for: geometry.size.width),
+                        spacing: viewLayout.itemSpacing
+                    ) { item in
+                        userGridButton(for: item)
+                    }
+                    .edgePadding(.vertical)
+                }
+                .defaultScrollAnchor(.center, for: .alignment)
+                .scrollBounceBehavior(.basedOnSize)
+            }
+            .edgePadding(.horizontal)
+        }
+
+        var largeView: some View {
+            HStack(spacing: viewLayout.itemSpacing) {
                 ForEach(userItems, id: \.user.id) { item in
                     userGridButton(for: item)
                         .frame(width: 300)

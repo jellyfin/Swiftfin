@@ -41,6 +41,7 @@ enum Notifications {
             if let payload = userInfo["payload"] as? Payload {
                 return payload
             }
+
             return nil
         }
 
@@ -200,6 +201,12 @@ extension Notifications.Key {
                 .map(AVAudioSession.InterruptionOptions.init(rawValue:)) ?? []
 
             return (type, options)
+        }
+    }
+
+    static var avAudioSessionRouteChange: Key<AVAudioSession.RouteChangeReason> {
+        Key(AVAudioSession.routeChangeNotification) { userInfo in
+            (userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt).flatMap(AVAudioSession.RouteChangeReason.init(rawValue:))
         }
     }
 }

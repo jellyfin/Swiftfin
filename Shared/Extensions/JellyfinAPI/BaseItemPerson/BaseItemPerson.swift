@@ -36,8 +36,7 @@ extension BaseItemPerson {
         guard !isCrew else { return role }
 
         let split = role.split(separator: "/")
-        guard split.count > 1 else { return role }
-        guard let firstRole = split.first?.trimmingCharacters(in: String.space),
+        guard split.count > 1, let firstRole = split.first?.trimmingCharacters(in: String.space),
               let lastRole = split.last?.trimmingCharacters(in: String.space) else { return role }
 
         var final = firstRole

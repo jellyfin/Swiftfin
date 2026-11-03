@@ -6,18 +6,18 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import SwiftUI
 
 extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct PictureInPicture: View {
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
-        @State
-        private var isPiPActive: Bool = false
+        private var isPiPActive: Bool {
+            (mediaSession.player as? MediaPlayerPictureInPictureProviding)?.isPiPActive == true
+        }
 
         private var systemImage: String {
             if isPiPActive {
@@ -27,24 +27,15 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             }
         }
 
-        private var isPiPActivePublisher: AnyPublisher<Bool, Never> {
-            (manager.proxy as? MediaPlayerPictureInPictureCapable)?
-                .isPiPActive
-                .$value
-                .eraseToAnyPublisher()
-                ?? Just(false).eraseToAnyPublisher()
-        }
-
         var body: some View {
-            if manager.proxy is any MediaPlayerPictureInPictureCapable {
+            if mediaSession.player is any MediaPlayerPictureInPictureProviding {
                 Button(L10n.pictureInPicture, systemImage: systemImage) {
                     if isPiPActive {
-                        manager.stopPictureInPicture()
+                        mediaSession.stopPictureInPicture()
                     } else {
-                        manager.startPictureInPicture()
+                        mediaSession.startPictureInPicture()
                     }
                 }
-                .onReceive(isPiPActivePublisher) { isPiPActive = $0 }
             }
         }
     }

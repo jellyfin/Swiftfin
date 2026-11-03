@@ -28,6 +28,14 @@ extension NavigationRoute {
         }
     }
 
+    static func jellyfinWebPage(_ path: String, queryItems: [URLQueryItem] = []) -> NavigationRoute {
+        NavigationRoute(
+            id: "jellyfin-web-page",
+            style: .sheet
+        ) {
+            JellyfinWebView(path: path, queryItems: queryItems)
+        }
+    }
     #endif
 
     static var appIconSelector: NavigationRoute {

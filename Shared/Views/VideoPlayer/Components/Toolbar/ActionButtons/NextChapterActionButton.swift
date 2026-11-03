@@ -12,43 +12,23 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct NextChapter: View {
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         var body: some View {
-            if let supplement = manager.supplements
-                .compactMap({ $0 as? MediaChaptersSupplement })
-                .first
-            {
-                _NextChapter(supplement: supplement)
-            }
-        }
-    }
+            if let supplement = viewState.supplements.compactMap({ $0 as? MediaChaptersSupplement }).first {
+                Button(
+                    L10n.nextChapter,
+                    systemImage: VideoPlayerActionButton.nextChapter.systemImage
+                ) {
+                    guard let start = supplement.chapters.nextChapterStart(after: mediaSession.seconds) else { return }
 
-    private struct _NextChapter: View {
-
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-
-        @ObservedObject
-        var supplement: MediaChaptersSupplement
-
-        @State
-        private var currentSeconds: Duration = .zero
-
-        var body: some View {
-            Button(
-                L10n.nextChapter,
-                systemImage: VideoPlayerActionButton.nextChapter.systemImage
-            ) {
-                guard let start = supplement.chapters.nextChapterStart(after: currentSeconds) else { return }
-
-                manager.proxy?.setSeconds(start)
-                manager.setPlaybackRequestStatus(status: .playing)
-            }
-            .disabled(supplement.chapters.nextChapterStart(after: currentSeconds) == nil)
-            .onReceive(manager.secondsBox.$value) { seconds in
-                currentSeconds = seconds
+                    mediaSession.seek(to: start)
+                    mediaSession.setPlaybackRequestStatus(status: .playing)
+                }
+                .disabled(supplement.chapters.nextChapterStart(after: mediaSession.seconds) == nil)
             }
         }
     }

@@ -10,6 +10,9 @@ import SwiftUI
 
 struct ContentGroupSection<Header: View, Content: View>: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     private let content: Content
     private let header: Header
 
@@ -22,7 +25,7 @@ struct ContentGroupSection<Header: View, Content: View>: View {
     }
 
     private var spacing: CGFloat {
-        UIDevice.isTV ? 30 : 15
+        viewLayout.value(standard: 15, large: 30)
     }
 
     var body: some View {

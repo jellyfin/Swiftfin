@@ -22,7 +22,6 @@ extension APIKeysView {
         let deleteAction: () -> Void
         let replaceAction: () -> Void
 
-        @ViewBuilder
         private var rowContent: some View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(apiKey.appName ?? L10n.unknown)
@@ -60,6 +59,7 @@ extension APIKeysView {
                     role: .destructive,
                     action: deleteAction
                 )
+
                 Button(
                     L10n.cancel,
                     role: .cancel
@@ -77,6 +77,7 @@ extension APIKeysView {
                     role: .destructive,
                     action: replaceAction
                 )
+
                 Button(
                     L10n.cancel,
                     role: .cancel

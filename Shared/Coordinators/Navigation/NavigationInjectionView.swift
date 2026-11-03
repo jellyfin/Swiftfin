@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import PreferencesView
 import SwiftUI
 import Transmission
 
@@ -43,8 +42,10 @@ struct NavigationInjectionView: View {
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             content
+                .trackingFrame(for: .layoutContainer)
                 .navigationDestination(for: NavigationRoute.self) { route in
                     route.destination
+                        .trackingFrame(for: .layoutContainer)
                         .environment(
                             \.router,
                             .init(
@@ -72,7 +73,7 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
                 presentedRoute.route.destination
             }
-            .environment(\.tabSafeAreaInsets, .zero)
+            .transformEnvironment(\.frameForParentView) { $0[.tabView] = nil }
             .background(.regularMaterial)
         }
         .fullScreenCover(
@@ -81,7 +82,7 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
                 presentedRoute.route.destination
             }
-            .environment(\.tabSafeAreaInsets, .zero)
+            .transformEnvironment(\.frameForParentView) { $0[.tabView] = nil }
         }
         #else
         .sheet(
@@ -102,9 +103,16 @@ struct NavigationInjectionView: View {
                 ),
                 options: .init(
                     isInteractive: isPresentationInteractive,
+                    modalPresentationCapturesStatusBarAppearance: true,
                     preferredPresentationSafeAreaInsets: .zero,
                 ),
-                otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
+                otherwise: .slide(
+                    .init(edge: .bottom),
+                    options: .init(
+                        isInteractive: isPresentationInteractive,
+                        modalPresentationCapturesStatusBarAppearance: true
+                    )
+                )
             )
         ) { presentedRouteBinding, _ in
             let vc = UIPreferencesHostingController {

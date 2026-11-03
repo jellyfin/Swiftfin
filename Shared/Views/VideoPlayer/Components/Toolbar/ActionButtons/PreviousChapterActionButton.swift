@@ -12,43 +12,23 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct PreviousChapter: View {
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         var body: some View {
-            if let supplement = manager.supplements
-                .compactMap({ $0 as? MediaChaptersSupplement })
-                .first
-            {
-                _PreviousChapter(supplement: supplement)
-            }
-        }
-    }
+            if let supplement = viewState.supplements.compactMap({ $0 as? MediaChaptersSupplement }).first {
+                Button(
+                    L10n.previousChapter,
+                    systemImage: VideoPlayerActionButton.previousChapter.systemImage
+                ) {
+                    guard let start = supplement.chapters.previousChapterStart(before: mediaSession.seconds) else { return }
 
-    private struct _PreviousChapter: View {
-
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-
-        @ObservedObject
-        var supplement: MediaChaptersSupplement
-
-        @State
-        private var currentSeconds: Duration = .zero
-
-        var body: some View {
-            Button(
-                L10n.previousChapter,
-                systemImage: VideoPlayerActionButton.previousChapter.systemImage
-            ) {
-                guard let start = supplement.chapters.previousChapterStart(before: currentSeconds) else { return }
-
-                manager.proxy?.setSeconds(start)
-                manager.setPlaybackRequestStatus(status: .playing)
-            }
-            .disabled(supplement.chapters.previousChapterStart(before: currentSeconds) == nil)
-            .onReceive(manager.secondsBox.$value) { seconds in
-                currentSeconds = seconds
+                    mediaSession.seek(to: start)
+                    mediaSession.setPlaybackRequestStatus(status: .playing)
+                }
+                .disabled(supplement.chapters.previousChapterStart(before: mediaSession.seconds) == nil)
             }
         }
     }

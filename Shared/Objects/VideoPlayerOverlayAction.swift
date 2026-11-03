@@ -7,6 +7,13 @@
 //
 
 @MainActor
+protocol VideoPlayerOverlayActionProviding {
+
+    var id: String { get }
+    var overlayActions: [VideoPlayerOverlayAction] { get }
+}
+
+@MainActor
 struct VideoPlayerOverlayAction: Identifiable {
 
     let id: String

@@ -19,7 +19,6 @@ extension ColorPicker {
         let value: Binding<Color>
         let supportsOpacity: Bool
 
-        @ViewBuilder
         private func gradientSection(for component: WritableKeyPath<Color.RGBA, CGFloat>, title: String) -> some View {
             Section {
                 ColorGradientSlider(

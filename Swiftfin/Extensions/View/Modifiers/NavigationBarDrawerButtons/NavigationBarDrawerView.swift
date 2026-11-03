@@ -36,6 +36,8 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
     // TODO: see if we can get the height instead from the view passed in
     private let drawerHeight: CGFloat = 36
 
+    private var previousSafeAreaInsets: UIEdgeInsets?
+
     private lazy var blurView: UIVisualEffectView = {
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
         blurView.translatesAutoresizingMaskIntoConstraints = false
@@ -89,15 +91,15 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         NSLayoutConstraint.activate([
             contentView.view.topAnchor.constraint(equalTo: view.topAnchor),
             contentView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            contentView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            contentView.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            contentView.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
         ])
 
         NSLayoutConstraint.activate([
             drawerButtonsView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -drawerHeight),
             drawerButtonsView.view.heightAnchor.constraint(equalToConstant: drawerHeight),
-            drawerButtonsView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            drawerButtonsView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            drawerButtonsView.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            drawerButtonsView.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -111,6 +113,37 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         // so by default VoiceOver reads it last.
         // Explicitly order the drawer before the content so it is announced near the navigation bar where users expect it.
         view.accessibilityElements = [drawerButtonsView.view as Any, contentView.view as Any]
+    }
+
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+
+        let insets = view.safeAreaInsets
+        let previousInsets = previousSafeAreaInsets
+        previousSafeAreaInsets = insets
+
+        guard let previousInsets,
+              view.window != nil,
+              drawerButtonsView.view.bounds.width > 0,
+              previousInsets.left != insets.left || previousInsets.right != insets.right
+        else { return }
+
+        // The tab sidebar updates the safe area without animating this layout.
+        if let coordinator = transitionCoordinator,
+           coordinator.animate(alongsideTransition: { [weak self] _ in
+               self?.view.layoutIfNeeded()
+           })
+        {
+            return
+        }
+
+        UIView.animate(
+            withDuration: 0.35,
+            delay: 0,
+            options: [.beginFromCurrentState, .allowUserInteraction, .curveEaseInOut]
+        ) {
+            self.view.layoutIfNeeded()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {

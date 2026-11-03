@@ -49,7 +49,7 @@ func Form(
 
 // MARK: - Platform Form
 
-private struct PlatformForm<Image: View, Content: View>: PlatformView {
+private struct PlatformForm<Image: View, Content: View>: PresentationView {
 
     @FocusedValue(\.formLearnMore)
     private var focusedLearnMore
@@ -65,14 +65,14 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
         self.image = image()
     }
 
-    var iOSView: some View {
+    var standardView: some View {
         Form {
             content
         }
         .toolbarTitleDisplayMode(.inline)
     }
 
-    var tvOSView: some View {
+    var largeView: some View {
         HStack {
             descriptionView
                 .frame(maxWidth: .infinity)
@@ -103,7 +103,6 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
         }
     }
 
-    @ViewBuilder
     private var descriptionView: some View {
         ZStack {
             image
@@ -115,7 +114,6 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
         .animation(.linear(duration: 0.2), value: focusedLearnMore == nil)
     }
 
-    @ViewBuilder
     private func learnMoreModal(_ content: AnyView) -> some View {
         Marquee(axis: .vertical, resetType: .bounce, speed: 30, fade: 20) {
             VStack(alignment: .leading, spacing: 16) {

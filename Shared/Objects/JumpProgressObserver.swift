@@ -8,16 +8,19 @@
 
 import Combine
 import Foundation
+import Observation
 
 @MainActor
-class JumpProgressObserver: ObservableObject {
+@Observable
+class JumpProgressObserver {
 
     private let interval: TimeInterval
-    let timer: PokeIntervalTimer
-    private var timerCancellable: AnyCancellable?
-
-    private(set) var jumps: Int = 0
     private var isForward = true
+    private(set) var jumps: Int = 0
+    let timer: PokeIntervalTimer
+
+    @ObservationIgnored
+    private var timerCancellable: AnyCancellable?
 
     init(interval: TimeInterval = 2) {
         self.interval = interval

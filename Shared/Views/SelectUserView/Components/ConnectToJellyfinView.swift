@@ -13,6 +13,9 @@ extension SelectUserView {
 
     struct ConnectToJellyfinView: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Default(.accentColor)
         private var accentColor
 
@@ -20,14 +23,32 @@ extension SelectUserView {
         private var router
 
         var body: some View {
+            #if os(iOS)
+            ScrollView {
+                content
+                    .edgePadding(.vertical)
+                    .frame(maxWidth: .infinity)
+            }
+            .defaultScrollAnchor(.center, for: .alignment)
+            .scrollBounceBehavior(.basedOnSize)
+            .edgePadding(.horizontal)
+            #else
+            content
+            #endif
+        }
+
+        private var content: some View {
             VStack {
                 Text(L10n.connectToJellyfinServerStart)
                     .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 Button {
                     router.route(to: .connectToServer)
                 } label: {
                     Text(L10n.connect)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity)
                 }
                 .fontWeight(.semibold)
@@ -36,12 +57,12 @@ extension SelectUserView {
                 .tint(accentColor)
                 #if os(iOS)
                 .controlSize(.large)
+                .frame(minHeight: viewLayout.controlHeight)
+                #else
+                .frame(height: viewLayout.controlHeight)
                 #endif
-                .frame(
-                    height: UIDevice.isTV ? 75 : 44
-                )
             }
-            .frame(maxWidth: UIDevice.isTV ? 400 : 250)
+            .frame(maxWidth: viewLayout.value(standard: viewLayout.isAccessibilitySize ? 400 : 250, large: 400))
         }
     }
 }

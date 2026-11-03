@@ -19,9 +19,6 @@ private struct EmptyCGRectPreferenceKey: PreferenceKey {
 
 struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value == FrameAndSafeAreaInsets {
 
-    @Environment(\.frameForParentView)
-    private var frameForParentView
-
     @State
     private var frame: CGRect = .zero
     @State
@@ -64,20 +61,15 @@ struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value =
                     $frame,
                     $safeAreaInsets
                 )
-                .environment(
-                    \.frameForParentView,
-                    frameForParentView.inserting(
-                        value: .init(frame: frame, safeAreaInsets: safeAreaInsets),
-                        for: coordinateSpace
-                    )
-                )
+                .transformEnvironment(\.frameForParentView) { frames in
+                    frames[coordinateSpace] = .init(frame: frame, safeAreaInsets: safeAreaInsets)
+                }
         }
     }
 }
 
 extension View {
 
-    @ViewBuilder
     func trackingFrame(
         in containerCoordinateSpace: CoordinateSpace = .global,
         _ frameBinding: Binding<CGRect>,
@@ -94,7 +86,6 @@ extension View {
         }
     }
 
-    @ViewBuilder
     func trackingFrame(
         in containerCoordinateSpace: CoordinateSpace = .global,
         for coordinateSpace: CoordinateSpace
@@ -108,7 +99,6 @@ extension View {
         )
     }
 
-    @ViewBuilder
     func trackingFrame<K: PreferenceKey>(
         in containerCoordinateSpace: CoordinateSpace = .global,
         for coordinateSpace: CoordinateSpace,
@@ -123,7 +113,6 @@ extension View {
         )
     }
 
-    @ViewBuilder
     func onFrameChanged(perform action: @escaping (CGRect, EdgeInsets) -> Void) -> some View {
         onGeometryChange(for: FrameAndSafeAreaInsets.self) { proxy in
             .init(
@@ -138,14 +127,12 @@ extension View {
         }
     }
 
-    @ViewBuilder
     func trackingFrame(_ binding: Binding<CGRect>) -> some View {
         onFrameChanged { newFrame, _ in
             binding.wrappedValue = newFrame
         }
     }
 
-    @ViewBuilder
     func trackingSize(
         _ sizeBinding: Binding<CGSize>,
         _ safeAreaInsetBinding: Binding<EdgeInsets> = .constant(.zero)

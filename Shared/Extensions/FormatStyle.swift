@@ -16,13 +16,14 @@ struct MinuteSecondsFormatStyle: FormatStyle {
         let formatter = DateComponentsFormatter()
         formatter.unitsStyle = .abbreviated
         formatter.allowedUnits = [.minute, .second]
+
         return formatter.string(from: value) ?? .emptyDash
     }
 }
 
+@available(*, deprecated, message: "Use `Duration` instead.")
 extension FormatStyle where Self == MinuteSecondsFormatStyle {
 
-    @available(*, deprecated, message: "Use `Duration` instead.")
     static var minuteSeconds: MinuteSecondsFormatStyle {
         MinuteSecondsFormatStyle()
     }
@@ -213,11 +214,13 @@ struct AgeFormatStyle: FormatStyle {
 
     func format(_ value: Date) -> String {
         let age = Calendar.current.dateComponents([.year], from: value, to: death ?? .now).year ?? 0
+
         return L10n.yearsOld(age)
     }
 }
 
 struct IntBitRateFormatStyle: FormatStyle {
+
     func format(_ value: Int) -> String {
         let units = [
             L10n.bitsPerSecond,
@@ -226,6 +229,7 @@ struct IntBitRateFormatStyle: FormatStyle {
             L10n.gigabitsPerSecond,
             L10n.terabitsPerSecond,
         ]
+
         var adjustedValue = Double(value)
         var unitIndex = 0
 
@@ -235,11 +239,13 @@ struct IntBitRateFormatStyle: FormatStyle {
         }
 
         let formattedValue = String(format: "%.1f", adjustedValue)
+
         return "\(formattedValue) \(units[unitIndex])"
     }
 }
 
 extension FormatStyle where Self == IntBitRateFormatStyle {
+
     static var bitRate: IntBitRateFormatStyle {
         IntBitRateFormatStyle()
     }

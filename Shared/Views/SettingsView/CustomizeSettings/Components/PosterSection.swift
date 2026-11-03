@@ -15,6 +15,7 @@ extension CustomizeSettingsView {
     struct PosterSection: View {
 
         enum PreviewItemState: CaseIterable, Displayable {
+
             case inProgress
             case rewatching
             case played
@@ -36,6 +37,9 @@ extension CustomizeSettingsView {
                 }
             }
         }
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Default(.Customization.Poster.configuration)
         private var posterConfiguration
@@ -82,7 +86,6 @@ extension CustomizeSettingsView {
             return item
         }
 
-        @ViewBuilder
         private func posterPreview(type: PosterDisplayType) -> some View {
             VStack(alignment: .leading) {
                 PosterImage(
@@ -101,7 +104,7 @@ extension CustomizeSettingsView {
                 previewItem.posterLabel
                     .environment(\.posterDisplayType, type)
             }
-            .frame(width: (UIDevice.isTV ? 225 : 150) * (type == .landscape ? 1.77 : 1))
+            .frame(width: viewLayout.value(standard: 150, large: 225) * (type == .landscape ? 1.77 : 1))
             .posterAccessibility(for: previewItem)
             .animation(.linear(duration: 0.1), value: posterConfiguration)
             .animation(.linear(duration: 0.1), value: previewItemState)
@@ -110,18 +113,18 @@ extension CustomizeSettingsView {
         var body: some View {
             Form {
                 Section(L10n.preview) {
-                    #if os(iOS)
-                    ScrollView(.horizontal) {
-                        HStack(alignment: .bottom) {
-                            ForEach([PosterDisplayType.portrait, .landscape, .square]) { type in
-                                posterPreview(type: type)
+                    if !viewLayout.isLarge {
+                        ScrollView(.horizontal) {
+                            HStack(alignment: .bottom) {
+                                ForEach([PosterDisplayType.portrait, .landscape, .square]) { type in
+                                    posterPreview(type: type)
+                                }
                             }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical)
+                        .scrollIndicators(.hidden)
                     }
-                    .scrollIndicators(.hidden)
-                    #endif
 
                     PlatformPicker(L10n.status, selection: $previewItemState)
                 }
@@ -166,7 +169,7 @@ extension CustomizeSettingsView {
                     data: [.portrait, .square, .landscape],
                     id: \.self,
                     columns: 2,
-                    spacing: EdgeInsets.itemSpacing
+                    spacing: viewLayout.itemSpacing
                 ) { type in
                     posterPreview(type: type)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)

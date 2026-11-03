@@ -23,6 +23,7 @@ extension VideoPlayer.PlaybackControls {
                 press.resolve(.fallback)
                 return
             }
+
             if press.phase == .began {
                 viewState.showControls()
                 press.resolve(.handled)
@@ -32,7 +33,7 @@ extension VideoPlayer.PlaybackControls {
 
         if press.phase == .began,
            isSeekPress,
-           !manager.item.isLiveStream,
+           mediaSession.canSeek,
            !viewState.isPresentingSupplement,
            viewState.presentation == .hidden || viewState.presentation == .progress || viewState.isProgressBarFocused
         {
@@ -44,6 +45,7 @@ extension VideoPlayer.PlaybackControls {
         // slider is waiting for the focus engine to process our request.
         if seekingPress == press.type {
             viewState.refreshAutoDismiss()
+
             switch press.phase {
             case .began:
                 if press.type == .rightArrow {
@@ -56,6 +58,7 @@ extension VideoPlayer.PlaybackControls {
                 } else {
                     jumpBackward()
                 }
+
                 seekingPress = nil
 
             case .cancelled:
@@ -65,6 +68,7 @@ extension VideoPlayer.PlaybackControls {
             default:
                 break
             }
+
             press.resolve(.handled)
             return
         }

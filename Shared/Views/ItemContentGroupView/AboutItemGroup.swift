@@ -22,6 +22,9 @@ struct AboutItemGroup: ContentGroup {
 
     struct Body: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Router
         private var router
 
@@ -132,7 +135,6 @@ struct AboutItemGroup: ContentGroup {
             .aspectRatio(cardAspectRatio, contentMode: .fit)
         }
 
-        @ViewBuilder
         private func ratingsCard(criticRating: Float, communityRating: Float) -> some View {
             AboutCard(
                 title: L10n.ratings,
@@ -176,11 +178,7 @@ struct AboutItemGroup: ContentGroup {
         }
 
         private var cardHeight: CGFloat {
-            #if os(tvOS)
-            400
-            #else
-            200
-            #endif
+            viewLayout.value(standard: 200, large: 400)
         }
 
         private let cardAspectRatio: CGFloat = 1.77
@@ -188,7 +186,7 @@ struct AboutItemGroup: ContentGroup {
         var body: some View {
             ContentGroupSection {
                 ScrollView(.horizontal) {
-                    HStack(spacing: EdgeInsets.itemSpacing) {
+                    HStack(spacing: viewLayout.itemSpacing) {
                         descriptionCard
 
                         if let mediaSources = item.mediaSources {
@@ -208,9 +206,7 @@ struct AboutItemGroup: ContentGroup {
                 }
                 .scrollIndicators(.hidden)
                 .scrollClipDisabled()
-                #if os(tvOS)
-                .withViewContext(.isOverComplexContent)
-                #endif
+                .if(viewLayout.isLarge) { $0.withViewContext(.isOverComplexContent) }
                 .frame(height: cardHeight)
                 .frame(maxWidth: .infinity)
             } header: {

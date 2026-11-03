@@ -12,11 +12,15 @@ import SwiftUI
 
 struct PosterIndicatorsOverlay: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.accentColor)
     private var accentColor
 
     @Environment(\.isSelected)
     private var isSelected
+
     @Environment(\.posterConfiguration)
     private var posterConfiguration
 
@@ -32,7 +36,7 @@ struct PosterIndicatorsOverlay: View {
     }
 
     private var indicatorSize: CGFloat {
-        UIDevice.isTV ? 45 : 25
+        viewLayout.indicatorSize
     }
 
     private var showsUnplayedIndicator: Bool {
@@ -123,6 +127,9 @@ struct PosterIndicatorsOverlay: View {
 
 struct PosterSelectionOverlay: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.accentColor)
     private var accentColor
 
@@ -132,7 +139,7 @@ struct PosterSelectionOverlay: View {
     var body: some View {
         if isSelected {
             ContainerRelativeShape()
-                .stroke(accentColor, lineWidth: UIDevice.isTV ? 12 : 8)
+                .stroke(accentColor, lineWidth: viewLayout.selectionBorderWidth)
                 .clipped()
                 .accessibilityHidden(true)
         }

@@ -25,7 +25,6 @@ struct EPGLoadableView<Content: View>: View {
         self.content = content()
     }
 
-    @ViewBuilder
     var body: some View {
         switch viewModel.state {
         case .initial, .refreshing:
@@ -132,6 +131,7 @@ struct EPGContentView: View {
             }
             .ignoresSafeArea(edges: .bottom)
         }
+        .trackingFrame(for: .layoutContainer)
         .confirmationDialog(
             L10n.programs,
             isPresented: isPresentingGroup,

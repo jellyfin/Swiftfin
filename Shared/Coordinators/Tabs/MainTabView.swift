@@ -10,6 +10,7 @@ import Defaults
 import FactoryKit
 import JellyfinAPI
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
@@ -39,16 +40,19 @@ struct MainTabView: View {
         #else
         TabCoordinator {
             TabItem.contentGroup(provider: DefaultContentGroupProvider())
+
             TabItem.library(
                 title: L10n.tvShowsCapitalized,
                 systemName: "tv",
                 filters: .init(itemTypes: [.series])
             )
+
             TabItem.library(
                 title: L10n.movies,
                 systemName: "film",
                 filters: .init(itemTypes: [.movie])
             )
+
             TabItem.search
             TabItem.media
             TabItem.settings
@@ -65,7 +69,6 @@ struct MainTabView: View {
         }
     }
 
-    @ViewBuilder
     private func tabRoot(_ tab: TabCoordinator.TabData) -> some View {
         NavigationInjectionView(coordinator: tab.coordinator) {
             tab.item.content
@@ -81,7 +84,6 @@ struct MainTabView: View {
         .environment(\.tabItemSelected, tab.publisher)
     }
 
-    @ViewBuilder
     private func tabView() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
@@ -90,10 +92,10 @@ struct MainTabView: View {
                     role: tab.item.id == TabItem.search.id ? .search : nil
                 ) {
                     #if os(tvOS)
-                    GeometryReader { proxy in
+                    GeometryReader { _ in
                         tabRoot(tab)
-                            .environment(\.tabSafeAreaInsets, proxy.safeAreaInsets)
                     }
+                    .trackingFrame(for: .tabView)
                     #else
                     tabRoot(tab)
                     #endif
@@ -122,6 +124,7 @@ struct MainTabView: View {
         }
         #else
         tabView()
+            .tabViewStyle(.sidebarAdaptable)
         #endif
     }
 

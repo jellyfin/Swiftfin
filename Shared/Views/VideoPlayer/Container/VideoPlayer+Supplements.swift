@@ -12,28 +12,25 @@ extension VideoPlayer.UIContainerViewController {
 
     struct SupplementContainerView: View {
 
-        private static let buttonSpacing: CGFloat = UIDevice.isTV ? 20 : 10
-
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
-
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @FocusState
         private var focusedElement: String?
 
         #if os(iOS)
-        @ViewBuilder
         private func closeButton(size: CGFloat) -> some View {
             Button {
                 viewState.selectedSupplementID = nil
                 UIDevice.impact(.light)
             } label: {
                 Label(L10n.close, systemImage: "chevron.down")
-                    .contentShape(Rectangle())
+                    .contentShape(.circle)
             }
             .frame(width: size, height: size)
             .modifier(
@@ -55,17 +52,16 @@ extension VideoPlayer.UIContainerViewController {
                 }?.id
         }
 
-        @ViewBuilder
-        private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
+        private func supplementContainer(for supplement: some VideoPlayerSupplement) -> some View {
             AlternateLayoutView(alignment: .topLeading) {
                 Color.clear
             } content: {
-                supplement.videoPlayerBody
+                supplement
                     .coordinatedFocus(ViewState.Focus.supplementContent(supplement.id))
             }
             .environment(viewState)
             .environmentObject(viewState.focusCoordinator)
-            .environmentObject(manager)
+            .environment(mediaSession)
             #if os(iOS)
             .background {
                 GestureView()
@@ -74,7 +70,6 @@ extension VideoPlayer.UIContainerViewController {
             #endif
         }
 
-        @ViewBuilder
         private var tabButtons: some View {
             AlternateLayoutView {
                 // swiftlint:disable:next hard_coded_display_string
@@ -82,7 +77,7 @@ extension VideoPlayer.UIContainerViewController {
                     .frame(maxWidth: .infinity)
                     .disabled(true)
             } content: { (size: CGSize) in
-                HStack(spacing: Self.buttonSpacing) {
+                HStack(spacing: viewLayout.supplementButtonSpacing) {
                     #if os(iOS)
                     if viewState.isPresentingFullScreenSupplement {
                         closeButton(size: size.height)
@@ -95,9 +90,9 @@ extension VideoPlayer.UIContainerViewController {
                         title: \.displayTitle,
                         selection: viewState.selectedSupplementID,
                         focus: $focusedElement,
-                        spacing: Self.buttonSpacing
+                        spacing: viewLayout.supplementButtonSpacing
                     ) { supplement in
-                        if UIDevice.isTV {
+                        if viewLayout.isLarge {
                             viewState.selectedSupplementID = supplement.id
                         } else {
                             viewState.selectedSupplementID = viewState.selectedSupplementID == supplement.id ? nil : supplement.id
@@ -108,31 +103,27 @@ extension VideoPlayer.UIContainerViewController {
                 }
                 .scrollIfLargerThanContainer(axes: .horizontal, alignment: .leading)
             }
-            .edgePadding(.horizontal)
             #if os(tvOS)
-            // Menu dismissal can restore a tab before the content finishes appearing.
-            // Keep tabs out of the focus engine until the requested control receives focus.
-            .disabled(viewState.isSupplementFocusPending)
-            .defaultFocus(
-                $focusedElement,
-                defaultTabFocus,
-                priority: .userInitiated
-            )
-            .focusSection()
-            .onMoveCommand { direction in
-                if direction == .up, viewState.isPresentingSupplement {
-                    viewState.selectedSupplementID = nil
-                }
-            }
-            #endif
-            .padding(
-                .init(
-                    top: 0,
-                    leading: UIDevice.isTV ? 0 : safeAreaInsets.leading,
-                    bottom: UIDevice.isTV ? 0 : 8,
-                    trailing: UIDevice.isTV ? 0 : safeAreaInsets.trailing
+            .edgePadding(.horizontal)
+                // Menu dismissal can restore a tab before the content finishes appearing.
+                // Keep tabs out of the focus engine until the requested control receives focus.
+                .disabled(viewState.isSupplementFocusPending)
+                .defaultFocus(
+                    $focusedElement,
+                    defaultTabFocus,
+                    priority: .userInitiated
                 )
-            )
+                .focusSection()
+                .onMoveCommand { direction in
+                    if direction == .up, viewState.isPresentingSupplement {
+                        viewState.selectedSupplementID = nil
+                    }
+                }
+            #else
+                .padding(.leading, max(viewState.supplementInsets.leading, viewLayout.edgePadding))
+                .padding(.trailing, max(viewState.supplementInsets.trailing, viewLayout.edgePadding))
+            #endif
+            .padding(.bottom, viewLayout.isLarge ? 0 : 8)
             .buttonStyle(.capsule)
             .controlSize(.large)
             .foregroundStyle(.white)
@@ -176,7 +167,7 @@ extension VideoPlayer.UIContainerViewController {
                 }
                 .isVisible(viewState.visibleElements.contains(.supplements))
                 .enabled(viewState.visibleElements.contains(.supplements))
-                .padding(.top, EdgeInsets.edgeInsets.bottom / (UIDevice.isTV ? 2 : 1))
+                .padding(.top, viewLayout.edgeInsets.bottom / (viewLayout.isLarge ? 2 : 1))
                 .animation(.linear(duration: 0.25), value: viewState.presentation)
                 .animation(.linear(duration: 0.1), value: viewState.isScrubbing)
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.1), value: viewState.supplements.map(\.id))

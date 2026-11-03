@@ -12,6 +12,9 @@ import SwiftUI
 
 struct ServerUsersView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -60,6 +63,7 @@ struct ServerUsersView: View {
                     navigationBarSelectView
                 }
             }
+
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
                     Button(L10n.cancel, role: .cancel) {
@@ -84,6 +88,7 @@ struct ServerUsersView: View {
                     .controlSize(.small)
                 }
             }
+
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
                     Button(L10n.delete, role: .destructive) {
@@ -163,7 +168,6 @@ struct ServerUsersView: View {
 
     // MARK: - User List View
 
-    @ViewBuilder
     private var userListView: some View {
         List {
             InsetGroupedListHeader(
@@ -197,7 +201,7 @@ struct ServerUsersView: View {
                         }
                         .isEditing(isEditing)
                         .isSelected(selectedUsers.contains(userID))
-                        .listRowInsets(.edgeInsets)
+                        .listRowInsets(viewLayout.edgeInsets)
                     }
                 }
             }

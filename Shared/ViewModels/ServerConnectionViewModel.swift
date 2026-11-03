@@ -29,8 +29,7 @@ final class ServerConnectionViewModel: ViewModel {
     @Published
     var isAutoSwitchEnabled: Bool {
         didSet {
-            guard oldValue != isAutoSwitchEnabled else { return }
-            guard Defaults[.Experimental.serverConnectionAutoSwitch] else { return }
+            guard oldValue != isAutoSwitchEnabled, Defaults[.Experimental.serverConnectionAutoSwitch] else { return }
 
             server.isAutoSwitchEnabled = isAutoSwitchEnabled
 
@@ -97,8 +96,7 @@ final class ServerConnectionViewModel: ViewModel {
     }
 
     func deleteConnection(_ connection: ServerConnection) {
-        guard connections.count > 1 else { return }
-        guard activeConnection?.id != connection.id else { return }
+        guard connections.count > 1, activeConnection?.id != connection.id else { return }
 
         connections.removeAll { $0.id == connection.id }
         saveConnections()
@@ -133,20 +131,21 @@ final class ServerConnectionViewModel: ViewModel {
                 accessToken: userSession?.user.accessToken,
                 matchingServerID: server.id
             )
+
             let state = ServerConnection.TestState.success
             testStates[connection.id] = state
+
             return state
         } catch {
             let state = ServerConnection.TestState.failure(error.localizedDescription)
             testStates[connection.id] = state
+
             return state
         }
     }
 
     func evaluateAutoSwitchConnection() async {
-        guard Defaults[.Experimental.serverConnectionAutoSwitch] else { return }
-        guard isAutoSwitchEnabled else { return }
-        guard !isEvaluatingAutoSwitchConnection else { return }
+        guard Defaults[.Experimental.serverConnectionAutoSwitch], isAutoSwitchEnabled, !isEvaluatingAutoSwitchConnection else { return }
 
         isEvaluatingAutoSwitchConnection = true
         defer { isEvaluatingAutoSwitchConnection = false }

@@ -11,6 +11,7 @@ import SwiftUI
 struct AddServerUserView: View {
 
     private enum Field {
+
         case username
         case password
         case confirmPassword
@@ -108,6 +109,9 @@ struct AddServerUserView: View {
                 UIDevice.feedback(.success)
                 Notifications[.didAddServerUser].post(newUser)
                 router.dismiss()
+
+            case .error:
+                break
             }
         }
         .topBarTrailing {

@@ -85,6 +85,7 @@ struct ItemSubtitlesView: View {
                     .controlSize(.small)
                 }
             }
+
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
                     Button(L10n.cancel, role: .cancel) {
@@ -104,6 +105,7 @@ struct ItemSubtitlesView: View {
                     .controlSize(.small)
                 }
             }
+
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
                     Button(L10n.delete, role: .destructive) {
@@ -150,7 +152,6 @@ struct ItemSubtitlesView: View {
         }
     }
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(

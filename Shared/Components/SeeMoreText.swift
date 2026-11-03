@@ -40,7 +40,6 @@ struct SeeMoreText: View {
         self.isTruncatedBinding = isTruncated
     }
 
-    @ViewBuilder
     private var seeMoreText: some View {
         Text(L10n.seeMore)
             .textCase(.uppercase)

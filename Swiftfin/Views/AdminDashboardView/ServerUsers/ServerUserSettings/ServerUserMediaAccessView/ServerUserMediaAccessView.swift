@@ -41,6 +41,7 @@ struct ServerUserMediaAccessView: View {
                 if viewModel.background.is(.updating) {
                     ProgressView()
                 }
+
                 let saveAction: () -> Void = {
                     if tempPolicy != viewModel.user.policy {
                         viewModel.updatePolicy(tempPolicy)
@@ -76,7 +77,6 @@ struct ServerUserMediaAccessView: View {
             .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
     var contentView: some View {
         List {
             accessView

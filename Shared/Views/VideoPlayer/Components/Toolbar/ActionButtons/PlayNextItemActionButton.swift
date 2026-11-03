@@ -12,11 +12,11 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct PlayNextItem: View {
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         var body: some View {
-            if let queue = manager.queue {
+            if let queue = mediaSession.queue {
                 _PlayNextItem(queue: queue)
             }
         }
@@ -24,11 +24,10 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     private struct _PlayNextItem: View {
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
-        @ObservedObject
-        var queue: AnyMediaPlayerQueue
+        let queue: any MediaPlayerQueue
 
         var body: some View {
             Button(
@@ -37,7 +36,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             ) {
                 guard let nextItem = queue.nextItem else { return }
 
-                manager.playNewItem(provider: nextItem)
+                mediaSession.playNewItem(intent: nextItem)
             }
             .disabled(queue.nextItem == nil)
         }

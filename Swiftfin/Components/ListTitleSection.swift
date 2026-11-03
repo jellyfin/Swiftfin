@@ -49,7 +49,7 @@ extension ListTitleSection {
 
     init(
         _ title: some WithText,
-        description: (some WithText)? = nil
+        description: some WithText? = nil
     ) {
         self.init(
             description: description?.textBody,
@@ -60,7 +60,7 @@ extension ListTitleSection {
 
     init(
         _ title: some WithText,
-        description: (some WithText)? = nil,
+        description: some WithText? = nil,
         learnMoreAction: @escaping () -> Void
     ) {
         self.init(
@@ -83,7 +83,6 @@ struct InsetGroupedListHeader<Content: View>: View {
     private let learnMoreAction: (() -> Void)?
     private let title: Text?
 
-    @ViewBuilder
     private var header: some View {
         Button {
             learnMoreAction?()
@@ -138,7 +137,7 @@ extension InsetGroupedListHeader {
 
     init(
         _ title: some WithText,
-        description: (some WithText)? = nil,
+        description: some WithText? = nil,
         learnMoreAction: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) {
@@ -155,7 +154,7 @@ extension InsetGroupedListHeader where Content == EmptyView {
 
     init(
         _ title: some WithText,
-        description: (some WithText)? = nil,
+        description: some WithText? = nil,
         learnMoreAction: (() -> Void)? = nil
     ) {
         self.init(

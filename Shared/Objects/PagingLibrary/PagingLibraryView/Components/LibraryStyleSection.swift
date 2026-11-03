@@ -16,13 +16,16 @@ extension PagingLibraryView {
         private var libraryStyle: LibraryStyle
 
         private let options: LibraryStyleOptions
+        private let canAdjustListColumns: Bool
 
         init(
             libraryStyle: Binding<LibraryStyle>,
-            options: LibraryStyleOptions
+            options: LibraryStyleOptions,
+            canAdjustListColumns: Bool
         ) {
             self._libraryStyle = .init(libraryStyle)
             self.options = options
+            self.canAdjustListColumns = canAdjustListColumns
         }
 
         var body: some View {
@@ -46,8 +49,8 @@ extension PagingLibraryView {
             }
 
             if libraryStyle.displayType == .list,
-               UIDevice.isPad,
-               options.displayTypes.contains(.list)
+               options.displayTypes.contains(.list),
+               canAdjustListColumns
             {
                 Stepper(
                     L10n.columnsWithCount(libraryStyle.listColumnCount),

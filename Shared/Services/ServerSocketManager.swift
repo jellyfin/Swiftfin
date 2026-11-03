@@ -15,6 +15,7 @@ import os
 final class ServerSocketManager {
 
     private struct Claim {
+
         let subscription: JellyfinSocket.Subscription
         let delay: Duration
         let interval: Duration
@@ -22,6 +23,7 @@ final class ServerSocketManager {
     }
 
     private struct State {
+
         var session: JellyfinSocket.Session?
         var claims: [UUID: Claim] = [:]
         var reconnectRequested = false
@@ -57,6 +59,7 @@ final class ServerSocketManager {
 
     private func start() {
         stop()
+
         tasks = [
             Task { [weak self] in await self?.runConnection() },
             Task { [weak self] in await self?.observeServerConnectionChange() },
@@ -86,6 +89,7 @@ final class ServerSocketManager {
 
         let session = state.withLock { state -> JellyfinSocket.Session? in
             state.claims[id] = Claim(subscription: subscription, delay: delay, interval: interval)
+
             return state.session
         }
 
@@ -114,25 +118,28 @@ final class ServerSocketManager {
         while !Task.isCancelled {
             guard let userSession else { break }
 
-            let session = userSession.client
-                .socket(
-                    supportsMediaControl: true,
-                    supportedCommands: [
-                        .displayContent,
-                        .play,
-                        .playMediaSource,
-                        .playState,
-                        .playTrailers,
-                        .setAudioStreamIndex,
-                        .setMaxStreamingBitrate,
-                        .setSubtitleStreamIndex,
-                    ],
-                    playableMediaTypes: [.video]
-                )
-                .connect(responseTimeout: .seconds(10))
+            let client = await userSession.client
+            guard !Task.isCancelled else { break }
+
+            let session = client.socket(
+                supportsMediaControl: true,
+                supportedCommands: [
+                    .displayContent,
+                    .play,
+                    .playMediaSource,
+                    .playState,
+                    .playTrailers,
+                    .setAudioStreamIndex,
+                    .setMaxStreamingBitrate,
+                    .setSubtitleStreamIndex,
+                ],
+                playableMediaTypes: [.video]
+            )
+            .connect(responseTimeout: .seconds(10))
 
             let claims = state.withLock { state in
                 state.session = session
+
                 return state.claims
             }
 
@@ -167,6 +174,7 @@ final class ServerSocketManager {
                     case let .message(message):
                         logger.debug("Socket message", metadata: ["message": .string("\(message)")])
                     }
+
                     allEvents.send(event)
                 }
             } catch {
@@ -182,6 +190,7 @@ final class ServerSocketManager {
             let (hasClaims, explicit) = state.withLock { state -> (Bool, Bool) in
                 state.session = nil
                 defer { state.reconnectRequested = false }
+
                 return (state.claims.isNotEmpty, state.reconnectRequested)
             }
 

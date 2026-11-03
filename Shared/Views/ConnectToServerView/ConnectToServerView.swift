@@ -42,6 +42,10 @@ struct ConnectToServerView: View {
         case let .duplicateServer(server):
             UIDevice.feedback(.warning)
             duplicateServer = server
+
+        case .error:
+            UIDevice.feedback(.error)
+            isURLFocused = true
         }
     }
 
@@ -101,7 +105,6 @@ struct ConnectToServerView: View {
 
     // MARK: - Local Servers Section
 
-    @ViewBuilder
     private var localServersSection: some View {
         Section(L10n.localServers) {
             if viewModel.localServers.isEmpty {
@@ -120,7 +123,6 @@ struct ConnectToServerView: View {
         }
     }
 
-    @ViewBuilder
     private var contentView: some View {
         #if os(iOS)
         List {
@@ -159,12 +161,6 @@ struct ConnectToServerView: View {
                 viewModel.searchForServers()
             }
             .onReceive(viewModel.events, perform: onEvent)
-            .onReceive(viewModel.$error) { error in
-                guard error != nil else { return }
-
-                UIDevice.feedback(.error)
-                isURLFocused = true
-            }
             .topBarTrailing {
                 if viewModel.state == .connecting {
                     ProgressView()

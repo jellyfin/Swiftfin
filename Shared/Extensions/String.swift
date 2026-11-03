@@ -61,14 +61,9 @@ private struct StringLibraryListElement: View {
                         isEditing ? (isSelected ? .primary : .secondary) : .primary
                     )
 
-                if isEditing {
-                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .resizable()
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(isSelected ? Color.accentColor : .secondary)
-                }
+                ListRowCheckbox()
             }
+            .edgePadding()
         }
         .foregroundStyle(.primary, .secondary)
     }
@@ -228,6 +223,13 @@ extension String {
     var nilIfBlank: String? {
         let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
+    }
+
+    var markdown: AttributedString {
+        (try? AttributedString(
+            markdown: self,
+            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        )) ?? AttributedString(self)
     }
 }
 

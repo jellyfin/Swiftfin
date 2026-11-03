@@ -10,6 +10,9 @@ import SwiftUI
 
 struct PosterButton<Item: Poster>: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Environment(\.viewContext)
     private var viewContext
 
@@ -37,17 +40,15 @@ struct PosterButton<Item: Poster>: View {
         self.action = action
     }
 
-    @ViewBuilder
-    private var contextMenuPreview: some View {
+    private func contextMenuPreview(width: CGFloat) -> some View {
         buttonLabel()
             .posterAccessibility(for: item)
-            .frame(width: posterSize.width)
+            .frame(width: width)
             .padding(20)
             .backport
             .glassEffect(in: .rect(cornerRadius: 10))
     }
 
-    @ViewBuilder
     private func posterImage(overlay: some View) -> some View {
         PosterImage(
             item: item,
@@ -62,7 +63,6 @@ struct PosterButton<Item: Poster>: View {
         .hoverEffect(.highlight)
     }
 
-    @ViewBuilder
     private func buttonLabel(overlay: some View = EmptyView()) -> some View {
         VStack(alignment: .leading) {
             posterImage(overlay: overlay)
@@ -77,19 +77,19 @@ struct PosterButton<Item: Poster>: View {
             action(namespace)
         } label: {
             // Layout required for tvOS focused offset label behavior
-            #if os(tvOS)
-            posterImage(overlay: item.posterOverlay(for: displayType))
-                .posterAspectRatio(displayType, contentMode: .fit)
-                .frame(width: posterSize.width > 0 ? posterSize.width : nil)
-                .posterAccessibility(for: item)
+            if viewLayout.isLarge {
+                posterImage(overlay: item.posterOverlay(for: displayType))
+                    .posterAspectRatio(displayType, contentMode: .fit)
+                    .frame(width: posterSize.width > 0 ? posterSize.width : nil)
+                    .posterAccessibility(for: item)
 
-            item.posterLabel
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .accessibilityHidden(true)
-            #else
-            buttonLabel(overlay: item.posterOverlay(for: displayType))
-                .posterAccessibility(for: item)
-            #endif
+                item.posterLabel
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityHidden(true)
+            } else {
+                buttonLabel(overlay: item.posterOverlay(for: displayType))
+                    .posterAccessibility(for: item)
+            }
         }
         .environment(\.posterDisplayType, displayType)
         .foregroundStyle(.primary, .secondary)
@@ -97,13 +97,16 @@ struct PosterButton<Item: Poster>: View {
         .buttonBorderShape(.roundedRectangle)
         #if os(tvOS)
         .focusedValue(\.focusedPoster, AnyPoster(item))
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .ignoresSafeArea()
-        #endif
         .trackingSize($posterSize)
         .posterContextMenu(for: item) {
-            contextMenuPreview
+            contextMenuPreview(width: posterSize.width)
                 .withViewContext(viewContext)
         }
+        #else
+        .posterContextMenu(for: item) { size in
+            contextMenuPreview(width: size.width)
+                .withViewContext(viewContext)
+        }
+        #endif
     }
 }

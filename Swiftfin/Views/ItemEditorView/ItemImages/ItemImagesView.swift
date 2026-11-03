@@ -13,6 +13,9 @@ import SwiftUI
 
 struct ItemImagesView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @ObservedObject
     var viewModel: ItemImageViewModel
 
@@ -100,7 +103,6 @@ struct ItemImagesView: View {
         .errorMessage($uploadError)
     }
 
-    @ViewBuilder
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -139,8 +141,9 @@ struct ItemImagesView: View {
             }
             .clipsToBounds(false)
             .scrollBehavior(.continuousLeadingEdge)
-            .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.itemSpacing)
+            .contentInsetAdjustmentBehavior(.never)
+            .insets(horizontal: viewLayout.edgePadding)
+            .itemSpacing(viewLayout.itemSpacing)
             .id(selectedType)
             .transition(.opacity.animation(.linear(duration: 0.1)))
         } else {
@@ -150,15 +153,14 @@ struct ItemImagesView: View {
             ) { _ in
                 addImageButton
             }
-            .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.itemSpacing)
+            .insets(horizontal: viewLayout.edgePadding)
+            .itemSpacing(viewLayout.itemSpacing)
             .scrollDisabled(true)
             .id(selectedType)
             .transition(.opacity.animation(.linear(duration: 0.1)))
         }
     }
 
-    @ViewBuilder
     private var typePicker: some View {
         Menu {
             ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
@@ -230,7 +232,6 @@ struct ItemImagesView: View {
         }
     }
 
-    @ViewBuilder
     private var addImageButton: some View {
         Menu {
             addImageMenu

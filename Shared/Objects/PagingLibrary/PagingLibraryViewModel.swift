@@ -84,6 +84,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     // Collections retain records that the session store holds weakly
     @Published
     private(set) var elements: IdentifiedArrayOf<Element>
+
     @Published
     var environment: Environment {
         didSet {
@@ -102,6 +103,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     @Published
     private(set) var searchElements: IdentifiedArrayOf<Element>
+
     @Published
     var searchQuery: String = "" {
         didSet {
@@ -120,6 +122,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     private var nextOffset = 0
     private var nextSearchOffset = 0
+
     // Generations prevent responses for replaced collections from updating the store
     private var generation = 0
     private var searchGeneration = 0
@@ -149,7 +152,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         searchQuery.nilIfBlank ?? ""
     }
 
-    private var searchableLibrary: (any SearchablePagingLibrary<Element, Environment, PageElement>)? {
+    private var searchableLibrary: any SearchablePagingLibrary<Element, Environment, PageElement>? {
         library as? any SearchablePagingLibrary<Element, Environment, PageElement>
     }
 
@@ -191,6 +194,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
                 case let .deleted(id):
                     let removed = self.removeElements { self.matchesItemID($0.id, id) }
+
                     // Deleting an unloaded row can still shift server page offsets
                     if removed || self.library.hasNextPage {
                         self.scheduleRefreshForStoreChange()
@@ -217,6 +221,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     func refreshForEnvironmentChange() {
         refresh()
+
         if isSearchActive {
             search(query: normalizedSearchQuery)
         }
@@ -230,14 +235,17 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     private func removeElements(where shouldRemove: (Element) -> Bool) -> Bool {
         var removed = false
+
         if elements.contains(where: shouldRemove) {
             elements.removeAll(where: shouldRemove)
             removed = true
         }
+
         if searchElements.contains(where: shouldRemove) {
             searchElements.removeAll(where: shouldRemove)
             removed = true
         }
+
         return removed
     }
 
@@ -270,22 +278,27 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         guard !isInvalidated else { return }
 
         hasPendingStoreRefresh = true
+
         guard storeRefreshTask == nil else { return }
 
         // Coalesce store changes and space automatic refreshes at least five seconds apart
         let delay = max(0.35, 5 - Date.now.timeIntervalSince(lastStoreRefresh))
+
         storeRefreshTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(delay))
+
             guard !Task.isCancelled, let self, !self.isInvalidated else { return }
 
             self.hasPendingStoreRefresh = false
 
             await self.background.refresh()
+
             guard !Task.isCancelled else { return }
 
             if self.isSearchActive {
                 await self.search(query: self.normalizedSearchQuery)
             }
+
             guard !Task.isCancelled else { return }
 
             self.lastStoreRefresh = Date.now
@@ -306,9 +319,11 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         generation += 1
         hasNextPage = true
         nextOffset = 0
+
         if !StateTask.isBackground {
             elements.removeAll()
         }
+
         try await loadPage(replacing: true)
     }
 
@@ -341,10 +356,12 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
             try page.userSession.items.validate()
             let previousCount = replacing ? 0 : elements.count
+
             let items = try IdentifiedArray(
                 materialize(response, pageState: page),
                 uniquingIDsWith: { existing, _ in existing }
             )
+
             let progress = page.progress(returnedCount: response.count)
             nextOffset = progress.nextOffset
             hasNextPage = library.hasNextPage && progress.hasNextPage
@@ -367,6 +384,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
         nextSearchOffset = 0
         searchElements.removeAll()
+
         guard query.isNotEmpty,
               searchableLibrary != nil
         else {
@@ -395,9 +413,11 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         else { return }
 
         let requestGeneration = searchGeneration
+
         while !Task.isCancelled, !isInvalidated {
             let offset = nextSearchOffset
             let page = try pageState(offset: offset, pageSize: pageSize)
+
             let response = try await searchableLibrary.retrieveSearchPage(
                 query: query,
                 environment: environment,
@@ -413,14 +433,17 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
             try page.userSession.items.validate()
             let previousCount = searchElements.count
+
             let items = try IdentifiedArray(
                 materialize(response, pageState: page),
                 uniquingIDsWith: { existing, _ in existing }
             )
+
             let progress = page.progress(returnedCount: response.count)
             nextSearchOffset = progress.nextOffset
             hasNextSearchPage = progress.hasNextPage
             searchElements.append(contentsOf: items.filter { searchElements[id: $0.id] == nil })
+
             guard searchElements.count == previousCount, hasNextSearchPage else { return }
         }
     }
@@ -429,6 +452,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     private func _getRandomItem() async throws {
         let requestGeneration = generation
         let randomElement: Element?
+
         if let randomLibrary = library as? any WithRandomElementLibrary<Element, Environment, PageElement> {
             let page = try pageState(offset: 0, pageSize: 1)
             let value = try await randomLibrary.retrieveRandomElement(environment: environment, pageState: page)

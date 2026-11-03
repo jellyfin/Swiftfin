@@ -18,7 +18,6 @@ extension View {
         self
     }
 
-    @ViewBuilder
     func navigationBarFilterDrawer(
         viewModel: FilterViewModel,
         types: [ItemFilterType]
@@ -31,7 +30,6 @@ extension View {
         )
     }
 
-    @ViewBuilder
     func navigationBarCloseButton(
         disabled: Bool = false,
         _ action: @escaping () -> Void
@@ -44,7 +42,6 @@ extension View {
         )
     }
 
-    @ViewBuilder
     func navigationBarMenuButton(
         isLoading: Bool = false,
         isHidden: Bool = false,
@@ -60,7 +57,6 @@ extension View {
         )
     }
 
-    @ViewBuilder
     func listRowCornerRadius(_ radius: CGFloat) -> some View {
         introspect(.listCell, on: .iOS(.v18...)) { cell in
             if #available(iOS 26, *) {

@@ -12,6 +12,9 @@ import SwiftUI
 
 struct DevicesView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -57,11 +60,13 @@ struct DevicesView: View {
                     navigationBarSelectView
                 }
             }
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 if viewModel.devices.isNotEmpty {
                     navigationBarEditView
                 }
             }
+
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
                     Button(L10n.delete, role: .destructive) {
@@ -104,7 +109,6 @@ struct DevicesView: View {
 
     // MARK: - Device List View
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             InsetGroupedListHeader(
@@ -145,7 +149,7 @@ struct DevicesView: View {
                     }
                     .isEditing(isEditing)
                     .isSelected(selectedDevices.contains(device.id ?? ""))
-                    .listRowInsets(.edgeInsets)
+                    .listRowInsets(viewLayout.edgeInsets)
                 }
             }
         }

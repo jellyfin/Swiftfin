@@ -10,22 +10,29 @@ import SwiftUI
 
 struct BottomEdgeGradientModifier: ViewModifier {
 
+    @State
+    private var contentSize: CGSize = .zero
+
     let bottomColor: Color
 
     func body(content: Content) -> some View {
         content
-            .overlay(
-                alignment: .bottom,
-                extendedBy: .init(top: 0, leading: 0, bottom: 10, trailing: 0)
-            ) {
-                EasedGradient(
-                    colors: [.clear, bottomColor],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 50)
+            .trackingSize($contentSize)
+            .overlay(alignment: .bottom) {
+                content
+                    .scaleEffect(y: -1)
+                    .blur(radius: 5)
+                    .clipped()
+                    .overlay {
+                        EasedGradient(
+                            colors: [.clear, bottomColor],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    }
+                    .offset(y: contentSize.height)
             }
-            .background(extendedBy: .init(top: 0, leading: 0, bottom: 1000, trailing: 0)) {
+            .background(alignment: .top, extendedBy: .init(top: 0, leading: 0, bottom: 1000, trailing: 0)) {
                 bottomColor
             }
     }

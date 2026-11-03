@@ -32,12 +32,29 @@ enum PlaybackResolution: Int, CaseIterable, Displayable, Storable {
         }
     }
 
-    var codecProfile: CodecProfile? {
+    func codecProfile(for mediaSource: MediaSourceInfo?) -> CodecProfile? {
         guard rawValue > 0 else { return nil }
+
+        let videoStream = mediaSource?.mediaStreams?.first { $0.type == .video }
+
+        // Jellyfin's bitrate normalizer can discard MaxHeight when it selects a width.
+        // Bound both dimensions, preserving the source aspect ratio when it is known.
+        let maxWidth: Int = if let width = videoStream?.width, let height = videoStream?.height, width > 0, height > 0 {
+            Swift.max(1, Int((Double(width) * Double(rawValue) / Double(height)).rounded(.up)))
+        } else {
+            rawValue * 16 / 9
+        }
 
         return CodecProfile(
             type: .video,
             conditions: {
+                ProfileCondition(
+                    condition: .lessThanEqual,
+                    isRequired: true,
+                    property: .width,
+                    value: maxWidth.description
+                )
+
                 ProfileCondition(
                     condition: .lessThanEqual,
                     isRequired: true,

@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct MediaSourceInfoView: PlatformView {
+struct MediaSourceInfoView: PresentationView {
 
     @FocusState
     private var focusedStream: MediaStream?
@@ -22,7 +22,6 @@ struct MediaSourceInfoView: PlatformView {
 
     let source: MediaSourceInfo
 
-    @ViewBuilder
     private func streamRow(_ stream: MediaStream) -> some View {
         ChevronButton(stream.displayTitle ?? .emptyDash) {
             router.route(to: .mediaStreamInfo(mediaStream: stream))
@@ -35,7 +34,6 @@ struct MediaSourceInfoView: PlatformView {
         }
     }
 
-    @ViewBuilder
     private var contentView: some View {
         Form {
             if let videoStreams = source.videoStreams,
@@ -70,7 +68,7 @@ struct MediaSourceInfoView: PlatformView {
         }
     }
 
-    var iOSView: some View {
+    var standardView: some View {
         contentView
             .navigationTitle(source.displayTitle)
             .toolbarTitleDisplayMode(.inline)
@@ -84,7 +82,7 @@ struct MediaSourceInfoView: PlatformView {
             #endif
     }
 
-    var tvOSView: some View {
+    var largeView: some View {
         HStack {
             contentView
 

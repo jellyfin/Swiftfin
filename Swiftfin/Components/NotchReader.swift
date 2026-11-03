@@ -14,11 +14,14 @@ import UIKit
 struct NotchMeasurement: Equatable, Sendable {
 
     let size: CGSize
+
     /// Physical screen radius, or zero when the view does not cover the display.
     var displayCornerRadius: CGFloat = 0
-    /// Cutout bounds in the measured view's coordinates; nil when unavailable.
+
+    /// Cutout bounds in the measured view's coordinates, or nil when unavailable.
     let cutout: CGRect?
     let systemInsets: EdgeInsets
+
     /// Private cutout insets, or systemInsets when the private API is unavailable.
     let insets: EdgeInsets
 }
@@ -57,24 +60,29 @@ enum NotchDeviceReader {
         else { return nil }
 
         let bounds = view.bounds
+
         let safe = view.safeAreaLayoutGuide
             .layoutFrame
             .intersection(bounds)
             .intersection(view.convert(window.safeAreaLayoutGuide.layoutFrame, from: window))
+
         let left = safe.isNull ? 0 : max(0, safe.minX - bounds.minX)
         let right = safe.isNull ? 0 : max(0, bounds.maxX - safe.maxX)
+
         let system = EdgeInsets(
             top: safe.isNull ? bounds.height : max(0, safe.minY - bounds.minY),
             leading: layoutDirection == .leftToRight ? left : right,
             bottom: safe.isNull ? 0 : max(0, bounds.maxY - safe.maxY),
             trailing: layoutDirection == .leftToRight ? right : left
         )
+
         var fallback = NotchMeasurement(
             size: bounds.size,
             cutout: nil,
             systemInsets: system,
             insets: system
         )
+
         let screen = window.screen
 
         let displayFrame = view.convert(bounds, to: screen.coordinateSpace)
@@ -94,6 +102,7 @@ enum NotchDeviceReader {
 
         let rect = view.convert(portrait, from: screen.fixedCoordinateSpace)
             .offsetBy(dx: -bounds.minX, dy: -bounds.minY)
+
         guard let insets = cutoutInsets(enclosing: rect, in: bounds.size, layoutDirection: layoutDirection) else { return fallback }
 
         return NotchMeasurement(
@@ -143,9 +152,8 @@ enum NotchDeviceReader {
               let method = class_getInstanceMethod(type(of: screen), selector),
               method_getNumberOfArguments(method) == 2,
               returns(method, type: "@"),
-              let area = screen.perform(selector)?.takeUnretainedValue() as? NSObject
-        else { return nil }
-        guard let rectSelector = "cmVjdA==".base64Decoded?.asSelector(),
+              let area = screen.perform(selector)?.takeUnretainedValue() as? NSObject,
+              let rectSelector = "cmVjdA==".base64Decoded?.asSelector(),
               let rectMethod = class_getInstanceMethod(type(of: area), rectSelector),
               method_getNumberOfArguments(rectMethod) == 2,
               returns(rectMethod, type: String(cString: NSValue(cgRect: .zero).objCType))
@@ -153,6 +161,7 @@ enum NotchDeviceReader {
 
         typealias Getter = @convention(c) (AnyObject, Selector) -> CGRect
         let getter = unsafeBitCast(method_getImplementation(rectMethod), to: Getter.self)
+
         return getter(area, rectSelector)
     }
 
@@ -176,6 +185,7 @@ enum NotchDeviceReader {
     private static func returns(_ method: Method, type: String) -> Bool {
         let encoding = method_copyReturnType(method)
         defer { free(encoding) }
+
         return String(cString: encoding) == type
     }
 }
@@ -205,6 +215,7 @@ private final class NotchProbe: UIView {
                 self?.onLayout?()
             }
         }
+
         onLayout?()
     }
 }
@@ -220,6 +231,7 @@ private struct NotchMeasurementReader: UIViewRepresentable {
     func makeUIView(context: Context) -> NotchProbe {
         let view = NotchProbe()
         view.isUserInteractionEnabled = false
+
         return view
     }
 

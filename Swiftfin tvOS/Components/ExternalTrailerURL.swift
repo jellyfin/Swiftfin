@@ -26,10 +26,10 @@ struct ExternalTrailerURL {
         }
 
         for source in Source.allCases where source.hostPatterns.contains(where: { host.contains($0) }) {
-            if let requiredPathComponents = source.requiredPathComponents {
-                if !requiredPathComponents.contains(where: { url.path.contains($0) }) {
-                    continue
-                }
+            if let requiredPathComponents = source.requiredPathComponents,
+               !requiredPathComponents.contains(where: { url.path.contains($0) })
+            {
+                continue
             }
 
             guard let deepLink = source.buildDeepLink(url) else {
@@ -38,6 +38,7 @@ struct ExternalTrailerURL {
 
             self.source = source
             self.deepLink = deepLink
+
             return
         }
 
@@ -88,6 +89,7 @@ extension ExternalTrailerURL.Source {
         }
 
         let videoId = String(match.1)
+
         return URL(string: "vimeo://video/\(videoId)")
     }
 

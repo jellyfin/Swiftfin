@@ -13,6 +13,9 @@ import SwiftUI
 // TODO: WebSocket
 struct ServerActivityView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -85,8 +88,8 @@ struct ServerActivityView: View {
                 uniqueElements: viewModel.elements,
                 layout: .columns(
                     1,
-                    itemSpacing: EdgeInsets.itemSpacing,
-                    lineSpacing: EdgeInsets.itemSpacing
+                    itemSpacing: viewLayout.itemSpacing,
+                    lineSpacing: viewLayout.itemSpacing
                 )
             ) { log in
 
@@ -114,7 +117,6 @@ struct ServerActivityView: View {
 
     // MARK: - User Filter Button
 
-    @ViewBuilder
     private var userFilterButton: some View {
         Picker(selection: $viewModel.environment.hasUserID) {
             Label(
@@ -151,7 +153,6 @@ struct ServerActivityView: View {
 
     // MARK: - Start Date Button
 
-    @ViewBuilder
     private var startDateButton: some View {
         Button {
             router.route(to: .activityFilters(environment: $viewModel.environment))

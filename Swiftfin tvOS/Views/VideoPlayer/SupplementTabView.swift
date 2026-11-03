@@ -12,14 +12,14 @@ import UIKit
 /// `TabView` acts weird with horizontal stacks, workaround with manual supplement presentation
 struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
-    private let content: (any MediaPlayerSupplement) -> Content
-    private let data: [any MediaPlayerSupplement]
+    private let content: (any VideoPlayerSupplement) -> Content
+    private let data: [any VideoPlayerSupplement]
     private let selection: Binding<String?>
 
     init(
-        data: [any MediaPlayerSupplement],
+        data: [any VideoPlayerSupplement],
         selection: Binding<String?>,
-        @ViewBuilder content: @escaping (any MediaPlayerSupplement) -> Content
+        @ViewBuilder content: @escaping (any VideoPlayerSupplement) -> Content
     ) {
         self.data = data
         self.selection = selection
@@ -27,20 +27,21 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
     }
 
     private var selectionPresented: (String) -> Void = { _ in }
+
     private var focusExitHeading: UIFocusHeading = []
     private var focusExit: (() -> Void)?
 
     func onSelectionPresented(_ action: @escaping (String) -> Void) -> Self {
-        var copy = self
-        copy.selectionPresented = action
-        return copy
+        with(self) {
+            $0.selectionPresented = action
+        }
     }
 
     func onFocusExit(_ heading: UIFocusHeading, perform action: (() -> Void)?) -> Self {
-        var copy = self
-        copy.focusExitHeading = heading
-        copy.focusExit = action
-        return copy
+        with(self) {
+            $0.focusExitHeading = heading
+            $0.focusExit = action
+        }
     }
 
     func makeUIViewController(context: Context) -> ContainerViewController {
@@ -56,6 +57,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
         controller.focusExitHeading = focusExitHeading
         controller.focusExit = focusExit
         context.coordinator.container = controller
+
         context.coordinator.sync(
             data: data,
             selection: selection.wrappedValue,
@@ -103,27 +105,31 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
         private var hosts: [String: HostingController<Content>] = [:]
         private weak var visibleHost: HostingController<Content>?
         private var transitionID: Int = 0
+
         private var selectionPresented: (String) -> Void = { _ in }
 
         func sync(
-            data: [any MediaPlayerSupplement],
+            data: [any VideoPlayerSupplement],
             selection: String?,
             selectionPresented: @escaping (String) -> Void,
-            @ViewBuilder content: (any MediaPlayerSupplement) -> Content
+            @ViewBuilder content: (any VideoPlayerSupplement) -> Content
         ) {
             guard let container else { return }
 
             self.selectionPresented = selectionPresented
 
             let ids = Set(data.map(\.id))
+
             for id in hosts.keys.filter({ !ids.contains($0) }) {
                 guard let host = hosts.removeValue(forKey: id) else { continue }
 
                 remove(host)
+
                 if visibleHost === host {
                     visibleHost = nil
                 }
             }
+
             for supplement in data {
                 if let host = hosts[supplement.id] {
                     host.content = content(supplement)
@@ -134,6 +140,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
                     hosts[supplement.id] = host
                 }
             }
+
             select(selection, in: container)
         }
 

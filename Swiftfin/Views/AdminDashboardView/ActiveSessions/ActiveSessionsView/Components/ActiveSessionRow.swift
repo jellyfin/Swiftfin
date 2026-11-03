@@ -14,6 +14,9 @@ extension ActiveSessionsView {
 
     struct ActiveSessionRow: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @CurrentDate
         private var currentDate: Date
 
@@ -56,7 +59,6 @@ extension ActiveSessionsView {
             }
         }
 
-        @ViewBuilder
         private func activeSessionDetails(_ nowPlayingItem: BaseItemDto, playState: PlayerStateInfo) -> some View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(session.userName ?? L10n.unknown)
@@ -77,7 +79,6 @@ extension ActiveSessionsView {
             .font(.subheadline)
         }
 
-        @ViewBuilder
         private var idleSessionDetails: some View {
             VStack(alignment: .leading, spacing: 4) {
 
@@ -112,7 +113,7 @@ extension ActiveSessionsView {
         }
 
         var body: some View {
-            ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+            ListRow(insets: .init(vertical: 8, horizontal: viewLayout.edgePadding)) {
                 rowLeading
             } content: {
                 if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {

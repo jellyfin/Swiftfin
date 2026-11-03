@@ -63,7 +63,6 @@ extension ServerTaskDetailsView {
             return L10n.unknown
         }
 
-        @ViewBuilder
         private var contentView: some View {
             HStack {
                 VStack(alignment: .leading) {

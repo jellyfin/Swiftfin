@@ -58,7 +58,7 @@ func Section(
     @ViewBuilder footer: @escaping () -> some View,
     @LabeledContentBuilder learnMore: @escaping () -> AnyView
 ) -> some View {
-    InlinePlatformView {
+    PresentationContent {
         Section {
             content()
         } header: {
@@ -73,7 +73,7 @@ func Section(
                 )
             }
         }
-    } tvOSView: {
+    } largeView: {
         Section {
             content()
                 .focusedValue(\.formLearnMore, learnMore())

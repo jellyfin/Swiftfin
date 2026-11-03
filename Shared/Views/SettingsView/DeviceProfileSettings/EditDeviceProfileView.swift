@@ -12,6 +12,9 @@ extension CustomDeviceProfilesView {
 
     struct EditDeviceProfileView: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @StoredValue(.User.customDeviceProfiles)
         private var customDeviceProfiles
 
@@ -61,6 +64,7 @@ extension CustomDeviceProfilesView {
                         } else {
                             source?.wrappedValue = profile
                         }
+
                         UIDevice.impact(.light)
                         router.dismiss()
                     }
@@ -93,7 +97,6 @@ extension CustomDeviceProfilesView {
                 #endif
         }
 
-        @ViewBuilder
         private var contentView: some View {
             Form(systemImage: "doc") {
                 Section(L10n.behavior) {
@@ -141,7 +144,7 @@ extension CustomDeviceProfilesView {
                 Text(title)
             }
             .labeledContentStyle(.deviceProfile)
-            .if(UIDevice.isTV) { text in
+            .if(viewLayout.isLarge) { text in
                 text
                     .padding(.vertical)
             }

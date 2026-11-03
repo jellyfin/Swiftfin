@@ -26,7 +26,6 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
         }
     }
 
-    @ViewBuilder
     private var labelView: some View {
         HStack {
             title
@@ -50,7 +49,6 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     }
 
-    @ViewBuilder
     private var glassBody: some View {
         labelView
             .glassEffect(
@@ -62,7 +60,6 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             .listRowBackground(Color.clear)
     }
 
-    @ViewBuilder
     private var legacyBody: some View {
         labelView
             .background {
@@ -107,7 +104,7 @@ extension ListRowMenu where Subtitle == Text? {
 
     init(
         _ title: some WithText,
-        subtitle: (some WithText)?,
+        subtitle: some WithText?,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.title = title.textBody
@@ -139,6 +136,7 @@ extension ListRowMenu where Subtitle == Text, Content == AnyView {
     {
         self.title = title.textBody
         self.subtitle = Text(selection.wrappedValue.displayTitle)
+
         self.content = {
             Picker(selection: selection) {
                 _CaseIterablePickerContent<SelectionValue>()

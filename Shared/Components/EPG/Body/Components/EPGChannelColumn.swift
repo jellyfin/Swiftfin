@@ -13,6 +13,9 @@ import SwiftUI
 
 struct EPGChannelColumn: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.accentColor)
     private var accentColor
 
@@ -24,14 +27,12 @@ struct EPGChannelColumn: View {
     let bottomInset: CGFloat
     let action: (BaseItemDto) -> Void
 
-    private let layout = EPGLayout()
-
     var body: some View {
+        let layout = EPGLayout(viewLayout: viewLayout)
+
         VStack(spacing: 0) {
             ZStack {
-                #if os(iOS)
-                // On Now Button
-                if viewModel.now >= viewModel.startDate {
+                if !viewLayout.isLarge, viewModel.now >= viewModel.startDate {
                     Button {
                         proxy.scrollTo(
                             centering: layout.width(from: viewModel.startDate, to: viewModel.now)
@@ -51,7 +52,6 @@ struct EPGChannelColumn: View {
                     }
                     .buttonStyle(EPGButtonStyle())
                 }
-                #endif
             }
             .frame(width: layout.channelColumnWidth, height: layout.rulerHeight)
 
@@ -72,9 +72,7 @@ struct EPGChannelColumn: View {
             }
             .scrollIndicators(.hidden)
             .introspect(.scrollView, on: .iOS(.v18...), .tvOS(.v18...)) { scrollView in
-                #if os(tvOS)
-                scrollView.contentInsetAdjustmentBehavior = .never
-                #endif
+                scrollView.contentInsetAdjustmentBehavior = viewLayout.isLarge ? .never : .automatic
 
                 proxy.registerVertical(scrollView)
             }

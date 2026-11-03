@@ -14,6 +14,9 @@ import SwiftUI
 /// outside of a `List` or `Form`.
 struct ListRow<Leading: View, Content: View>: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @ViewContextContains(.isListRowSeparatorVisible)
     private var isListRowSeparatorVisible
 
@@ -41,7 +44,7 @@ struct ListRow<Leading: View, Content: View>: View {
         ZStack(alignment: .bottomTrailing) {
 
             Button(action: action) {
-                HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
+                HStack(alignment: .center, spacing: viewLayout.edgePadding) {
 
                     leading
 
@@ -53,17 +56,13 @@ struct ListRow<Leading: View, Content: View>: View {
             }
             .foregroundStyle(.primary, .secondary)
             .contentShape(.contextMenuPreview, Rectangle())
-            #if os(tvOS)
-            .buttonStyle(.card)
-            #endif
+            .if(viewLayout.isLarge) { $0.buttonStyle(.card) }
 
-            #if !os(tvOS)
-            if isListRowSeparatorVisible {
+            if !viewLayout.isLarge, isListRowSeparatorVisible {
                 Color.secondarySystemFill
                     .frame(width: contentSize.width, height: 1)
                     .padding(.trailing, insets.trailing)
             }
-            #endif
         }
     }
 }

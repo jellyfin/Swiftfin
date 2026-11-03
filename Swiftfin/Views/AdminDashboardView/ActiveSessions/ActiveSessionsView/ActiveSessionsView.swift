@@ -18,7 +18,6 @@ struct ActiveSessionsView: View {
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
 
-    @ViewBuilder
     private var activeWithinFilterButton: some View {
         Picker(selection: $viewModel.environment.activeWithinSeconds) {
             Label(
@@ -64,7 +63,6 @@ struct ActiveSessionsView: View {
         .pickerStyle(.menu)
     }
 
-    @ViewBuilder
     private var showInactiveSessionsButton: some View {
         Picker(selection: $viewModel.environment.showSessionType) {
             ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in
