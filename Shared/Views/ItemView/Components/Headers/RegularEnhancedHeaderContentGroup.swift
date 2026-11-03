@@ -128,6 +128,7 @@ extension ItemView {
             private var overlay: some View {
                 VStack(alignment: .leading, spacing: viewLayout.value(standard: 5, large: 30)) {
                     title
+
                     detailsRow
                 }
                 .focusSection()
