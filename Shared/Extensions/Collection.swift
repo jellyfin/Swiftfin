@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Algorithms
 import Foundation
 
 extension Collection {
@@ -24,5 +25,14 @@ extension Collection {
 
     func keyed<Key>(using keyPath: KeyPath<Element, Key>) -> [Key: Element] {
         Dictionary(uniqueKeysWithValues: map { ($0[keyPath: keyPath], $0) })
+    }
+
+    /// Splits a collection sorted by ascending key into elements at or before the value and those after it.
+    func split<Value: Comparable>(
+        after value: Value,
+        sortedBy key: (Element) -> Value
+    ) -> (atOrBefore: SubSequence, after: SubSequence) {
+        let boundary = partitioningIndex { key($0) > value }
+        return (self[..<boundary], self[boundary...])
     }
 }

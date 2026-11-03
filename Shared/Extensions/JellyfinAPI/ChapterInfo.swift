@@ -40,6 +40,10 @@ extension ChapterInfo {
         let preferredPosterDisplayType: PosterDisplayType = .landscape
         let systemImage: String = "film"
 
+        var startSeconds: Duration {
+            chapterInfo.startSeconds ?? .zero
+        }
+
         var subtitle: String?
 
         init(
@@ -66,7 +70,7 @@ extension ChapterInfo {
         }
 
         func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
-            let startTime = PosterAccessibility.duration(chapterInfo.startSeconds ?? .zero)
+            let startTime = PosterAccessibility.duration(startSeconds)
 
             return PosterAccessibility(
                 label: displayTitle,
@@ -89,16 +93,6 @@ extension ChapterInfo {
     }
 }
 
-extension [ChapterInfo.FullInfo] {
-
-    /// Finds the current chapter in a list sorted by start time, including after the final chapter starts.
-    func chapterIndex(at seconds: Duration) -> Int? {
-        guard !isEmpty else { return nil }
-
-        return lastIndex { ($0.chapterInfo.startSeconds ?? .zero) <= seconds } ?? startIndex
-    }
-}
-
 // TODO: have label match what BaseItemDto does in PosterCollectionView
 //       - different height, causes clipping
 
@@ -117,7 +111,7 @@ private struct ChapterPosterLabel: View {
                 .foregroundStyle(.primary)
                 .lineLimit(1)
 
-            Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+            Text(chapter.startSeconds, format: .runtime)
                 .font(viewLayout.value(standard: .subheadline.weight(.semibold), large: .caption))
                 .foregroundStyle(Color(UIColor.systemBlue))
                 .padding(.horizontal, 4)
