@@ -30,11 +30,16 @@ extension UserDefaults {
     // MARK: User
 
     static var currentUserSuite: UserDefaults {
+        userSuite(id: currentUserSuiteName)
+    }
+
+    fileprivate static var currentUserSuiteName: String {
         switch Defaults[.lastSignedInUserID] {
         case .signedOut:
-            userSuite(id: "default")
+            "default"
+
         case let .signedIn(userID):
-            userSuite(id: userID)
+            userID
         }
     }
 
@@ -45,6 +50,8 @@ extension UserDefaults {
 
 private extension Defaults.Keys {
 
+    static let userKeys = DefaultsKeyCache()
+
     static func AppKey<Value: Defaults.Serializable>(_ name: String) -> Key<Value?> {
         Key(name, suite: .appSuite)
     }
@@ -54,7 +61,7 @@ private extension Defaults.Keys {
     }
 
     static func UserKey<Value: Defaults.Serializable>(_ name: String, default: Value) -> Key<Value> {
-        Key(name, default: `default`, suite: .currentUserSuite)
+        userKeys.key(name, default: `default`, suiteName: UserDefaults.currentUserSuiteName)
     }
 }
 
@@ -252,14 +259,6 @@ extension Defaults.Keys {
     }
 
     enum VideoPlayer {
-
-        static var appMaximumBitrate: Key<PlaybackBitrate> {
-            UserKey("appMaximumBitrate", default: .max)
-        }
-
-        static var appMaximumBitrateTest: Key<PlaybackBitrateTestSize> {
-            UserKey("appMaximumBitrateTest", default: .regular)
-        }
 
         static var autoPlayEnabled: Key<Bool> {
             UserKey("autoPlayEnabled", default: true)

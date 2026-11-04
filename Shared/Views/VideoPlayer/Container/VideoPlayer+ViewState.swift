@@ -278,7 +278,11 @@ extension VideoPlayer {
         }
 
         var isPresentingProgress: Bool {
-            visibleElements.contains(.progress)
+            guard !isGestureLocked else {
+                return false
+            }
+
+            return isScrubbing || presentation == .progress || presentation == .controls
         }
 
         var isProgressBarFocused: Bool {
@@ -348,14 +352,23 @@ extension VideoPlayer {
         private var scrubPosition: Duration? {
             didSet {
                 if (oldValue == nil) != (scrubPosition == nil) {
+                    freezePlaybackTimeIfHidden()
                     refreshAutoDismiss()
                 }
             }
         }
 
+        private var hiddenPlaybackSeconds: Duration = .zero
+
+        /// Keep hidden progress mounted without observing the live timeline.
+        /// Playback actions and new scrubs must still use the session's time.
+        var playbackSeconds: Duration {
+            isPresentingProgress ? mediaSession?.seconds ?? .zero : hiddenPlaybackSeconds
+        }
+
         var scrubbedSeconds: Duration {
             get {
-                scrubPosition ?? mediaSession?.seconds ?? .zero
+                scrubPosition ?? playbackSeconds
             }
             set {
                 guard isScrubbing else { return }
@@ -479,6 +492,8 @@ extension VideoPlayer {
         func connect(mediaSession: MediaSession) {
             sessionObservations.removeAll()
             self.mediaSession = mediaSession
+            freezePlaybackTimeIfHidden()
+
             var previousActivity: (MediaSession.Activity?, Bool)?
 
             let observations = [
@@ -500,6 +515,7 @@ extension VideoPlayer {
                     }
 
                     cancelScrub()
+                    freezePlaybackTimeIfHidden()
 
                     if let rate = originalPlaybackRate {
                         self.mediaSession?.rate = rate
@@ -561,6 +577,7 @@ extension VideoPlayer {
             #endif
 
             mediaSession = nil
+            hiddenPlaybackSeconds = .zero
         }
 
         func fillVideo() {
@@ -686,7 +703,9 @@ extension VideoPlayer {
             let wasPresentingSupplement = isPresentingSupplement
             let wasPresentingProgress = isPresentingProgress
             let previousSupplementID = selectedSupplementID
+
             self.presentation = presentation
+            freezePlaybackTimeIfHidden()
 
             if selectedSupplementID != guestSupplement?.id {
                 guestSupplement = nil
@@ -709,6 +728,14 @@ extension VideoPlayer {
             #endif
 
             refreshAutoDismiss()
+        }
+
+        private func freezePlaybackTimeIfHidden() {
+            guard !isPresentingProgress else {
+                return
+            }
+
+            hiddenPlaybackSeconds = mediaSession?.seconds ?? .zero
         }
     }
 }

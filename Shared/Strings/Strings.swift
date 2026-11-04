@@ -424,8 +424,6 @@ internal enum L10n {
   internal static let controlOtherUsers = L10n.tr("Localizable", "controlOtherUsers", fallback: "Control other users")
   /// Control shared devices
   internal static let controlSharedDevices = L10n.tr("Localizable", "controlSharedDevices", fallback: "Control shared devices")
-  /// Corrupted frames
-  internal static let corruptedFrames = L10n.tr("Localizable", "corruptedFrames", fallback: "Corrupted frames")
   /// Count
   internal static let count = L10n.tr("Localizable", "count", fallback: "Count")
   /// Country

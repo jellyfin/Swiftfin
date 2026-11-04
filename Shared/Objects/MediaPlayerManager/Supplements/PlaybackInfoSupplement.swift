@@ -97,20 +97,13 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
 
         @ViewBuilder
         private var videoInfoSection: some View {
-            if videoStream != nil || (mediaSession.player as? any VideoMediaPlayer) != nil {
+            if let width = videoStream?.width, let height = videoStream?.height {
                 Text(L10n.video)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .padding(.vertical, 4)
 
-                if let width = videoStream?.width, let height = videoStream?.height {
-                    LabeledContent(L10n.videoResolution, value: height.description.multiply(by: width.description))
-                }
-
-                if let proxy = mediaSession.player as? any VideoMediaPlayer {
-                    LabeledContent(L10n.droppedFrames, value: proxy.videoState.droppedFrames.description)
-                    LabeledContent(L10n.corruptedFrames, value: proxy.videoState.corruptedFrames.description)
-                }
+                LabeledContent(L10n.videoResolution, value: height.description.multiply(by: width.description))
             }
         }
 
