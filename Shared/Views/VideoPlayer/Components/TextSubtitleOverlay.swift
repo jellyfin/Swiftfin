@@ -37,13 +37,13 @@ struct TextSubtitleOverlay: View {
 }
 
 private struct TextSubtitleOverlayContent: View {
-    
+
     @Default(.VideoPlayer.Subtitle.captionProfileID)
     private var profileID
 
     @Environment(\.scenePhase)
     private var scenePhase
-    
+
     @AdaptiveLayout
     private var viewLayout
 
@@ -51,7 +51,7 @@ private struct TextSubtitleOverlayContent: View {
     private var captionStyle = CaptionStyle.current
     @State
     private var profiles = CaptionProfile.availableForCurrentPlatform
-    
+
     let snapshot: TextSubtitleSnapshot
     let videoLayout: VideoPlayer.VideoLayout
 
