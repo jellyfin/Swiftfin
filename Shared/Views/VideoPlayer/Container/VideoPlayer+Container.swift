@@ -679,6 +679,10 @@ extension VideoPlayer {
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
 
+            #if os(tvOS)
+            view.window?.addGestureRecognizer(windowMenuGesture)
+            #endif
+
             if !didInitiallyAppear {
                 viewState.showControls()
                 setupPlayerView()
@@ -906,6 +910,10 @@ extension VideoPlayer {
         override func viewDidDisappear(_ animated: Bool) {
             super.viewDidDisappear(animated)
 
+            #if os(tvOS)
+            windowMenuGesture.view?.removeGestureRecognizer(windowMenuGesture)
+            #endif
+
             // Covering the player with a full-screen sheet does not end playback.
             if isDismissing {
                 didDismiss()
@@ -933,6 +941,13 @@ extension VideoPlayer {
         // MARK: - tvOS
 
         #if os(tvOS)
+        private lazy var windowMenuGesture: UITapGestureRecognizer = {
+            let gesture = UITapGestureRecognizer()
+            gesture.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
+            gesture.delegate = self
+            return gesture
+        }()
+
         override var preferredFocusEnvironments: [UIFocusEnvironment] {
             if viewState.isSupplementFocusPending {
                 return [supplementContainerViewController]
@@ -1209,5 +1224,20 @@ extension VideoPlayer.UIContainerViewController {
     }
 
     typealias OnPressEvent = EventPublisher<PressEvent>
+}
+
+extension VideoPlayer.UIContainerViewController: UIGestureRecognizerDelegate {
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive press: UIPress) -> Bool {
+        let focusedView = UIFocusSystem.focusSystem(for: view)?.focusedItem as? UIView
+        return focusedView?.isDescendant(of: view) != true
+    }
+
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        true
+    }
 }
 #endif
