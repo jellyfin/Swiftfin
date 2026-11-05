@@ -81,6 +81,7 @@ jobs:
     needs: resolve_platform
     runs-on: xcode-27
     strategy:
+      fail-fast: false
       matrix: ${{ fromJSON(needs.resolve_platform.outputs.matrix) }}
     env:
       XCODE_VERSION: "27.1"

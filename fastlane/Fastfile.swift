@@ -228,10 +228,10 @@ class Fastfile: LaneFile {
             )
         } else {
             let testFlightBuild: Int = laneContextValue(for: "LATEST_TESTFLIGHT_BUILD_NUMBER") ?? 0
-            resolvedBuild = "\(testFlightBuild)"
+            resolvedBuild = "\(testFlightBuild + 1)"
 
             incrementBuildNumber(
-                buildNumber: .userDefined("\(testFlightBuild + 1)"),
+                buildNumber: .userDefined(resolvedBuild),
                 xcodeproj: .userDefined(xcodeProject)
             )
         }
