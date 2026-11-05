@@ -41,6 +41,12 @@ public protocol DeliverfileProtocol: AnyObject {
     /// Path to the folder containing the screenshots
     var screenshotsPath: String? { get }
 
+    /// Path to the folder containing the app clip header images
+    var appClipHeaderImagesPath: String? { get }
+
+    /// Path to the folder containing the app clip default experience metadata
+    var appClipDefaultExperienceMetadataPath: String? { get }
+
     /// Path to the folder containing localized App Preview videos
     var appPreviewsPath: String? { get }
 
@@ -119,7 +125,7 @@ public protocol DeliverfileProtocol: AnyObject {
     /// The name of your Developer Portal team if you're in multiple teams
     var devPortalTeamName: String? { get }
 
-    /// The provider short name to be used with the iTMSTransporter to identify your team. This value will override the automatically detected provider short name. To get provider short name run `pathToXcode.app/Contents/Applications/Application\ Loader.app/Contents/itms/bin/iTMSTransporter -m provider -u 'USERNAME' -p 'PASSWORD' -account_type itunes_connect -v off`. The short names of providers should be listed in the second column
+    /// The provider short name to be used with the iTMSTransporter to identify your team. This value will override the automatically detected provider short name. To get provider short name run `xcrun iTMSTransporter -m provider -u 'USERNAME' -p 'PASSWORD' -account_type itunes_connect -v off`. The short names of providers should be listed in the second column
     var itcProvider: String? { get }
 
     /// The provider public ID to be used with altool (--provider-public-id). This value will override the automatically detected provider value for altool uploads. Required after Xcode 26 when your account is associated with multiple providers and using username/app-password authentication
@@ -167,8 +173,14 @@ public protocol DeliverfileProtocol: AnyObject {
     /// Metadata: A hash containing the review information
     var appReviewInformation: [String: Any]? { get }
 
+    /// Metadata: A hash containing the app clip review information
+    var appClipReviewInformation: [String: Any]? { get }
+
     /// Metadata: Path to the app review attachment file
     var appReviewAttachmentFile: String? { get }
+
+    /// Metadata: Path to the routing app coverage file (`.geojson`) that is required for routing apps
+    var routingAppCoverageFile: String? { get }
 
     /// Metadata: The localised app description
     var description: [String: Any]? { get }
@@ -208,6 +220,12 @@ public protocol DeliverfileProtocol: AnyObject {
 
     /// Should precheck check in-app purchases?
     var precheckIncludeInAppPurchases: Bool { get }
+
+    /// The localized subtitle for the default app clip experience
+    var appClipDefaultExperienceSubtitle: [String: Any]? { get }
+
+    /// Action for the default app clip experience (OPEN, VIEW, PLAY)
+    var appClipDefaultExperienceAction: String? { get }
 
     /// The (spaceship) app ID of the app you want to use/modify
     var app: Int? { get }
@@ -263,6 +281,14 @@ public extension DeliverfileProtocol {
     }
 
     var screenshotsPath: String? {
+        return nil
+    }
+
+    var appClipHeaderImagesPath: String? {
+        return nil
+    }
+
+    var appClipDefaultExperienceMetadataPath: String? {
         return nil
     }
 
@@ -434,7 +460,15 @@ public extension DeliverfileProtocol {
         return nil
     }
 
+    var appClipReviewInformation: [String: Any]? {
+        return nil
+    }
+
     var appReviewAttachmentFile: String? {
+        return nil
+    }
+
+    var routingAppCoverageFile: String? {
         return nil
     }
 
@@ -490,6 +524,14 @@ public extension DeliverfileProtocol {
         return true
     }
 
+    var appClipDefaultExperienceSubtitle: [String: Any]? {
+        return nil
+    }
+
+    var appClipDefaultExperienceAction: String? {
+        return nil
+    }
+
     var app: Int? {
         return nil
     }
@@ -497,4 +539,4 @@ public extension DeliverfileProtocol {
 
 // Please don't remove the lines below
 // They are used to detect outdated files
-// FastlaneRunnerAPIVersion [0.9.145]
+// FastlaneRunnerAPIVersion [0.9.158]
