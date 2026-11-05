@@ -257,7 +257,7 @@ jobs:
             "profileName64:$profile_name_base64"
             "xcodeVersion:$resolved_xcode_version"
             "changelogFile:$changelog_file"
-            "scheme:\"$SCHEME\""
+            "scheme:$SCHEME"
           )
 
           if [ -n "$payload_build" ]; then
