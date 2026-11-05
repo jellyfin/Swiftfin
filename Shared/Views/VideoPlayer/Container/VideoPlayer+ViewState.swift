@@ -190,6 +190,18 @@ extension VideoPlayer {
         var isBeingDismissed = false
         var isCompact: Bool = false
 
+        var isTabletop: Bool = false {
+            didSet {
+                guard isTabletop != oldValue else { return }
+
+                if isTabletop {
+                    showControls()
+                } else {
+                    refreshAutoDismiss()
+                }
+            }
+        }
+
         var isScrubbing: Bool {
             scrubPosition != nil
         }
@@ -653,6 +665,7 @@ extension VideoPlayer {
 
         private var canAutoDismiss: Bool {
             guard presentation != .hidden,
+                  !isTabletop,
                   !isScrubbing,
                   !isPresentingSupplement,
                   interactions.isEmpty,
