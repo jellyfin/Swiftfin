@@ -12,7 +12,7 @@ class Fastfile: LaneFile {
 
     // MARK: - Version
     
-    private struct Version: CustomStringConvertible, Equatable {
+    private struct Version: CustomStringConvertible, Comparable {
 
         enum BumpType {
             case major
@@ -65,6 +65,10 @@ class Fastfile: LaneFile {
             } else {
                 "\(major).\(minor).\(patch)"
             }
+        }
+
+        static func < (lhs: Self, rhs: Self) -> Bool {
+            (lhs.major, lhs.minor, lhs.patch) < (rhs.major, rhs.minor, rhs.patch)
         }
     }
     
@@ -176,7 +180,7 @@ class Fastfile: LaneFile {
                 fail("invalid provided version '\(providedVersion)'")
             }
             
-            resolvedVersion = providedVersion
+            resolvedVersion = version.description
             
             incrementVersionNumber(
                 versionNumber: .userDefined(version.description),
@@ -209,7 +213,8 @@ class Fastfile: LaneFile {
                 fail("invalid version '\(testFlightVersion)'")
             }
             
-            if let liveVersion, Version(string: liveVersion) == version {
+            if let liveVersion = liveVersion.flatMap(Version.init(string:)), liveVersion >= version {
+                version = liveVersion
                 version.bump(.minor)
             }
             
@@ -231,7 +236,12 @@ class Fastfile: LaneFile {
                 xcodeproj: .userDefined(xcodeProject)
             )
         } else {
-            let testFlightBuild: Int = laneContextValue(for: "LATEST_TESTFLIGHT_BUILD_NUMBER") ?? 0
+            let testFlightBuild = latestTestflightBuildNumber(
+                appIdentifier: bundleIdentifier,
+                version: .userDefined(resolvedVersion),
+                platform: appPlatform,
+                initialBuildNumber: 0
+            )
             resolvedBuild = "\(testFlightBuild + 1)"
 
             incrementBuildNumber(
