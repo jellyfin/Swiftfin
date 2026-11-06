@@ -6,17 +6,6 @@
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIcons</key>
-	<dict>
-		<key>CFBundleAlternateIcons</key>
-		<array>
-			<string>AppIcon-dark-jellyfin</string>
-			<string>AppIcon-dark-green</string>
-			<string>AppIcon-dark-orange</string>
-			<string>AppIcon-dark-red</string>
-			<string>AppIcon-dark-yellow</string>
-		</array>
-	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
