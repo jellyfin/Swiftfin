@@ -211,11 +211,12 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             .makeGroups(environment: .default)
 
         case .series:
-            try await ItemTypeContentGroupProvider(
-                itemTypes: [.season],
-                parent: item
+            PosterGroup(
+                id: "\(item.id ?? "unknown")-\(BaseItemKind.season.rawValue)",
+                library: SeasonLibrary(parent: item),
+                displayTitle: BaseItemKind.season.pluralDisplayTitle,
+                posterDisplayType: BaseItemKind.season.preferredPosterDisplayType
             )
-            .makeGroups(environment: .default)
 
         case .channel, .liveTvChannel, .tvChannel:
             PosterGroup(
