@@ -7,7 +7,9 @@
 //
 
 import Combine
+import FactoryKit
 import Foundation
+import Get
 import JellyfinAPI
 import Pulse
 
@@ -38,8 +40,17 @@ final class UserSession {
 
         // Connection changes replace only the transport, never the user session
         // or the item store retained by views and playback.
+        let accessToken = user.accessToken
         let client = JellyfinClient(
-            configuration: .swiftfinConfiguration(url: url, accessToken: user.accessToken),
+            configuration: .swiftfinConfiguration(url: url, accessToken: accessToken),
+            delegate: AuthenticationDelegate { [weak self] in
+                guard let self else { return true }
+
+                return await Container.shared.userSessionManager().handleUnauthorizedResponse(
+                    from: self,
+                    accessToken: accessToken
+                )
+            },
             sessionConfiguration: .swiftfin,
             sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
         )
@@ -94,5 +105,18 @@ final class UserSession {
 
         items.invalidate()
         itemActionErrors.send(completion: .finished)
+    }
+}
+
+private struct AuthenticationDelegate: APIClientDelegate {
+
+    let onUnauthorized: () async -> Bool
+
+    func client(_ client: APIClient, shouldRetry task: URLSessionTask, error: Error, attempts: Int) async throws -> Bool {
+        if case APIError.unacceptableStatusCode(401) = error, await onUnauthorized() {
+            // The session has ended. Do not present its request errors over the sign-in screen.
+            throw CancellationError()
+        }
+        return false
     }
 }

@@ -10,6 +10,7 @@ import Combine
 import Defaults
 import FactoryKit
 import Foundation
+import Get
 import JellyfinAPI
 import KeychainSwift
 import Logging
@@ -40,6 +41,7 @@ final class UserSessionManager: ObservableObject {
 
         case backgroundTimeout
         case explicit
+        case authenticationExpired
     }
 
     enum AuthenticationError: Error {
@@ -55,6 +57,17 @@ final class UserSessionManager: ObservableObject {
 
     @Published
     private(set) var currentSession: UserSession?
+
+    struct ReauthenticationRequest {
+        let server: ServerState
+        let user: UserState
+    }
+
+    @Published
+    private(set) var reauthenticationRequest: ReauthenticationRequest?
+
+    @MainActor
+    private var authenticationChecks: [ObjectIdentifier: Task<Bool, Never>] = [:]
 
     @Published
     private(set) var pendingDeepLink: DeepLink?
@@ -102,6 +115,7 @@ final class UserSessionManager: ObservableObject {
 
     @MainActor
     func signIn(userID: String) async throws {
+        reauthenticationRequest = nil
         Defaults[.lastSignedInUserID] = .signedIn(userID: userID)
         try await updateCurrentSession(with: resolveStoredSession())
 
@@ -121,6 +135,45 @@ final class UserSessionManager: ObservableObject {
             "Signed out current user",
             metadata: ["reason": .string(String(describing: reason))]
         )
+    }
+
+    /// Confirm a rejected token without treating permission or connection failures as sign-out.
+    @MainActor
+    func handleUnauthorizedResponse(from session: UserSession, accessToken: String) async -> Bool {
+        guard currentSession === session, session.user.accessToken == accessToken else { return true }
+
+        let id = ObjectIdentifier(session)
+        if let check = authenticationChecks[id] {
+            return await check.value
+        }
+
+        let check = Task { @MainActor in
+            do {
+                // This uses a separate client so a failed check cannot recursively trigger another check.
+                _ = try await session.user.getUserData(server: session.server)
+            } catch APIError.unacceptableStatusCode(401) {
+                guard currentSession === session, session.user.accessToken == accessToken else { return true }
+
+                await signOut(reason: .authenticationExpired)
+
+                if currentSession == nil, Defaults[.lastSignedInUserID] == .signedOut {
+                    reauthenticationRequest = .init(server: session.server, user: session.user)
+                }
+                return true
+            } catch {
+                // Keep the session when the authentication check cannot reach the server.
+            }
+            return currentSession !== session || session.user.accessToken != accessToken
+        }
+        authenticationChecks[id] = check
+        defer { authenticationChecks[id] = nil }
+        return await check.value
+    }
+
+    @MainActor
+    func consumeReauthenticationRequest() -> ReauthenticationRequest? {
+        defer { reauthenticationRequest = nil }
+        return reauthenticationRequest
     }
 
     @MainActor
