@@ -105,7 +105,6 @@ class Fastfile: LaneFile {
         let requiredKeys = [
             "keyID",
             "issuerID",
-            "keyContents",
             "scheme",
             "codeSign64",
             "profileName64"
@@ -126,12 +125,17 @@ class Fastfile: LaneFile {
         guard
               let keyID = requiredOptions["keyID"],
               let issuerID = requiredOptions["issuerID"],
-              let keyContents = requiredOptions["keyContents"],
               let scheme = requiredOptions["scheme"],
               let codeSign64 = requiredOptions["codeSign64"],
               let profileName64 = requiredOptions["profileName64"] else {
             fail("internal validation error")
         }
+
+        guard let keyContents = ProcessInfo.processInfo.environment["FL_KEY_CONTENTS"]?.trimOption() else {
+            fail("missing or empty environment variable: FL_KEY_CONTENTS")
+        }
+
+        let normalizedKeyContents = keyContents.components(separatedBy: .whitespacesAndNewlines).joined()
 
         let sdk = sdk(forScheme: scheme)
         let appPlatform = appPlatform(forSDK: sdk)
@@ -151,7 +155,7 @@ class Fastfile: LaneFile {
         appStoreConnectApiKey(
             keyId: keyID,
             issuerId: .userDefined(issuerID),
-            keyContent: .userDefined(keyContents),
+            keyContent: .userDefined(normalizedKeyContents),
             isKeyContentBase64: true,
             duration: 1200,
             inHouse: false
@@ -246,6 +250,7 @@ class Fastfile: LaneFile {
             skipArchive: .userDefined(false),
             sdk: .userDefined(sdk),
             xcargs: .userDefined("-skipMacroValidation"),
+            buildTimingSummary: true,
             skipProfileDetection: false,
             clonedSourcePackagesPath: .userDefined(sourcePackagesPath),
             disablePackageAutomaticUpdates: true
@@ -261,6 +266,11 @@ class Fastfile: LaneFile {
         let ipa = "\(outputDirectory)/\(sanitizedName(for: scheme)).ipa"
         guard FileManager.default.fileExists(atPath: ipa) else {
             fail("couldn't find ipa file")
+        }
+
+        if options["skipUpload"]?.trimOption()?.lowercased() == "true" {
+            puts(message: "Built \(scheme) \(resolvedVersion) (\(resolvedBuild)). Skipping TestFlight upload.")
+            return
         }
         
         puts(message: "Uploading \(scheme) \(resolvedVersion) (\(resolvedBuild))")
@@ -296,6 +306,7 @@ class Fastfile: LaneFile {
             archivePath: .userDefined("fastlane/build/\(sanitizedName(for: scheme)).xcarchive"),
             sdk: .userDefined(sdk(forScheme: scheme)),
             xcargs: .userDefined("-skipMacroValidation"),
+            buildTimingSummary: true,
             skipProfileDetection: true,
             clonedSourcePackagesPath: .userDefined(sourcePackagesPath),
             disablePackageAutomaticUpdates: true
