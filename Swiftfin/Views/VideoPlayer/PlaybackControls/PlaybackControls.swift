@@ -84,8 +84,8 @@ extension VideoPlayer {
                         .transition(.offset(y: -20).combined(with: .opacity))
                 }
             }
-            .environmentObject(viewState.toastProxy)
             .modifier(VideoPlayer.KeyCommandsModifier())
+            .environmentObject(viewState.toastProxy)
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.25), value: viewState.presentation)
             .animation(.easeInOut(duration: 0.2), value: viewState.toastProxy.isPresenting)
