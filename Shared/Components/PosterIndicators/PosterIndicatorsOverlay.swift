@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -15,8 +14,8 @@ struct PosterIndicatorsOverlay: View {
     @AdaptiveLayout
     private var viewLayout
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @Environment(\.isSelected)
     private var isSelected
@@ -82,7 +81,7 @@ struct PosterIndicatorsOverlay: View {
         }
 
         if showsPlayedIndicator {
-            QuadrantItem(color: accentColor) {
+            QuadrantItem(color: theme.accentColor) {
                 Text(Image(systemName: "checkmark"))
                     .fontWeight(.bold)
                     .accessibilityLabel(L10n.played)
@@ -130,8 +129,8 @@ struct PosterSelectionOverlay: View {
     @AdaptiveLayout
     private var viewLayout
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @Environment(\.isSelected)
     private var isSelected
@@ -139,7 +138,7 @@ struct PosterSelectionOverlay: View {
     var body: some View {
         if isSelected {
             ContainerRelativeShape()
-                .stroke(accentColor, lineWidth: viewLayout.selectionBorderWidth)
+                .stroke(theme.accentColor, lineWidth: viewLayout.selectionBorderWidth)
                 .clipped()
                 .accessibilityHidden(true)
         }

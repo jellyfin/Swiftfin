@@ -24,8 +24,6 @@ struct SelectUserView: View {
     @AdaptiveLayout
     private var viewLayout
 
-    @Default(.accentColor)
-    private var accentColor
     @Default(.selectUserUseSplashscreen)
     private var selectUserUseSplashscreen
     @Default(.selectUserAllServersSplashscreen)

@@ -38,6 +38,7 @@ struct FadeContentTransitionView<Item: Hashable, Content: View>: PlatformViewRep
             duration: duration,
             debounce: debounce,
             content: content,
+            environment: context.environment,
             in: uiView
         )
     }
@@ -62,7 +63,7 @@ struct FadeContentTransitionView<Item: Hashable, Content: View>: PlatformViewRep
     final class Coordinator {
 
         private var currentContentID: AnyHashable?
-        private var currentContent: HostedFadeContentTransitionContent<HostingRootView<Content>>?
+        private var currentContent: HostedFadeContentTransitionContent<HostingRootView<HostingEnvironmentView<Content>>>?
         private var updateGeneration = 0
         private var debounceUpdate: DispatchWorkItem?
 
@@ -71,6 +72,7 @@ struct FadeContentTransitionView<Item: Hashable, Content: View>: PlatformViewRep
             duration: TimeInterval,
             debounce: TimeInterval?,
             content: @escaping (Item) -> Content,
+            environment: EnvironmentValues,
             in view: UIFadeContentTransitionView
         ) {
             updateGeneration += 1
@@ -88,7 +90,7 @@ struct FadeContentTransitionView<Item: Hashable, Content: View>: PlatformViewRep
                 self.applyUpdate(
                     id: id,
                     duration: duration,
-                    content: content(item),
+                    content: HostingEnvironmentView(content: content(item), environment: environment),
                     generation: generation,
                     in: view
                 )
@@ -115,7 +117,7 @@ struct FadeContentTransitionView<Item: Hashable, Content: View>: PlatformViewRep
         private func applyUpdate(
             id: AnyHashable,
             duration: TimeInterval,
-            content: Content,
+            content: HostingEnvironmentView<Content>,
             generation: Int,
             in view: UIFadeContentTransitionView
         ) {

@@ -7,13 +7,12 @@
 //
 
 import Combine
-import Defaults
 import SwiftUI
 
 struct ConnectToServerView: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @FocusState
     private var isURLFocused: Bool
@@ -94,7 +93,7 @@ struct ConnectToServerView: View {
             .fontWeight(.semibold)
             .backport
             .buttonStyle(.glassProminent.shadow(false))
-            .tint(accentColor)
+            .tint(theme.accentColor)
             #if os(iOS)
             .controlSize(.large)
             #endif

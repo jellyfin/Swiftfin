@@ -6,15 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 import JellyfinAPI
 import SwiftUI
 
 struct QuickConnectAuthorizeView: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @Router
     private var router
@@ -103,7 +102,7 @@ struct QuickConnectAuthorizeView: View {
                 .fontWeight(.semibold)
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
+                .tint(theme.accentColor)
                 #if os(iOS)
                 .controlSize(.large)
                 #endif

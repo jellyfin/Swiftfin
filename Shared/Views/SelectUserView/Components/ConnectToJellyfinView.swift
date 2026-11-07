@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension SelectUserView {
@@ -16,8 +15,8 @@ extension SelectUserView {
         @AdaptiveLayout
         private var viewLayout
 
-        @Default(.accentColor)
-        private var accentColor
+        @AppTheme
+        private var theme
 
         @Router
         private var router
@@ -54,7 +53,7 @@ extension SelectUserView {
                 .fontWeight(.semibold)
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
+                .tint(theme.accentColor)
                 #if os(iOS)
                 .controlSize(.large)
                 .frame(minHeight: viewLayout.controlHeight)

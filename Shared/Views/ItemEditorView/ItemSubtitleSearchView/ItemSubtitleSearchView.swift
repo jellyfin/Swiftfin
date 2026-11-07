@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -15,8 +14,8 @@ struct ItemSubtitleSearchView: View {
     @AdaptiveLayout
     private var viewLayout
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var viewModel: ItemSubtitlesViewModel
@@ -65,7 +64,7 @@ struct ItemSubtitleSearchView: View {
                     .disabled(selectedSubtitles.isEmpty)
             } else {
                 Button(L10n.save, action: save)
-                    .foregroundStyle(accentColor.overlayColor, accentColor)
+                    .foregroundStyle(theme.accentColor.overlayColor, theme.accentColor)
                     .disabled(selectedSubtitles.isEmpty)
                     .backport
                     .buttonStyle(.glassProminent)
@@ -99,7 +98,7 @@ struct ItemSubtitleSearchView: View {
                     .fontWeight(.semibold)
                     .backport
                     .buttonStyle(.glassProminent.shadow(false))
-                    .tint(accentColor)
+                    .tint(theme.accentColor)
                 }
             }
 

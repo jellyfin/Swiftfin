@@ -69,20 +69,7 @@ private extension Defaults.Keys {
 
 extension Defaults.Keys {
 
-    /// The _real_ accent color key to be used.
-    ///
-    /// This is set externally whenever the app or user accent colors change,
-    /// depending on the current app state.
-    static var accentColor: Key<Color> = AppKey("accentColor", default: .jellyfinPurple)
-
-    /// The _real_ appearance key to be used.
-    ///
-    /// This is set externally whenever the app or user appearances change,
-    /// depending on the current app state.
-    static let appearance: Key<AppAppearance> = AppKey("appearance", default: .system)
-
     /// The appearance default for non-user contexts.
-    /// /// Only use for `set`, use `appearance` for `get`.
     static let appAppearance: Key<AppAppearance> = AppKey("appAppearance", default: .system)
 
     static let backgroundSignOutInterval: Key<TimeInterval> = AppKey("backgroundSignOutInterval", default: 3600)
@@ -104,16 +91,14 @@ extension Defaults.Keys {
 
 extension Defaults.Keys {
 
-    /// The accent color default for user contexts.
-    /// Only use for `set`, use `accentColor` for `get`.
-    static var userAccentColor: Key<Color> {
-        UserKey("userAccentColor", default: .jellyfinPurple)
+    /// The saved accent color for a specific user.
+    static func userAccentColor(userID: String) -> Key<Color> {
+        userKeys.key("userAccentColor", default: .jellyfinPurple, suiteName: userID)
     }
 
-    /// The appearance default for user contexts.
-    /// /// Only use for `set`, use `appearance` for `get`.
-    static var userAppearance: Key<AppAppearance> {
-        UserKey("userAppearance", default: .system)
+    /// The saved appearance for a specific user.
+    static func userAppearance(userID: String) -> Key<AppAppearance> {
+        userKeys.key("userAppearance", default: .system, suiteName: userID)
     }
 
     enum Customization {
