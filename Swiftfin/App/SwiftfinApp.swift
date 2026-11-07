@@ -22,7 +22,7 @@ struct SwiftfinApp: App {
 
         SwiftfinSpotlight().addSwiftfinToSpotlight()
     }
-    
+
     // TODO: move all these to single view and ViewModifiers
 
     var body: some Scene {
