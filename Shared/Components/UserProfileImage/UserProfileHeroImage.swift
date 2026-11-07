@@ -23,7 +23,9 @@ struct UserProfileHeroImage: View {
     @State
     private var isPresentingOptions: Bool = false
 
-    let user: UserDto
+    @SharedUser
+    var user: UserDto
+
     let source: ImageSource
     var pipeline: ImagePipeline = .Swiftfin.posters
     let onUpdate: () -> Void

@@ -95,9 +95,7 @@ final class MediaPlayerManager {
 
             switch state {
             case .preparing, .playback:
-                if nowPlayingObservation == nil {
-                    nowPlayingObservation = nowPlayableObserver.observe(session)
-                }
+                nowPlayingObservation ?= nowPlayableObserver.observe(session)
 
             case .initial, .loadingItem, .error:
                 nowPlayingObservation = nil

@@ -58,7 +58,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         case error
     }
 
-    @Published
+    @SharedUser
     private(set) var user: UserDto
     @SharedBaseItems
     var libraries: [BaseItemDto] = []
@@ -67,20 +67,11 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         self.user = user
 
         super.init()
-
-        Notifications[.didChangeUserProfile]
-            .publisher
-            .sink { [weak self] userID in
-                guard let self, userID == self.user.id else { return }
-
-                self.refresh()
-            }
-            .store(in: &cancellables)
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        user = try await user.getFullUser(userSession: requireUserSession())
+        $user = try await requireUserSession().getUser(id: $user.id)
     }
 
     @Function(\Action.Cases.getLibraries)
@@ -100,12 +91,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         let request = Paths.updateUserPolicy(userID: userID, policy)
         try await send(request)
 
-        user.policy = policy
-
-        let currentUser = try authenticatedUser
-        if userID == currentUser.id {
-            currentUser.data.policy = policy
-        }
+        $user = try await requireUserSession().getUser(id: userID)
 
         events.send(.updated)
     }
@@ -119,12 +105,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         let request = Paths.updateUserConfiguration(userID: userID, configuration)
         try await send(request)
 
-        user.configuration = configuration
-
-        let currentUser = try authenticatedUser
-        if userID == currentUser.id {
-            currentUser.data.configuration = configuration
-        }
+        $user = try await requireUserSession().getUser(id: userID)
 
         events.send(.updated)
     }
@@ -141,14 +122,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         let request = Paths.updateUser(userID: userID, updatedUser)
         try await send(request)
 
-        user.name = username
-
-        let currentUser = try authenticatedUser
-        if userID == currentUser.id {
-            currentUser.data.name = username
-        }
-
-        Notifications[.didChangeUserProfile].post(userID)
+        $user = try await requireUserSession().getUser(id: userID)
         events.send(.updated)
     }
 }

@@ -49,8 +49,8 @@ struct SettingsView: View {
     private var serverSection: some View {
         if let userSession = userSessionManager.currentSession {
             Section {
-                UserProfileRow(user: userSession.user.data) {
-                    router.route(to: .localUserSettings(user: userSession.user.data))
+                UserProfileRow(user: userSession.userData) {
+                    router.route(to: .localUserSettings(user: userSession.userData))
                 }
 
                 ChevronButton(
@@ -70,7 +70,7 @@ struct SettingsView: View {
                 }
 
                 #if os(iOS)
-                if userSession.user.data.policy?.isAdministrator == true {
+                if userSession.userData.policy?.isAdministrator == true {
                     ChevronButton(L10n.dashboard) {
                         router.route(to: .adminDashboard)
                     }

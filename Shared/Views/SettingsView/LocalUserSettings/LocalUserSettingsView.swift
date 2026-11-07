@@ -30,7 +30,7 @@ struct LocalUserSettingsView: View {
                 StateAdapter(initialValue: false) { isPhotoPickerPresented in
                     UserProfileHeroImage(
                         user: imageViewModel.user,
-                        source: userSession.user.profileImageSource(
+                        source: imageViewModel.user.profileImageSource(
                             client: userSession.client
                         )
                     ) {
@@ -61,7 +61,7 @@ struct LocalUserSettingsView: View {
             if let userSession = imageViewModel.userSession {
                 Section {
                     ChevronButton(L10n.quickConnect) {
-                        router.route(to: .quickConnectAuthorize(user: userSession.user.data))
+                        router.route(to: .quickConnectAuthorize(user: userSession.userData))
                     }
 
                     ChevronButton(L10n.password) {
@@ -107,7 +107,7 @@ struct LocalUserSettingsView: View {
             if let userSession = imageViewModel.userSession {
                 UserProfileImage(
                     userID: userSession.user.id,
-                    source: userSession.user.profileImageSource(
+                    source: imageViewModel.user.profileImageSource(
                         client: userSession.client
                     )
                 )

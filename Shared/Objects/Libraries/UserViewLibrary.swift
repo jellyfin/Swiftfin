@@ -38,9 +38,9 @@ struct UserViewLibrary: PagingLibrary {
         let request = Paths.getUserViews(parameters: parameters)
 
         async let userViews = pageState.userSession.client.send(request)
-        async let currentUser = pageState.userSession.client.send(Paths.getCurrentUser)
+        async let currentUser = pageState.userSession.getUser(id: pageState.userSession.user.id)
 
-        let excludedLibraryIDs = try await currentUser.value.configuration?.myMediaExcludes ?? []
+        let excludedLibraryIDs = try await currentUser.value?.configuration?.myMediaExcludes ?? []
         let response = try await userViews
 
         return try pageState.items(from: response)

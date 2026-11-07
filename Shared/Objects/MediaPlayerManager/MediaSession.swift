@@ -260,7 +260,7 @@ final class MediaSession {
                 source: playbackItem.mediaSource,
                 audioStreamIndex: playbackItem.configuration.audioStreamIndex,
                 subtitleStreamIndex: playbackItem.configuration.subtitleStreamIndex,
-                configuration: userSession.user.data.configuration
+                configuration: userSession.userData.configuration
             )
         }
 
@@ -275,9 +275,7 @@ final class MediaSession {
               destination.mediaSession == nil else { return nil }
 
         let snapshot = currentIntent()
-        if handoffRecovery == nil {
-            handoffRecovery = (player, snapshot)
-        }
+        handoffRecovery ?= (player, snapshot)
         if player.playbackLocation == .local {
             localPlayer = player
         }
@@ -494,7 +492,7 @@ final class MediaSession {
 
     func ended(from player: any MediaPlayer) {
         guard self.player === player, canControlPlayback, !isSeeking, !item.isLiveStream else { return }
-        guard let queue, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true else {
+        guard let queue, userSession.userData.configuration?.enableNextEpisodeAutoPlay == true else {
             stop()
             return
         }
@@ -513,7 +511,7 @@ final class MediaSession {
                 let next = try await queue.next()
                 guard !Task.isCancelled, let self, resolutionID == id, state != .stopped else { return }
 
-                if let next, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true {
+                if let next, userSession.userData.configuration?.enableNextEpisodeAutoPlay == true {
                     playNewItem(intent: next)
                 } else {
                     stop()

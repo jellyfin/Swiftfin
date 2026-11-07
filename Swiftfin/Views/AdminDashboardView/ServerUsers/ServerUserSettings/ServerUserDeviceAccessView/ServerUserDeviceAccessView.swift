@@ -105,9 +105,7 @@ struct ServerUserDeviceAccessView: View {
                             if let index = tempPolicy.enabledDevices?.firstIndex(of: device.id!) {
                                 tempPolicy.enabledDevices?.remove(at: index)
                             } else {
-                                if tempPolicy.enabledDevices == nil {
-                                    tempPolicy.enabledDevices = []
-                                }
+                                tempPolicy.enabledDevices ?= []
 
                                 tempPolicy.enabledDevices?.append(device.id!)
                             }
