@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension LetterPickerBar {
@@ -16,8 +15,8 @@ extension LetterPickerBar {
         @AdaptiveLayout
         private var viewLayout
 
-        @Default(.accentColor)
-        private var accentColor
+        @AppTheme
+        private var theme
 
         @Environment(\.isSelected)
         private var isSelected
@@ -32,9 +31,9 @@ extension LetterPickerBar {
             if isFocused {
                 Color.primary.overlayColor
             } else if isSelected {
-                accentColor.overlayColor
+                theme.accentColor.overlayColor
             } else {
-                viewLayout.value(standard: accentColor, large: Color.primary)
+                viewLayout.value(standard: theme.accentColor, large: Color.primary)
             }
         }
 
@@ -43,7 +42,7 @@ extension LetterPickerBar {
         }
 
         private var glassTint: Color {
-            isFocused ? .primary : accentColor
+            isFocused ? .primary : theme.accentColor
         }
 
         var body: some View {

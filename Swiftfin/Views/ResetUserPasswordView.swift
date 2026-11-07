@@ -7,14 +7,10 @@
 //
 
 import Combine
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct ResetUserPasswordView: View {
-
-    @Default(.accentColor)
-    private var accentColor
 
     private enum Field: Hashable {
 

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
@@ -16,8 +15,8 @@ struct EPGChannelColumn: View {
     @AdaptiveLayout
     private var viewLayout
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var viewModel: EPGViewModel
@@ -67,7 +66,7 @@ struct EPGChannelColumn: View {
                         .isSelected(channel.itemID == selectedChannelID)
                     }
                 }
-                .tint(accentColor)
+                .tint(theme.accentColor)
                 .padding(.bottom, bottomInset)
             }
             .scrollIndicators(.hidden)

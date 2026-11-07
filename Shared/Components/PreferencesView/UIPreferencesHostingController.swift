@@ -19,9 +19,15 @@ class UIPreferencesHostingController: UIHostingController<AnyView> {
         _ = UIViewController.forwardOrientationPreferences
         #endif
 
-        var box = WeakBox<UIPreferencesHostingController>(value: nil)
+        super.init(rootView: AnyView(EmptyView()))
 
-        let rootView = AnyView(
+        setContent(content: content)
+    }
+
+    func setContent(@ViewBuilder content: () -> some View) {
+        let box = WeakBox(value: self)
+
+        rootView = AnyView(
             content()
                 #if os(iOS)
                     .onPreferenceChange(KeyCommandsPreferenceKey.self) {
@@ -42,10 +48,6 @@ class UIPreferencesHostingController: UIHostingController<AnyView> {
                     }
                 #endif
         )
-
-        super.init(rootView: rootView)
-
-        box.value = self
     }
 
     @available(*, unavailable)

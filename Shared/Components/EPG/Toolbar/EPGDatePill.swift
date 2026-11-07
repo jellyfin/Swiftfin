@@ -6,15 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension EPGDateBar {
 
     struct DatePill: View {
 
-        @Default(.accentColor)
-        private var accentColor
+        @AppTheme
+        private var theme
 
         @Environment(\.isSelected)
         private var isSelected
@@ -34,7 +33,7 @@ extension EPGDateBar {
             if isFocused {
                 .white
             } else if isSelected {
-                accentColor.opacity(0.5)
+                theme.accentColor.opacity(0.5)
             } else {
                 nil
             }

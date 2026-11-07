@@ -6,15 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import Logging
 import SwiftUI
 
 struct PlayButton: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var provider: ItemContentGroupProvider
@@ -64,8 +63,8 @@ struct PlayButton: View {
             .backport
             .glassEffect(
                 .regular.selection(
-                    tint: accentColor,
-                    foregroundColor: accentColor.overlayColor
+                    tint: theme.accentColor,
+                    foregroundColor: theme.accentColor.overlayColor
                 ),
                 in: .capsule
             )

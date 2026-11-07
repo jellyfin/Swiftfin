@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct FilterTrack: View {
@@ -44,8 +43,8 @@ struct FilterTrack: View {
         }
     }
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var viewModel: FilterViewModel
@@ -148,7 +147,7 @@ struct FilterTrack: View {
         }
         .font(viewLayout.value(standard: .footnote, large: .callout))
         .controlSize(viewLayout.value(standard: .small, large: .large))
-        .buttonStyle(.capsule(selectionTint: accentColor, focusTint: viewLayout.value(standard: nil, large: .white)))
+        .buttonStyle(.capsule(selectionTint: theme.accentColor, focusTint: viewLayout.value(standard: nil, large: .white)))
         #if os(tvOS)
         .animation(.snappy(duration: 0.2), value: focus.wrappedValue)
         #endif

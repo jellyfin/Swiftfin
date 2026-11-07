@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct ErrorView<ErrorType: Error>: View {
@@ -14,8 +13,8 @@ struct ErrorView<ErrorType: Error>: View {
     @AdaptiveLayout
     private var viewLayout
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @Environment(\.refresh)
     private var refresh
@@ -56,7 +55,7 @@ struct ErrorView<ErrorType: Error>: View {
                 .fontWeight(.semibold)
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
+                .tint(theme.accentColor)
                 #if os(iOS)
                 .controlSize(.large)
                 #endif

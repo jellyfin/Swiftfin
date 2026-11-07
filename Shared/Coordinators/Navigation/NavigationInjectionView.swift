@@ -114,8 +114,8 @@ struct NavigationInjectionView: View {
                     )
                 )
             )
-        ) { presentedRouteBinding, _ in
-            let vc = UIPreferencesHostingController {
+        ) { presentedRouteBinding in
+            PreferencesView {
                 NavigationInjectionView(coordinator: presentedRouteBinding.wrappedValue.coordinator) {
                     presentedRouteBinding.wrappedValue
                         .route
@@ -125,10 +125,7 @@ struct NavigationInjectionView: View {
                         }
                 }
             }
-
-            vc.view.backgroundColor = .black
-
-            return vc
+            .background(.black)
         }
         #endif
     }
