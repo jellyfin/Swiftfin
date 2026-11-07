@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import FactoryKit
 import JellyfinAPI
 import Nuke
@@ -14,8 +13,8 @@ import SwiftUI
 
 struct UserProfileHeroImage: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @Injected(\.currentUserSession)
     private var userSession
@@ -50,7 +49,7 @@ struct UserProfileHeroImage: View {
                             .frame(width: 30, height: 30)
                             .shadow(radius: 10)
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(accentColor.overlayColor, accentColor)
+                            .foregroundStyle(theme.accentColor.overlayColor, theme.accentColor)
                     }
                 }
 

@@ -14,18 +14,29 @@ import SwiftUI
 struct SettingsView: View {
 
     #if os(iOS)
-    @Default(.userAppearance)
-    private var appearance
+    @Default
+    private var appearance: AppAppearance
     #endif
 
-    @Default(.userAccentColor)
-    private var accentColor
+    @Default
+    private var accentColor: Color
+
+    @AppTheme
+    private var theme
 
     @InjectedObject(\.userSessionManager)
     private var userSessionManager: UserSessionManager
 
     @Router
     private var router
+
+    init() {
+        let userID = Container.shared.userSessionManager().currentSession?.user.id ?? "default"
+        #if os(iOS)
+        _appearance = Default(.userAppearance(userID: userID))
+        #endif
+        _accentColor = Default(.userAccentColor(userID: userID))
+    }
 
     // MARK: - Body
 
@@ -103,7 +114,7 @@ struct SettingsView: View {
             .fontWeight(.semibold)
             .backport
             .buttonStyle(.glassProminent.shadow(false))
-            .tint(accentColor)
+            .tint(theme.accentColor)
             #if os(iOS)
             .controlSize(.large)
             #endif

@@ -16,9 +16,15 @@ struct PreferencesView<Content: View>: UIViewControllerRepresentable {
         self.content = content()
     }
 
-    func makeUIViewController(context: Context) -> some UIViewController {
-        UIPreferencesHostingController { content }
+    func makeUIViewController(context: Context) -> UIPreferencesHostingController {
+        UIPreferencesHostingController {
+            HostingEnvironmentView(content: content, environment: context.environment)
+        }
     }
 
-    func updateUIViewController(_ uiViewController: some UIViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UIPreferencesHostingController, context: Context) {
+        uiViewController.setContent {
+            HostingEnvironmentView(content: content, environment: context.environment)
+        }
+    }
 }

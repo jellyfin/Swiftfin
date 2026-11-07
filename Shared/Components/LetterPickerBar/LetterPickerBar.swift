@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct LetterPickerBar: PresentationView {
@@ -14,8 +13,8 @@ struct LetterPickerBar: PresentationView {
     @AdaptiveLayout
     private var viewLayout
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @FocusState
     private var focusedLetter: ItemLetter?
@@ -110,7 +109,7 @@ struct LetterPickerBar: PresentationView {
 
                 case .dot:
                     Circle()
-                        .fill(accentColor.opacity(0.5))
+                        .fill(theme.accentColor.opacity(0.5))
                         .frame(width: 3, height: 3)
                         .frame(width: dimension, height: dimension)
                 }

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import FactoryKit
 import JellyfinAPI
 import SwiftUI
@@ -14,9 +13,6 @@ import SwiftUI
 extension DevicesView {
 
     struct DeviceRow: View {
-
-        @Default(.accentColor)
-        private var accentColor
 
         // MARK: - Environment Variables
 

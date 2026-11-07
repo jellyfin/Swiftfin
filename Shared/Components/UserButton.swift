@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -15,8 +14,8 @@ struct UserButton: View {
     @AdaptiveLayout
     private var viewLayout
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @Environment(\.isEditing)
     private var isEditing
@@ -89,7 +88,7 @@ struct UserButton: View {
                             height: viewLayout.value(standard: 40, large: 75)
                         )
                         .symbolRenderingMode(.palette)
-                        .foregroundStyle(accentColor.overlayColor, accentColor)
+                        .foregroundStyle(theme.accentColor.overlayColor, theme.accentColor)
                         .hoverEffect(.lift)
                 }
             }

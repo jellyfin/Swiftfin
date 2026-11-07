@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 // TODO: remove isEditing observation
@@ -16,8 +15,8 @@ struct ListRowCheckbox: View {
     @AdaptiveLayout
     private var viewLayout
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @Environment(\.isEditing)
     private var isEditing
@@ -37,7 +36,7 @@ struct ListRowCheckbox: View {
                     .aspectRatio(1, contentMode: .fit)
                     .frame(width: size, height: size)
                     .symbolRenderingMode(.palette)
-                    .foregroundStyle(accentColor.overlayColor, accentColor)
+                    .foregroundStyle(theme.accentColor.overlayColor, theme.accentColor)
 
             } else {
                 Image(systemName: "circle")

@@ -31,4 +31,7 @@ extension EnvironmentValues {
 
     @Entry
     var posterDisplayType: PosterDisplayType = .portrait
+
+    @Entry
+    var theme: AppTheme.Value = .init()
 }

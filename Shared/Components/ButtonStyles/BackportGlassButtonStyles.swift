@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension BackportButtonStyle where Self == BackportGlassButtonStyle {
@@ -68,8 +67,8 @@ private struct BackportGlassButtonStyleBody: View {
         case prominent
     }
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @Environment(\.controlSize)
     private var controlSize
@@ -193,7 +192,7 @@ private struct BackportGlassButtonStyleBody: View {
         case .destructive, .cancel:
             .red
         default:
-            accentColor
+            theme.accentColor
         }
     }
 }

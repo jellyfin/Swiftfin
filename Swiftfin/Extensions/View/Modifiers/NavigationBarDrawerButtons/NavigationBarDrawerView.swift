@@ -22,10 +22,12 @@ struct NavigationBarDrawerView<Content: View, Drawer: View>: PlatformViewControl
     }
 
     func makeUIViewController(context: Context) -> UINavigationBarDrawerHostingController<Content, Drawer> {
-        UINavigationBarDrawerHostingController<Content, Drawer>(drawer: drawer, content: content)
+        UINavigationBarDrawerHostingController<Content, Drawer>(drawer: drawer, content: content, environment: context.environment)
     }
 
-    func updateUIViewController(_ uiViewController: UINavigationBarDrawerHostingController<Content, Drawer>, context: Context) {}
+    func updateUIViewController(_ uiViewController: UINavigationBarDrawerHostingController<Content, Drawer>, context: Context) {
+        uiViewController.update(drawer: drawer, content: content, environment: context.environment)
+    }
 }
 
 class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIViewController {
@@ -36,6 +38,8 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
     // TODO: see if we can get the height instead from the view passed in
     private let drawerHeight: CGFloat = 36
 
+    private let initialEnvironment: EnvironmentValues
+
     private var previousSafeAreaInsets: UIEdgeInsets?
 
     private lazy var blurView: UIVisualEffectView = {
@@ -44,15 +48,15 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         return blurView
     }()
 
-    private lazy var contentView: UIHostingController<Content> = {
-        let contentView = UIHostingController(rootView: content)
+    private lazy var contentView: UIHostingController<HostingEnvironmentView<Content>> = {
+        let contentView = UIHostingController(rootView: HostingEnvironmentView(content: content, environment: initialEnvironment))
         contentView.view.translatesAutoresizingMaskIntoConstraints = false
         contentView.view.backgroundColor = nil
         return contentView
     }()
 
-    private lazy var drawerButtonsView: UIHostingController<Drawer> = {
-        let drawerButtonsView = UIHostingController(rootView: drawer)
+    private lazy var drawerButtonsView: UIHostingController<HostingEnvironmentView<Drawer>> = {
+        let drawerButtonsView = UIHostingController(rootView: HostingEnvironmentView(content: drawer, environment: initialEnvironment))
         drawerButtonsView.view.translatesAutoresizingMaskIntoConstraints = false
         drawerButtonsView.view.backgroundColor = nil
         return drawerButtonsView
@@ -60,12 +64,19 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
 
     init(
         drawer: Drawer,
-        content: Content
+        content: Content,
+        environment: EnvironmentValues
     ) {
         self.drawer = drawer
         self.content = content
+        self.initialEnvironment = environment
 
         super.init(nibName: nil, bundle: nil)
+    }
+
+    func update(drawer: Drawer, content: Content, environment: EnvironmentValues) {
+        contentView.rootView = HostingEnvironmentView(content: content, environment: environment)
+        drawerButtonsView.rootView = HostingEnvironmentView(content: drawer, environment: environment)
     }
 
     @available(*, unavailable)

@@ -48,13 +48,15 @@ extension VideoPlayer {
             let playbackControlsView = playbackControls
                 .eraseToAnyView()
 
-            return UIContainerViewController(
+            let controller = UIContainerViewController(
                 viewState: viewState,
                 mediaSession: mediaSession,
                 videoSize: videoSize,
                 player: playerView,
                 playbackControls: playbackControlsView
             )
+            controller.hostingEnvironment = context.environment
+            return controller
         }
 
         static func dismantleUIViewController(_ controller: UIContainerViewController, coordinator: ()) {
@@ -65,7 +67,9 @@ extension VideoPlayer {
         func updateUIViewController(
             _ uiViewController: UIContainerViewController,
             context: Context
-        ) {}
+        ) {
+            uiViewController.updateHostingEnvironment(context.environment)
+        }
     }
 
     // MARK: - UIContainerViewController
@@ -73,6 +77,20 @@ extension VideoPlayer {
     class UIContainerViewController: UIViewController {
 
         typealias ViewState = VideoPlayer.ViewState
+
+        fileprivate var hostingEnvironment = EnvironmentValues()
+
+        func updateHostingEnvironment(_ environment: EnvironmentValues) {
+            hostingEnvironment = environment
+            guard isViewLoaded else { return }
+
+            playerViewController.content.environment = environment
+            playbackControlsViewController.content.environment = environment
+            #if os(tvOS)
+            supplementContainerViewController.content.environment = environment
+            overlayActionsViewController.content.environment = environment
+            #endif
+        }
 
         private var tabletopRegion: CGRect? {
             (view as? LayoutView)?.tabletopRegion
@@ -275,14 +293,17 @@ extension VideoPlayer {
             return view
         }()
 
-        private lazy var playerViewController: HostingController<AnyView> = {
+        private lazy var playerViewController: HostingController<HostingEnvironmentView<AnyView>> = {
             let controller = HostingController(
-                content: PlayerContainerView(player: player, videoSize: videoSize)
-                    .modifier(LayoutEnvironment())
-                    .environment(viewState)
-                    .environmentObject(viewState.focusCoordinator)
-                    .environment(mediaSession)
-                    .eraseToAnyView()
+                content: HostingEnvironmentView(
+                    content: PlayerContainerView(player: player, videoSize: videoSize)
+                        .modifier(LayoutEnvironment())
+                        .environment(viewState)
+                        .environmentObject(viewState.focusCoordinator)
+                        .environment(mediaSession)
+                        .eraseToAnyView(),
+                    environment: hostingEnvironment
+                )
             )
 
             controller.disableSafeArea = true
@@ -292,14 +313,17 @@ extension VideoPlayer {
             return controller
         }()
 
-        private lazy var playbackControlsViewController: HostingController<AnyView> = {
+        private lazy var playbackControlsViewController: HostingController<HostingEnvironmentView<AnyView>> = {
             let controller = HostingController(
-                content: PlaybackControlsContainerView(playbackControls: playbackControls)
-                    .modifier(LayoutEnvironment())
-                    .environment(viewState)
-                    .environmentObject(viewState.focusCoordinator)
-                    .environment(mediaSession)
-                    .eraseToAnyView()
+                content: HostingEnvironmentView(
+                    content: PlaybackControlsContainerView(playbackControls: playbackControls)
+                        .modifier(LayoutEnvironment())
+                        .environment(viewState)
+                        .environmentObject(viewState.focusCoordinator)
+                        .environment(mediaSession)
+                        .eraseToAnyView(),
+                    environment: hostingEnvironment
+                )
             )
 
             controller.disableSafeArea = true
@@ -310,7 +334,7 @@ extension VideoPlayer {
         }()
 
         #if os(tvOS)
-        private lazy var supplementContainerViewController: HostingController<AnyView> = {
+        private lazy var supplementContainerViewController: HostingController<HostingEnvironmentView<AnyView>> = {
             let content = SupplementContainerView()
                 .modifier(LayoutEnvironment())
                 .environment(viewState)
@@ -318,7 +342,7 @@ extension VideoPlayer {
                 .environment(mediaSession)
                 .eraseToAnyView()
 
-            let controller = HostingController(content: content)
+            let controller = HostingController(content: HostingEnvironmentView(content: content, environment: hostingEnvironment))
             controller.disableSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
             controller.view.translatesAutoresizingMaskIntoConstraints = false
@@ -326,13 +350,16 @@ extension VideoPlayer {
             return controller
         }()
 
-        private lazy var overlayActionsViewController: HostingController<AnyView> = {
+        private lazy var overlayActionsViewController: HostingController<HostingEnvironmentView<AnyView>> = {
             let controller = HostingController(
-                content: OverlayActions()
-                    .modifier(LayoutEnvironment())
-                    .environment(viewState)
-                    .environmentObject(viewState.focusCoordinator)
-                    .eraseToAnyView()
+                content: HostingEnvironmentView(
+                    content: OverlayActions()
+                        .modifier(LayoutEnvironment())
+                        .environment(viewState)
+                        .environmentObject(viewState.focusCoordinator)
+                        .eraseToAnyView(),
+                    environment: hostingEnvironment
+                )
             )
 
             controller.disableSafeArea = true
