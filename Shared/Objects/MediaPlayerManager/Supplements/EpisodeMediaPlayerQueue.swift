@@ -96,7 +96,6 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
             resetSeason()
             return
         }
-
         guard seasonLibrary?.library.parent.id != seasonID else { return }
 
         resetSeason()
