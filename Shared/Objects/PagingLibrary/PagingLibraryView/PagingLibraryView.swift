@@ -50,6 +50,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @TabItemSelected
     private var tabItemSelected
 
+    @ViewContextContains(.isTabRoot)
+    private var isTabRoot
+
     private let displayTitle: String?
 
     private var libraryStyleOptions: LibraryStyleOptions {
@@ -85,10 +88,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     private func contentInsets(for frame: GeometryProxy) -> EdgeInsets {
         #if os(tvOS)
-        // The collection disables automatic adjustment, so include both the local
-        // safe area (including filter bars) and the tab's measured top inset.
+        // When the header is hidden, the grid accounts for the top safe area.
         var insets = frame.safeAreaInsets
-        insets.top = max(insets.top, frameForParentView[.tabView]?.safeAreaInsets.top ?? 0)
+        insets.top = isTabRoot ? max(insets.top, frameForParentView[.tabView]?.safeAreaInsets.top ?? 0) : 0
         return insets + viewLayout.itemSpacing
         #else
         let horizontalSpacing = libraryStyle.displayType == .list ? 0 : viewLayout.itemSpacing
@@ -122,12 +124,27 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                         }
                     #endif
             }
-            .onReachedBottomEdge(offset: .offset(300)) {
-                if viewModel.isSearchActive {
-                    viewModel.getNextSearchPage()
-                } else {
-                    viewModel.getNextPage()
+            #if os(tvOS)
+            .header(isVisible: !isTabRoot) {
+                    Text(displayTitle ?? viewModel.library.parent.displayTitle)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, contentInsets(for: geometry).leading)
+                        .padding(.trailing, contentInsets(for: geometry).trailing)
+                        .padding(
+                            .top,
+                            max(geometry.safeAreaInsets.top, frameForParentView[.tabView]?.safeAreaInsets.top ?? 0) + viewLayout.itemSpacing
+                        )
+                        .accessibilityAddTraits(.isHeader)
                 }
+            #endif
+                .onReachedBottomEdge(offset: .offset(300)) {
+                    if viewModel.isSearchActive {
+                        viewModel.getNextSearchPage()
+                    } else {
+                        viewModel.getNextPage()
+                    }
             }
             .proxy(gridProxy)
             .onRefresh {
@@ -240,7 +257,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .animation(.linear(duration: 0.2), value: viewModel.searchElements)
         .navigationTitle(displayTitle ?? viewModel.library.parent.displayTitle)
         .errorMessage($viewModel.error)
-        #if os(iOS)
+        #if os(tvOS)
+        .toolbarVisibility(.hidden, for: .navigationBar)
+        #else
         .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
         #endif
         .onChange(of: viewModel.environment) {

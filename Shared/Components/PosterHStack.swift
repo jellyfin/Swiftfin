@@ -54,9 +54,7 @@ struct PosterHStack<
         .insets(horizontal: viewLayout.edgePadding)
         .itemSpacing(viewLayout.itemSpacing)
         .scrollBehavior(.continuousLeadingEdge)
-        #if os(iOS)
         .contentInsetAdjustmentBehavior(.never)
-        #endif
         .withViewContext(.isThumb)
     }
 }

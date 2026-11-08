@@ -291,14 +291,14 @@ extension SeriesEpisodeContentGroup {
                     alignment: .topLeading
                 )
                 .frame(minHeight: 200)
-                .backport
-                .glassEffect(
-                    showsMaterial ? .regular : .identity,
-                    in: .rect(
+                .background {
+                    RoundedRectangle(
                         cornerRadius: cornerRadius,
                         style: .continuous
                     )
-                )
+                    .fill(.regularMaterial)
+                    .opacity(showsMaterial ? 1 : 0)
+                }
                 .scaleEffect(isFocused ? 1.05 : 1)
                 .scaleEffect(configuration.isPressed ? 0.97 : 1)
                 .brightness(isFocused ? 0.04 : 0)

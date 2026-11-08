@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import SwiftUI
 
 struct ContentGroupVStack: View {
@@ -23,7 +24,7 @@ struct ContentGroupVStack: View {
         group.body(with: group.viewModel)
     }
 
-    var body: some View {
+    private var content: some View {
         VStack(alignment: .leading, spacing: spacing) {
             ForEach(groups, id: \.id) { group in
                 makeGroupBody(group)
@@ -32,5 +33,15 @@ struct ContentGroupVStack: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .topLeading)
+    }
+
+    var body: some View {
+        #if os(tvOS)
+        CollectionHStackFocusScope {
+            content
+        }
+        #else
+        content
+        #endif
     }
 }

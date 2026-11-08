@@ -117,9 +117,7 @@ extension VideoPlayer {
                 ))
                 .itemSpacing(viewLayout.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
-                #if os(iOS)
                 .contentInsetAdjustmentBehavior(.never)
-                #endif
                 .focusSection()
             }
             .onChange(of: currentElementID) { _, newID in
