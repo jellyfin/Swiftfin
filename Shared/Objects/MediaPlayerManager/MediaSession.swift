@@ -211,8 +211,6 @@ final class MediaSession {
         progressReporter.mediaSession = self
 
         lifecycleObservation = core.statePublisher.sink { [weak self] state in
-            // Error and cancel are special synchronous actions in StatefulMacros.
-            // Cleanup follows their committed state, including generated action calls.
             if state == .error || state == .stopped {
                 self?.tearDown()
             }
@@ -254,7 +252,7 @@ final class MediaSession {
         }
 
         var nextIntent = intent
-        if canControlPlayback, let playbackItem {
+        if let playbackItem {
             nextIntent.configuration.continuation = MediaPlaybackContinuation(
                 item: playbackItem.baseItem,
                 source: playbackItem.mediaSource,
@@ -429,7 +427,6 @@ final class MediaSession {
     func stop() {
         guard state != .stopped else { return }
 
-        // StatefulMacros' cancel action commits synchronously and invalidates late completions.
         cancel()
     }
 
@@ -491,7 +488,8 @@ final class MediaSession {
     }
 
     func ended(from player: any MediaPlayer) {
-        guard self.player === player, canControlPlayback, !isSeeking, !item.isLiveStream else { return }
+        guard self.player === player, playbackItem != nil, state == .preparing || state == .playback,
+              !isSeeking, !item.isLiveStream else { return }
         guard let queue, userSession.userData.configuration?.enableNextEpisodeAutoPlay == true else {
             stop()
             return

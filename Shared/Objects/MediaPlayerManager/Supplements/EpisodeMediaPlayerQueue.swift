@@ -27,7 +27,9 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
     }
 
     @ObservationIgnored
-    private var currentAdjacentEpisodesTask: AnyCancellable?
+    private var currentAdjacentEpisodesTask: Task<Void, Error>? {
+        didSet { oldValue?.cancel() }
+    }
 
     @ObservationIgnored
     private var seasonLibrary: PagingLibraryViewModel<EpisodeLibrary>?
@@ -65,7 +67,15 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
         currentAdjacentEpisodesTask = Task { [weak self] in
             try await self?.getAdjacentEpisodes(for: newItem.baseItem)
         }
-        .asAnyCancellable()
+    }
+
+    func next() async throws -> PlaybackIntent? {
+        try await currentAdjacentEpisodesTask?.value
+        return nextItem
+    }
+
+    isolated deinit {
+        currentAdjacentEpisodesTask?.cancel()
     }
 
     func refresh() {
@@ -87,7 +97,6 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
             return
         }
 
-        // Keep the list and its loading work when playback moves within the same season.
         guard seasonLibrary?.library.parent.id != seasonID else { return }
 
         resetSeason()
