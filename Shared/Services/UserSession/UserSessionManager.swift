@@ -10,7 +10,6 @@ import Combine
 import Defaults
 import FactoryKit
 import Foundation
-import Get
 import JellyfinAPI
 import KeychainSwift
 import Logging
@@ -42,6 +41,7 @@ final class UserSessionManager: ObservableObject {
         case backgroundTimeout
         case explicit
         case authenticationExpired
+        case accountUnavailable
     }
 
     enum AuthenticationError: Error {
@@ -66,9 +66,6 @@ final class UserSessionManager: ObservableObject {
     @Published
     private(set) var reauthenticationRequest: ReauthenticationRequest?
 
-    @MainActor
-    private var authenticationChecks: [ObjectIdentifier: Task<Bool, Never>] = [:]
-
     @Published
     private(set) var pendingDeepLink: DeepLink?
 
@@ -83,6 +80,9 @@ final class UserSessionManager: ObservableObject {
 
     @MainActor
     private var sessionTransition: (id: UUID, task: Task<Void, Never>)?
+
+    @MainActor
+    private var currentUserChanges: AnyCancellable?
 
     @MainActor
     var hasActivePlayback: Bool {
@@ -128,46 +128,17 @@ final class UserSessionManager: ObservableObject {
     func signOut(reason: SignOutReason) async {
         guard currentSession != nil || sessionTransition != nil else { return }
 
+        let expiredSession = reason == .authenticationExpired ? currentSession : nil
         Defaults[.lastSignedInUserID] = .signedOut
         await updateCurrentSession(with: nil)
+        if let expiredSession, currentSession == nil, Defaults[.lastSignedInUserID] == .signedOut {
+            reauthenticationRequest = .init(server: expiredSession.server, user: expiredSession.user)
+        }
 
         logger.info(
             "Signed out current user",
             metadata: ["reason": .string(String(describing: reason))]
         )
-    }
-
-    /// Confirm a rejected token without treating permission or connection failures as sign-out.
-    @MainActor
-    func handleUnauthorizedResponse(from session: UserSession, accessToken: String) async -> Bool {
-        guard currentSession === session, session.user.accessToken == accessToken else { return true }
-
-        let id = ObjectIdentifier(session)
-        if let check = authenticationChecks[id] {
-            return await check.value
-        }
-
-        let check = Task { @MainActor in
-            do {
-                // This uses a separate client so a failed check cannot recursively trigger another check.
-                _ = try await session.user.getUserData(server: session.server)
-            } catch APIError.unacceptableStatusCode(401) {
-                guard currentSession === session, session.user.accessToken == accessToken else { return true }
-
-                await signOut(reason: .authenticationExpired)
-
-                if currentSession == nil, Defaults[.lastSignedInUserID] == .signedOut {
-                    reauthenticationRequest = .init(server: session.server, user: session.user)
-                }
-                return true
-            } catch {
-                // Keep the session when the authentication check cannot reach the server.
-            }
-            return currentSession !== session || session.user.accessToken != accessToken
-        }
-        authenticationChecks[id] = check
-        defer { authenticationChecks[id] = nil }
-        return await check.value
     }
 
     @MainActor
@@ -298,7 +269,7 @@ final class UserSessionManager: ObservableObject {
 
         do {
             try await currentSession.server.updateServerInfo()
-            try await currentSession.user.updateUserData(server: currentSession.server)
+            _ = try await currentSession.getUser(id: currentSession.user.id)
 
             Defaults[.lastServerInformationRefreshDate] = Date.now
         } catch {
@@ -354,6 +325,7 @@ final class UserSessionManager: ObservableObject {
     private func applyCurrentSession(_ newSession: UserSession?) async {
         let previousSession = currentSession
 
+        currentUserChanges = nil
         await stopActivePlayback()
         previousSession?.willStop()
         await newSession?.willStart()
@@ -366,6 +338,26 @@ final class UserSessionManager: ObservableObject {
         } else {
             state = .signedIn
         }
+
+        currentUserChanges = newSession?.users
+            .changes
+            .sink { [weak self, weak newSession] change in
+                guard let session = newSession else { return }
+
+                switch change {
+                case let .updated(user):
+                    guard user.id == session.user.id, user.policy?.isDisabled == true else { return }
+
+                case let .deleted(id):
+                    guard id == session.user.id else { return }
+                }
+
+                Task { @MainActor [weak self, weak session] in
+                    guard let self, let session, self.currentSession === session else { return }
+
+                    await self.signOut(reason: .accountUnavailable)
+                }
+            }
 
         newSession?.didStart()
     }

@@ -32,11 +32,11 @@ struct ActiveSessionDetailsView: View {
     }
 
     private var canControl: Bool {
-        guard let user = viewModel.userSession?.user else { return false }
+        guard let user = viewModel.userSession?.userData else { return false }
 
         let session = viewModel.session
 
-        return user.data.policy?.enableRemoteControlOfOtherUsers == true
+        return user.policy?.enableRemoteControlOfOtherUsers == true
             || session.userID == nil
             || session.userID == user.id
             || session.additionalUsers?.contains { $0.userID == user.id } == true
@@ -213,7 +213,7 @@ struct ActiveSessionDetailsView: View {
             if hasMessageControl {
                 Button(L10n.message, systemImage: "message.fill") {
                     // swiftlint:disable:next nested_l10n
-                    messageHeader = L10n.messageFrom(viewModel.userSession?.user.username ?? L10n.server)
+                    messageHeader = L10n.messageFrom(viewModel.userSession?.userData.name ?? L10n.server)
                     messageText = ""
                     isPresentingMessage = true
                 }

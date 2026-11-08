@@ -31,10 +31,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
         OverlayView(itemID: itemID)
     }
 
-    private struct OverlayView: PlatformView {
-
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets: EdgeInsets
+    private struct OverlayView: PresentationView {
 
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
@@ -100,20 +97,13 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
 
         @ViewBuilder
         private var videoInfoSection: some View {
-            if videoStream != nil || (mediaSession.player as? any VideoMediaPlayer) != nil {
+            if let width = videoStream?.width, let height = videoStream?.height {
                 Text(L10n.video)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .padding(.vertical, 4)
 
-                if let width = videoStream?.width, let height = videoStream?.height {
-                    LabeledContent(L10n.videoResolution, value: height.description.multiply(by: width.description))
-                }
-
-                if let proxy = mediaSession.player as? any VideoMediaPlayer {
-                    LabeledContent(L10n.droppedFrames, value: proxy.videoState.droppedFrames.description)
-                    LabeledContent(L10n.corruptedFrames, value: proxy.videoState.corruptedFrames.description)
-                }
+                LabeledContent(L10n.videoResolution, value: height.description.multiply(by: width.description))
             }
         }
 
@@ -220,7 +210,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
         }
 
-        var iOSView: some View {
+        var standardView: some View {
             CompactOrRegularView(
                 isCompact: viewState.isCompact
             ) {
@@ -230,9 +220,9 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
             .onFirstAppear { viewModel.observe(itemID: itemID) }
             .labeledContentStyle(.playbackInfo)
-            .padding(.leading, safeAreaInsets.leading)
-            .padding(.trailing, safeAreaInsets.trailing)
-            .padding(.bottom, safeAreaInsets.bottom)
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
+            .padding(.bottom, viewState.systemInsets.bottom)
         }
 
         private var compactView: some View {
@@ -271,7 +261,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             .edgePadding()
         }
 
-        var tvOSView: some View {
+        var largeView: some View {
             regularView
                 .onFirstAppear { viewModel.observe(itemID: itemID) }
                 .labeledContentStyle(.playbackInfo)

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 // TODO: image
@@ -75,8 +74,8 @@ extension ListTitleSection {
 /// used as a header for a `List` with `listStyle(.plain)`.
 struct InsetGroupedListHeader<Content: View>: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     private let content: Content
     private let description: Text?
@@ -102,7 +101,7 @@ struct InsetGroupedListHeader<Content: View>: View {
 
                 if learnMoreAction != nil {
                     Text(L10n.learnMore + .ellipsis)
-                        .foregroundStyle(accentColor)
+                        .foregroundStyle(theme.accentColor)
                 }
             }
             .font(.subheadline)

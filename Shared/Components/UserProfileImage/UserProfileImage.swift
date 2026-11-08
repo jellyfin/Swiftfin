@@ -36,37 +36,31 @@ struct UserProfileImage: View {
             Rectangle()
                 .fill(.complexSecondary)
 
-            RedrawOnNotificationView(
-                .didChangeUserProfile,
-                filter: {
-                    $0 == userID
-                }
-            ) {
-                AlternateLayoutView {
-                    Color.clear
-                } content: {
-                    ImageView(source)
-                        .pipeline(pipeline)
-                        .image { image in
-                            image.aspectRatio(contentMode: .fill)
-                        }
-                        .placeholder { _ in
-                            SystemImageContentView(
-                                systemName: "person.fill",
-                                ratio: 0.5
-                            )
-                        }
-                        .failure {
-                            SystemImageContentView(
-                                systemName: "person.fill",
-                                ratio: 0.5
-                            )
-                        }
-                        .overlay {
-                            Color.black
-                                .opacity(overlayOpacity)
-                        }
-                }
+            AlternateLayoutView {
+                Color.clear
+            } content: {
+                ImageView(source)
+                    .pipeline(pipeline)
+                    .image { image in
+                        image.aspectRatio(contentMode: .fill)
+                    }
+                    .placeholder { _ in
+                        SystemImageContentView(
+                            systemName: "person.fill",
+                            ratio: 0.5
+                        )
+                    }
+                    .failure {
+                        SystemImageContentView(
+                            systemName: "person.fill",
+                            ratio: 0.5
+                        )
+                    }
+                    .overlay {
+                        Color.black
+                            .opacity(overlayOpacity)
+                    }
+                    .id(source.url)
             }
         }
         .posterBorder()

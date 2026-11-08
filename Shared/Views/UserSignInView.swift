@@ -14,6 +14,9 @@ import SwiftUI
 
 struct UserSignInView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     private enum Field: Hashable {
 
         case username
@@ -48,10 +51,10 @@ struct UserSignInView: View {
     @StateObject
     private var viewModel: UserSignInViewModel
 
-    private let reauthenticatingUser: UserState?
+    private let user: UserState?
 
-    init(server: ServerState, reauthenticating user: UserState? = nil) {
-        self.reauthenticatingUser = user
+    init(server: ServerState, user: UserState? = nil) {
+        self.user = user
         self._username = State(initialValue: user?.username ?? "")
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
     }
@@ -74,7 +77,7 @@ struct UserSignInView: View {
             )
 
         case let .existingUser(existingUser):
-            if existingUser.state.state == reauthenticatingUser, let authenticationAction {
+            if existingUser.state.state == user, let authenticationAction {
                 let userState = existingUser.state.state
                 let policy = userState.accessPolicy
                 viewModel.saveExisting(
@@ -114,24 +117,13 @@ struct UserSignInView: View {
         return evaluatedPolicy
     }
 
-    @ViewBuilder
-    private func disclaimerText(_ disclaimer: String) -> some View {
-        if let attributedString = try? AttributedString(
-            markdown: disclaimer,
-            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-        ) {
-            Text(attributedString)
-        } else {
-            Text(disclaimer)
-        }
-    }
-
     // MARK: - Sign In Section
 
     @ViewBuilder
     private var signInSection: some View {
         Section {
             TextField(L10n.username, text: $username)
+                .disabled(user != nil)
                 .autocorrectionDisabled()
                 .textContentType(.username)
                 .textInputAutocapitalization(.never)
@@ -216,7 +208,7 @@ struct UserSignInView: View {
             .disabled(username.isEmpty)
         }
 
-        if viewModel.isQuickConnectEnabled {
+        if user == nil, viewModel.isQuickConnectEnabled {
             Section {
                 Button {
                     router.route(
@@ -248,7 +240,7 @@ struct UserSignInView: View {
 
         if let disclaimer = viewModel.serverDisclaimer {
             Section(L10n.disclaimer) {
-                disclaimerText(disclaimer)
+                Text(disclaimer.markdown)
                     .font(.callout)
             }
         }
@@ -264,61 +256,57 @@ struct UserSignInView: View {
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             } else {
-                #if os(iOS)
-                ForEach(viewModel.publicUsers) { user in
-                    ChevronButton {
-                        username = user.name ?? ""
-                        password = ""
-                        focusedTextField = .password
-                    } label: {
-                        HStack {
-                            UserProfileImage(
-                                userID: user.id,
-                                source: user.profileImageSource(
-                                    client: viewModel.server.client,
-                                    maxWidth: 50
-                                )
-                            )
-                            .frame(width: 50, height: 50)
-
-                            Text(user.name ?? .emptyDash)
-                                .fontWeight(.semibold)
-                                .lineLimit(1)
-                        }
-                    }
-                }
-                #else
-                LazyVGrid(
-                    columns: Array(
-                        repeating: GridItem(.flexible(), spacing: EdgeInsets.itemSpacing),
-                        count: 4
-                    ),
-                    spacing: EdgeInsets.itemSpacing
-                ) {
+                if !viewLayout.isLarge {
                     ForEach(viewModel.publicUsers) { user in
-                        UserButton(
-                            user: user,
-                            client: viewModel.server.client
-                        ) {
+                        ChevronButton {
                             username = user.name ?? ""
                             password = ""
                             focusedTextField = .password
+                        } label: {
+                            HStack {
+                                UserProfileImage(
+                                    userID: user.id,
+                                    source: user.profileImageSource(
+                                        client: viewModel.server.client,
+                                        maxWidth: 50
+                                    )
+                                )
+                                .frame(width: 50, height: 50)
+
+                                Text(user.name ?? .emptyDash)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                            }
                         }
-                        .withViewContext(.isOverComplexContent)
+                    }
+                } else {
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: 200), spacing: viewLayout.itemSpacing)],
+                        spacing: viewLayout.itemSpacing
+                    ) {
+                        ForEach(viewModel.publicUsers) { user in
+                            UserButton(
+                                user: user,
+                                client: viewModel.server.client
+                            ) {
+                                username = user.name ?? ""
+                                password = ""
+                                focusedTextField = .password
+                            }
+                            .withViewContext(.isOverComplexContent)
+                        }
                     }
                 }
-                #endif
             }
         }
         .disabled(viewModel.state == .signingIn)
     }
 
-    @ViewBuilder
     private var contentView: some View {
         #if os(iOS)
         List {
             signInSection
-            publicUsersSection
+            publicUsersSection.disabled(user != nil)
         }
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
@@ -345,7 +333,7 @@ struct UserSignInView: View {
         ) {
             signInSection
         } trailingContentView: {
-            publicUsersSection
+            publicUsersSection.disabled(user != nil)
         }
         #endif
     }
@@ -358,7 +346,7 @@ struct UserSignInView: View {
             .interactiveDismissDisabled(viewModel.state == .signingIn)
             .onReceive(viewModel.events, perform: handleEvent)
             .onFirstAppear {
-                focusedTextField = reauthenticatingUser == nil ? .username : .password
+                focusedTextField = user == nil ? .username : .password
                 viewModel.getPublicData()
             }
             .alert(

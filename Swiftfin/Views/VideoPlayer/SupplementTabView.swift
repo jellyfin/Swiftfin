@@ -27,7 +27,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
     }
 
     func updateUIViewController(_ controller: UIViewController, context: Context) {
-        context.coordinator.sync(data: data, selection: selection, content: content)
+        context.coordinator.sync(data: data, selection: selection, environment: context.environment, content: content)
     }
 
     static func dismantleUIViewController(_: UIViewController, coordinator: Coordinator) {
@@ -42,7 +42,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
         weak var container: UIViewController?
 
-        private var hosts: [String: HostingController<Content>] = [:]
+        private var hosts: [String: HostingController<HostingEnvironmentView<Content>>] = [:]
         private var ids: [String] = []
         private var pageController: UIPageViewController?
         private var requestedID: String?
@@ -57,6 +57,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
         func sync(
             data: [any VideoPlayerSupplement],
             selection: Binding<String?>,
+            environment: EnvironmentValues,
             @ViewBuilder content: (any VideoPlayerSupplement) -> Content
         ) {
             guard container != nil else { return }
@@ -77,9 +78,9 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
             for supplement in data {
                 if let host = hosts[supplement.id] {
-                    host.content = content(supplement)
+                    host.content = HostingEnvironmentView(content: content(supplement), environment: environment)
                 } else {
-                    let host = HostingController(content: content(supplement))
+                    let host = HostingController(content: HostingEnvironmentView(content: content(supplement), environment: environment))
                     host.disableSafeArea = true
                     host.view.backgroundColor = .clear
                     hosts[supplement.id] = host

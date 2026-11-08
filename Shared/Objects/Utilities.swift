@@ -12,6 +12,14 @@ import Foundation
 @_exported import StatefulMacros
 @_exported import SwiftfinMacros
 
+infix operator ?=: AssignmentPrecedence
+
+func ?= <T>(lhs: inout T?, rhs: @autoclosure () -> T?) {
+    if lhs == nil {
+        lhs = rhs()
+    }
+}
+
 @inlinable
 func clamp<T: Comparable>(_ x: T, min y: T, max z: T) -> T {
     min(max(x, y), z)

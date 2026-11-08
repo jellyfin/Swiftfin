@@ -15,64 +15,78 @@ import SwiftUI
 
 @MainActor
 @Observable
-final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaPlayerSecondarySubtitleProviding {
+final class MPVMediaPlayer {
 
     let displayTitle = MediaPlayerType.mpv.displayTitle
     let playbackProfile = PlaybackProfile.local(.mpv)
+
     let player = MPVPlayer(configuration: .init(audio: .init(audioSession: .hostManaged)))
     private let textSubtitles = TextSubtitlePresentation()
+
+    @ObservationIgnored
+    weak var mediaSession: MediaSession?
+
     private(set) var videoState = VideoPlaybackState()
 
+    @ObservationIgnored
+    private var loadedItem: MediaPlayerItem?
+    @ObservationIgnored
+    private var loadGeneration: UInt64?
+
+    @ObservationIgnored
+    private var eventObservation: AnyCancellable?
+    @ObservationIgnored
+    private var timingObservation: AnyCancellable?
+
+    @ObservationIgnored
+    private var seekTask: Task<Void, Never>?
+    @ObservationIgnored
+    private var pendingSeek: PlaybackTimeline.Seek?
+    @ObservationIgnored
+    private var pendingPlaybackStatus: MediaSession.PlaybackRequestStatus?
+
+    @ObservationIgnored
+    private var subtitleLoads: [Int: Task<Bool, Never>] = [:]
+
+    @ObservationIgnored
+    private var observedState: MPVPlaybackState = .idle
+    @ObservationIgnored
+    private var observedPaused = true
+    @ObservationIgnored
+    private var observedPlayback = PlaybackState()
+    @ObservationIgnored
+    private var information = MPVMediaInformation.empty
+
+    @ObservationIgnored
+    private var appliedAudioOffset: Duration?
+    @ObservationIgnored
+    private var appliedSubtitleOffsets: [MPVSubtitleRole: Duration] = [:]
+
+    @ObservationIgnored
+    private var automaticPiPRequested = false
     #if os(iOS)
     @ObservationIgnored
     private var automaticPiPObservation: AnyCancellable?
     #endif
 
-    @ObservationIgnored
-    private var isSeekReload = false
-    @ObservationIgnored
-    private var lastError: MPVPlayerError?
-    @ObservationIgnored
-    private var lastState: MPVPlaybackState?
-    @ObservationIgnored
-    private var lastTracks: [MPVMediaTrack] = []
-    @ObservationIgnored
-    private var loadedItem: MediaPlayerItem?
-    @ObservationIgnored
-    private var loadedSubtitleIndexes: Set<Int> = []
-    @ObservationIgnored
-    weak var mediaSession: MediaSession?
-    @ObservationIgnored
-    private var pendingSeek: PlaybackTimeline.Seek?
-    @ObservationIgnored
-    private var pendingPlaybackStatus: MediaSession.PlaybackRequestStatus?
-    @ObservationIgnored
-    private var playbackObservation: AnyCancellable?
-    @ObservationIgnored
-    private var sawSeeking = false
-    @ObservationIgnored
-    private var seekLatencyBeforeRequest: Double?
-    @ObservationIgnored
-    private var seekStartedAt: ContinuousClock.Instant?
-
     init() {
         let logger = Logger.swiftfin()
+
         player.logHandler = { message in
             let level: Logger.Level
+
             switch message.level {
             case .fatal, .error:
                 level = .error
+
             case .warning:
                 level = .warning
+
             default:
                 return
             }
 
-            // Native network errors can include authenticated media URLs.
-            let text = message.message
-                .replacingOccurrences(of: #"(?i)\b(?:https?|rtsp|rtmp|ftp|file)://[^\s]+"#, with: "<URL>", options: .regularExpression)
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-            logger.log(level: level, "mpv [\(message.prefix)]: \(text)")
+            logger.log(level: level, "mpv [\(message.prefix)]: \(Self.redacted(message.message))")
         }
 
         #if os(iOS)
@@ -83,62 +97,52 @@ final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaP
     isolated deinit {
         stop()
     }
+}
+
+extension MPVMediaPlayer: VideoMediaPlayer {
 
     func load(_ item: MediaPlayerItem) {
-        stop()
+        clearItem()
         loadedItem = item
-        item.setTrackIndexes(.init())
-
-        textSubtitles.start(player) { [weak self] in
-            guard let self else { return }
-
-            loadedItem?.replaySubtitles?.refresh()
-        }
-
-        #if DEBUG
-        print("[MPV] Loading resolved URL: \(item.url.absoluteString)")
-        #endif
 
         player.load(
             item.url,
-            autoPlay: mediaSession?.playbackRequestStatus == .playing,
+            playAutomatically: mediaSession?.playbackRequestStatus == .playing,
             startTime: item.baseItem.isLiveStream ? nil : item.baseItem.startSeconds
         )
+        loadGeneration = player.generation
 
+        textSubtitles.start(player) { [weak self] in
+            self?.loadedItem?.replaySubtitles?.refresh()
+        }
+
+        item.setTrackIndexes(.init())
         setRate(mediaSession?.rate ?? 1)
         item.applyPlaybackOffsets()
         observePlayback(of: item)
     }
 
     func play() {
-        guard loadedItem != nil else { return }
+        guard loadedItem != nil else {
+            return
+        }
 
         pendingPlaybackStatus = .playing
         player.play()
     }
 
     func pause() {
-        guard loadedItem != nil else { return }
+        guard loadedItem != nil else {
+            return
+        }
 
         pendingPlaybackStatus = .paused
         player.pause()
     }
 
     func stop() {
-        playbackObservation = nil
-        loadedItem = nil
-        loadedSubtitleIndexes.removeAll()
-        lastState = nil
-        lastTracks = []
-
-        cancelSeek()
-        lastError = nil
-        pendingPlaybackStatus = nil
-
-        textSubtitles.clear()
+        clearItem()
         player.stop()
-
-        videoState = VideoPlaybackState()
     }
 
     func seek(_ request: PlaybackTimeline.Seek) {
@@ -147,32 +151,41 @@ final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaP
             return
         }
 
+        cancelSeek()
         pendingSeek = request
         player.clearLastError()
-        lastError = nil
 
-        seekLatencyBeforeRequest = player.playbackDiagnostics.seekLatencySeconds
-        sawSeeking = false
-        seekStartedAt = .now
-        isSeekReload = player.state == .ended
+        let generation = player.generation
 
-        if isSeekReload, let loadedItem {
-            loadedSubtitleIndexes.removeAll()
-            #if DEBUG
-            print("[MPV] Loading resolved URL: \(loadedItem.url.absoluteString)")
-            #endif
-            player.load(loadedItem.url, autoPlay: mediaSession?.playbackRequestStatus == .playing, startTime: request.target)
-        } else {
-            player.seek(to: request.target)
+        seekTask = Task { [weak self, player] in
+            let position: Duration?
+
+            do {
+                position = try await player.seekAndWait(to: request.target).position
+            } catch is CancellationError {
+                return
+            } catch {
+                position = nil
+            }
+
+            guard !Task.isCancelled, let self, loadGeneration == generation, pendingSeek?.id == request.id else {
+                return
+            }
+
+            pendingSeek = nil
+            seekTask = nil
+            mediaSession?.playerDidCompleteSeek(request, position: position, from: self)
+
+            if loadGeneration == generation, observedState == .ended, loadedItem?.baseItem.isLiveStream == false {
+                mediaSession?.ended(from: self)
+            }
         }
     }
 
     func cancelSeek() {
         pendingSeek = nil
-        seekLatencyBeforeRequest = nil
-        sawSeeking = false
-        seekStartedAt = nil
-        isSeekReload = false
+        seekTask?.cancel()
+        seekTask = nil
     }
 
     func setRate(_ rate: Double) {
@@ -183,265 +196,372 @@ final class MPVMediaPlayer: VideoMediaPlayer, MediaPlayerOffsetProviding, MediaP
         switch stream.type {
         case .audio:
             // M3U Live TV reports -1 for an unknown index. Preserve mpv's audio selection.
-            guard let index = stream.index, index >= 0 else { return }
+            guard let index = stream.index, index >= 0 else {
+                return
+            }
 
-            setTrack(index, type: .audio)
+            if let track = player.audioTracks.first(where: { $0.mpvID == index }), !track.isSelected {
+                player.selectTrack(track.id)
+            }
 
         case .subtitle:
             setSubtitle(stream.index, for: .primary)
 
         default:
-            return
+            break
         }
     }
 
-    private func setSubtitle(_ index: Int?, for role: MPVSubtitleRole) {
-        guard loadedItem != nil else { return }
+    func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
+        MPVVideoPlayerView(player: player, textSubtitles: textSubtitles, layout: layout, isPictureInPictureActive: isPiPActive)
+    }
 
-        let track = player.subtitleTracks.first(property: \.mpvID, equalTo: index)
+    /// Replacing an item keeps MPVUI's native client and renderer available for the next load.
+    private func clearItem() {
+        eventObservation = nil
+        timingObservation = nil
+
+        loadedItem = nil
+        loadGeneration = nil
+
+        cancelSeek()
+
+        for task in subtitleLoads.values {
+            task.cancel()
+        }
+
+        subtitleLoads.removeAll()
+
+        pendingPlaybackStatus = nil
+        observedState = .idle
+        observedPaused = true
+        observedPlayback = PlaybackState()
+        information = .empty
+
+        appliedAudioOffset = nil
+        appliedSubtitleOffsets.removeAll()
+
+        textSubtitles.clear()
+        videoState = VideoPlaybackState()
+    }
+
+    private func setSubtitle(_ index: Int?, for role: MPVSubtitleRole) {
+        guard loadedItem != nil else {
+            return
+        }
+
+        let track = player.subtitleTracks.first { $0.mpvID == index }
 
         if player.selectedSubtitle(for: role)?.id != track?.id {
             player.selectSubtitle(track?.id, for: role)
         }
     }
 
+    private func observePlayback(of item: MediaPlayerItem) {
+        let events = player.makeEventStream()
+        let timing = player.makeTimingStream()
+
+        eventObservation = Task { [weak self, weak item] in
+            for await event in events {
+                guard !Task.isCancelled, let self, let item, loadedItem === item, event.generation == loadGeneration else {
+                    return
+                }
+
+                receive(event, for: item)
+            }
+        }
+        .asAnyCancellable()
+
+        timingObservation = Task { [weak self, weak item] in
+            for await value in timing {
+                guard !Task.isCancelled, let self, let item, loadedItem === item, value.generation == loadGeneration else {
+                    return
+                }
+
+                updateTiming(
+                    position: value.position,
+                    duration: value.duration,
+                    seekable: value.isSeekable,
+                    buffering: value.buffer.isBuffering
+                )
+            }
+        }
+        .asAnyCancellable()
+    }
+
+    private func receive(_ event: MPVPlaybackEvent, for item: MediaPlayerItem) {
+        switch event.change {
+        case let .snapshot(snapshot):
+            observedState = snapshot.state
+            observedPaused = snapshot.isPaused
+            observedPlayback.isReady = snapshot.isPlaybackReady
+
+            updateTiming(
+                position: snapshot.position,
+                duration: snapshot.duration,
+                seekable: snapshot.isSeekable,
+                buffering: snapshot.buffer.isBuffering
+            )
+
+            updateMediaInformation(snapshot.mediaInformation, for: item)
+            publishPlaybackState()
+
+        case let .pauseChanged(paused):
+            observedPaused = paused
+            publishPlaybackState()
+
+        case let .readinessChanged(ready):
+            observedPlayback.isReady = ready
+            publishPlaybackState()
+
+            if ready, loadedItem === item {
+                updateTracks(for: item)
+            }
+
+        case let .stateChanged(state):
+            observedState = state
+            publishPlaybackState()
+
+            guard loadedItem === item else {
+                return
+            }
+
+            switch state {
+            case .ended:
+                mediaSession?.playerDidUpdatePosition(player.position, from: self)
+
+                if pendingSeek == nil, !item.baseItem.isLiveStream {
+                    mediaSession?.ended(from: self)
+                }
+
+            case let .failed(error):
+                mediaSession?.logger.error("MPV playback failed: \(Self.redacted(error.message))")
+                mediaSession?.playerDidFail(error, from: self)
+
+            case .ready:
+                updateTracks(for: item)
+
+            default:
+                break
+            }
+
+        case let .mediaInformationChanged(value):
+            updateMediaInformation(value, for: item)
+
+        case .videoFeaturesChanged:
+            updateAutomaticPiP()
+
+        case .audioChanged, .chapterChanged, .error, .seekCompleted, .externalTrackLoaded:
+            break
+        }
+    }
+
+    private func updateTiming(position: Duration, duration: Duration, seekable: Bool, buffering: Bool) {
+        mediaSession?.playerDidUpdatePosition(position, from: self)
+
+        let previous = observedPlayback
+
+        observedPlayback.duration = duration > .zero ? duration : nil
+        observedPlayback.isSeekable = seekable
+        observedPlayback.isBuffering = buffering
+
+        if previous != observedPlayback {
+            publishPlaybackState()
+        }
+    }
+
+    private func publishPlaybackState() {
+        var state = observedPlayback
+        state.isPlaying = observedState == .playing && !observedPaused
+        state.isSeeking = observedState == .seeking
+        state.isSeekable = state.isSeekable || observedState == .ended
+
+        mediaSession?.playerDidUpdate(state, from: self)
+
+        let observed: MediaSession.PlaybackRequestStatus = observedPaused ? .paused : .playing
+
+        if state.isReady, pendingPlaybackStatus == nil || pendingPlaybackStatus == observed {
+            pendingPlaybackStatus = nil
+            mediaSession?.playerDidRequestPlayback(observed, from: self)
+        }
+    }
+
+    private func updateMediaInformation(_ value: MPVMediaInformation, for item: MediaPlayerItem) {
+        let tracksChanged = information.tracks != value.tracks
+        information = value
+
+        let size = value.presentationDimensions.map { CGSize(width: $0.width, height: $0.height) } ?? .zero
+
+        if videoState.videoSize != size {
+            videoState.videoSize = size
+        }
+
+        if tracksChanged {
+            updateTracks(for: item)
+        }
+
+        updateAutomaticPiP()
+    }
+
+    private func updateTracks(for item: MediaPlayerItem) {
+        guard !information.tracks.isEmpty, player.isPlaybackReady, loadedItem === item else {
+            return
+        }
+
+        let map = MediaTrackIndexMap.mpv(
+            mediaStreams: item.mediaSource.mediaStreams ?? [],
+            tracks: information.tracks,
+            isTranscoding: item.mediaSource.transcodingURL != nil,
+            selectedAudioStreamIndex: item.selectedAudioStreamIndex
+        )
+
+        if item.indexMap != map {
+            item.setTrackIndexes(map)
+        }
+    }
+
+    private nonisolated static func redacted(_ text: String) -> String {
+        text
+            .replacingOccurrences(of: #"(?i)\b(?:https?|rtsp|rtmp|ftp|file)://[^\s]+"#, with: "<URL>", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+extension MPVMediaPlayer: MediaPlayerOffsetProviding {
+
+    func setOffset(_ seconds: Duration, for type: MediaStreamType) {
+        switch type {
+        case .audio:
+            guard appliedAudioOffset != seconds else {
+                return
+            }
+
+            appliedAudioOffset = seconds
+            player.setAudioDelay(seconds)
+
+        case .subtitle:
+            setSubtitleOffset(seconds, for: .primary)
+
+        default:
+            break
+        }
+    }
+
+    private func setSubtitleOffset(_ seconds: Duration, for role: MPVSubtitleRole) {
+        guard appliedSubtitleOffsets[role] != seconds else {
+            return
+        }
+
+        appliedSubtitleOffsets[role] = seconds
+        player.setSubtitleDelay(seconds, for: role)
+    }
+}
+
+extension MPVMediaPlayer: MediaPlayerSecondarySubtitleProviding {
+
     func setSecondarySubtitle(_ index: Int?) {
         setSubtitle(index, for: .secondary)
     }
 
     func setSecondarySubtitleOffset(_ seconds: Duration) {
-        player.setSubtitleDelay(seconds, for: .secondary)
-    }
-
-    private func setTrack(_ index: Int?, type: MPVTrackType) {
-        guard loadedItem != nil else { return }
-
-        let tracks = player.mediaInformation.tracks.filter { $0.type == type }
-
-        guard let index, index >= 0 else {
-            if tracks.contains(where: \.isSelected) {
-                player.disableTrack(type)
-            }
-
-            return
-        }
-
-        if let track = tracks.first(property: \.mpvID, equalTo: index), !track.isSelected {
-            player.selectTrack(track.id)
-        }
-    }
-
-    func setOffset(_ seconds: Duration, for type: MediaStreamType) {
-        switch type {
-        case .audio:
-            player.setAudioDelay(seconds)
-
-        case .subtitle:
-            player.setSubtitleDelay(seconds)
-
-        default:
-            return
-        }
-    }
-
-    func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
-        MPVVideoPlayerView(
-            player: player,
-            textSubtitles: textSubtitles,
-            layout: layout,
-            isPictureInPictureActive: isPiPActive
-        )
-    }
-
-    /// MPVUI publishes through Observation. Observe it here so timing and state
-    /// continue to reach the mediaSession when no video view is mounted.
-    private func observePlayback(of item: MediaPlayerItem) {
-        let observation = ObservationToken { [player] in
-            (
-                player.state, player.position, player.mediaInformation, player.playbackDiagnostics,
-                player.isPaused, player.bufferStatus, player.isSeekable, player.duration, player.lastError
-            )
-        } onChange: { [weak self, weak item] _ in
-            guard let self, let item, loadedItem === item else { return }
-
-            updatePlayback(for: item)
-        }
-
-        // Initial delivery may synchronously end or replace playback.
-        if loadedItem === item {
-            playbackObservation = AnyCancellable(observation)
-        }
-    }
-
-    private func updatePlayback(for item: MediaPlayerItem) {
-        let state = player.state
-        let position = player.position
-        let information = player.mediaInformation
-        let diagnostics = player.playbackDiagnostics
-        let isPaused = player.isPaused
-        let buffer = player.bufferStatus
-        let isSeekable = player.isSeekable
-        let duration = player.duration
-        let error = player.lastError
-
-        guard information.sourceURL == item.url else { return }
-
-        mediaSession?.playerDidUpdatePosition(position, from: self)
-
-        mediaSession?.playerDidUpdate(
-            PlaybackState(
-                isReady: diagnostics.startLatencySeconds != nil,
-                isPlaying: state == .playing && !isPaused,
-                isSeekable: isSeekable || isSeekReload || state == .ended,
-                isSeeking: state == .seeking,
-                duration: duration > .zero ? duration : nil,
-                isBuffering: buffer.isBuffering
-            ),
-            from: self
-        )
-
-        let observed: MediaSession.PlaybackRequestStatus = isPaused ? .paused : .playing
-
-        if diagnostics.startLatencySeconds != nil,
-           pendingPlaybackStatus == nil || pendingPlaybackStatus == observed
-        {
-            pendingPlaybackStatus = nil
-            mediaSession?.playerDidRequestPlayback(observed, from: self)
-        }
-
-        if let request = pendingSeek {
-            sawSeeking = sawSeeking || state == .seeking
-
-            let didRestart = isSeekReload
-                ? diagnostics.startLatencySeconds != nil
-                : diagnostics.seekLatencySeconds != seekLatencyBeforeRequest
-
-            // Playback may have advanced while delivery to the main actor was delayed.
-            let elapsed = seekStartedAt?.duration(to: .now) ?? .zero
-            let advance = isPaused ? Duration.zero : elapsed * max(1, mediaSession?.rate ?? 1)
-
-            if state != .loading, state != .seeking,
-               sawSeeking || didRestart,
-               position >= request.target - .seconds(1),
-               position <= request.target + advance + .seconds(1)
-            {
-                cancelSeek()
-                mediaSession?.playerDidCompleteSeek(request, position: position, from: self)
-            } else if case let .commandFailed(context, _, _) = error, context == "Seek", error != lastError {
-                cancelSeek()
-                mediaSession?.playerDidCompleteSeek(request, position: nil, from: self)
-            }
-        }
-
-        lastError = error
-
-        let size: CGSize
-
-        if let dimensions = information.dimensions {
-            var width = CGFloat(dimensions.effectiveWidth)
-            var height = CGFloat(dimensions.effectiveHeight)
-            let rotation = ((information.rotation % 360) + 360) % 360
-
-            if rotation == 90 || rotation == 270 {
-                swap(&width, &height)
-            }
-
-            size = CGSize(width: width, height: height)
-        } else {
-            size = .zero
-        }
-
-        let videoState = VideoPlaybackState(
-            videoSize: size,
-            droppedFrames: Int(clamping: (diagnostics.decoderDroppedFrames ?? 0) + (diagnostics.outputDroppedFrames ?? 0))
-        )
-
-        if self.videoState != videoState {
-            self.videoState = videoState
-        }
-
-        let stateChanged = lastState != state
-        let tracksChanged = lastTracks != information.tracks
-
-        lastState = state
-        lastTracks = information.tracks
-
-        if stateChanged {
-            updateState(state, item: item)
-        }
-
-        guard loadedItem === item else { return }
-
-        if stateChanged || tracksChanged {
-            updateTracks(for: item)
-
-            if state == .ready || state == .playing || state == .paused {
-                item.applyPlaybackOffsets()
-            }
-        }
-    }
-
-    private func updateTracks(for item: MediaPlayerItem) {
-        guard player.mediaInformation.sourceURL == item.url, player.mediaInformation.tracks.isNotEmpty else { return }
-
-        switch player.state {
-        case .idle, .loading, .ended, .stopped, .failed:
-            return
-        default:
-            break
-        }
-
-        let indexMap = MediaTrackIndexMap.mpv(
-            mediaStreams: item.mediaSource.mediaStreams ?? [],
-            tracks: player.mediaInformation.tracks,
-            isTranscoding: item.mediaSource.transcodingURL != nil,
-            selectedAudioStreamIndex: item.selectedAudioStreamIndex
-        )
-
-        item.setTrackIndexes(indexMap)
-
-        for stream in item.subtitleStreams.sidecarSubtitles {
-            guard let index = stream.index,
-                  indexMap.playerIndex(for: index) == nil,
-                  let client = mediaSession?.userSession.client,
-                  let url = stream.url(with: client),
-                  loadedSubtitleIndexes.insert(index).inserted
-            else { continue }
-
-            // Tag sidecars so a failed load cannot shift remaining stream mappings.
-            player.command("sub-add", arguments: [url.absoluteString, "auto", "swiftfin-subtitle-\(index)"])
-        }
-    }
-
-    private func updateState(_ state: MPVPlaybackState, item: MediaPlayerItem) {
-        switch state {
-        case .ended:
-            guard !item.baseItem.isLiveStream else { return }
-
-            mediaSession?.ended(from: self)
-
-        case let .failed(error):
-            // MPVUI 0.7's Error conformance loses its native details when erased to Error.
-            mediaSession?.logger.error("MPV playback failed: \(String(reflecting: error))")
-            mediaSession?.playerDidFail(error, from: self)
-
-        case .idle, .loading, .ready, .playing, .paused, .buffering, .seeking, .stopped:
-            break
-        }
+        setSubtitleOffset(seconds, for: .secondary)
     }
 }
 
-// MARK: - Picture in picture
+extension MPVMediaPlayer: MediaPlayerExternalSubtitleProviding {
+
+    /// Imports only requested sidecars. A failed import is removed so a later request can retry.
+    func prepareSubtitle(_ stream: MediaStream) async -> Bool {
+        guard let item = loadedItem,
+              let generation = loadGeneration,
+              stream.isSidecarSubtitle,
+              let index = stream.index,
+              index >= 0
+        else {
+            return false
+        }
+
+        if let mapped = item.indexMap.playerIndex(for: index), mapped >= 0 {
+            return true
+        }
+
+        if let pending = subtitleLoads[index] {
+            return await pending.value
+        }
+
+        guard let client = mediaSession?.userSession.client, let url = stream.url(with: client) else {
+            return false
+        }
+
+        let descriptor = MPVExternalTrack(
+            url: url,
+            type: .subtitle,
+            clientID: MPVTrackIdentity.subtitleID(index),
+            title: stream.displayTitle,
+            language: stream.language,
+            selection: .unselected
+        )
+
+        let task = Task { [weak self, weak item, player] in
+            do {
+                _ = try await player.loadExternalTrack(descriptor)
+
+                guard !Task.isCancelled, let self, let item, loadedItem === item, loadGeneration == generation else {
+                    return false
+                }
+
+                // Mapping applies the latest primary/secondary choices, even if they changed during the read.
+                updateMediaInformation(player.mediaInformation, for: item)
+
+                return true
+            } catch is CancellationError {
+                return false
+            } catch {
+                guard !Task.isCancelled, let self, loadGeneration == generation else {
+                    return false
+                }
+
+                let message = (error as? MPVPlayerError)?.message ?? String(describing: error)
+                mediaSession?.logger.error("MPV subtitle import failed: \(Self.redacted(message))")
+
+                return false
+            }
+        }
+
+        subtitleLoads[index] = task
+
+        let loaded = await task.value
+
+        if loadGeneration == generation {
+            subtitleLoads[index] = nil
+        }
+
+        return loaded
+    }
+}
 
 extension MPVMediaPlayer: MediaPlayerPictureInPictureProviding {
 
     var allowsAutomaticPiP: Bool {
         get {
-            player.pictureInPicture.allowsAutomaticStartFromInline
+            automaticPiPRequested
         }
         set {
-            player.pictureInPicture.allowsAutomaticStartFromInline = newValue
+            automaticPiPRequested = newValue
+            updateAutomaticPiP()
         }
+    }
+
+    private var canCarrySubtitlesInPiP: Bool {
+        player.subtitleTracks
+            .filter(\.isSelected)
+            .allSatisfy { track in
+                let capability = track.subtitleCapabilities?.supportsLiveText == true
+                    ? player.videoFeatureCapabilities.pictureInPictureSubtitles
+                    : player.videoFeatureCapabilities.nativeSubtitles
+
+                return capability.availability == .available
+            }
     }
 
     var isPiPActive: Bool {
@@ -449,7 +569,7 @@ extension MPVMediaPlayer: MediaPlayerPictureInPictureProviding {
     }
 
     var isPiPAvailable: Bool {
-        player.pictureInPicture.isPossible && !player.pictureInPicture.isTransitioning
+        player.pictureInPicture.isPossible && !player.pictureInPicture.isTransitioning && canCarrySubtitlesInPiP
     }
 
     var isPiPTransitioning: Bool {
@@ -457,70 +577,38 @@ extension MPVMediaPlayer: MediaPlayerPictureInPictureProviding {
     }
 
     func startPiP() {
-        player.pictureInPicture.start()
+        if isPiPAvailable {
+            player.pictureInPicture.start()
+        }
     }
 
     func stopPiP() {
         player.pictureInPicture.stop()
     }
-}
 
-extension MediaTrackIndexMap {
+    private func updateAutomaticPiP() {
+        let supported = canCarrySubtitlesInPiP
+        player.pictureInPicture.allowsAutomaticStartFromInline = automaticPiPRequested && supported
 
-    /// mpv assigns indexes within each track type. Jellyfin uses global stream indexes.
-    static func mpv(
-        mediaStreams: [MediaStream],
-        tracks: [MPVMediaTrack],
-        isTranscoding: Bool,
-        selectedAudioStreamIndex: Int?
-    ) -> MediaTrackIndexMap {
-        var map = MediaTrackIndexMap()
-
-        for (streamType, trackType) in [(MediaStreamType.audio, MPVTrackType.audio), (.subtitle, .subtitle)] {
-            let streams = mediaStreams.filter { $0.type == streamType && $0.isExternal != true }
-                .sorted { ($0.index ?? -1) < ($1.index ?? -1) }
-
-            let internalTracks = tracks.filter { $0.type == trackType && !$0.isExternal }
-
-            if isTranscoding {
-                if streamType == .audio, let index = selectedAudioStreamIndex, let track = internalTracks.first {
-                    map.setPlayerIndex(track.mpvID, for: index)
-                }
-            } else {
-                for (stream, track) in zip(streams, internalTracks) {
-                    if let index = stream.index, !stream.isSidecarSubtitle {
-                        map.setPlayerIndex(track.mpvID, for: index)
-                    }
-                }
-            }
+        if !supported, player.pictureInPicture.isActive {
+            player.pictureInPicture.stop()
         }
-
-        for stream in mediaStreams.sidecarSubtitles {
-            if let index = stream.index,
-               let track = tracks.first(where: { $0.type == .subtitle && $0.isExternal && $0.title == "swiftfin-subtitle-\(index)" })
-            {
-                map.setPlayerIndex(track.mpvID, for: index)
-            }
-        }
-
-        return map
     }
 }
 
 extension MPVMediaPlayer: MediaPlayerSubtitleCueProviding {
 
-    func canObserveSubtitleCues(at playerIndex: Int) -> Bool {
-        guard let track = player.subtitleTracks.first(property: \.mpvID, equalTo: playerIndex),
-              let codec = track.codec?.lowercased() else { return false }
-
-        // MPVUI's live semantic stream covers these formats. Native ASS and
-        // bitmap rendering do not expose cue endings through that API.
-        return ["subrip", "srt", "webvtt", "vtt", "ttml", "mov_text"].contains(codec)
+    var subtitleCues: Set<SubtitleCue> {
+        Set(
+            (textSubtitles.snapshot?.regions ?? [])
+                .filter(\.text.isNotEmpty)
+                .map {
+                    SubtitleCue(text: $0.text, track: $0.trackID?.mpvID ?? -1, secondary: $0.role == .secondary)
+                }
+        )
     }
 
-    var subtitleCues: Set<SubtitleCue> {
-        Set((textSubtitles.snapshot?.regions ?? []).filter(\.text.isNotEmpty).map {
-            SubtitleCue(text: $0.text, track: $0.trackID?.mpvID ?? -1, secondary: $0.role == .secondary)
-        })
+    func canObserveSubtitleCues(at playerIndex: Int) -> Bool {
+        player.subtitleTracks.first { $0.mpvID == playerIndex }?.subtitleCapabilities?.supportsLiveText == true
     }
 }

@@ -84,7 +84,7 @@ extension View {
     }
 
     func edgePadding(_ edges: Edge.Set = .all) -> some View {
-        padding(edges, EdgeInsets.edgePadding)
+        modifier(EdgePaddingModifier(edges: edges))
     }
 
     @inlinable
@@ -327,33 +327,11 @@ extension View {
     /// Applies the aspect ratio, corner radius, and border for the given `PosterType`
     ///
     /// Note: will not apply `subtleShadow`
-    @ViewBuilder
     func posterStyle(
         _ type: PosterDisplayType,
         contentMode: ContentMode = .fill
     ) -> some View {
-        switch type {
-        case .landscape:
-            posterAspectRatio(type, contentMode: contentMode)
-                #if !os(tvOS)
-                    .posterBorder()
-                    .posterCornerRadius(type)
-                #endif
-
-        case .portrait:
-            posterAspectRatio(type, contentMode: contentMode)
-                #if !os(tvOS)
-                    .posterBorder()
-                    .posterCornerRadius(type)
-                #endif
-
-        case .square:
-            posterAspectRatio(type, contentMode: contentMode)
-                #if os(iOS)
-                    .posterBorder()
-                    .posterCornerRadius(type)
-                #endif
-        }
+        modifier(PosterStyleModifier(type: type, contentMode: contentMode))
     }
 
     func preference<Key: PreferenceKey, V>(

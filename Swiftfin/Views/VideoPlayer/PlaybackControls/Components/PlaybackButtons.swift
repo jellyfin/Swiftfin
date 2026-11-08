@@ -79,7 +79,6 @@ extension VideoPlayer.PlaybackControls {
             }
             .buttonStyle(OverlayButtonStyle(symbolEffectSpeed: 2))
             .padding(.horizontal, 50)
-            .offset(y: viewState.centerOffset / 2)
         }
     }
 

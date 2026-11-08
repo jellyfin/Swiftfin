@@ -7,9 +7,7 @@
 //
 
 import Combine
-import FactoryKit
 import Foundation
-import Get
 import JellyfinAPI
 import Pulse
 
@@ -20,6 +18,23 @@ final class UserSession {
 
     @MainActor
     private(set) lazy var items = ItemStore()
+
+    @MainActor
+    private(set) lazy var users = UserStore()
+
+    @MainActor
+    private(set) lazy var currentUser: UserRecord = {
+        var data = user.data
+        data.id = user.id
+        data.name ?= user.username
+        return (try? users.record(for: data)) ?? UserRecord(id: user.id, value: nil)
+    }()
+
+    @MainActor
+    var userChanges = Set<AnyCancellable>()
+
+    @MainActor
+    var userRefresh: Task<Void, Never>?
 
     @MainActor
     var itemActionErrors = PassthroughSubject<Error, Never>()
@@ -40,17 +55,8 @@ final class UserSession {
 
         // Connection changes replace only the transport, never the user session
         // or the item store retained by views and playback.
-        let accessToken = user.accessToken
         let client = JellyfinClient(
-            configuration: .swiftfinConfiguration(url: url, accessToken: accessToken),
-            delegate: AuthenticationDelegate { [weak self] in
-                guard let self else { return true }
-
-                return await Container.shared.userSessionManager().handleUnauthorizedResponse(
-                    from: self,
-                    accessToken: accessToken
-                )
-            },
+            configuration: .swiftfinConfiguration(url: url, accessToken: user.accessToken),
             sessionConfiguration: .swiftfin,
             sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
         )
@@ -82,6 +88,7 @@ final class UserSession {
     @MainActor
     func willStart() async {
         observeItemChanges()
+        observeUserChanges()
 
         for service in services {
             await service.willStart(userSession: self)
@@ -98,25 +105,15 @@ final class UserSession {
     @MainActor
     func willStop() {
         itemChanges = nil
-
+        userChanges.removeAll()
+        userRefresh?.cancel()
+        userRefresh = nil
         for service in services.reversed() {
             service.willStop(userSession: self)
         }
 
         items.invalidate()
+        users.invalidate()
         itemActionErrors.send(completion: .finished)
-    }
-}
-
-private struct AuthenticationDelegate: APIClientDelegate {
-
-    let onUnauthorized: () async -> Bool
-
-    func client(_ client: APIClient, shouldRetry task: URLSessionTask, error: Error, attempts: Int) async throws -> Bool {
-        if case APIError.unacceptableStatusCode(401) = error, await onUnauthorized() {
-            // The session has ended. Do not present its request errors over the sign-in screen.
-            throw CancellationError()
-        }
-        return false
     }
 }

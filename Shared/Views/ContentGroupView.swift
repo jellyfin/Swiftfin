@@ -19,8 +19,11 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         case content = "contentGroup-content"
     }
 
-    @Environment(\.tabSafeAreaInsets)
-    private var tabSafeAreaInsets
+    @Environment(\.frameForParentView)
+    private var frameForParentView
+
+    @AdaptiveLayout
+    private var viewLayout
 
     @Router
     private var router
@@ -49,8 +52,11 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                         .id("top")
 
                     ContentGroupVStack(groups: viewModel.groups)
-                        .edgePadding(contentGroupOptions.contains(.ignoreSafeAreaTop) ? .bottom : .vertical)
-                        .padding(.top, contentGroupOptions.contains(.ignoreSafeAreaTop) ? 0 : tabSafeAreaInsets.top)
+                        .edgePadding(viewLayout.isLarge && !contentGroupOptions.contains(.ignoreSafeAreaTop) ? .vertical : .bottom)
+                        .padding(
+                            .top,
+                            contentGroupOptions.contains(.ignoreSafeAreaTop) ? 0 : (frameForParentView[.tabView]?.safeAreaInsets.top ?? 0)
+                        )
                         .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
                             contentGroupOptions = value
                         }
@@ -59,12 +65,12 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
             .trackingFrame(for: .scrollView)
             #if os(tvOS)
             .coordinatedFocus(Focus.content.rawValue)
-            .ignoresSafeArea(.container, edges: [.horizontal, .top])
-            #else
-            .ignoresSafeArea(
-                edges: contentGroupOptions.contains(.ignoreSafeAreaTop) ? [.horizontal, .top] : .horizontal
-            )
             #endif
+            .ignoresSafeArea(
+                .container,
+                edges: viewLayout
+                    .scrollContentEdges(extendsTop: viewLayout.isLarge || contentGroupOptions.contains(.ignoreSafeAreaTop))
+            )
             .scrollIndicators(.hidden)
             .refreshable {
                 await viewModel.background.refresh()
@@ -79,7 +85,7 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         }
     }
 
-    var body: some View {
+    private var groupContent: some View {
         ZStack {
             switch viewModel.state {
             case .content:
@@ -110,6 +116,34 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea(edges: .all)
             }
+        }
+    }
+
+    var body: some View {
+        Group {
+            #if os(tvOS)
+            groupContent
+            #else
+            GeometryReader { geometry in
+                let safeArea = frameForParentView[.navigationStack]?.safeAreaInsets ?? geometry.safeAreaInsets
+                let horizontalInsets = EdgeInsets(
+                    top: 0,
+                    leading: safeArea.leading,
+                    bottom: 0,
+                    trailing: safeArea.trailing
+                )
+
+                groupContent
+                    .layoutContainer(size: CGSize(
+                        width: max(0, geometry.size.width - horizontalInsets.leading - horizontalInsets.trailing),
+                        height: geometry.size.height
+                    ))
+                    .padding(horizontalInsets)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .animation(.smooth(duration: 0.35), value: horizontalInsets)
+            }
+            .ignoresSafeArea(.container, edges: .horizontal)
+            #endif
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.2), value: viewModel.background.states)

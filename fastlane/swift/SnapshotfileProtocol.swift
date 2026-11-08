@@ -125,6 +125,9 @@ public protocol SnapshotfileProtocol: AnyObject {
     /// Skips resolution of Swift Package Manager dependencies
     var skipPackageDependenciesResolution: Bool { get }
 
+    /// Raises an error instead of fetching build settings by running `xcodebuild -showBuildSettings`, which can take a long time on large projects. The error names the required build setting, so the corresponding option can be specified manually
+    var disallowXcodebuildSettingsLookup: Bool { get }
+
     /// Prevents packages from automatically being resolved to versions other than those recorded in the `Package.resolved` file. This translates in the option `-disableAutomaticPackageResolution` being passed to xcodebuild
     var disablePackageAutomaticUpdates: Bool { get }
 
@@ -142,6 +145,9 @@ public protocol SnapshotfileProtocol: AnyObject {
 
     /// Array of strings matching Test Bundle/Test Suite/Test Cases to skip
     var skipTesting: String? { get }
+
+    /// Run simulator in a Rosetta mode
+    var runRosettaSimulator: Bool { get }
 
     /// xcodebuild formatter to use (ex: 'xcbeautify', 'xcbeautify --quieter', 'xcpretty', 'xcpretty -test'). Use empty string (ex: '') to disable any formatter (More information: https://docs.fastlane.tools/best-practices/xcodebuild-formatters/)
     var xcodebuildFormatter: String { get }
@@ -324,6 +330,10 @@ public extension SnapshotfileProtocol {
         return false
     }
 
+    var disallowXcodebuildSettingsLookup: Bool {
+        return false
+    }
+
     var disablePackageAutomaticUpdates: Bool {
         return false
     }
@@ -346,6 +356,10 @@ public extension SnapshotfileProtocol {
 
     var skipTesting: String? {
         return nil
+    }
+
+    var runRosettaSimulator: Bool {
+        return false
     }
 
     var xcodebuildFormatter: String {
@@ -371,4 +385,4 @@ public extension SnapshotfileProtocol {
 
 // Please don't remove the lines below
 // They are used to detect outdated files
-// FastlaneRunnerAPIVersion [0.9.137]
+// FastlaneRunnerAPIVersion [0.9.150]

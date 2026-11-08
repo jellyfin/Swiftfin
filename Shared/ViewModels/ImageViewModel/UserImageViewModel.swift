@@ -45,7 +45,7 @@ final class UserImageViewModel: ViewModel {
         case error
     }
 
-    @Published
+    @SharedUser
     var user: UserDto
 
     init(user: UserDto) {
@@ -68,6 +68,7 @@ final class UserImageViewModel: ViewModel {
         _ = try await send(request)
 
         await cleanImageCache()
+        $user = try await requireUserSession().getUser(id: userID)
         events.send(.updated)
     }
 
@@ -79,6 +80,7 @@ final class UserImageViewModel: ViewModel {
         _ = try await send(request)
 
         await cleanImageCache()
+        $user = try await requireUserSession().getUser(id: userID)
         events.send(.deleted)
     }
 
@@ -90,10 +92,6 @@ final class UserImageViewModel: ViewModel {
                 await ImagePipeline.Swiftfin.local.removeItem(for: url)
                 await ImagePipeline.Swiftfin.posters.removeItem(for: url)
             }
-        }
-
-        if let userID = user.id {
-            Notifications[.didChangeUserProfile].post(userID)
         }
     }
 }
