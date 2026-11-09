@@ -22,7 +22,7 @@
     {
       "identity" : "collectionhstack",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/CollectionHStack",
+      "location" : "https://github.com/LePips/CollectionHStack.git",
       "state" : {
         "branch" : "main",
         "revision" : "be93b8c846df6aeec9b39d47cc1031b671842f0b"
@@ -31,7 +31,7 @@
     {
       "identity" : "collectionvgrid",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/CollectionVGrid",
+      "location" : "https://github.com/LePips/CollectionVGrid.git",
       "state" : {
         "branch" : "main",
         "revision" : "ae139c76a1877e4f34e14bc4017ae615e2434635"
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/MediaAccessibilityKit",
       "state" : {
-        "revision" : "6c2b50d3f2b6ccfa0105cf5fc6315f1d431ca92a",
-        "version" : "0.3.0"
+        "revision" : "afb0f472fa98b5abf5861bed243c5cda7909b927",
+        "version" : "0.4.0"
       }
     },
     {
