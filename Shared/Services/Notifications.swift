@@ -160,6 +160,10 @@ extension Notifications.Key {
 
     // MARK: - UIApplication
 
+    static var applicationDidBecomeActive: Key<Void> {
+        Key(UIApplication.didBecomeActiveNotification)
+    }
+
     static var applicationDidEnterBackground: Key<Void> {
         Key(UIApplication.didEnterBackgroundNotification)
     }

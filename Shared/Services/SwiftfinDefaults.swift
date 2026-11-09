@@ -371,13 +371,6 @@ extension Defaults.Keys {
             }
         }
 
-        enum Subtitle {
-
-            static var captionProfileID: Key<String> {
-                UserKey("captionProfileID", default: "")
-            }
-        }
-
         enum Transition {
 
             static var automaticPictureInPicture: Key<Bool> {
