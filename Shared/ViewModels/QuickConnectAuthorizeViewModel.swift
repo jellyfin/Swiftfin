@@ -37,7 +37,8 @@ final class QuickConnectAuthorizeViewModel: ViewModel {
         case initial
     }
 
-    let user: UserDto
+    @SharedUser
+    var user: UserDto
 
     init(user: UserDto) {
         self.user = user

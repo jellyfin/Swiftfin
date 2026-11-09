@@ -20,6 +20,23 @@ final class UserSession {
     private(set) lazy var items = ItemStore()
 
     @MainActor
+    private(set) lazy var users = UserStore()
+
+    @MainActor
+    private(set) lazy var currentUser: UserRecord = {
+        var data = user.data
+        data.id = user.id
+        data.name ?= user.username
+        return (try? users.record(for: data)) ?? UserRecord(id: user.id, value: nil)
+    }()
+
+    @MainActor
+    var userChanges = Set<AnyCancellable>()
+
+    @MainActor
+    var userRefresh: Task<Void, Never>?
+
+    @MainActor
     var itemActionErrors = PassthroughSubject<Error, Never>()
 
     @MainActor
@@ -71,6 +88,7 @@ final class UserSession {
     @MainActor
     func willStart() async {
         observeItemChanges()
+        observeUserChanges()
 
         for service in services {
             await service.willStart(userSession: self)
@@ -87,12 +105,15 @@ final class UserSession {
     @MainActor
     func willStop() {
         itemChanges = nil
-
+        userChanges.removeAll()
+        userRefresh?.cancel()
+        userRefresh = nil
         for service in services.reversed() {
             service.willStop(userSession: self)
         }
 
         items.invalidate()
+        users.invalidate()
         itemActionErrors.send(completion: .finished)
     }
 }

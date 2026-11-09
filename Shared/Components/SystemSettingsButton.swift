@@ -10,11 +10,11 @@ import SwiftUI
 
 struct SystemSettingsButton: View {
 
-    let title: String
-    let destination: SystemSettings
-
     @State
     private var error: Error?
+
+    let title: String
+    let destination: SystemSettings
 
     var body: some View {
         ChevronButton(title, external: true) {
@@ -26,6 +26,7 @@ struct SystemSettingsButton: View {
                 }
             }
         }
+        .enabled(destination.canOpen)
         .errorMessage($error)
     }
 }

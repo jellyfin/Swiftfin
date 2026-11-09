@@ -6,14 +6,16 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct ItemSubtitleSearchView: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AdaptiveLayout
+    private var viewLayout
+
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var viewModel: ItemSubtitlesViewModel
@@ -62,7 +64,7 @@ struct ItemSubtitleSearchView: View {
                     .disabled(selectedSubtitles.isEmpty)
             } else {
                 Button(L10n.save, action: save)
-                    .foregroundStyle(accentColor.overlayColor, accentColor)
+                    .foregroundStyle(theme.accentColor.overlayColor, theme.accentColor)
                     .disabled(selectedSubtitles.isEmpty)
                     .backport
                     .buttonStyle(.glassProminent)
@@ -84,21 +86,21 @@ struct ItemSubtitleSearchView: View {
                 Toggle(L10n.perfectMatch, isOn: $isPerfectMatch)
             }
 
-            #if os(tvOS)
-            Section {
-                Button(action: save) {
-                    Text(L10n.save)
-                        .frame(maxWidth: .infinity)
+            if viewLayout.isLarge {
+                Section {
+                    Button(action: save) {
+                        Text(L10n.save)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .disabled(selectedSubtitles.isEmpty)
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .tint(theme.accentColor)
                 }
-                .disabled(selectedSubtitles.isEmpty)
-                .listRowInsets(.zero)
-                .listRowBackground(Color.clear)
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
             }
-            #endif
 
             Section(L10n.search) {
 

@@ -27,7 +27,6 @@ struct ItemPlaylistView: View {
         _viewModel = StateObject(wrappedValue: ItemPlaylistViewModel(item: item))
     }
 
-    @ViewBuilder
     private var contentView: some View {
         Form(systemImage: "list.bullet") {
 

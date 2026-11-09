@@ -11,6 +11,4 @@ import Foundation
 struct VideoPlaybackState: Equatable, Sendable {
 
     var videoSize: CGSize = .zero
-    var droppedFrames: Int = 0
-    var corruptedFrames: Int = 0
 }

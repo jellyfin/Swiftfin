@@ -62,6 +62,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             data: data,
             selection: selection.wrappedValue,
             selectionPresented: selectionPresented,
+            environment: context.environment,
             content: content
         )
     }
@@ -102,8 +103,8 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
         weak var container: UIViewController?
 
-        private var hosts: [String: HostingController<Content>] = [:]
-        private weak var visibleHost: HostingController<Content>?
+        private var hosts: [String: HostingController<HostingEnvironmentView<Content>>] = [:]
+        private weak var visibleHost: HostingController<HostingEnvironmentView<Content>>?
         private var transitionID: Int = 0
 
         private var selectionPresented: (String) -> Void = { _ in }
@@ -112,6 +113,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             data: [any VideoPlayerSupplement],
             selection: String?,
             selectionPresented: @escaping (String) -> Void,
+            environment: EnvironmentValues,
             @ViewBuilder content: (any VideoPlayerSupplement) -> Content
         ) {
             guard let container else { return }
@@ -132,9 +134,9 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
             for supplement in data {
                 if let host = hosts[supplement.id] {
-                    host.content = content(supplement)
+                    host.content = HostingEnvironmentView(content: content(supplement), environment: environment)
                 } else {
-                    let host = HostingController(content: content(supplement))
+                    let host = HostingController(content: HostingEnvironmentView(content: content(supplement), environment: environment))
                     host.disableSafeArea = true
                     host.view.backgroundColor = .clear
                     hosts[supplement.id] = host

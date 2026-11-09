@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-struct MediaTrackIndexMap {
+struct MediaTrackIndexMap: Equatable {
 
     private var playerIndexesByJellyfinIndex: [Int: Int]
 

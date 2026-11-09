@@ -88,7 +88,8 @@ final class PreviewImageProvider {
     func image(for seconds: Duration) async -> UIImage? {
         switch source {
         case let .chapters(chapters):
-            guard let index = chapters.chapterIndex(at: seconds) else { return nil }
+            let started = chapters.split(after: seconds, sortedBy: \.startSeconds).atOrBefore
+            guard let index = started.indices.last ?? chapters.indices.first else { return nil }
 
             return await resolveImage(index)
 

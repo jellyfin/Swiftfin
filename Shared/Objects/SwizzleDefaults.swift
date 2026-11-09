@@ -48,23 +48,12 @@ enum SwizzleDefaults {
     }
 
     private static let swizzle: Void = {
-        _swizzle(#selector(UserDefaults.object(forKey:)), #selector(UserDefaults._ds_object(forKey:)))
-        _swizzle(#selector(UserDefaults.bool(forKey:)), #selector(UserDefaults._ds_bool(forKey:)))
-        _swizzle(#selector(UserDefaults.string(forKey:)), #selector(UserDefaults._ds_string(forKey:)))
-        _swizzle(#selector(UserDefaults.integer(forKey:)), #selector(UserDefaults._ds_integer(forKey:)))
-        _swizzle(#selector(UserDefaults.double(forKey:)), #selector(UserDefaults._ds_double(forKey:)))
+        UserDefaults.swizzleInstanceMethod(#selector(UserDefaults.object(forKey:)), with: #selector(UserDefaults._ds_object(forKey:)))
+        UserDefaults.swizzleInstanceMethod(#selector(UserDefaults.bool(forKey:)), with: #selector(UserDefaults._ds_bool(forKey:)))
+        UserDefaults.swizzleInstanceMethod(#selector(UserDefaults.string(forKey:)), with: #selector(UserDefaults._ds_string(forKey:)))
+        UserDefaults.swizzleInstanceMethod(#selector(UserDefaults.integer(forKey:)), with: #selector(UserDefaults._ds_integer(forKey:)))
+        UserDefaults.swizzleInstanceMethod(#selector(UserDefaults.double(forKey:)), with: #selector(UserDefaults._ds_double(forKey:)))
     }()
-
-    private static func _swizzle(
-        _ original: Selector,
-        _ replacement: Selector
-    ) {
-        guard let a = class_getInstanceMethod(UserDefaults.self, original),
-              let b = class_getInstanceMethod(UserDefaults.self, replacement)
-        else { return }
-
-        method_exchangeImplementations(a, b)
-    }
 }
 
 fileprivate extension UserDefaults {

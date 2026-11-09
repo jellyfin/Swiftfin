@@ -10,11 +10,12 @@ import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
+@MainActor
 extension BaseItemDto {
 
     /// Indicates whether the item can be downloaded by the current user
     var canBeDownloaded: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
+        guard let userPolicy = Container.shared.currentUserSession()?.userData.policy else { return false }
 
         return userPolicy.enableContentDownloading == true && canDownload == true
     }
@@ -31,7 +32,7 @@ extension BaseItemDto {
 
     /// Indicates whether the item's metadata can be edited by the current user
     var canEditMetadata: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
+        guard let userPolicy = Container.shared.currentUserSession()?.userData.policy else { return false }
 
         switch type {
         case .playlist:
@@ -45,7 +46,7 @@ extension BaseItemDto {
 
     /// Indicates whether the item's lyrics can be edited by the current user
     var canEditLyrics: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
+        guard let userPolicy = Container.shared.currentUserSession()?.userData.policy else { return false }
 
         switch type {
         case .audio:
@@ -57,7 +58,7 @@ extension BaseItemDto {
 
     /// Indicates whether the item's subtitles can be edited by the current user
     var canEditSubtitles: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
+        guard let userPolicy = Container.shared.currentUserSession()?.userData.policy else { return false }
 
         switch type {
         case .episode, .movie, .musicVideo, .trailer, .video:

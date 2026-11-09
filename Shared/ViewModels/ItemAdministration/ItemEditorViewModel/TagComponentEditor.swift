@@ -29,9 +29,7 @@ struct TagComponentEditor: ItemComponentEditor {
 
     func adding(_ tags: [String], to item: BaseItemDto) -> BaseItemDto {
         var item = item
-        if item.tags == nil {
-            item.tags = []
-        }
+        item.tags ?= []
         item.tags?.append(contentsOf: tags)
         return item
     }

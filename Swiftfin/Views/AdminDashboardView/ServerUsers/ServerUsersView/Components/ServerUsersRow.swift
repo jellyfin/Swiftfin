@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import FactoryKit
 import JellyfinAPI
 import SwiftUI
@@ -17,9 +16,6 @@ extension ServerUsersView {
 
         @Injected(\.currentUserSession)
         private var userSession
-
-        @Default(.accentColor)
-        private var accentColor
 
         // MARK: - Environment Variables
 
@@ -33,7 +29,8 @@ extension ServerUsersView {
         @CurrentDate
         private var currentDate: Date
 
-        let user: UserDto
+        @SharedUser
+        var user: UserDto
 
         // MARK: - Actions
 
