@@ -26,6 +26,14 @@ struct ErrorView<ErrorType: Error>: View {
 
     let error: ErrorType
 
+    private var canSignIn: Bool {
+        guard let apiError = error as? APIError,
+              case .unacceptableStatusCode(401) = apiError
+        else { return false }
+
+        return userSessionManager.currentSession != nil
+    }
+
     private var systemImage: String {
         if let error = error as? SystemImageable {
             error.systemImage
@@ -48,30 +56,17 @@ struct ErrorView<ErrorType: Error>: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
 
-            if let apiError = error as? APIError,
-               case .unacceptableStatusCode(401) = apiError,
-               userSessionManager.currentSession != nil
-            {
-                Button(L10n.signIn) {
-                    Task { @MainActor in
-                        await userSessionManager.signOut(reason: .authenticationExpired)
-                    }
-                }
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .tint(theme.accentColor)
-                .frame(minHeight: viewLayout.controlHeight)
-                .frame(maxWidth: viewLayout.value(standard: 300, large: 600))
-            }
-
-            if let refresh {
+            if canSignIn || refresh != nil {
                 Button {
-                    Task {
-                        await refresh()
+                    Task { @MainActor in
+                        if canSignIn {
+                            await userSessionManager.signOut(reason: .authenticationExpired)
+                        } else if let refresh {
+                            await refresh()
+                        }
                     }
                 } label: {
-                    Text(L10n.retry)
+                    Text(canSignIn ? L10n.signIn : L10n.retry)
                         .frame(maxWidth: .infinity)
                 }
                 .fontWeight(.semibold)
