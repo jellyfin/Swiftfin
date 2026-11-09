@@ -12,19 +12,19 @@ import SwiftUI
 extension ItemEntry: @MainActor LibraryElement {
 
     var supportedLibraryStyleOptions: LibraryStyleOptions {
-        snapshot.supportedLibraryStyleOptions
+        snapshot.supportedLibraryStyleOptions(grouping: grouping)
     }
 
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
         guard let value else { return }
 
-        value.libraryDidSelectElement(router: router, in: namespace)
+        value.libraryDidSelectElement(router: router, in: namespace, grouping: grouping)
     }
 
     @ViewBuilder
     func makeBody(libraryStyle: LibraryStyle, action: (() -> Void)?) -> some View {
         if let value {
-            value.makeBody(libraryStyle: libraryStyle, action: action)
+            value.makeBody(libraryStyle: libraryStyle, action: action, grouping: grouping)
         }
     }
 }

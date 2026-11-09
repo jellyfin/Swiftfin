@@ -30,7 +30,8 @@ extension UserSession {
             .removeDuplicates {
                 $0.policy == $1.policy &&
                     $0.configuration?.latestItemsExcludes == $1.configuration?.latestItemsExcludes &&
-                    $0.configuration?.myMediaExcludes == $1.configuration?.myMediaExcludes
+                    $0.configuration?.myMediaExcludes == $1.configuration?.myMediaExcludes &&
+                    $0.configuration?.groupedFolders == $1.configuration?.groupedFolders
             }
             .dropFirst()
             .map { _ in () }
