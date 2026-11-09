@@ -206,6 +206,8 @@ internal enum L10n {
   internal static let available = L10n.tr("Localizable", "available", fallback: "Available")
   /// Average Frame Rate
   internal static let averageFrameRate = L10n.tr("Localizable", "averageFrameRate", fallback: "Average Frame Rate")
+  /// Back
+  internal static let back = L10n.tr("Localizable", "back", fallback: "Back")
   /// Backdrop
   internal static let backdrop = L10n.tr("Localizable", "backdrop", fallback: "Backdrop")
   /// A wide background image displayed behind the item details on its media page. Multiple backdrops can be added and will cycle or be selected randomly.
@@ -424,6 +426,8 @@ internal enum L10n {
   internal static let controlOtherUsers = L10n.tr("Localizable", "controlOtherUsers", fallback: "Control other users")
   /// Control shared devices
   internal static let controlSharedDevices = L10n.tr("Localizable", "controlSharedDevices", fallback: "Control shared devices")
+  /// Corrupted frames
+  internal static let corruptedFrames = L10n.tr("Localizable", "corruptedFrames", fallback: "Corrupted frames")
   /// Count
   internal static let count = L10n.tr("Localizable", "count", fallback: "Count")
   /// Country
@@ -1166,6 +1170,8 @@ internal enum L10n {
   internal static let noActivity = L10n.tr("Localizable", "noActivity", fallback: "No activity")
   /// No profiles defined. Playback issues may occur.
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
+  /// No devices found
+  internal static let noDevicesFound = L10n.tr("Localizable", "noDevicesFound", fallback: "No devices found")
   /// No episodes available
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
   /// No items
@@ -1184,6 +1190,8 @@ internal enum L10n {
   internal static let noResults = L10n.tr("Localizable", "noResults", fallback: "No results")
   /// No runtime limit
   internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
+  /// Nothing playing
+  internal static let nothingPlaying = L10n.tr("Localizable", "nothingPlaying", fallback: "Nothing playing")
   /// Not supported
   internal static let notSupported = L10n.tr("Localizable", "notSupported", fallback: "Not supported")
   /// Off
@@ -1526,6 +1534,12 @@ internal enum L10n {
   internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
   /// Reorder
   internal static let reorder = L10n.tr("Localizable", "reorder", fallback: "Reorder")
+  /// Repeat All
+  internal static let repeatAll = L10n.tr("Localizable", "repeatAll", fallback: "Repeat All")
+  /// Repeat Off
+  internal static let repeatOff = L10n.tr("Localizable", "repeatOff", fallback: "Repeat Off")
+  /// Repeat One
+  internal static let repeatOne = L10n.tr("Localizable", "repeatOne", fallback: "Repeat One")
   /// Replace
   internal static let replace = L10n.tr("Localizable", "replace", fallback: "Replace")
   /// Replace all metadata
@@ -1660,6 +1674,8 @@ internal enum L10n {
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See more")
   /// Select all
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select all")
+  /// Select device
+  internal static let selectDevice = L10n.tr("Localizable", "selectDevice", fallback: "Select device")
   /// Select image
   internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select image")
   /// Select server
@@ -1668,6 +1684,8 @@ internal enum L10n {
   internal static let send = L10n.tr("Localizable", "send", fallback: "Send")
   /// Send progress reports
   internal static let sendProgressReports = L10n.tr("Localizable", "sendProgressReports", fallback: "Send progress reports")
+  /// Send text
+  internal static let sendText = L10n.tr("Localizable", "sendText", fallback: "Send text")
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Series date played

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -14,8 +13,8 @@ extension RemoteView.QueueView {
 
     struct QueueRow: View {
 
-        @Default(.accentColor)
-        private var accentColor
+        @AppTheme
+        private var theme
 
         @Environment(\.isSelected)
         private var isSelected
@@ -24,7 +23,6 @@ extension RemoteView.QueueView {
         let isPaused: Bool
         let action: () -> Void
 
-        @ViewBuilder
         private var leadingView: some View {
             PosterImage(
                 item: item,
@@ -39,7 +37,7 @@ extension RemoteView.QueueView {
 
                         NowPlayingIndicator()
                             .frame(width: 22, height: 22)
-                            .foregroundStyle(accentColor)
+                            .foregroundStyle(theme.accentColor)
                             .disabled(isPaused)
                     }
                     .posterStyle(item.preferredPosterDisplayType)
@@ -48,7 +46,6 @@ extension RemoteView.QueueView {
             .subtleShadow()
         }
 
-        @ViewBuilder
         private var trailingView: some View {
             VStack(alignment: .leading, spacing: 4) {
                 switch item.type {
@@ -111,7 +108,7 @@ extension RemoteView.QueueView {
             } action: {
                 action()
             }
-            .listRowBackground(isSelected ? accentColor.opacity(0.2) : nil)
+            .listRowBackground(isSelected ? theme.accentColor.opacity(0.2) : nil)
         }
     }
 }

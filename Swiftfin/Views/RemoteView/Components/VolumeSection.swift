@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -14,8 +13,8 @@ extension RemoteView {
 
     struct VolumeSection<Proxy: MediaPlayerVolumeConfigurable & ObservableObject>: View {
 
-        @Default(.accentColor)
-        private var accentColor
+        @AppTheme
+        private var theme
 
         @ObservedObject
         var proxy: Proxy
@@ -51,7 +50,7 @@ extension RemoteView {
                         }
                         .gesturePadding(20)
                         .frame(height: isAdjustingVolume ? 15 : 10)
-                        .foregroundStyle(accentColor)
+                        .foregroundStyle(theme.accentColor)
                         .frame(height: 15)
                         .animation(.linear(duration: 0.1), value: isAdjustingVolume)
                         .onChange(of: proxy.volumeLevel) { _, newValue in

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension ButtonStyle where Self == RemoteButtonStyle {
@@ -49,8 +48,8 @@ struct RemoteButtonStyle: ButtonStyle {
         }
     }
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @Environment(\.isEnabled)
     private var isEnabled
@@ -67,7 +66,7 @@ struct RemoteButtonStyle: ButtonStyle {
             .backport
             .glassEffect(
                 isSelected
-                    ? .regular.selection(tint: accentColor, foregroundColor: accentColor.overlayColor)
+                    ? .regular.selection(tint: theme.accentColor, foregroundColor: theme.accentColor.overlayColor)
                     : .regular.tint(.secondarySystemBackground),
                 in: .circle
             )
