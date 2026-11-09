@@ -150,10 +150,16 @@ final class ItemRecord: Identifiable {
         var updatedMetadata = value
         updatedMetadata.userData = nil
 
+        // List and full-item responses can use different keys for the same item's user data.
+        var previousUserData = previous.userData
+        if let key = value.userData?.key {
+            previousUserData?.key = key
+        }
+
         let update = ItemStore.Update(
             itemID: id,
             metadataChanged: previousMetadata != updatedMetadata || previousProgramID != currentProgram?.id,
-            userDataChanged: previous.userData != value.userData
+            userDataChanged: previousUserData != value.userData
         )
 
         if value != metadata {

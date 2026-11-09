@@ -14,6 +14,9 @@ extension ItemActionButtons {
 
     struct Playback: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @EnvironmentObject
         private var provider: ItemContentGroupProvider
 
@@ -152,7 +155,7 @@ extension ItemActionButtons {
                     }
                 }
             }
-            .if(!isInMenu && UIDevice.isTV) { menu in
+            .if(!isInMenu && viewLayout.isLarge) { menu in
                 menu.menuStyle(.button)
             }
         }

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import PreferencesView
 import SwiftUI
 import UIKit
 
@@ -24,17 +23,22 @@ struct SwiftfinApp: App {
         SwiftfinSpotlight().addSwiftfinToSpotlight()
     }
 
+    // TODO: move all these to single view and ViewModifiers
+
     var body: some Scene {
         WindowGroup {
-            OverlayToastView {
-                PreferencesView {
-                    WithLocalUserAuthentication {
-                        RootView()
-                            .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+            ThemePreferencesEnvironment {
+                OverlayToastView {
+                    PreferencesView {
+                        WithLocalUserAuthentication {
+                            RootView()
+                                .supportedOrientations(UIDevice.isPhone ? .portrait : .all)
+                        }
                     }
+                    .ignoresSafeArea(.container)
                 }
+                .trackingFrame(for: .layoutContainer)
             }
-            .ignoresSafeArea()
         }
     }
 }

@@ -360,23 +360,6 @@ extension AVMediaPlayer {
 
             .store(in: &playbackObservations)
 
-        NotificationCenter.default
-            .publisher(for: AVPlayerItem.newAccessLogEntryNotification, object: playerItem)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                MainActor.assumeIsolated {
-                    guard let self, self.isCurrent(playerItem, generation: generation),
-                          let event = playerItem.accessLog()?.events.last, event.numberOfDroppedVideoFrames >= 0
-                    else { return }
-
-                    if self.videoState.droppedFrames != event.numberOfDroppedVideoFrames {
-                        self.videoState.droppedFrames = event.numberOfDroppedVideoFrames
-                    }
-                }
-            }
-
-            .store(in: &playbackObservations)
-
         playerItem.publisher(for: \.status, options: [.initial, .new])
             .sink { [weak self] _ in
                 Task { @MainActor [weak self] in

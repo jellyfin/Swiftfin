@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import FactoryKit
 import Foundation
@@ -19,13 +20,17 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
     let displayTitle: String = L10n.home
     let id: String = "default-content-group-provider"
 
+    var refreshRequests: AnyPublisher<Void, Never> {
+        userSession?.userLibraryChanges ?? Combine.Empty().eraseToAnyPublisher()
+    }
+
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
         guard let userSession else { return [] }
 
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
         let userViews = try await userSession.send(userViewsPath)
-        let excludedLibraryIDs = userSession.user.data.configuration?.latestItemsExcludes ?? []
+        let excludedLibraryIDs = userSession.userData.configuration?.latestItemsExcludes ?? []
 
         let resolvedUserViews = (userViews.value.items ?? [])
             .subtracting(excludedLibraryIDs, using: \.id)

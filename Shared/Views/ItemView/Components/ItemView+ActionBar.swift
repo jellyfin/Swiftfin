@@ -12,6 +12,9 @@ extension ItemView {
 
     struct ActionBar: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @FocusState
         private var focusedButton: String?
 
@@ -35,11 +38,11 @@ extension ItemView {
             let defaultFocusedButton = provider.item.presentPlayButton ?
                 ItemView.Component.play : visible.first?.id ?? ItemView.Component.menu
 
-            VStack(alignment: alignment, spacing: UIDevice.isTV ? 24 : 8) {
+            VStack(alignment: alignment, spacing: viewLayout.value(standard: 8, large: 24)) {
                 if provider.item.presentPlayButton {
                     PlayButton(provider: provider)
                         .coordinatedFocus(ItemView.Component.play, selection: $focusedButton)
-                        .frame(height: UIDevice.isTV ? 75 : 44)
+                        .frame(height: viewLayout.controlHeight)
                 }
 
                 ItemActionButtons(

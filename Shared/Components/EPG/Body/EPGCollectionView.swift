@@ -6,12 +6,16 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct EPGCollectionView: UIViewRepresentable {
+
+    @AppTheme
+    private var theme
+
+    @AdaptiveLayout
+    private var viewLayout
 
     @ObservedObject
     var viewModel: EPGViewModel
@@ -22,7 +26,9 @@ struct EPGCollectionView: UIViewRepresentable {
     let onSelect: (BaseItemDto) -> Void
     let onSelectGroup: (ProgramBlock) -> Void
 
-    private let layout = EPGLayout()
+    private var layout: EPGLayout {
+        EPGLayout(viewLayout: viewLayout)
+    }
 
     func makeUIView(context: Context) -> UICollectionView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: context.coordinator.gridLayout)
@@ -106,8 +112,7 @@ extension EPGCollectionView {
 
         private weak var collectionView: UICollectionView?
 
-        private var accentColor = Defaults[.accentColor]
-        private var cancellables: Set<AnyCancellable> = []
+        private var accentColor: Color = .jellyfinPurple
         private var dataSource: UICollectionViewDiffableDataSource<String, ItemID>?
         private var didRequestNextPage = false
         private var lastPaginationVerticalOffset: CGFloat?
@@ -142,22 +147,13 @@ extension EPGCollectionView {
             dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView) { collectionView, indexPath, itemID in
                 collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: itemID)
             }
-
-            Defaults.publisher(.accentColor)
-                .receive(on: RunLoop.main)
-                .sink { [weak self] _ in
-                    guard let self else { return }
-
-                    self.accentColor = Defaults[.accentColor]
-                    self.gridLayout.nowColor = UIColor(self.accentColor)
-                    self.gridLayout.invalidateLayout()
-                    self.refreshVisibleCells()
-                }
-                .store(in: &cancellables)
         }
 
         func update(_ collectionView: UICollectionView) {
             guard let representable else { return }
+
+            let accentColorDidChange = accentColor != representable.theme.accentColor
+            accentColor = representable.theme.accentColor
 
             let viewModel = representable.viewModel
             let layout = representable.layout
@@ -198,11 +194,11 @@ extension EPGCollectionView {
             )
 
             let sectionsDidChange = renderState?.sections != nextRenderState.sections
-            let layoutDidChange = sectionsDidChange ||
+            let layoutDidChange = accentColorDidChange || sectionsDidChange ||
                 renderState?.contentWidth != nextRenderState.contentWidth ||
                 renderState?.nowOffset != nextRenderState.nowOffset ||
                 renderState?.rowHeight != nextRenderState.rowHeight
-            let cellsDidChange = renderState?.now != nextRenderState.now ||
+            let cellsDidChange = accentColorDidChange || renderState?.now != nextRenderState.now ||
                 renderState?.programsRevision != nextRenderState.programsRevision
 
             gridLayout.rowHeight = nextRenderState.rowHeight

@@ -6,15 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import Logging
 import SwiftUI
 
 struct PlayButton: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var provider: ItemContentGroupProvider
@@ -64,14 +63,16 @@ struct PlayButton: View {
             .backport
             .glassEffect(
                 .regular.selection(
-                    tint: accentColor,
-                    foregroundColor: accentColor.overlayColor
+                    tint: theme.accentColor,
+                    foregroundColor: theme.accentColor.overlayColor
                 ),
                 in: .capsule
             )
         }
         .buttonBorderShape(.capsule)
         .buttonStyle(BasicHoverButtonStyle())
+        .accessibilityLabel(L10n.play)
+        .accessibilityValue(provider.playbackIntent?.item.playButtonLabel ?? L10n.play)
         .contextMenu {
             if (provider.playbackIntent?.item.userData?.playbackPositionTicks ?? 0) > 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {

@@ -131,6 +131,7 @@ struct EPGContentView: View {
             }
             .ignoresSafeArea(edges: .bottom)
         }
+        .trackingFrame(for: .layoutContainer)
         .confirmationDialog(
             L10n.programs,
             isPresented: isPresentingGroup,

@@ -19,7 +19,9 @@ extension SettingsView {
         @Injected(\.currentUserSession)
         private var userSession: UserSession?
 
-        let user: UserDto
+        @SharedUser
+        var user: UserDto
+
         var action: (() -> Void)?
 
         var body: some View {
