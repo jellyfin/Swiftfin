@@ -50,12 +50,10 @@ struct ErrorView<ErrorType: Error>: View {
 
             if let apiError = error as? APIError,
                case .unacceptableStatusCode(401) = apiError,
-               let session = userSessionManager.currentSession
+               userSessionManager.currentSession != nil
             {
                 Button(L10n.signIn) {
                     Task { @MainActor in
-                        guard userSessionManager.currentSession === session else { return }
-
                         await userSessionManager.signOut(reason: .authenticationExpired)
                     }
                 }
