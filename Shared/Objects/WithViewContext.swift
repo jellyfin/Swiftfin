@@ -23,6 +23,7 @@ struct ViewContext {
         case isInParent
         case isInResume
         case isBackdrop
+        case isTabRoot
     }
 }
 

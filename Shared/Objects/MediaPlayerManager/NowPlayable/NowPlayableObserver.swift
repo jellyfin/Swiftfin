@@ -32,6 +32,7 @@ final class NowPlayableObserver: MediaSessionObserver {
     private var itemArtwork: UIImage?
     private var artworkSources: [ImageSource]?
     private var languageOptions = NowPlayableLanguageOptions()
+    private var publishedPositionSecond: Int64?
 
     private var registeredCommands: [NowPlayableCommand] {
         [
@@ -108,9 +109,15 @@ final class NowPlayableObserver: MediaSessionObserver {
                 self?.updateRemoteCommands()
             },
             ObservationToken { [weak mediaSession] in
-                mediaSession?.observedSeconds
-            } onChange: { [weak self] _ in
-                self?.updatePlaybackInfo()
+                mediaSession?.observedSeconds.components.seconds
+            } onChange: { [weak self] second in
+                guard let self, second != publishedPositionSecond else {
+                    return
+                }
+
+                // Now Playing extrapolates between positions using the published rate.
+                // State, rate, and seek changes still publish immediately above.
+                updatePlaybackInfo()
             },
         ]
 
@@ -147,6 +154,7 @@ final class NowPlayableObserver: MediaSessionObserver {
         guard observedItem !== item else { return }
 
         observedItem = item
+        publishedPositionSecond = nil
         itemImageCancellable = nil
         programRefreshTask = nil
         programEndDate = nil
@@ -276,6 +284,8 @@ final class NowPlayableObserver: MediaSessionObserver {
     private func updatePlaybackInfo() {
         guard isActive, let mediaSession, let item = mediaSession.playbackItem else { return }
 
+        publishedPositionSecond = mediaSession.observedSeconds.components.seconds
+
         let state = mediaSession.playbackState
         let isAdvancing = mediaSession.playbackRequestStatus == .playing && state.isPlaying
             && !mediaSession.isSeeking && !state.isSeeking && !state.isBuffering && !state.isWaitingForDisplay
@@ -399,6 +409,7 @@ final class NowPlayableObserver: MediaSessionObserver {
         itemArtwork = nil
         artworkSources = nil
         observedItem = nil
+        publishedPositionSecond = nil
         playbackRequestStateBeforeInterruption = nil
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
 

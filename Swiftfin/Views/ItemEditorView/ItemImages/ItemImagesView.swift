@@ -13,6 +13,9 @@ import SwiftUI
 
 struct ItemImagesView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @ObservedObject
     var viewModel: ItemImageViewModel
 
@@ -138,8 +141,9 @@ struct ItemImagesView: View {
             }
             .clipsToBounds(false)
             .scrollBehavior(.continuousLeadingEdge)
-            .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.itemSpacing)
+            .contentInsetAdjustmentBehavior(.never)
+            .insets(horizontal: viewLayout.edgePadding)
+            .itemSpacing(viewLayout.itemSpacing)
             .id(selectedType)
             .transition(.opacity.animation(.linear(duration: 0.1)))
         } else {
@@ -149,8 +153,8 @@ struct ItemImagesView: View {
             ) { _ in
                 addImageButton
             }
-            .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.itemSpacing)
+            .insets(horizontal: viewLayout.edgePadding)
+            .itemSpacing(viewLayout.itemSpacing)
             .scrollDisabled(true)
             .id(selectedType)
             .transition(.opacity.animation(.linear(duration: 0.1)))

@@ -19,6 +19,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     case playbackSettings
     case playNextItem
     case playPreviousItem
+    case nextChapter
+    case previousChapter
     case subtitles
     #if os(iOS)
     case gestureLock
@@ -46,6 +48,10 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.playNextItem
         case .playPreviousItem:
             L10n.playPreviousItem
+        case .nextChapter:
+            L10n.nextChapter
+        case .previousChapter:
+            L10n.previousChapter
         case .subtitles:
             L10n.subtitles
         #if os(iOS)
@@ -75,6 +81,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .playbackSettings: "tv"
         case .playNextItem: "forward.end.fill"
         case .playPreviousItem: "backward.end.fill"
+        case .nextChapter: "forward.frame.fill"
+        case .previousChapter: "backward.frame.fill"
         case .subtitles: "captions.bubble.fill"
         case .subtitleOffset: "textformat.abc"
         }
@@ -111,6 +119,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .playbackSettings: usesLiquidGlassSymbols ? "tv" : "tv.circle.fill"
         case .playNextItem: usesLiquidGlassSymbols ? "forward.end.fill" : "forward.end.circle.fill"
         case .playPreviousItem: usesLiquidGlassSymbols ? "backward.end.fill" : "backward.end.circle.fill"
+        case .nextChapter: usesLiquidGlassSymbols ? "forward.frame.fill" : "forward.frame"
+        case .previousChapter: usesLiquidGlassSymbols ? "backward.frame.fill" : "backward.frame"
         case .subtitles: "captions.bubble.fill"
         case .subtitleOffset: "textformat.abc"
         }

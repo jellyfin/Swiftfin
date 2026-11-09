@@ -40,6 +40,7 @@ final class UserSessionManager: ObservableObject {
 
         case backgroundTimeout
         case explicit
+        case accountUnavailable
     }
 
     enum AuthenticationError: Error {
@@ -70,6 +71,9 @@ final class UserSessionManager: ObservableObject {
 
     @MainActor
     private var sessionTransition: (id: UUID, task: Task<Void, Never>)?
+
+    @MainActor
+    private var currentUserChanges: AnyCancellable?
 
     @MainActor
     var hasActivePlayback: Bool {
@@ -245,7 +249,7 @@ final class UserSessionManager: ObservableObject {
 
         do {
             try await currentSession.server.updateServerInfo()
-            try await currentSession.user.updateUserData(server: currentSession.server)
+            _ = try await currentSession.getUser(id: currentSession.user.id)
 
             Defaults[.lastServerInformationRefreshDate] = Date.now
         } catch {
@@ -301,6 +305,7 @@ final class UserSessionManager: ObservableObject {
     private func applyCurrentSession(_ newSession: UserSession?) async {
         let previousSession = currentSession
 
+        currentUserChanges = nil
         await stopActivePlayback()
         previousSession?.willStop()
         await newSession?.willStart()
@@ -313,6 +318,26 @@ final class UserSessionManager: ObservableObject {
         } else {
             state = .signedIn
         }
+
+        currentUserChanges = newSession?.users
+            .changes
+            .sink { [weak self, weak newSession] change in
+                guard let session = newSession else { return }
+
+                switch change {
+                case let .updated(user):
+                    guard user.id == session.user.id, user.policy?.isDisabled == true else { return }
+
+                case let .deleted(id):
+                    guard id == session.user.id else { return }
+                }
+
+                Task { @MainActor [weak self, weak session] in
+                    guard let self, let session, self.currentSession === session else { return }
+
+                    await self.signOut(reason: .accountUnavailable)
+                }
+            }
 
         newSession?.didStart()
     }

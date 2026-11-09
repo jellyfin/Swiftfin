@@ -6,13 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @State
     private var collectedMenuGroups: [MenuContentGroup] = []
@@ -58,7 +57,7 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
                         }
                         .labelStyle(.iconOnly)
                         .fontWeight(.semibold)
-                        .foregroundStyle(accentColor)
+                        .foregroundStyle(theme.accentColor)
                     }
                 }
             }

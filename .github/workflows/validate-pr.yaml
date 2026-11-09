@@ -1,6 +1,8 @@
 name: "Validate PR 🧹"
 
 on:
+  schedule:
+    - cron: '0 0 * * *'
   pull_request:
     types:
       - opened
@@ -9,9 +11,12 @@ on:
       - ready_for_review
     branches: [ main ]
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -67,4 +72,4 @@ jobs:
         run: swiftlint lint --strict --config ".swiftlint.yml"
 
       - name: Find Unused Strings
-        run: swift Scripts/Translations/FindUnusedStrings.swift
+        run: swift Tools/Translations/FindUnusedStrings.swift

@@ -6,23 +6,15 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
-
-#if os(iOS)
-private let buttonHeight: CGFloat = 44
-private let buttonMaxSize: CGFloat = 300
-private let iconSize: CGFloat = 72
-#else
-private let buttonHeight: CGFloat = 75
-private let buttonMaxSize: CGFloat = 600
-private let iconSize: CGFloat = 144
-#endif
 
 struct ErrorView<ErrorType: Error>: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AdaptiveLayout
+    private var viewLayout
+
+    @AppTheme
+    private var theme
 
     @Environment(\.refresh)
     private var refresh
@@ -40,7 +32,7 @@ struct ErrorView<ErrorType: Error>: View {
     var body: some View {
         VStack {
             Image(systemName: systemImage)
-                .font(.system(size: iconSize, weight: .regular))
+                .font(.system(size: viewLayout.value(standard: 72, large: 144), weight: .regular))
                 .foregroundStyle(Color.red)
                 .symbolRenderingMode(.monochrome)
 
@@ -63,12 +55,12 @@ struct ErrorView<ErrorType: Error>: View {
                 .fontWeight(.semibold)
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
+                .tint(theme.accentColor)
                 #if os(iOS)
                 .controlSize(.large)
                 #endif
-                .frame(height: buttonHeight)
-                .frame(maxWidth: buttonMaxSize)
+                .frame(minHeight: viewLayout.controlHeight)
+                .frame(maxWidth: viewLayout.value(standard: 300, large: 600))
             }
 
             if let localizedError = error as? LocalizedError,

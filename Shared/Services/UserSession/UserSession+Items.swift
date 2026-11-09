@@ -44,8 +44,18 @@ extension UserSession {
     ) async throws -> (value: Value, items: [ItemRecord]) {
         try items.validate()
         let token = try items.beginRequest()
+        let userToken = try users.beginRequest()
         let response = try await client.send(request)
+        try Task.checkCancellation()
         try items.validate()
+
+        if let user = response.value as? UserDto {
+            try users.merge(user, token: userToken)
+        } else if let values = response.value as? [UserDto] {
+            for user in values {
+                try users.merge(user, token: userToken)
+            }
+        }
 
         let records: [ItemRecord]
         if let provider = response.value as? any BaseItemPatchProvider {

@@ -24,7 +24,7 @@ final class TextSubtitlePresentation {
         clear()
         player.setTextSubtitleInterceptionEnabled(true)
 
-        let subtitles = player.textSubtitleStream()
+        let subtitles = player.makeTextSubtitleStream()
 
         observationTask = Task { [weak self] in
             for await snapshot in subtitles {

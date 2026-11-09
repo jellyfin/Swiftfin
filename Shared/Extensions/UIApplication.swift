@@ -39,17 +39,4 @@ extension UIApplication {
                 $0.isKeyWindow
             }
     }
-
-    // TODO: change to all windows?
-    func setAccentColor(_ newColor: UIColor) {
-        keyWindow?.tintColor = newColor
-    }
-
-    func setAppearance(_ newAppearance: UIUserInterfaceStyle) {
-        guard let keyWindow else { return }
-
-        UIView.transition(with: keyWindow, duration: 0.2, options: .transitionCrossDissolve) {
-            keyWindow.overrideUserInterfaceStyle = newAppearance
-        }
-    }
 }

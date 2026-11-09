@@ -6,25 +6,25 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import SwiftUI
 
 struct ContentGroupVStack: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     let groups: [any ContentGroup]
 
     private var spacing: CGFloat {
-        #if os(tvOS)
-        60
-        #else
-        20
-        #endif
+        viewLayout.value(standard: 20, large: 60)
     }
 
     private func makeGroupBody(_ group: some ContentGroup) -> some View {
         group.body(with: group.viewModel)
     }
 
-    var body: some View {
+    private var content: some View {
         VStack(alignment: .leading, spacing: spacing) {
             ForEach(groups, id: \.id) { group in
                 makeGroupBody(group)
@@ -33,5 +33,15 @@ struct ContentGroupVStack: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .topLeading)
+    }
+
+    var body: some View {
+        #if os(tvOS)
+        CollectionHStackFocusScope {
+            content
+        }
+        #else
+        content
+        #endif
     }
 }

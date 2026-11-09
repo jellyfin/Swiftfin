@@ -73,7 +73,7 @@ struct VideoPlayerSettingsView: View {
 
     init() {
         _viewModel =
-            StateObject(wrappedValue: ServerUserAdminViewModel(user: Container.shared.currentUserSession()?.user.data ?? UserDto()))
+            StateObject(wrappedValue: ServerUserAdminViewModel(user: Container.shared.currentUserSession()?.userData ?? UserDto()))
     }
 
     private func updateConfiguration(_ modify: (inout UserConfiguration) -> Void) {

@@ -6,13 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct NavigationBarCloseButtonModifier: ViewModifier {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     let disabled: Bool
     let action: () -> Void
@@ -28,7 +27,7 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
                         Image(systemName: "xmark.circle.fill")
                             .fontWeight(.bold)
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(accentColor.overlayColor, accentColor)
+                            .foregroundStyle(theme.accentColor.overlayColor, theme.accentColor)
                             .opacity(disabled ? 0.75 : 1)
                     }
                     .disabled(disabled)

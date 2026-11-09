@@ -18,6 +18,23 @@ extension VideoPlayer {
     @Observable
     final class ViewState {
 
+        var layoutSize: CGSize = .zero
+        var systemInsets: EdgeInsets = .zero
+
+        var supplementInsets: EdgeInsets {
+            #if os(tvOS)
+            systemInsets.max(ViewLayout.platformDefault.edgePadding)
+            #else
+            EdgeInsets(top: 0, leading: systemInsets.leading, bottom: systemInsets.bottom, trailing: systemInsets.trailing)
+            #endif
+        }
+
+        #if os(iOS)
+        var supplementHeight: CGFloat = 0
+        var supplementVisibleHeight: CGFloat = 0
+        var playbackButtonsInsets: EdgeInsets = .zero
+        #endif
+
         enum Presentation: Equatable {
 
             case hidden
@@ -180,6 +197,18 @@ extension VideoPlayer {
         var isBeingDismissed = false
         var isCompact: Bool = false
 
+        var isTabletop: Bool = false {
+            didSet {
+                guard isTabletop != oldValue else { return }
+
+                if isTabletop {
+                    showControls()
+                } else {
+                    refreshAutoDismiss()
+                }
+            }
+        }
+
         var isScrubbing: Bool {
             scrubPosition != nil
         }
@@ -268,7 +297,11 @@ extension VideoPlayer {
         }
 
         var isPresentingProgress: Bool {
-            visibleElements.contains(.progress)
+            guard !isGestureLocked else {
+                return false
+            }
+
+            return isScrubbing || presentation == .progress || presentation == .controls
         }
 
         var isProgressBarFocused: Bool {
@@ -301,6 +334,12 @@ extension VideoPlayer {
             case .controls:
                 var elements: Set<Element> = [.progress, .toolbar, .playbackButtons, .dimming]
 
+                #if os(iOS)
+                if overlayActions.isNotEmpty {
+                    elements.insert(.overlayActions)
+                }
+                #endif
+
                 if supplements.isNotEmpty {
                     elements.insert(.supplements)
                 }
@@ -308,7 +347,7 @@ extension VideoPlayer {
                 return elements
 
             case let .supplement(_, showsPlaybackButtons):
-                if UIDevice.isTV {
+                if ViewLayout.platformDefault.isLarge {
                     return [.supplements, .dimming]
                 }
 
@@ -326,21 +365,29 @@ extension VideoPlayer {
 
         var originalPlaybackRate: Double?
 
-        var centerOffset: CGFloat = 0
         let focusCoordinator: FocusCoordinator = .init()
         let jumpProgressObserver: JumpProgressObserver = .init()
 
         private var scrubPosition: Duration? {
             didSet {
                 if (oldValue == nil) != (scrubPosition == nil) {
+                    freezePlaybackTimeIfHidden()
                     refreshAutoDismiss()
                 }
             }
         }
 
+        private var hiddenPlaybackSeconds: Duration = .zero
+
+        /// Keep hidden progress mounted without observing the live timeline.
+        /// Playback actions and new scrubs must still use the session's time.
+        var playbackSeconds: Duration {
+            isPresentingProgress ? mediaSession?.seconds ?? .zero : hiddenPlaybackSeconds
+        }
+
         var scrubbedSeconds: Duration {
             get {
-                scrubPosition ?? mediaSession?.seconds ?? .zero
+                scrubPosition ?? playbackSeconds
             }
             set {
                 guard isScrubbing else { return }
@@ -413,7 +460,7 @@ extension VideoPlayer {
         }
 
         init(timer: PokeIntervalTimer? = nil) {
-            self.timer = timer ?? .init(defaultInterval: UIDevice.isTV ? 10 : 5)
+            self.timer = timer ?? .init(defaultInterval: ViewLayout.platformDefault.isLarge ? 10 : 5)
 
             self.timer
                 .sink { [weak self] in
@@ -464,6 +511,8 @@ extension VideoPlayer {
         func connect(mediaSession: MediaSession) {
             sessionObservations.removeAll()
             self.mediaSession = mediaSession
+            freezePlaybackTimeIfHidden()
+
             var previousActivity: (MediaSession.Activity?, Bool)?
 
             let observations = [
@@ -487,6 +536,7 @@ extension VideoPlayer {
                     }
 
                     cancelScrub()
+                    freezePlaybackTimeIfHidden()
 
                     if let rate = originalPlaybackRate {
                         self.mediaSession?.rate = rate
@@ -548,6 +598,7 @@ extension VideoPlayer {
             #endif
 
             mediaSession = nil
+            hiddenPlaybackSeconds = .zero
         }
 
         func fillVideo() {
@@ -623,6 +674,7 @@ extension VideoPlayer {
 
         private var canAutoDismiss: Bool {
             guard presentation != .hidden,
+                  !isTabletop,
                   !isScrubbing,
                   !isPresentingSupplement,
                   interactions.isEmpty,
@@ -673,7 +725,9 @@ extension VideoPlayer {
             let wasPresentingSupplement = isPresentingSupplement
             let wasPresentingProgress = isPresentingProgress
             let previousSupplementID = selectedSupplementID
+
             self.presentation = presentation
+            freezePlaybackTimeIfHidden()
 
             if selectedSupplementID != guestSupplement?.id {
                 guestSupplement = nil
@@ -696,6 +750,14 @@ extension VideoPlayer {
             #endif
 
             refreshAutoDismiss()
+        }
+
+        private func freezePlaybackTimeIfHidden() {
+            guard !isPresentingProgress else {
+                return
+            }
+
+            hiddenPlaybackSeconds = mediaSession?.seconds ?? .zero
         }
     }
 }

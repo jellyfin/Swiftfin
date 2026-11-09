@@ -6,15 +6,17 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct EPGChannelColumn: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AdaptiveLayout
+    private var viewLayout
+
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var viewModel: EPGViewModel
@@ -24,14 +26,12 @@ struct EPGChannelColumn: View {
     let bottomInset: CGFloat
     let action: (BaseItemDto) -> Void
 
-    private let layout = EPGLayout()
-
     var body: some View {
+        let layout = EPGLayout(viewLayout: viewLayout)
+
         VStack(spacing: 0) {
             ZStack {
-                #if os(iOS)
-                // On Now Button
-                if viewModel.now >= viewModel.startDate {
+                if !viewLayout.isLarge, viewModel.now >= viewModel.startDate {
                     Button {
                         proxy.scrollTo(
                             centering: layout.width(from: viewModel.startDate, to: viewModel.now)
@@ -51,7 +51,6 @@ struct EPGChannelColumn: View {
                     }
                     .buttonStyle(EPGButtonStyle())
                 }
-                #endif
             }
             .frame(width: layout.channelColumnWidth, height: layout.rulerHeight)
 
@@ -67,14 +66,12 @@ struct EPGChannelColumn: View {
                         .isSelected(channel.itemID == selectedChannelID)
                     }
                 }
-                .tint(accentColor)
+                .tint(theme.accentColor)
                 .padding(.bottom, bottomInset)
             }
             .scrollIndicators(.hidden)
             .introspect(.scrollView, on: .iOS(.v18...), .tvOS(.v18...)) { scrollView in
-                #if os(tvOS)
-                scrollView.contentInsetAdjustmentBehavior = .never
-                #endif
+                scrollView.contentInsetAdjustmentBehavior = viewLayout.isLarge ? .never : .automatic
 
                 proxy.registerVertical(scrollView)
             }

@@ -6,15 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 import UniformTypeIdentifiers
 
 struct ItemSubtitleUploadView: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var viewModel: ItemSubtitlesViewModel
@@ -57,7 +56,7 @@ struct ItemSubtitleUploadView: View {
                     .fontWeight(.semibold)
                     .backport
                     .buttonStyle(.glassProminent.shadow(false))
-                    .tint(accentColor)
+                    .tint(theme.accentColor)
                     #if os(iOS)
                     .controlSize(.large)
                     #endif

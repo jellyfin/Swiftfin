@@ -11,7 +11,7 @@ import SwiftUI
 
 extension SeriesEpisodeContentGroup {
 
-    struct SeasonSelector: PlatformView {
+    struct SeasonSelector: PresentationView {
 
         @Binding
         var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?
@@ -58,7 +58,7 @@ extension SeriesEpisodeContentGroup {
             }
         }
 
-        var tvOSView: some View {
+        var largeView: some View {
             ScrollView(.horizontal) {
                 SelectionTrack(
                     seasons,
@@ -102,7 +102,7 @@ extension SeriesEpisodeContentGroup {
             selection = seasonID
         }
 
-        var iOSView: some View {
+        var standardView: some View {
             if seasons.count == 1, let season = seasons.first {
                 singleSeasonButton(season)
             } else {

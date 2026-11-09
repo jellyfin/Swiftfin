@@ -36,6 +36,9 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
 
@@ -61,12 +64,6 @@ extension VideoPlayer.PlaybackControls {
 
         private var isSlowScrubbing: Bool {
             isScrubbing && (currentTranslation.y >= 60)
-        }
-
-        private var insetSliderWidth: CGFloat {
-            guard sliderSize.width.isFinite else { return 0 }
-
-            return max(0, sliderSize.width - EdgeInsets.edgePadding * 2)
         }
 
         private var previewXOffset: CGFloat {
@@ -138,9 +135,6 @@ extension VideoPlayer.PlaybackControls {
                     .frame(height: 10)
                     .trackingSize($sliderSize)
             } content: {
-                // Use scale effect, slider doesn't respond well to horizontal frame changes
-                let xScale = insetSliderWidth > 0 ? max(1, sliderSize.width / insetSliderWidth) : 1
-
                 SliderContainer(
                     value: Bindable(viewState).scrubbedSeconds.map(
                         getter: { $0.seconds },
@@ -170,8 +164,7 @@ extension VideoPlayer.PlaybackControls {
                         }
                     }
                 }
-                .frame(maxWidth: sliderSize != .zero ? insetSliderWidth : .infinity)
-                .scaleEffect(x: isScrubbing ? xScale : 1, y: 1, anchor: .center)
+                .frame(maxWidth: .infinity)
                 .frame(height: isScrubbing ? 20 : 10)
                 .foregroundStyle(mediaSession.canSeek ? Color.white : Color.gray)
                 .phaseAnimator(isLoading && !reduceMotion ? [false, true] : [false]) { content, dimmed in
@@ -189,7 +182,6 @@ extension VideoPlayer.PlaybackControls {
             VStack(spacing: 5) {
                 if mediaSession.item.isLiveStream {
                     liveIndicator
-                        .edgePadding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     capsuleSlider
@@ -197,7 +189,6 @@ extension VideoPlayer.PlaybackControls {
 
                     SplitTimeStamp()
                         .offset(y: isScrubbing ? 5 : 0)
-                        .frame(maxWidth: isScrubbing ? nil : insetSliderWidth)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -215,7 +206,7 @@ extension VideoPlayer.PlaybackControls {
             .overlay(alignment: .bottom) {
                 if isSlowScrubbing {
                     slowScrubbingIndicator
-                        .offset(y: EdgeInsets.edgePadding * 2)
+                        .offset(y: viewLayout.edgePadding * 2)
                         .transition(.opacity.animation(.linear(duration: 0.1)))
                 }
             }
