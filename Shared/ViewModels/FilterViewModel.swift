@@ -44,11 +44,14 @@ final class FilterViewModel: ViewModel {
     var currentFilters: ItemFilterCollection
     @Published
     private(set) var savedFilters: [StoredItemFilter] = []
+    @Published
+    private var selectedSavedFilterID: String?
 
     /// Fixed filters, excluded from selection state and reset actions
     let staticFilters: ItemFilterCollection
 
-    let parent: any LibraryParent?
+    private let parent: any LibraryParent?
+    let libraryItemTypes: [BaseItemKind]
 
     var savableFilters: ItemFilterCollection {
         currentFilters
@@ -57,19 +60,7 @@ final class FilterViewModel: ViewModel {
     }
 
     var hasActiveFilters: Bool {
-        savableFilters != .default
-    }
-
-    var libraryID: String? {
-        if let parent {
-            parent.id
-        } else {
-            "search"
-        }
-    }
-
-    var libraryItemTypes: [BaseItemKind] {
-        staticFilters.union(currentFilters).itemTypes
+        staticFilters.union(savableFilters) != staticFilters
     }
 
     var hasFilterOptions: Bool {
@@ -78,11 +69,12 @@ final class FilterViewModel: ViewModel {
 
     var selectedSavedFilter: StoredItemFilter? {
         get {
-            savedFilters.first { $0.filters.mutating(\.itemTypes, with: []) == savableFilters }
+            savedFilters.first { $0.id == selectedSavedFilterID }
         }
         set {
             guard let newValue else { return }
 
+            selectedSavedFilterID = newValue.id
             currentFilters = newValue.filters
                 .mutating(\.itemTypes, with: currentFilters.itemTypes)
                 .mutating(\.query, with: currentFilters.query)
@@ -103,6 +95,7 @@ final class FilterViewModel: ViewModel {
         self.parent = parent
         self.currentFilters = currentFilters
         self.staticFilters = staticFilters
+        self.libraryItemTypes = staticFilters.union(currentFilters).itemTypes
 
         super.init()
 
@@ -113,12 +106,12 @@ final class FilterViewModel: ViewModel {
                 guard let self else { return }
 
                 savedFilters = StoredValues[.User.savedFilters]
-                    .filter {
-                        ($0.libraryID == nil || $0.libraryID == self.libraryID) &&
-                            ($0.filters.itemTypes.isEmpty || $0.filters.itemTypes == self.libraryItemTypes)
-                    }
             }
             .store(in: &cancellables)
+
+        selectedSavedFilterID = savedFilters.first {
+            $0.filters == savableFilters
+        }?.id
     }
 
     func isFilterSelected(type: ItemFilterType) -> Bool {
@@ -131,7 +124,8 @@ final class FilterViewModel: ViewModel {
     private func resetCurrentFilters(_ type: ItemFilterType?) {
 
         guard let type else {
-            currentFilters = .default
+            selectedSavedFilterID = nil
+            currentFilters = .default.mutating(\.itemTypes, with: currentFilters.itemTypes)
             return
         }
 

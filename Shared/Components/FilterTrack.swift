@@ -120,7 +120,6 @@ struct FilterTrack: View {
             #endif
     }
 
-    @ViewBuilder
     private func buttonLabel(for target: FocusTarget) -> some View {
         Label {
             Text(target.title)
@@ -135,10 +134,17 @@ struct FilterTrack: View {
             viewModel.selectedSavedFilter == nil ? L10n.save : L10n.edit,
             systemImage: viewModel.selectedSavedFilter == nil ? "square.and.arrow.down" : "pencil"
         ) {
-            router.route(to: .savedFilterEditor(viewModel: viewModel))
+            router.route(
+                to: .editFilters(
+                    filters: viewModel.savableFilters,
+                    savedFilter: viewModel.selectedSavedFilter,
+                    onSave: { viewModel.selectedSavedFilter = $0 }
+                )
+            )
         }
 
         Button(L10n.clear, systemImage: "text.badge.xmark", role: .destructive, action: reset)
+            .disabled(!viewModel.hasActiveFilters)
     }
 
     private func button(for target: FocusTarget) -> some View {
@@ -146,7 +152,7 @@ struct FilterTrack: View {
             switch target {
             case .options:
                 Menu {
-                    if viewModel.hasActiveFilters {
+                    if viewModel.hasActiveFilters || viewModel.selectedSavedFilter != nil {
                         if UIDevice.isTV || viewModel.savedFilters.isEmpty {
                             Section {
                                 menuActions
@@ -158,14 +164,20 @@ struct FilterTrack: View {
                         }
                     }
 
-                    Section {
-                        Picker(L10n.filters, selection: $viewModel.selectedSavedFilter) {
+                    if viewModel.savedFilters.isNotEmpty {
+                        Section(L10n.filters) {
                             ForEach(viewModel.savedFilters) { savedFilter in
-                                Text(savedFilter.name)
-                                    .tag(savedFilter as StoredItemFilter?)
+                                Button {
+                                    viewModel.selectedSavedFilter = savedFilter
+                                } label: {
+                                    if viewModel.selectedSavedFilter?.id == savedFilter.id {
+                                        Label(savedFilter.name, systemImage: "checkmark")
+                                    } else {
+                                        Text(savedFilter.name)
+                                    }
+                                }
                             }
                         }
-                        .pickerStyle(.inline)
                     }
                 } label: {
                     buttonLabel(for: target)

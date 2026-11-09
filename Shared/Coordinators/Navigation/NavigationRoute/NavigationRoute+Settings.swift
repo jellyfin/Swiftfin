@@ -208,6 +208,12 @@ extension NavigationRoute {
         }
     }
 
+    static var savedFilters: NavigationRoute {
+        NavigationRoute(id: "savedFilters") {
+            SavedFiltersView()
+        }
+    }
+
     static var posterSettings: NavigationRoute {
         NavigationRoute(
             id: "posterSettings"

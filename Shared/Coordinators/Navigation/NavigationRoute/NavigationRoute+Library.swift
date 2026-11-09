@@ -24,12 +24,16 @@ extension NavigationRoute {
     }
 
     @MainActor
-    static func savedFilterEditor(viewModel: FilterViewModel) -> NavigationRoute {
+    static func editFilters(
+        filters: ItemFilterCollection,
+        savedFilter: StoredItemFilter? = nil,
+        onSave: ((StoredItemFilter) -> Void)? = nil
+    ) -> NavigationRoute {
         NavigationRoute(
-            id: "saved-filter-editor",
+            id: "edit-filters",
             style: .sheet
         ) {
-            StoredFilterEditorView(viewModel: viewModel, filters: viewModel.savableFilters)
+            EditFiltersView(filters: filters, savedFilter: savedFilter, onSave: onSave)
         }
     }
 

@@ -11,7 +11,6 @@ import Foundation
 struct StoredItemFilter: Hashable, Identifiable, Storable {
 
     private(set) var id: String = UUID().uuidString
-    var libraryID: String?
     var name: String
     var filters: ItemFilterCollection
 }

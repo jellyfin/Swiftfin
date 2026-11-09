@@ -57,7 +57,11 @@ extension CustomizeSettingsView {
                         )
                     }
 
-                    Toggle(L10n.rememberFiltering, isOn: $rememberLibraryFilters)
+                    ChevronButton(L10n.savedFilters) {
+                        router.route(to: .savedFilters)
+                    }
+
+                    Toggle(L10n.rememberFilters, isOn: $rememberLibraryFilters)
                 }
 
                 Section(L10n.layout) {
