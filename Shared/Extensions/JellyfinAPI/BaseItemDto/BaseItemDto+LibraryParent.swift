@@ -16,6 +16,8 @@ extension BaseItemDto: LibraryParent {
         let id: String
 
         static let episodes = Grouping(displayTitle: L10n.episodes, id: "episodes")
+        static let folders = Grouping(displayTitle: L10n.folders, id: "folders")
+        static let items = Grouping(displayTitle: L10n.items, id: "items")
         static let seasons = Grouping(displayTitle: L10n.seasons, id: "seasons")
         static let series = Grouping(displayTitle: L10n.series, id: "series")
     }
@@ -25,9 +27,15 @@ extension BaseItemDto: LibraryParent {
     }
 
     var groupings: (defaultSelection: Grouping, elements: [Grouping])? {
-        switch collectionType {
+        if isFolderCollection {
+            return (.folders, [])
+        }
+
+        return switch collectionType {
         case .tvshows:
-            (.series, [.episodes, .seasons, .series])
+            (.series, [.episodes, .seasons, .series, .folders])
+        case .movies, .musicvideos, .homevideos:
+            (.items, [.items, .folders])
         default:
             nil
         }
@@ -44,7 +52,10 @@ extension BaseItemDto: LibraryParent {
     }
 
     func supportedItemTypes(for grouping: Grouping?) -> [BaseItemKind] {
-        if isFolderCollection {
+        if isFolderCollection || grouping == .folders {
+            if libraryType == .userView, collectionType == .movies || collectionType == .tvshows {
+                return [.collectionFolder]
+            }
             return BaseItemKind.supportedCases.appending([.folder, .collectionFolder])
         }
 
@@ -81,7 +92,7 @@ extension BaseItemDto: LibraryParent {
     }
 
     func isRecursiveCollection(for grouping: Grouping?) -> Bool {
-        guard !isFolderCollection else { return false }
+        guard !isFolderCollection, grouping != .folders else { return false }
         guard let collectionType, libraryType != .userView else { return true }
 
         if grouping == .episodes || grouping == .seasons {

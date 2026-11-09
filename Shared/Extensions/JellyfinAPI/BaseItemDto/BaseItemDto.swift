@@ -533,8 +533,9 @@ extension BaseItemDto {
     }
 
     /// Can this `BaseItemDto` be played
+    @MainActor
     var presentPlayButton: Bool {
-        guard Container.shared.currentUserSession()?.user.data.policy?.enableMediaPlayback == true else { return false }
+        guard Container.shared.currentUserSession()?.userData.policy?.enableMediaPlayback == true else { return false }
 
         switch type {
         case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
@@ -546,9 +547,10 @@ extension BaseItemDto {
         }
     }
 
+    @MainActor
     var canShuffle: Bool {
         guard id?.nilIfBlank != nil, !isMissing,
-              Container.shared.currentUserSession()?.user.data.policy?.enableMediaPlayback == true
+              Container.shared.currentUserSession()?.userData.policy?.enableMediaPlayback == true
         else { return false }
 
         switch type {
@@ -591,8 +593,9 @@ extension BaseItemDto {
     }
 
     /// Can this `BaseItemDto` be recorded
+    @MainActor
     var canBeRecorded: Bool {
-        guard Container.shared.currentUserSession()?.user.data.policy?.enableLiveTvManagement == true else { return false }
+        guard Container.shared.currentUserSession()?.userData.policy?.enableLiveTvManagement == true else { return false }
 
         switch type {
         case .channel, .liveTvChannel, .tvChannel:

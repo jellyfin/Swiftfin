@@ -16,14 +16,14 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct AutoPlay: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @ViewContextContains(.isInMenu)
         private var isInMenu
 
         @Environment(MediaSession.self)
         private var mediaSession
-
-        @State
-        private var userConfiguration: UserConfiguration
 
         @StateObject
         private var viewModel: ServerUserAdminViewModel
@@ -32,7 +32,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         private var toaster
 
         private var isAutoPlayEnabled: Bool {
-            mediaSession.userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true
+            mediaSession.userSession.userData.configuration?.enableNextEpisodeAutoPlay == true
         }
 
         private var systemImage: String {
@@ -44,9 +44,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         }
 
         init() {
-            let user = Container.shared.currentUserSession()?.user.data ?? UserDto()
+            let user = Container.shared.currentUserSession()?.userData ?? UserDto()
 
-            self.userConfiguration = user.configuration ?? UserConfiguration()
             self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
         }
 
@@ -54,15 +53,10 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             Button {
                 let newValue = !isAutoPlayEnabled
 
+                var userConfiguration = viewModel.user.configuration ?? UserConfiguration()
                 userConfiguration.enableNextEpisodeAutoPlay = newValue
-                mediaSession.userSession.user.data.configuration = userConfiguration
                 viewModel.updateConfiguration(userConfiguration)
 
-                if newValue {
-                    toaster.present("Auto Play on", systemName: "play.circle.fill")
-                } else {
-                    toaster.present("Auto Play off", systemName: "stop.circle")
-                }
             } label: {
                 Label(
                     L10n.autoPlay,
@@ -73,11 +67,19 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     Text(isAutoPlayEnabled ? "On" : "Off")
                 }
             }
-            .if(isInMenu && !UIDevice.isTV) { button in
+            .if(isInMenu && !viewLayout.isLarge) { button in
                 button
                     .id(isAutoPlayEnabled)
             }
-            .disabled(mediaSession.queue == nil)
+            .disabled(mediaSession.queue == nil || viewModel.background.is(.updating))
+            .errorMessage($viewModel.error)
+            .onReceive(viewModel.events) { _ in
+                if isAutoPlayEnabled {
+                    toaster.present("Auto Play on", systemName: "play.circle.fill")
+                } else {
+                    toaster.present("Auto Play off", systemName: "stop.circle")
+                }
+            }
         }
     }
 }

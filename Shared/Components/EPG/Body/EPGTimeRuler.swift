@@ -10,10 +10,11 @@ import SwiftUI
 
 struct EPGTimeRuler: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @ObservedObject
     var viewModel: EPGViewModel
-
-    private let layout = EPGLayout()
 
     // Count of timestamps needed for the period (30m increments)
     private var labelCount: Int {
@@ -21,6 +22,8 @@ struct EPGTimeRuler: View {
     }
 
     var body: some View {
+        let layout = EPGLayout(viewLayout: viewLayout)
+
         LazyHStack(spacing: 0) {
             ForEach(0 ..< labelCount, id: \.self) { index in
                 let date = viewModel.startDate.addingTimeInterval(Double(index * 30 * 60))

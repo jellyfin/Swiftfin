@@ -10,6 +10,7 @@ import Defaults
 import FactoryKit
 import JellyfinAPI
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
@@ -70,13 +71,15 @@ struct MainTabView: View {
 
     private func tabRoot(_ tab: TabCoordinator.TabData) -> some View {
         NavigationInjectionView(coordinator: tab.coordinator) {
-            tab.item.content
+            tab.item
+                .content
+                .withViewContext(.isTabRoot)
                 #if os(iOS)
-                    .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
-                        view.topBarTrailing {
-                            FirstTabSettingsBarButton()
-                        }
+                .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
+                    view.topBarTrailing {
+                        FirstTabSettingsBarButton()
                     }
+                }
                 #endif
         }
         .environmentObject(tabCoordinator)
@@ -91,10 +94,10 @@ struct MainTabView: View {
                     role: tab.item.id == TabItem.search.id ? .search : nil
                 ) {
                     #if os(tvOS)
-                    GeometryReader { proxy in
+                    GeometryReader { _ in
                         tabRoot(tab)
-                            .environment(\.tabSafeAreaInsets, proxy.safeAreaInsets)
                     }
+                    .trackingFrame(for: .tabView)
                     #else
                     tabRoot(tab)
                     #endif
@@ -123,6 +126,7 @@ struct MainTabView: View {
         }
         #else
         tabView()
+            .tabViewStyle(.sidebarAdaptable)
         #endif
     }
 
@@ -167,10 +171,7 @@ private struct FirstTabSettingsBarButton: View {
                 .labelStyle(.iconOnly)
             }
 
-            SettingsBarButton(
-                server: userSession.server,
-                user: userSession.user
-            ) {
+            SettingsBarButton(userSession: userSession) {
                 router.route(to: .settings)
             }
             .onReceive(userSession.serverSocketManager.isConnected.receive(on: DispatchQueue.main)) { isConnected in

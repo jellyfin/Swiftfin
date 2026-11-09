@@ -6,13 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @State
     private var collectedMenuGroups: [MenuContentGroup] = []
@@ -55,7 +54,7 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
                         let foregroundStyle: Color = if #available(iOS 26, *) {
                             .primary
                         } else {
-                            accentColor
+                            theme.accentColor
                         }
 
                         Menu(L10n.options, systemImage: systemImage) {
@@ -67,14 +66,14 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
                         }
                         .labelStyle(.iconOnly)
                         .fontWeight(.semibold)
-                        .foregroundStyle(foregroundStyle)
+                        .foregroundStyle(theme.accentColor)
                         .if(onPressed != nil) { view in
                             view
                                 .menuStyle(.button)
                                 .buttonStyle(.isPressed { isPressed in
                                     onPressed?(isPressed)
                                 })
-                                .tint(foregroundStyle)
+                                .tint(theme.accentColor)
                         }
                     }
                 }

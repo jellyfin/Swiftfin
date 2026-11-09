@@ -40,13 +40,18 @@ final class ServerActivityDetailViewModel: ViewModel {
     @Published
     var log: ActivityLogEntry
     @Published
-    var user: UserDto?
+    private var userRecord: UserRecord?
+
+    var user: UserDto? {
+        userRecord?.value
+    }
+
     @OptionalSharedBaseItem
     var item: BaseItemDto?
 
     init(log: ActivityLogEntry, user: UserDto?) {
         self.log = log
-        self.user = user
+        self.userRecord = user.map { SharedUser(wrappedValue: $0).projectedValue }
         super.init()
     }
 
@@ -55,12 +60,12 @@ final class ServerActivityDetailViewModel: ViewModel {
         let session = try requireUserSession()
         try session.items.validate()
         async let fetchedItem: ItemEntry? = getItem(for: log.itemID, userSession: session)
-        async let fetchedUser: UserDto? = getUser(for: log.userID)
+        async let fetchedUser: UserRecord? = getUser(for: log.userID)
 
         let results = try? await (fetchedItem, fetchedUser)
         try session.items.validate()
         $item = results?.0
-        user = results?.1
+        userRecord = results?.1
     }
 
     private func getItem(for itemID: String?, userSession: UserSession) async throws -> ItemEntry? {
@@ -69,12 +74,9 @@ final class ServerActivityDetailViewModel: ViewModel {
         return try await userSession.getFullItem(id: itemID)
     }
 
-    private func getUser(for userID: String?) async throws -> UserDto? {
+    private func getUser(for userID: String?) async throws -> UserRecord? {
         guard let userID else { return nil }
 
-        let request = Paths.getUserByID(userID: userID)
-        let response = try await send(request)
-
-        return response.value
+        return try await requireUserSession().getUser(id: userID)
     }
 }

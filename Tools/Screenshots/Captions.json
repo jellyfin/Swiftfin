@@ -1,0 +1,34 @@
+{
+    "Episode": {
+        "headline": "Stay Up-To-Date",
+        "subtitle": "Keep up with your latest episodes."
+    },
+    "Home": {
+        "headline": "Your Server",
+        "subtitle": "The home for everything you watch."
+    },
+    "Library": {
+        "headline": "Browse Everything",
+        "subtitle": "Filter by genre, year, rating, and more."
+    },
+    "Media": {
+        "headline": "All Your Media",
+        "subtitle": "Movies, shows, live TV, and more from your server."
+    },
+    "Movie": {
+        "headline": "Don't Miss A Detail",
+        "subtitle": "Cast, genres, and ratings at a glance."
+    },
+    "Playback": {
+        "headline": "Native Playback",
+        "subtitle": "Beautiful playback built for {platform}."
+    },
+    "Series": {
+        "headline": "Ready To Binge",
+        "subtitle": "Jump to any season or episode."
+    },
+    "UserSelection": {
+        "headline": "For Everyone",
+        "subtitle": "Your users and servers all in one place."
+    }
+}

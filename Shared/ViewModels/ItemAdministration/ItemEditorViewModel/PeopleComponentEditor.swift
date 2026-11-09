@@ -40,9 +40,7 @@ struct PeopleComponentEditor: ItemComponentEditor {
 
     func adding(_ people: [BaseItemPerson], to item: BaseItemDto) -> BaseItemDto {
         var item = item
-        if item.people == nil {
-            item.people = []
-        }
+        item.people ?= []
         item.people?.append(contentsOf: people)
         return item
     }

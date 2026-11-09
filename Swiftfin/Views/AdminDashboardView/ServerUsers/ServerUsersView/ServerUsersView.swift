@@ -12,6 +12,9 @@ import SwiftUI
 
 struct ServerUsersView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -155,7 +158,7 @@ struct ServerUsersView: View {
         .alert(L10n.deleteUserFailed, isPresented: $isPresentingSelfDeleteError) {
             Button(L10n.ok, role: .cancel) {}
         } message: {
-            Text(L10n.deleteUserSelfDeletion(viewModel.userSession?.user.username ?? ""))
+            Text(L10n.deleteUserSelfDeletion(viewModel.userSession?.userData.name ?? ""))
         }
         .onNotification(.didAddServerUser) { newUser in
             viewModel.appendUser(newUser)
@@ -183,7 +186,7 @@ struct ServerUsersView: View {
                     .listRowSeparator(.hidden)
                     .listRowInsets(.zero)
             } else {
-                ForEach(viewModel.users, id: \.self) { user in
+                ForEach(viewModel.users, id: \.id) { user in
                     if let userID = user.id {
                         ServerUsersRow(user: user) {
                             if isEditing {
@@ -198,7 +201,7 @@ struct ServerUsersView: View {
                         }
                         .isEditing(isEditing)
                         .isSelected(selectedUsers.contains(userID))
-                        .listRowInsets(.edgeInsets)
+                        .listRowInsets(viewLayout.edgeInsets)
                     }
                 }
             }

@@ -136,11 +136,6 @@ extension Notifications.Key {
 
     // MARK: - User
 
-    /// - Payload: The ID of the user whose Profile Image changed.
-    static var didChangeUserProfile: Key<String> {
-        Key("didChangeUserProfile")
-    }
-
     static var didAddServerUser: Key<UserDto> {
         Key("didAddServerUser")
     }
@@ -164,6 +159,10 @@ extension Notifications.Key {
     }
 
     // MARK: - UIApplication
+
+    static var applicationDidBecomeActive: Key<Void> {
+        Key(UIApplication.didBecomeActiveNotification)
+    }
 
     static var applicationDidEnterBackground: Key<Void> {
         Key(UIApplication.didEnterBackgroundNotification)

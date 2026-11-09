@@ -6,13 +6,15 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
-struct LetterPickerBar: PlatformView {
+struct LetterPickerBar: PresentationView {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AdaptiveLayout
+    private var viewLayout
+
+    @AppTheme
+    private var theme
 
     @FocusState
     private var focusedLetter: ItemLetter?
@@ -93,7 +95,7 @@ struct LetterPickerBar: PlatformView {
     }
 
     private var letterBar: some View {
-        VStack(spacing: UIDevice.isTV ? dimension * 0.1 : 0) {
+        VStack(spacing: viewLayout.value(standard: 0, large: dimension * 0.1)) {
             ForEach(rows) { row in
                 switch row {
                 case let .letter(letter):
@@ -103,11 +105,11 @@ struct LetterPickerBar: PlatformView {
                     .isSelected(selectedLetter == letter)
                     .frame(width: dimension, height: dimension)
                     .focused($focusedLetter, equals: letter)
-                    .allowsHitTesting(UIDevice.isTV)
+                    .allowsHitTesting(viewLayout.isLarge)
 
                 case .dot:
                     Circle()
-                        .fill(accentColor.opacity(0.5))
+                        .fill(theme.accentColor.opacity(0.5))
                         .frame(width: 3, height: 3)
                         .frame(width: dimension, height: dimension)
                 }
@@ -124,10 +126,10 @@ struct LetterPickerBar: PlatformView {
             .fixedSize()
             .trackingSize($letterSize)
         }
-        .font(UIDevice.isTV ? .system(size: 22, weight: .semibold) : .footnote)
+        .font(viewLayout.value(standard: .footnote, large: .system(size: 22, weight: .semibold)))
     }
 
-    var iOSView: some View {
+    var standardView: some View {
         letterBar
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay {
@@ -168,12 +170,12 @@ struct LetterPickerBar: PlatformView {
                 barHeight = size.height
             }
             .frame(width: dimension)
-            .padding(.vertical, EdgeInsets.edgePadding / 2)
+            .padding(.vertical, viewLayout.edgePadding / 2)
             .preference(key: PresentationControllerShouldDismissPreferenceKey.self, value: activeLetter == nil)
             .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)
     }
 
-    var tvOSView: some View {
+    var largeView: some View {
         letterBar
             .scrollIfLargerThanContainer()
             .frame(width: dimension)

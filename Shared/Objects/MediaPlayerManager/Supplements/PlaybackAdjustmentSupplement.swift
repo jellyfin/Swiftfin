@@ -31,10 +31,13 @@ extension PlaybackAdjustmentSupplement: VideoPlayerSupplement {
         AdjustmentView(supplement: self)
     }
 
-    private struct AdjustmentView: PlatformView {
+    private struct AdjustmentView: PresentationView {
 
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
+        @AdaptiveLayout
+        private var viewLayout
+
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
 
         @Environment(MediaSession.self)
         private var mediaSession
@@ -52,21 +55,21 @@ extension PlaybackAdjustmentSupplement: VideoPlayerSupplement {
                 formatValue: supplement.formatValue,
                 focusID: supplement.preferredFocusID
             )
-            .frame(maxWidth: UIDevice.isTV ? 1200 : 700)
+            .frame(maxWidth: viewLayout.isLarge ? 1200 : 700)
             .frame(maxWidth: .infinity)
             .edgePadding(.horizontal)
-            .padding(.vertical, UIDevice.isTV ? 24 : 12)
-            .padding(.leading, safeAreaInsets.leading)
-            .padding(.trailing, safeAreaInsets.trailing)
+            .padding(.vertical, viewLayout.isLarge ? 24 : 12)
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
             .scrollIfLargerThanContainer()
-            .padding(.bottom, safeAreaInsets.bottom)
+            .padding(.bottom, viewState.supplementInsets.bottom)
         }
 
-        var iOSView: some View {
+        var standardView: some View {
             content
         }
 
-        var tvOSView: some View {
+        var largeView: some View {
             content
                 .focusSection()
         }

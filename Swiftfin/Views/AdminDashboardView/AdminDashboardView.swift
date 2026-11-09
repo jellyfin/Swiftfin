@@ -53,6 +53,10 @@ struct AdminDashboardView: View {
                     router.route(to: .serverLogs)
                 }
 
+                ChevronButton(L10n.plugins) {
+                    router.route(to: .plugins)
+                }
+
                 ChevronButton(L10n.tasks) {
                     router.route(to: .tasks)
                 }

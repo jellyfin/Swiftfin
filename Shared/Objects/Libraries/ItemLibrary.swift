@@ -33,7 +33,8 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
     init(
         parent: BaseItemDto,
         filters: ItemFilterCollection? = nil,
-        staticFilters: ItemFilterCollection = .default
+        staticFilters: ItemFilterCollection = .default,
+        grouping: BaseItemDto.Grouping? = nil
     ) {
         var filters = filters ?? .default
 
@@ -45,7 +46,7 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
         }
 
         self.environment = .init(
-            grouping: parent.groupings?.defaultSelection,
+            grouping: grouping ?? parent.groupings?.defaultSelection,
             filters: staticFilters.union(filters)
         )
         self.filterViewModel = .init(
@@ -115,10 +116,7 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
         )
         parameters.userID = pageState.userSession.user.id
 
-        let request = Paths.getItems(parameters: parameters)
-        let response = try await pageState.userSession.client.send(request)
-
-        return try pageState.items(from: response)
+        return try await retrieveItems(parameters: parameters, environment: environment, pageState: pageState)
     }
 
     func retrieveRandomElement(
@@ -133,10 +131,7 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
         parameters.sortBy = [.random]
         parameters.userID = pageState.userSession.user.id
 
-        let request = Paths.getItems(parameters: parameters)
-        let response = try await pageState.userSession.client.send(request)
-
-        return try pageState.items(from: response).first
+        return try await retrieveItems(parameters: parameters, environment: environment, pageState: pageState).first
     }
 
     func retrieveSearchPage(
@@ -154,10 +149,42 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
         parameters.searchTerm = filterViewModel.staticFilters.query ?? query
         parameters.userID = pageState.userSession.user.id
 
+        return try await retrieveItems(parameters: parameters, environment: environment, pageState: pageState)
+    }
+
+    private func retrieveItems(
+        parameters: Paths.GetItemsParameters,
+        environment: Environment,
+        pageState: LibraryPageState
+    ) async throws -> [ItemPatch] {
+        var parameters = parameters
+        let groupedFolders: [String]?
+
+        if environment.grouping == .folders, parent.libraryType == .userView,
+           parent.collectionType == .movies || parent.collectionType == .tvshows
+        {
+            groupedFolders = pageState.userSession.userData.configuration?.groupedFolders ?? []
+            guard let groupedFolders, groupedFolders.isNotEmpty else { return [] }
+
+            parameters.parentID = nil
+            parameters.ids = groupedFolders
+
+            if parameters.sortBy == [.random] {
+                parameters.limit = nil
+            }
+        } else {
+            groupedFolders = nil
+        }
+
         let request = Paths.getItems(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return try pageState.items(from: response)
+        return try pageState.items(from: response).filter { patch in
+            guard let groupedFolders else { return true }
+
+            return groupedFolders.contains(patch.value.id ?? "") &&
+                (patch.value.collectionType == nil || patch.value.collectionType == parent.collectionType)
+        }
     }
 
     private func makeBaseItemParameters(environment: Environment) -> Paths.GetItemsParameters {
@@ -170,12 +197,6 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
         parameters.sortOrder = [.ascending]
 
         guard let parentID = parent.id else { return parameters }
-
-        if parent.isFolderCollection {
-            parameters.parentID = parentID
-            parameters.isRecursive = nil
-            return parameters
-        }
 
         switch parent.libraryType {
         case .person:
@@ -200,7 +221,11 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
                 return nil
             }
 
-            return ItemEntry(item: record, occurrence: patch.value.playlistItemID)
+            return ItemEntry(
+                item: record,
+                occurrence: patch.value.playlistItemID,
+                grouping: patch.value.type == .collectionFolder ? .folders : nil
+            )
         }
     }
 

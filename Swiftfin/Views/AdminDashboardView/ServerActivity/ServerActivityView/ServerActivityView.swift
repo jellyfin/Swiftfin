@@ -13,6 +13,9 @@ import SwiftUI
 // TODO: WebSocket
 struct ServerActivityView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -85,8 +88,8 @@ struct ServerActivityView: View {
                 uniqueElements: viewModel.elements,
                 layout: .columns(
                     1,
-                    itemSpacing: EdgeInsets.itemSpacing,
-                    lineSpacing: EdgeInsets.itemSpacing
+                    itemSpacing: viewLayout.itemSpacing,
+                    lineSpacing: viewLayout.itemSpacing
                 )
             ) { log in
 

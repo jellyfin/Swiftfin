@@ -6,14 +6,16 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct UserButton: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AdaptiveLayout
+    private var viewLayout
+
+    @AppTheme
+    private var theme
 
     @Environment(\.isEditing)
     private var isEditing
@@ -50,26 +52,27 @@ struct UserButton: View {
             }
         }
         .foregroundStyle(.primary, .secondary)
-        #if os(tvOS)
-        .buttonStyle(.borderless)
-        .buttonBorderShape(.circle)
-        #endif
+        .if(viewLayout.isLarge) { content in
+            content
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
+        }
     }
 
     @ViewBuilder
     private var labelView: some View {
         // tvOS breaks HoverEffects when using a VStack
-        #if os(tvOS)
-        imageView
-
-        titleView
-        #else
-        VStack {
+        if viewLayout.isLarge {
             imageView
 
             titleView
+        } else {
+            VStack {
+                imageView
+
+                titleView
+            }
         }
-        #endif
     }
 
     private var imageView: some View {
@@ -81,11 +84,11 @@ struct UserButton: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(
-                            width: UIDevice.isTV ? 75 : 40,
-                            height: UIDevice.isTV ? 75 : 40
+                            width: viewLayout.value(standard: 40, large: 75),
+                            height: viewLayout.value(standard: 40, large: 75)
                         )
                         .symbolRenderingMode(.palette)
-                        .foregroundStyle(accentColor.overlayColor, accentColor)
+                        .foregroundStyle(theme.accentColor.overlayColor, theme.accentColor)
                         .hoverEffect(.lift)
                 }
             }
@@ -97,20 +100,32 @@ struct UserButton: View {
             .font(.headline)
             .fontWeight(.semibold)
             .foregroundStyle(labelForegroundStyle)
-            .lineLimit(1)
+            .lineLimit(viewLayout.isAccessibilitySize ? nil : 1)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
 
-        AlternateLayoutView {
-            // Setting the subtitle here ensures that we reserve the horizonal spacing
-            // swiftlint:disable:next hard_coded_display_string
-            Text(subtitle ?? "Hidden")
-                .lineLimit(1)
-        } content: {
+        if viewLayout.isAccessibilitySize {
             if let subtitle {
-                Marquee(subtitle)
+                Text(subtitle)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
             }
+        } else {
+            AlternateLayoutView {
+                // Setting the subtitle here ensures that we reserve the horizonal spacing
+                // swiftlint:disable:next hard_coded_display_string
+                Text(subtitle ?? "Hidden")
+                    .lineLimit(1)
+            } content: {
+                if let subtitle {
+                    Marquee(subtitle)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .font(.footnote)
         }
-        .font(.footnote)
     }
 }
 

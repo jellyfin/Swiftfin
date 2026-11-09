@@ -182,4 +182,8 @@ extension L10n {
     static func castingTo(_ destination: Any) -> String {
         "Casting to \(destination)"
     }
+
+    // MARK: - TODO
+
+    static let _droppedFrames = L10n.droppedFrames
 }

@@ -211,8 +211,6 @@ final class MediaSession {
         progressReporter.mediaSession = self
 
         lifecycleObservation = core.statePublisher.sink { [weak self] state in
-            // Error and cancel are special synchronous actions in StatefulMacros.
-            // Cleanup follows their committed state, including generated action calls.
             if state == .error || state == .stopped {
                 self?.tearDown()
             }
@@ -227,8 +225,6 @@ final class MediaSession {
         player?.stop()
     }
 
-    /// The session retains the engine independently of any mounted video surface.
-    /// Reattaching the same engine is harmless; destinations change through transfer(to:).
     @discardableResult
     func attach(player: any MediaPlayer) -> Bool {
         guard state != .stopped else { return false }
@@ -256,13 +252,13 @@ final class MediaSession {
         }
 
         var nextIntent = intent
-        if canControlPlayback, let playbackItem {
+        if let playbackItem {
             nextIntent.configuration.continuation = MediaPlaybackContinuation(
                 item: playbackItem.baseItem,
                 source: playbackItem.mediaSource,
                 audioStreamIndex: playbackItem.configuration.audioStreamIndex,
                 subtitleStreamIndex: playbackItem.configuration.subtitleStreamIndex,
-                configuration: userSession.user.data.configuration
+                configuration: userSession.userData.configuration
             )
         }
 
@@ -277,9 +273,7 @@ final class MediaSession {
               destination.mediaSession == nil else { return nil }
 
         let snapshot = currentIntent()
-        if handoffRecovery == nil {
-            handoffRecovery = (player, snapshot)
-        }
+        handoffRecovery ?= (player, snapshot)
         if player.playbackLocation == .local {
             localPlayer = player
         }
@@ -433,7 +427,6 @@ final class MediaSession {
     func stop() {
         guard state != .stopped else { return }
 
-        // StatefulMacros' cancel action commits synchronously and invalidates late completions.
         cancel()
     }
 
@@ -495,8 +488,9 @@ final class MediaSession {
     }
 
     func ended(from player: any MediaPlayer) {
-        guard self.player === player, canControlPlayback, !isSeeking, !item.isLiveStream else { return }
-        guard let queue, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true else {
+        guard self.player === player, playbackItem != nil, state == .preparing || state == .playback,
+              !isSeeking, !item.isLiveStream else { return }
+        guard let queue, userSession.userData.configuration?.enableNextEpisodeAutoPlay == true else {
             stop()
             return
         }
@@ -515,7 +509,7 @@ final class MediaSession {
                 let next = try await queue.next()
                 guard !Task.isCancelled, let self, resolutionID == id, state != .stopped else { return }
 
-                if let next, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true {
+                if let next, userSession.userData.configuration?.enableNextEpisodeAutoPlay == true {
                     playNewItem(intent: next)
                 } else {
                     stop()

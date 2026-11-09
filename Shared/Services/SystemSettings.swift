@@ -15,6 +15,20 @@ enum SystemSettings {
     case application
     case captionStyles
 
+    var canOpen: Bool {
+        switch self {
+        case .application:
+            true
+
+        case .captionStyles:
+            if #available(iOS 26.4, tvOS 26.4, *) {
+                AccessibilitySettings.canOpenSettings(for: .captionStyles)
+            } else {
+                false
+            }
+        }
+    }
+
     func open() async throws {
         switch self {
         case .application:
