@@ -87,12 +87,12 @@ extension VideoPlayer {
                     .buttonStyle(OverlayActionButtonStyle())
                     .coordinatedFocus(action.id.focusID, selection: $focusedAction)
                     .offset(x: offsets[action.id] ?? 0)
-                    .opacity(1 - min(abs(offsets[action.id] ?? 0) / 200, 1))
+                    .opacity(1 - min(abs(offsets[action.id] ?? 0) / 60, 1))
                     #if os(iOS)
                     .highPriorityGesture(
                         DragGesture(minimumDistance: 10)
                             .onChanged { value in
-                                offsets[action.id] = value.translation.width
+                                offsets[action.id] = value.translation.width / 4
                             }
                             .onEnded { value in
                                 if abs(value.predictedEndTranslation.width) > 120 {
@@ -111,7 +111,7 @@ extension VideoPlayer {
 
         private func dismissOverlayAction(_ action: ViewState.OverlayAction, towards direction: Direction) {
             withAnimation(.easeOut(duration: 0.25)) {
-                offsets[action.id] = direction == .left ? -400 : 400
+                offsets[action.id] = direction == .left ? -60 : 60
             } completion: {
                 viewState.dismissOverlayAction(action.id)
                 offsets[action.id] = nil
