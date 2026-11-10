@@ -8,70 +8,72 @@
 
 import SwiftUI
 
-extension PagingLibraryView {
+struct LibraryStyleSection: View {
 
-    struct LibraryStyleSection: View {
+    @StateOrBinding
+    private var libraryStyle: LibraryStyle
 
-        @StateOrBinding
-        private var libraryStyle: LibraryStyle
+    private let options: LibraryStyleOptions
+    private let canAdjustListColumns: Bool
 
-        private let options: LibraryStyleOptions
-        private let canAdjustListColumns: Bool
+    init(
+        libraryStyle: Binding<LibraryStyle>,
+        options: LibraryStyleOptions,
+        canAdjustListColumns: Bool
+    ) {
+        self._libraryStyle = .init(libraryStyle)
+        self.options = options
+        self.canAdjustListColumns = canAdjustListColumns
+    }
 
-        init(
-            libraryStyle: Binding<LibraryStyle>,
-            options: LibraryStyleOptions,
-            canAdjustListColumns: Bool
-        ) {
-            self._libraryStyle = .init(libraryStyle)
-            self.options = options
-            self.canAdjustListColumns = canAdjustListColumns
+    var body: some View {
+        if options.displayTypes.count > 1 {
+            Picker(selection: $libraryStyle.displayType) {
+                ForEach(options.displayTypes, id: \.self) { displayType in
+                    Label(
+                        displayType.displayTitle,
+                        systemImage: displayType.systemImage
+                    )
+                    .tag(displayType)
+                }
+            } label: {
+                Text(L10n.layout)
+
+                Text(libraryStyle.displayType.displayTitle)
+
+                Image(systemName: libraryStyle.displayType.systemImage)
+            }
+            .pickerStyle(.menu)
         }
 
-        var body: some View {
-            if options.displayTypes.count > 1 {
-                Picker(selection: $libraryStyle.displayType) {
-                    ForEach(options.displayTypes, id: \.self) { displayType in
-                        Label(
-                            displayType.displayTitle,
-                            systemImage: displayType.systemImage
-                        )
-                        .tag(displayType)
-                    }
-                } label: {
-                    Text(L10n.layout)
+        if libraryStyle.displayType == .list,
+           options.displayTypes.contains(.list),
+           canAdjustListColumns
+        {
+            Stepper(
+                L10n.columnsWithCount(libraryStyle.listColumnCount),
+                value: $libraryStyle.listColumnCount,
+                in: 1 ... 3
+            )
+        }
 
-                    Text(libraryStyle.displayType.displayTitle)
-
-                    Image(systemName: libraryStyle.displayType.systemImage)
+        if options.posterDisplayTypes.count > 1 {
+            Picker(selection: $libraryStyle.posterDisplayType) {
+                ForEach(options.posterDisplayTypes, id: \.self) { displayType in
+                    Label(
+                        displayType.displayTitle,
+                        systemImage: displayType.systemImage
+                    )
+                    .tag(displayType)
                 }
-                .pickerStyle(.menu)
-            }
+            } label: {
+                Text(L10n.posters)
 
-            if libraryStyle.displayType == .list,
-               options.displayTypes.contains(.list),
-               canAdjustListColumns
-            {
-                Stepper(
-                    L10n.columnsWithCount(libraryStyle.listColumnCount),
-                    value: $libraryStyle.listColumnCount,
-                    in: 1 ... 3
-                )
-            }
+                Text(libraryStyle.posterDisplayType.displayTitle)
 
-            if options.posterDisplayTypes.count > 1 {
-                Picker(selection: $libraryStyle.posterDisplayType) {
-                    ForEach(options.posterDisplayTypes, id: \.self) { displayType in
-                        Text(displayType.displayTitle)
-                            .tag(displayType)
-                    }
-                } label: {
-                    Text(L10n.posters)
-
-                    Text(libraryStyle.posterDisplayType.displayTitle)
-                }
-                .pickerStyle(.menu)
+                Image(systemName: libraryStyle.posterDisplayType.systemImage)
             }
+            .pickerStyle(.menu)
         }
     }
 }

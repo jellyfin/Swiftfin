@@ -12,8 +12,17 @@ import SwiftUI
 
 struct ActiveSessionsView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
+
+    @StateObject
+    private var gridProxy = CollectionVGridProxy()
+
+    @StoredValue(.User.libraryStyle(id: "active-sessions"))
+    private var libraryStyle: LibraryStyle
 
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
@@ -88,15 +97,25 @@ struct ActiveSessionsView: View {
                 systemImage: "waveform.path.ecg"
             )
         } else {
-            CollectionVGrid(
-                uniqueElements: viewModel.sessions.values,
-                layout: .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
-            ) { session in
-                ActiveSessionRow(viewModel: session) {
-                    router.route(
-                        to: .activeSessionDetails(viewModel: session)
+            GeometryReader { geometry in
+                let spacing = libraryStyle.displayType == .list ? 0 : viewLayout.itemSpacing
+
+                CollectionVGrid(
+                    uniqueElements: viewModel.sessions.values,
+                    layout: SessionViewModel.layout(
+                        for: libraryStyle,
+                        options: SessionViewModel.supportedLibraryStyleOptions,
+                        insets: EdgeInsets(top: spacing, leading: spacing, bottom: spacing, trailing: spacing),
+                        viewLayout: viewLayout.resolving(size: geometry.size)
                     )
+                ) { session in
+                    session.makeBody(libraryStyle: libraryStyle) {
+                        router.route(
+                            to: .activeSessionDetails(viewModel: session)
+                        )
+                    }
                 }
+                .proxy(gridProxy)
             }
             .ignoresSafeArea(edges: .vertical)
         }
@@ -123,6 +142,9 @@ struct ActiveSessionsView: View {
         .refreshable {
             viewModel.refresh()
         }
+        .onChange(of: libraryStyle) {
+            gridProxy.redraw()
+        }
         .onFirstAppear {
             viewModel.refresh()
         }
@@ -141,8 +163,18 @@ struct ActiveSessionsView: View {
                 L10n.filters,
                 systemImage: systemImage
             ) {
-                activeWithinFilterButton
-                showInactiveSessionsButton
+                Section {
+                    LibraryStyleSection(
+                        libraryStyle: $libraryStyle,
+                        options: SessionViewModel.supportedLibraryStyleOptions,
+                        canAdjustListColumns: viewLayout.canAdjustLibraryListColumns
+                    )
+                }
+
+                Section(L10n.filters) {
+                    activeWithinFilterButton
+                    showInactiveSessionsButton
+                }
             }
             .menuStyle(.button)
             .buttonStyle(.isPressed { isPressed in
