@@ -76,15 +76,6 @@ private struct SessionPosterContextMenu: View {
         session.playState?.isPaused == true
     }
 
-    private var canControl: Bool {
-        guard let user = Container.shared.currentUserSession()?.userData else { return false }
-
-        return user.policy?.enableRemoteControlOfOtherUsers == true
-            || session.userID == nil
-            || session.userID == user.id
-            || session.additionalUsers?.contains { $0.userID == user.id } == true
-    }
-
     var body: some View {
         if let itemID = session.nowPlayingItem?.id {
             Button(L10n.goToItem, systemImage: "info.circle") {
@@ -92,7 +83,7 @@ private struct SessionPosterContextMenu: View {
             }
         }
 
-        if canControl, session.isSupportsMediaControl == true, session.nowPlayingItem != nil {
+        if session.canControlPlayback(by: Container.shared.currentUserSession()?.userData) {
             Button(isPaused ? L10n.play : L10n.pause, systemImage: isPaused ? "play.fill" : "pause.fill") {
                 Task {
                     await sendPlaystateCommand(isPaused ? .unpause : .pause)

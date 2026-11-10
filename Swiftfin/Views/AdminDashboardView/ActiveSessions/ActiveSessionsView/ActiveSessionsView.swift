@@ -98,14 +98,19 @@ struct ActiveSessionsView: View {
             )
         } else {
             GeometryReader { geometry in
-                let spacing = libraryStyle.displayType == .list ? 0 : viewLayout.itemSpacing
+                let horizontalSpacing = libraryStyle.displayType == .list ? 0 : viewLayout.itemSpacing
 
                 CollectionVGrid(
                     uniqueElements: viewModel.sessions.values,
                     layout: SessionViewModel.layout(
                         for: libraryStyle,
                         options: SessionViewModel.supportedLibraryStyleOptions,
-                        insets: EdgeInsets(top: spacing, leading: spacing, bottom: spacing, trailing: spacing),
+                        insets: EdgeInsets(
+                            top: geometry.safeAreaInsets.top + viewLayout.itemSpacing,
+                            leading: horizontalSpacing,
+                            bottom: geometry.safeAreaInsets.bottom + viewLayout.itemSpacing,
+                            trailing: horizontalSpacing
+                        ),
                         viewLayout: viewLayout.resolving(size: geometry.size)
                     )
                 ) { session in
