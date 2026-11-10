@@ -20,6 +20,9 @@ extension ActiveSessionsView {
         @CurrentDate
         private var currentDate: Date
 
+        @Environment(\.viewContext)
+        private var viewContext
+
         @ObservedObject
         var viewModel: SessionViewModel
 
@@ -35,16 +38,7 @@ extension ActiveSessionsView {
         }
 
         private var rowLeading: some View {
-            let size: CGSize = switch posterDisplayType {
-            case .landscape:
-                CGSize(width: 90, height: 60)
-            case .portrait:
-                CGSize(width: 60, height: 90)
-            case .square:
-                CGSize(width: 60, height: 60)
-            }
-
-            return PosterImage(
+            PosterImage(
                 item: session,
                 type: posterDisplayType,
                 size: .extraSmall
@@ -63,8 +57,8 @@ extension ActiveSessionsView {
                     .posterStyle(posterDisplayType)
                 }
             }
-            .frame(width: size.width, height: size.height)
             .subtleShadow()
+            .frame(width: posterDisplayType == .landscape ? 110 : 60)
         }
 
         private func activeSessionDetails(_ nowPlayingItem: BaseItemDto, playState: PlayerStateInfo) -> some View {
@@ -123,6 +117,28 @@ extension ActiveSessionsView {
                 }
             } action: {
                 action()
+            }
+            .posterContextMenu(for: session) {
+                VStack(alignment: .leading) {
+                    PosterImage(
+                        item: session,
+                        type: posterDisplayType,
+                        size: .small
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .subtleShadow()
+
+                    session.posterLabel
+                        .allowsHitTesting(false)
+                }
+                .environment(\.posterDisplayType, posterDisplayType)
+                .foregroundStyle(.primary, .secondary)
+                .posterAccessibility(for: session)
+                .frame(width: viewLayout.posterMinimumWidth(for: posterDisplayType))
+                .padding(20)
+                .backport
+                .glassEffect(in: .rect(cornerRadius: 10))
+                .withViewContext(viewContext)
             }
             .withViewContext(.isListRowSeparatorVisible)
         }

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -44,6 +45,10 @@ extension SessionInfoDto: Poster {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    var posterContextMenu: some View {
+        SessionPosterContextMenu(session: self)
+    }
+
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         SessionPosterOverlay(session: self, displayType: displayType)
     }
@@ -57,6 +62,60 @@ extension SessionInfoDto: Poster {
         else { return [] }
 
         return nowPlayingItem.imageSources(for: displayType, environment: environment)
+    }
+}
+
+private struct SessionPosterContextMenu: View {
+
+    @Router
+    private var router
+
+    let session: SessionInfoDto
+
+    private var isPaused: Bool {
+        session.playState?.isPaused == true
+    }
+
+    private var canControl: Bool {
+        guard let user = Container.shared.currentUserSession()?.userData else { return false }
+
+        return user.policy?.enableRemoteControlOfOtherUsers == true
+            || session.userID == nil
+            || session.userID == user.id
+            || session.additionalUsers?.contains { $0.userID == user.id } == true
+    }
+
+    var body: some View {
+        if let itemID = session.nowPlayingItem?.id {
+            Button(L10n.goToItem, systemImage: "info.circle") {
+                router.route(to: .item(id: itemID))
+            }
+        }
+
+        if canControl, session.isSupportsMediaControl == true, session.nowPlayingItem != nil {
+            Button(isPaused ? L10n.play : L10n.pause, systemImage: isPaused ? "play.fill" : "pause.fill") {
+                Task {
+                    await sendPlaystateCommand(isPaused ? .unpause : .pause)
+                }
+            }
+
+            Button(L10n.stop, systemImage: "stop.fill", role: .destructive) {
+                Task {
+                    await sendPlaystateCommand(.stop)
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func sendPlaystateCommand(_ command: PlaystateCommand) async {
+        guard let userSession = Container.shared.currentUserSession(), let id = session.id else { return }
+
+        do {
+            try await userSession.client.send(Paths.sendPlaystateCommand(sessionID: id, command: command.rawValue))
+        } catch {
+            userSession.itemActionErrors.send(error)
+        }
     }
 }
 
