@@ -150,7 +150,7 @@ extension SelectUserView {
 
             ServerMenu(servers: servers)
                 .frame(maxWidth: viewLayout.value(standard: 400, large: 600))
-                .frame(minHeight: buttonHeight)
+                .frame(height: buttonHeight)
                 .focused($isCenterButtonFocused)
 
             AddUserMenu(servers: servers)
