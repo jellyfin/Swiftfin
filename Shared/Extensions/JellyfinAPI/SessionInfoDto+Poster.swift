@@ -30,6 +30,7 @@ extension SessionInfoDto: Poster {
         nowPlayingItem?.systemImage ?? "person.fill"
     }
 
+    @ContentBuilder
     var posterLabel: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(displayTitle)
@@ -45,10 +46,12 @@ extension SessionInfoDto: Poster {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    @ContentBuilder
     var posterContextMenu: some View {
         SessionPosterContextMenu(session: self)
     }
 
+    @ContentBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         SessionPosterOverlay(session: self, displayType: displayType)
     }
@@ -76,6 +79,7 @@ private struct SessionPosterContextMenu: View {
         session.playState?.isPaused == true
     }
 
+    @ContentBuilder
     var body: some View {
         if let itemID = session.nowPlayingItem?.id {
             Button(L10n.goToItem, systemImage: "info.circle") {
@@ -129,6 +133,7 @@ private struct SessionPosterOverlay: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
             VStack(spacing: 0) {

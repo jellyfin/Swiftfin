@@ -17,7 +17,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
     private let subtitle: Subtitle?
     private let content: () -> Content
 
-    @ViewBuilder
+    @ContentBuilder
     private var buttonView: some View {
         if UIDevice.supportsLiquidGlass {
             glassBody
@@ -26,6 +26,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
         }
     }
 
+    @ContentBuilder
     private var labelView: some View {
         HStack {
             title
@@ -49,6 +50,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     }
 
+    @ContentBuilder
     private var glassBody: some View {
         labelView
             .glassEffect(
@@ -60,6 +62,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             .listRowBackground(Color.clear)
     }
 
+    @ContentBuilder
     private var legacyBody: some View {
         labelView
             .background {
@@ -79,6 +82,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             .listRowBackground(Color.clear)
     }
 
+    @ContentBuilder
     var body: some View {
         Menu(content: content) {
             buttonView
@@ -95,7 +99,7 @@ extension ListRowMenu where Subtitle == Text? {
 
     init(
         _ title: some WithText,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.title = title.textBody
         self.subtitle = nil
@@ -105,7 +109,7 @@ extension ListRowMenu where Subtitle == Text? {
     init(
         _ title: some WithText,
         subtitle: some WithText?,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.title = title.textBody
         self.subtitle = subtitle?.textBody
@@ -117,8 +121,8 @@ extension ListRowMenu {
 
     init(
         _ title: some WithText,
-        @ViewBuilder subtitle: @escaping () -> Subtitle,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder subtitle: @escaping () -> Subtitle,
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.title = title.textBody
         self.subtitle = subtitle()
@@ -132,8 +136,7 @@ extension ListRowMenu where Subtitle == Text, Content == AnyView {
         _ title: some WithText,
         selection: Binding<SelectionValue>
     ) where SelectionValue: CaseIterable & Displayable & Hashable,
-        SelectionValue.AllCases: RandomAccessCollection
-    {
+        SelectionValue.AllCases: RandomAccessCollection {
         self.title = title.textBody
         self.subtitle = Text(selection.wrappedValue.displayTitle)
 

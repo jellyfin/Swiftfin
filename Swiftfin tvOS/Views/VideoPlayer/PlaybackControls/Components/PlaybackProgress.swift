@@ -89,6 +89,7 @@ extension VideoPlayer.PlaybackControls {
             return clamp(p, min: 0, max: max(0, sliderSize.width - videoWidth))
         }
 
+        @ContentBuilder
         private var liveIndicator: some View {
             Text(L10n.live)
                 .font(.caption)
@@ -102,6 +103,7 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
+        @ContentBuilder
         private var videoPlayerSlider: some View {
             SliderContainer(
                 value: Bindable(viewState).scrubbedSeconds.map(
@@ -143,7 +145,7 @@ extension VideoPlayer.PlaybackControls {
             .disabled(!mediaSession.canSeek)
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var previewImage: some View {
             if isScrubbing, let previewImageProvider = mediaSession.playbackItem?.previewImageProvider {
                 PreviewImageView(previewImageProvider: previewImageProvider)
@@ -156,6 +158,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             VStack(spacing: 10) {
                 if mediaSession.item.isLiveStream {

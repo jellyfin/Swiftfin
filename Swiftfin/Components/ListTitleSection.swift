@@ -17,10 +17,10 @@ struct ListTitleSection: View {
     private let learnMoreAction: (() -> Void)?
     private let title: Text
 
+    @ContentBuilder
     var body: some View {
         Section {
             VStack(alignment: .center, spacing: 10) {
-
                 title
                     .font(.title3)
                     .fontWeight(.semibold)
@@ -82,12 +82,12 @@ struct InsetGroupedListHeader<Content: View>: View {
     private let learnMoreAction: (() -> Void)?
     private let title: Text?
 
+    @ContentBuilder
     private var header: some View {
         Button {
             learnMoreAction?()
         } label: {
             VStack(alignment: .center, spacing: 10) {
-
                 if let title {
                     title
                         .font(.title3)
@@ -111,6 +111,7 @@ struct InsetGroupedListHeader<Content: View>: View {
         .foregroundStyle(.primary, .secondary)
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 16)
@@ -138,7 +139,7 @@ extension InsetGroupedListHeader {
         _ title: some WithText,
         description: some WithText? = nil,
         learnMoreAction: (() -> Void)? = nil,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.init(
             content: content(),

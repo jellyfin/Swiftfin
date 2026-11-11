@@ -42,6 +42,7 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
+        @ContentBuilder
         var body: some View {
             List {
                 ForEach(users, id: \.user.id) { item in

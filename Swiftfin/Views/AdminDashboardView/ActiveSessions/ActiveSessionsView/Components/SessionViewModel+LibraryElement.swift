@@ -26,7 +26,7 @@ extension SessionViewModel: LibraryElement {
         .default
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
@@ -58,6 +58,7 @@ private struct SessionGridElement: View {
     let displayType: PosterDisplayType
     let action: (() -> Void)?
 
+    @ContentBuilder
     var body: some View {
         PosterButton(
             item: viewModel.session,

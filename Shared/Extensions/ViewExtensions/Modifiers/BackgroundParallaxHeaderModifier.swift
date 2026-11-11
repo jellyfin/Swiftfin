@@ -10,9 +10,10 @@ import SwiftUI
 
 extension View {
 
+    @ContentBuilder
     func backgroundParallaxHeader(
         multiplier: CGFloat = 1,
-        @ViewBuilder header: @escaping () -> some View
+        @ContentBuilder header: @escaping () -> some View
     ) -> some View {
         modifier(
             BackgroundParallaxHeaderModifier(
@@ -40,7 +41,7 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
 
     init(
         multiplier: CGFloat = 1,
-        @ViewBuilder header: @escaping () -> Background
+        @ContentBuilder header: @escaping () -> Background
     ) {
         self.background = header()
         self.multiplier = multiplier
@@ -96,6 +97,7 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
         return 1 + (navigationBarHeight + overscroll) / headerSize.height
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .trackingFrame($contentFrame)

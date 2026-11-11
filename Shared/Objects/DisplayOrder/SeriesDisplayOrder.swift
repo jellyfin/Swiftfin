@@ -9,6 +9,7 @@
 import Foundation
 
 enum SeriesDisplayOrder: String, CaseIterable, Identifiable {
+
     case aired = "Aired"
     case originalAirDate
     case absolute

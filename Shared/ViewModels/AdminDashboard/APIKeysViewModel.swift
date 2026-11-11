@@ -16,6 +16,7 @@ final class APIKeysViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
         case create(name: String)
         case replace(key: AuthenticationInfo)
@@ -32,14 +33,17 @@ final class APIKeysViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case updating
     }
 
     enum Event {
+
         case createdKey
     }
 
     enum State {
+
         case initial
         case error
         case refreshing
@@ -67,8 +71,8 @@ final class APIKeysViewModel: ViewModel {
         let request = Paths.createKey(app: name)
         try await send(request)
 
-        /// API does not return the new key so a full refresh is required.
-        /// There is no API to return a single API Key.
+        // API does not return the new key so a full refresh is required.
+        // There is no API to return a single API Key.
         try await _refresh()
 
         events.send(.createdKey)

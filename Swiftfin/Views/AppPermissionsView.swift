@@ -14,6 +14,7 @@ struct AppPermissionsView: View {
     @State
     private var statuses: OrderedDictionary<AppPermission, PermissionStatus> = [:]
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "hand.raised.fill") {
             ForEach(AppPermission.allCases) { permission in

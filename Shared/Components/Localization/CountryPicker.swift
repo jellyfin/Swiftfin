@@ -27,6 +27,7 @@ struct CountryPicker: View {
         viewModel.elements.first(property: \.twoLetterISORegionName, equalTo: selection.wrappedValue)
     }
 
+    @ContentBuilder
     private var picker: some View {
         Picker(
             title,
@@ -38,6 +39,7 @@ struct CountryPicker: View {
         )
     }
 
+    @ContentBuilder
     var body: some View {
         Group {
             #if os(tvOS)

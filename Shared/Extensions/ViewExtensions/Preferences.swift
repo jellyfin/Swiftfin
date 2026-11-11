@@ -11,18 +11,21 @@ import SwiftUI
 extension View {
 
     #if os(iOS)
+    @ContentBuilder
     func keyCommands(@ArrayBuilder<KeyCommandAction> _ commands: () -> [KeyCommandAction]) -> some View {
         preference(key: KeyCommandsPreferenceKey.self, value: commands())
     }
     #endif
 
     #if os(tvOS)
+    @ContentBuilder
     func pressCommands(@ArrayBuilder<PressCommandAction> _ commands: () -> [PressCommandAction]) -> some View {
         preference(key: PressCommandsPreferenceKey.self, value: commands())
     }
     #endif
 
     /// - Important: This does nothing on tvOS.
+    @ContentBuilder
     func supportedOrientations(_ supportedOrientations: UIInterfaceOrientationMask) -> some View {
         #if os(tvOS)
         self

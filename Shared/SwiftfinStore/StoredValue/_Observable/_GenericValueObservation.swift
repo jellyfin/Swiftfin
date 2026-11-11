@@ -11,6 +11,7 @@ import Foundation
 
 @MainActor
 protocol _StoredValueObservable<Value>: ObservableObject {
+
     associatedtype Value: Storable
 
     var key: StoredValues.Key<Value> { get }

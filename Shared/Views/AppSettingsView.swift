@@ -44,6 +44,7 @@ struct AppSettingsView: View {
     }
     #endif
 
+    @ContentBuilder
     private var serverPicker: some View {
         Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
             Label(L10n.random, systemImage: "dice.fill")
@@ -56,9 +57,9 @@ struct AppSettingsView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
-
             Section(L10n.swiftfin) {
                 ChevronButton(L10n.aboutApp) {
                     router.route(to: .aboutApp)
@@ -67,7 +68,6 @@ struct AppSettingsView: View {
 
             #if os(iOS)
             Section(L10n.customize) {
-
                 ChevronButton(L10n.appIcon) {
                     router.route(to: .appIconSelector)
                 }
@@ -91,7 +91,6 @@ struct AppSettingsView: View {
                 Toggle(L10n.useSplashscreen, isOn: $selectUserUseSplashscreen)
 
                 if selectUserUseSplashscreen {
-
                     #if os(tvOS)
                     ListRowMenu(L10n.servers) {
                         if selectUserAllServersSplashscreen == .all {

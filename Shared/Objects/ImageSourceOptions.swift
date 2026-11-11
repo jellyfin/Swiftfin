@@ -9,6 +9,7 @@
 import Foundation
 
 protocol WithImageSourceOptions {
+
     var maxWidth: CGFloat? { get set }
     var maxHeight: CGFloat? { get set }
     var quality: Int? { get set }

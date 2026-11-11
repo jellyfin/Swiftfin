@@ -17,6 +17,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @Environment(MediaSession.self)
         private var mediaSession
 
+        @ContentBuilder
         var body: some View {
             if let supplement = viewState.supplements.compactMap({ $0 as? MediaChaptersSupplement }).first {
                 Button(

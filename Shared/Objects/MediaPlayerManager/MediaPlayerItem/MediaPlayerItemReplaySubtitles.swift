@@ -189,8 +189,7 @@ final class MediaPlayerItemReplaySubtitles {
                       let index = MediaPlaybackPreferences.current.subtitleForReplay(
                           in: candidates,
                           defaultIndex: item.mediaSource.defaultSubtitleStreamIndex
-                      )
-                {
+                      ) {
                     if await prepare(index) {
                         tracks.primary = index
                         break

@@ -19,8 +19,8 @@ let fileURL = URL(fileURLWithPath: CommandLine.arguments.count == 3
 let outputURL = URL(fileURLWithPath: CommandLine.arguments.count == 3
     ? CommandLine.arguments[2] : "Shared/Strings/Strings.swift")
 
-// This regular expression pattern matches lines of the format:
-// "Key" = "Value";
+/// This regular expression pattern matches lines of the format:
+/// "Key" = "Value";
 let regex = #/^"(?<key>(?:\\.|[^"\\])+)"\s*=\s*"(?<value>(?:\\.|[^"\\])*)";\s*$/#
 
 // Attempt to read the file content.
@@ -36,6 +36,7 @@ guard let content = String(data: data, encoding: encoding) else {
 }
 
 struct Entry {
+
     let value: String
     let comment: String?
     let line: Int
@@ -126,7 +127,7 @@ if let pending = pendingNotes.first {
     fail("Comment has no following entry.", line: pending.line)
 }
 
-// Sort the keys alphabetically for consistent ordering.
+/// Sort the keys alphabetically for consistent ordering.
 let sortedKeys = entries.keys.sorted {
     let left = $0.lowercased()
     let right = $1.lowercased()
@@ -140,7 +141,7 @@ let newContent = sortedKeys.map { key in
 }
 .joined(separator: "\n\n")
 
-// Validate and render both outputs before writing either file.
+/// Validate and render both outputs before writing either file.
 let generatedContent = generateSwift(keys: sortedKeys, entries: entries)
 do {
     if newContent != content {
@@ -155,11 +156,13 @@ do {
     exit(1)
 }
 
-// Decode .strings escapes using Foundation rather than treating them as Swift escapes.
+/// Decode .strings escapes using Foundation rather than treating them as Swift escapes.
 func decodedValue(_ raw: String, line: Int) -> String {
     let source = "\"value\" = \"\(raw)\";"
     guard let dictionary = try? PropertyListSerialization.propertyList(
-        from: Data(source.utf8), options: [], format: nil
+        from: Data(source.utf8),
+        options: [],
+        format: nil
     ) as? [String: String], let value = dictionary["value"] else {
         fail("Invalid escaped string value.", line: line)
     }
@@ -234,8 +237,8 @@ func generateSwift(keys: [String], entries: [String: Entry]) -> String {
     return lines.joined(separator: "\n")
 }
 
-// Parse printf arguments, including positional/repeated arguments and dynamic width/precision.
-// Reject unsupported or inconsistent formats rather than generating an unsafe variadic call.
+/// Parse printf arguments, including positional/repeated arguments and dynamic width/precision.
+/// Reject unsupported or inconsistent formats rather than generating an unsafe variadic call.
 func argumentTypes(_ value: String, line: Int) -> [String] {
     let pattern = #/^%(?:(?<position>[0-9]+)\$)?[-+ #0']*(?<width>[0-9]+|\*(?:[0-9]+\$)?)?(?:\.(?<precision>[0-9]*|\*(?:[0-9]+\$)?))?(?<length>hh|ll|[hlqLztj])?(?<conversion>[@diuoxXfFeEgGaAcCsSp])/#
     var remaining = value[...]

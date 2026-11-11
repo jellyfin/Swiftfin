@@ -43,6 +43,7 @@ extension Color {
     struct RGBA {
 
         enum Component {
+
             case red
             case green
             case blue

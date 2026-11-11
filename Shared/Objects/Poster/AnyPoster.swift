@@ -92,16 +92,19 @@ struct AnyPoster: Poster {
         _poster.posterAccessibility(configuration: configuration)
     }
 
+    @ContentBuilder
     var posterLabel: some View {
         _poster.posterLabel
             .eraseToAnyView()
     }
 
+    @ContentBuilder
     var posterContextMenu: some View {
         _poster.posterContextMenu
             .eraseToAnyView()
     }
 
+    @ContentBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         _poster.posterOverlay(for: displayType)
             .eraseToAnyView()
@@ -122,6 +125,7 @@ struct AnyPoster: Poster {
         )
     }
 
+    @ContentBuilder
     func transform(image: Image, displayType: PosterDisplayType) -> some View {
         _poster.transform(image: image, displayType: displayType)
             .eraseToAnyView()

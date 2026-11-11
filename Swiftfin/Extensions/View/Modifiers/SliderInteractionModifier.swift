@@ -119,6 +119,7 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
             }
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .overlay {

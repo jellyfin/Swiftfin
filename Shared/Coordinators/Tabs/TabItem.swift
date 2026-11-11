@@ -22,7 +22,7 @@ struct TabItem: Displayable, @MainActor Identifiable, @MainActor Hashable {
         id: String,
         title: String,
         systemImage: String,
-        @ViewBuilder content: () -> some View
+        @ContentBuilder content: () -> some View
     ) {
         self.content = AnyView(content())
         self.id = id

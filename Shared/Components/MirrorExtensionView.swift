@@ -13,12 +13,12 @@ struct MirrorExtensionView<Content: View>: View {
     private let content: Content
     private let edges: Edge.Set
 
-    init(edges: Edge.Set, @ViewBuilder content: () -> Content) {
+    init(edges: Edge.Set, @ContentBuilder content: () -> Content) {
         self.content = content()
         self.edges = edges
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var mirroredContent: some View {
         content
 
@@ -26,6 +26,7 @@ struct MirrorExtensionView<Content: View>: View {
             .blur(radius: 5)
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .overlay(alignment: .top) {

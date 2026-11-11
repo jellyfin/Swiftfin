@@ -38,6 +38,7 @@ struct JellyfinWebView: View {
         return components.url
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             if let userSession, let url {
@@ -96,8 +97,7 @@ private struct JellyfinWebUIView: UIViewRepresentable {
         ]
 
         if let sessionData = try? JSONSerialization.data(withJSONObject: session),
-           let sessionJSON = String(data: sessionData, encoding: .utf8)
-        {
+           let sessionJSON = String(data: sessionData, encoding: .utf8) {
             configuration.userContentController.addUserScript(
                 WKUserScript(
                     source: """
@@ -118,7 +118,7 @@ private struct JellyfinWebUIView: UIViewRepresentable {
             )
         }
 
-        /// `.zero` then resizes to fill container
+        // `.zero` then resizes to fill container
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.load(URLRequest(url: url))
 

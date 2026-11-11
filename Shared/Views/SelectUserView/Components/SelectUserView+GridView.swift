@@ -44,6 +44,7 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
+        @ContentBuilder
         private func userGridButton(for item: UserItem) -> some View {
             UserButton(
                 user: item.user,
@@ -67,6 +68,7 @@ extension SelectUserView {
             #endif
         }
 
+        @ContentBuilder
         var standardView: some View {
             GeometryReader { geometry in
                 ScrollView {
@@ -86,6 +88,7 @@ extension SelectUserView {
             .edgePadding(.horizontal)
         }
 
+        @ContentBuilder
         var largeView: some View {
             HStack(spacing: viewLayout.itemSpacing) {
                 ForEach(userItems, id: \.user.id) { item in

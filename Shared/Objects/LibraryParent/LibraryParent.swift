@@ -39,7 +39,6 @@ extension LibraryParent {
     }
 
     func setParentParameters(_ parameters: Paths.GetItemsParameters) -> Paths.GetItemsParameters {
-
         guard let id else { return parameters }
 
         var parameters = parameters

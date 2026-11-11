@@ -30,6 +30,7 @@ struct UserProfileHeroImage: View {
     let onUpdate: () -> Void
     let onDelete: () -> Void
 
+    @ContentBuilder
     var body: some View {
         Section {
             VStack(alignment: .center) {

@@ -51,6 +51,7 @@ struct RemoteImageSearchView: View {
         )
     }
 
+    @ContentBuilder
     var body: some View {
         ImageElementsView(
             viewModel: remoteImageInfoViewModel.remoteImageLibrary,
@@ -110,7 +111,7 @@ extension RemoteImageSearchView {
             self.posterType = posterType
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var gridView: some View {
             if viewModel.elements.isEmpty {
                 ContentUnavailableView(
@@ -130,6 +131,7 @@ extension RemoteImageSearchView {
             }
         }
 
+        @ContentBuilder
         private func imageButton(_ image: RemoteImageInfo) -> some View {
             PosterButton(
                 item: image,
@@ -139,11 +141,13 @@ extension RemoteImageSearchView {
                     to: .remoteImageDetail(
                         viewModel: itemImageViewModel,
                         remoteImageInfo: image
-                    ), in: namespace
+                    ),
+                    in: namespace
                 )
             }
         }
 
+        @ContentBuilder
         var body: some View {
             ZStack {
                 switch viewModel.state {
@@ -171,6 +175,7 @@ extension RemoteImageSearchView {
             self.providersViewModel = viewModel.remoteImageProvidersLibrary
         }
 
+        @ContentBuilder
         var body: some View {
             Group {
                 Toggle(

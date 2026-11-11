@@ -32,6 +32,7 @@ struct DevicesView: View {
     @StateObject
     private var viewModel = DevicesViewModel()
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -109,6 +110,7 @@ struct DevicesView: View {
 
     // MARK: - Device List View
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             InsetGroupedListHeader(
@@ -158,7 +160,7 @@ struct DevicesView: View {
 
     // MARK: - Navigation Bar Edit Content
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarEditView: some View {
         if viewModel.background.is(.refreshing) {
             ProgressView()
@@ -192,7 +194,7 @@ struct DevicesView: View {
 
     // MARK: - Navigation Bar Select/Remove All Content
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarSelectView: some View {
         let isAllSelected: Bool = selectedDevices.count == viewModel.devices.count
 
@@ -219,7 +221,7 @@ struct DevicesView: View {
 
     // MARK: - Delete Selected Devices Confirmation Actions
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteSelectedDevicesConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 
@@ -232,7 +234,7 @@ struct DevicesView: View {
 
     // MARK: - Delete Device Confirmation Actions
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteDeviceConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 

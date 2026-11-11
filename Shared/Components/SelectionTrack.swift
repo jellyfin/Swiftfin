@@ -44,6 +44,7 @@ struct SelectionTrack<Elements: RandomAccessCollection, ID: Hashable>: View {
         #endif
     }
 
+    @ContentBuilder
     var body: some View {
         HStack(spacing: spacing) {
             ForEach(elements, id: id) { element in

@@ -37,6 +37,7 @@ extension ActiveSessionsView {
             session.nowPlayingItem != nil && session.playState != nil
         }
 
+        @ContentBuilder
         private var rowLeading: some View {
             PosterImage(
                 item: session,
@@ -61,6 +62,7 @@ extension ActiveSessionsView {
             .frame(width: posterDisplayType == .landscape ? 110 : 60)
         }
 
+        @ContentBuilder
         private func activeSessionDetails(_ nowPlayingItem: BaseItemDto, playState: PlayerStateInfo) -> some View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(session.userName ?? L10n.unknown)
@@ -81,6 +83,7 @@ extension ActiveSessionsView {
             .font(.subheadline)
         }
 
+        @ContentBuilder
         private var idleSessionDetails: some View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(session.userName ?? L10n.unknown)
@@ -106,6 +109,7 @@ extension ActiveSessionsView {
             .font(.subheadline)
         }
 
+        @ContentBuilder
         var body: some View {
             ListRow(insets: .init(vertical: 8, horizontal: viewLayout.edgePadding)) {
                 rowLeading

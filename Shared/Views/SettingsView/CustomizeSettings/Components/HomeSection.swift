@@ -23,9 +23,9 @@ extension CustomizeSettingsView {
         @Default(.Customization.Home.resumeNextUp)
         private var resumeNextUp
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.home) {
-
                 Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)
                 Toggle(L10n.recentlyPlayed, isOn: $showRecentlyPlayed)
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)

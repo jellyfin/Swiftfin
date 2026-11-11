@@ -46,6 +46,7 @@ struct SwiftfinConsoleHandler: LogHandler {
 }
 
 extension Logger.Level {
+
     var emoji: String {
         switch self {
         case .trace:

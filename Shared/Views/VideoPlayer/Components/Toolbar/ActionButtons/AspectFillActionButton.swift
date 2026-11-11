@@ -15,6 +15,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @Environment(ViewState.self)
         private var viewState
 
+        @ContentBuilder
         var body: some View {
             Button(
                 L10n.aspectFill,

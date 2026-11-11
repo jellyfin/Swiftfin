@@ -15,6 +15,7 @@ struct UnplayedIndicator: View {
 
     let count: Int?
 
+    @ContentBuilder
     var body: some View {
         if let count, count > 0 {
             Quadrant(.topTrailing) {

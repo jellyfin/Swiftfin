@@ -20,7 +20,7 @@ struct FadeContentTransitionView<Item: Hashable, Content: View>: PlatformViewRep
         item: Item,
         duration: TimeInterval = 0.35,
         debounce: TimeInterval? = nil,
-        @ViewBuilder content: @escaping (Item) -> Content
+        @ContentBuilder content: @escaping (Item) -> Content
     ) {
         self.item = item
         self.duration = duration

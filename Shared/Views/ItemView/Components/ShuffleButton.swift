@@ -16,6 +16,7 @@ struct ShuffleButton: View {
 
     let item: BaseItemDto
 
+    @ContentBuilder
     var body: some View {
         if item.canShuffle {
             Button(ItemActionButton.shuffle.displayTitle, systemImage: ItemActionButton.shuffle.systemImage) {

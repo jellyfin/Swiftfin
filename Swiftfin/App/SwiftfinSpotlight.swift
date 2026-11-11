@@ -10,6 +10,7 @@ import CoreSpotlight
 import Foundation
 
 struct SwiftfinSpotlight {
+
     private let mainIndex = CSSearchableIndex(name: "SwiftfinAppIndex")
 
     func addSwiftfinToSpotlight() {

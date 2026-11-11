@@ -33,6 +33,7 @@ extension SeriesEpisodeContentGroup {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             EpisodeCardLayout(
                 header: episode.displayTitle,
@@ -80,6 +81,7 @@ extension SeriesEpisodeContentGroup {
         let systemImage: String?
         let action: () -> Void
 
+        @ContentBuilder
         var body: some View {
             EpisodeCardLayout(
                 header: title,
@@ -149,7 +151,7 @@ extension SeriesEpisodeContentGroup {
             artworkAction: @escaping () -> Void,
             contentAction: @escaping () -> Void,
             contextMenuItem: BaseItemDto? = nil,
-            @ViewBuilder artwork: () -> Artwork
+            @ContentBuilder artwork: () -> Artwork
         ) {
             self.header = header
             self.subHeader = subHeader
@@ -160,6 +162,7 @@ extension SeriesEpisodeContentGroup {
             self.artwork = artwork()
         }
 
+        @ContentBuilder
         private func contextMenuPreview(for item: BaseItemDto) -> some View {
             VStack(alignment: .leading) {
                 PosterImage(
@@ -182,7 +185,7 @@ extension SeriesEpisodeContentGroup {
             .glassEffect(in: .rect(cornerRadius: 10))
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var artworkButton: some View {
             let button = Button(action: artworkAction) {
                 if let contextMenuItem {
@@ -211,6 +214,7 @@ extension SeriesEpisodeContentGroup {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             VStack(alignment: .leading) {
                 artworkButton
@@ -253,6 +257,7 @@ extension SeriesEpisodeContentGroup {
         let subHeader: String
         let content: String
 
+        @ContentBuilder
         var body: some View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(subHeader)
@@ -282,6 +287,7 @@ extension SeriesEpisodeContentGroup {
 
         private let cornerRadius: CGFloat = 20
 
+        @ContentBuilder
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .padding(28)

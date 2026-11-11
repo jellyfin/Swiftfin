@@ -13,16 +13,18 @@ protocol PresentationView: View {
     associatedtype StandardBody: View
     associatedtype LargeBody: View
 
-    @ViewBuilder
+    @ContentBuilder
     @MainActor
     var standardView: Self.StandardBody { get }
-    @ViewBuilder
+    @ContentBuilder
     @MainActor
     var largeView: Self.LargeBody { get }
 }
 
 @MainActor
 extension PresentationView {
+
+    @ContentBuilder
     var body: some View {
         PresentationContent { self.standardView } largeView: { self.largeView }
     }
@@ -31,17 +33,19 @@ extension PresentationView {
 /// Standard and large presentations share the same layout policy.
 /// Size changes within either presentation are handled by AdaptiveLayout.
 struct PresentationContent<StandardBody: View, LargeBody: View>: View {
+
     private let standardView: () -> StandardBody
     private let largeView: () -> LargeBody
 
     init(
-        @ViewBuilder standardView: @escaping () -> StandardBody,
-        @ViewBuilder largeView: @escaping () -> LargeBody
+        @ContentBuilder standardView: @escaping () -> StandardBody,
+        @ContentBuilder largeView: @escaping () -> LargeBody
     ) {
         self.standardView = standardView
         self.largeView = largeView
     }
 
+    @ContentBuilder
     var body: some View {
         if ViewLayout.Presentation.current == .large {
             largeView()

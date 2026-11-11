@@ -28,6 +28,7 @@ struct ItemImageDetailView: View {
         )
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             Section {

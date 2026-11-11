@@ -71,6 +71,7 @@ struct SliderContainer<Value: BinaryFloatingPoint>: View {
         #endif
     }
 
+    @ContentBuilder
     var body: some View {
         SliderContainerBody(configuration: .init(
             isEditing: containerState.isEditing,

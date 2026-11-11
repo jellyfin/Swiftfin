@@ -27,6 +27,7 @@ extension ItemActionButtons {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             Button(
                 isFavorited ? L10n.removeFromFavorites : L10n.addToFavorites,

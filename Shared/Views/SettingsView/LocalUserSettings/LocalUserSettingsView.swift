@@ -23,6 +23,7 @@ struct LocalUserSettingsView: View {
         self._imageViewModel = StateObject(wrappedValue: UserImageViewModel(user: user))
     }
 
+    @ContentBuilder
     var body: some View {
         Form {
             #if os(iOS)

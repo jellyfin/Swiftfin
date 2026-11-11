@@ -36,9 +36,10 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
         self.mediaSession = mediaSession
         item = mediaSession.playbackItem
 
-        if let item, !item.baseItem.isLiveStream, item.baseItem.mediaType != .audio,
-           let itemID = item.baseItem.id
-        {
+        if let item,
+           !item.baseItem.isLiveStream,
+           item.baseItem.mediaType != .audio,
+           let itemID = item.baseItem.id {
             let session = mediaSession.userSession
 
             request = Task { [weak self, weak item, load] in
@@ -67,8 +68,12 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
     }
 
     var overlayActions: [VideoPlayerOverlayAction] {
-        guard let mediaSession, let item, mediaSession.playbackItem === item,
-              mediaSession.state == .playback, mediaSession.canSeek, !mediaSession.isSeeking else { return [] }
+        guard let mediaSession,
+              let item,
+              mediaSession.playbackItem === item,
+              mediaSession.state == .playback,
+              mediaSession.canSeek,
+              !mediaSession.isSeeking else { return [] }
 
         let duration = mediaSession.playbackState.duration ?? mediaSession.item.runtime
 
@@ -78,8 +83,14 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
             weak self,
             weak item
         ] in
-            guard let self, let mediaSession = self.mediaSession, let item, self.item === item,
-                  mediaSession.playbackItem === item, mediaSession.state == .playback, mediaSession.canSeek, !mediaSession.isSeeking,
+            guard let self,
+                  let mediaSession = self.mediaSession,
+                  let item,
+                  self.item === item,
+                  mediaSession.playbackItem === item,
+                  mediaSession.state == .playback,
+                  mediaSession.canSeek,
+                  !mediaSession.isSeeking,
                   let target = segment.skipTarget(
                       at: mediaSession.seconds,
                       duration: mediaSession.playbackState.duration ?? mediaSession.item.runtime

@@ -15,7 +15,7 @@ struct CinematicContentGroupContainer<Content: View>: View {
 
     private let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
+    init(@ContentBuilder content: () -> Content) {
         self.content = content()
     }
 
@@ -25,6 +25,7 @@ struct CinematicContentGroupContainer<Content: View>: View {
         return max(parentHeight - 75, 0)
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .frame(minHeight: resolvedHeight, alignment: .bottomLeading)

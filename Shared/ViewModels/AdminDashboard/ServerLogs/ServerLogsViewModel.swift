@@ -16,6 +16,7 @@ final class ServerLogsViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh(filter: ServerLogType?)
 
         var transition: Transition {
@@ -24,6 +25,7 @@ final class ServerLogsViewModel: ViewModel {
     }
 
     enum State {
+
         case initial
         case error
         case content

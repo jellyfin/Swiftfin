@@ -18,6 +18,7 @@ struct PluginDetailsView: View {
     @ObservedObject
     var viewModel: PluginDetailsViewModel
 
+    @ContentBuilder
     var body: some View {
         List {
             ListTitleSection(

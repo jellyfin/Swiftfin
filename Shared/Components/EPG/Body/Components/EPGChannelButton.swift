@@ -38,7 +38,7 @@ struct EPGChannelButton: View {
         channel.imageTags?[ImageType.primary.rawValue] != nil
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var channelContent: some View {
         if hasPrimaryImage {
             PosterImage(
@@ -72,6 +72,7 @@ struct EPGChannelButton: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         let layout = EPGLayout(viewLayout: viewLayout)
         let posterSize = min(

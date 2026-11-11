@@ -26,6 +26,7 @@ struct LibraryStyleSection: View {
         self.canAdjustListColumns = canAdjustListColumns
     }
 
+    @ContentBuilder
     var body: some View {
         if options.displayTypes.count > 1 {
             Picker(selection: $libraryStyle.displayType) {
@@ -48,8 +49,7 @@ struct LibraryStyleSection: View {
 
         if libraryStyle.displayType == .list,
            options.displayTypes.contains(.list),
-           canAdjustListColumns
-        {
+           canAdjustListColumns {
             Stepper(
                 L10n.columnsWithCount(libraryStyle.listColumnCount),
                 value: $libraryStyle.listColumnCount,

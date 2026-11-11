@@ -30,6 +30,7 @@ struct ServerUserMediaAccessView: View {
         self.tempPolicy = policy
     }
 
+    @ContentBuilder
     var body: some View {
         contentView
             .toolbarTitleDisplayMode(.inline)
@@ -77,6 +78,7 @@ struct ServerUserMediaAccessView: View {
             .errorMessage($viewModel.error)
     }
 
+    @ContentBuilder
     var contentView: some View {
         List {
             accessView
@@ -84,7 +86,7 @@ struct ServerUserMediaAccessView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     var accessView: some View {
         Section(L10n.access) {
             Toggle(
@@ -107,7 +109,7 @@ struct ServerUserMediaAccessView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     var deletionView: some View {
         Section(L10n.deletion) {
             Toggle(

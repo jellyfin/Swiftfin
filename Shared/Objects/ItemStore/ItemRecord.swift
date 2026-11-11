@@ -20,7 +20,7 @@ final class ItemRecord: Identifiable {
     nonisolated let id: String
     private var metadata: BaseItemDto?
     private var currentProgram: ItemRecord?
-    // Pending writes overlay confirmed data until each write finishes
+    /// Pending writes overlay confirmed data until each write finishes
     private var optimisticChanges: [(id: UUID, field: ItemUserDataField, value: Bool)] = []
 
     @ObservationIgnored
@@ -137,8 +137,7 @@ final class ItemRecord: Identifiable {
         let previousProgramID = currentProgram?.id
 
         if (patch.scope == .fullItem || (patch.scope == .partial && patch.fields.contains("CurrentProgram")))
-            && revision >= programRevision
-        {
+            && revision >= programRevision {
             // Reject program links that would create a cycle of retained records
             currentProgram = program?.references(self) == true ? nil : program
             programRevision = revision
@@ -182,7 +181,7 @@ final class ItemRecord: Identifiable {
         self === record || currentProgram?.references(record) == true
     }
 
-    // Playlist positions belong to entries rather than shared records
+    /// Playlist positions belong to entries rather than shared records
     private static func withoutPlaylistOccurrences(_ item: BaseItemDto) -> BaseItemDto {
         var item = item
         item.playlistItemID = nil

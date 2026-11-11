@@ -23,6 +23,7 @@ struct ColorPicker: View {
         self.supportsOpacity = supportsOpacity
     }
 
+    @ContentBuilder
     var body: some View {
         ChevronButton {
             isPresented = true

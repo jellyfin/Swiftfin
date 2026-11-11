@@ -11,7 +11,16 @@ import Foundation
 import Logging
 import SwiftUI
 
-struct GestureView: PlatformViewRepresentable {
+struct GestureView: View {
+
+    @ContentBuilder
+    var body: some View {
+        GestureViewRepresentable()
+            .accessibilityHidden(true)
+    }
+}
+
+private struct GestureViewRepresentable: PlatformViewRepresentable {
 
     func makeUIView(context: Context) -> UIView {
         let view = UIView(frame: .zero)
@@ -28,7 +37,6 @@ struct GestureView: PlatformViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {
-
         context.coordinator.longPressAction = context.environment.longPressAction
         context.coordinator.panAction = context.environment.panAction
         context.coordinator.pinchAction = context.environment.pinchAction

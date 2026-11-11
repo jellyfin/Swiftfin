@@ -28,6 +28,7 @@ struct MediaInfoSupplement {
 
 extension MediaInfoSupplement: VideoPlayerSupplement {
 
+    @ContentBuilder
     var body: some View {
         InfoOverlay(item: item)
     }
@@ -56,6 +57,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
             self._recordingViewModel = StateObject(wrappedValue: RecordingTimerViewModel(item: item))
         }
 
+        @ContentBuilder
         private var accessoryView: some View {
             VStack(alignment: .leading) {
                 DotHStack {
@@ -93,6 +95,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
             }
         }
 
+        @ContentBuilder
         private var recordButtons: some View {
             VStack {
                 Button(role: recordingViewModel.recordingTimer != nil ? .destructive : nil) {
@@ -145,6 +148,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
             .errorMessage($recordingViewModel.error)
         }
 
+        @ContentBuilder
         private var fromBeginningButton: some View {
             Button {
                 mediaSession.seek(to: .zero)
@@ -161,6 +165,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
 
         // TODO: may need to be a layout for correct overview frame
         //       with scrolling if too long
+        @ContentBuilder
         var standardView: some View {
             CompactOrRegularView(
                 isCompact: viewState.isCompact
@@ -177,6 +182,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
             }
         }
 
+        @ContentBuilder
         private var compactView: some View {
             VStack(alignment: .leading) {
                 Text(item.displayTitle)
@@ -217,6 +223,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
             .edgePadding()
         }
 
+        @ContentBuilder
         private var regularContent: some View {
             HStack(alignment: .bottom, spacing: viewLayout.edgePadding) {
                 // TODO: determine what to do with non-portrait (channel, home video) images
@@ -275,6 +282,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
             }
         }
 
+        @ContentBuilder
         var largeView: some View {
             regularContent
                 .edgePadding(.horizontal)
