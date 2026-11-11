@@ -58,6 +58,7 @@ struct RemoteButtonStyle: ButtonStyle {
 
     let size: Size
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .contentTransition(.symbolEffect(.replace))

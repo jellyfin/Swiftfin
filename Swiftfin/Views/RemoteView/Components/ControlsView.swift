@@ -55,6 +55,7 @@ extension RemoteView {
             proxy.isSyncSuspended = isPressed
         }
 
+        @ContentBuilder
         var body: some View {
             VStack(spacing: 20) {
                 if let activeItem = proxy.activeItem {

@@ -32,7 +32,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         }
 
         private func select(_ target: SessionViewModel) {
-            guard mediaSession.canControlPlayback, mediaSession.item.mediaType == .video,
+            guard mediaSession.canControlPlayback,
+                  mediaSession.item.mediaType == .video,
                   selectedSessionID != target.id else { return }
 
             mediaSession.transfer(to: JellyfinCastMediaPlayer(session: target.session))

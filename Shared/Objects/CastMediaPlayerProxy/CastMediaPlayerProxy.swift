@@ -234,8 +234,8 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy, MediaPlayerQueueConfigurable
         session.sendPlaystateCommand(command: .previousTrack, seekPositionTicks: nil)
     }
 
-    // there is no jump-to-index command, so the queue is replayed
-    // from the selected item to keep the remaining queue intact
+    /// there is no jump-to-index command, so the queue is replayed
+    /// from the selected item to keep the remaining queue intact
     func playQueueItem(_ item: BaseItemDto) {
         guard let index = queueItemIDs.firstIndex(of: item.id ?? "") else { return }
 
@@ -304,10 +304,10 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy, MediaPlayerQueueConfigurable
 
 // MARK: - Session Sync
 
-// The target session takes the place of a local player, with
-// its socket frames standing in for player events. Commands are
-// applied optimistically and stale frames suppressed until the
-// session reports the result.
+/// The target session takes the place of a local player, with
+/// its socket frames standing in for player events. Commands are
+/// applied optimistically and stale frames suppressed until the
+/// session reports the result.
 private extension CastMediaPlayerProxy {
 
     func markLocalCommand() {

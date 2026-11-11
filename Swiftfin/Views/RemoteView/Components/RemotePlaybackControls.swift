@@ -43,6 +43,7 @@ extension RemoteView {
             proxy.activeItem?.isLiveContent == true
         }
 
+        @ContentBuilder
         var body: some View {
             HStack(spacing: 24) {
                 if hasQueue {

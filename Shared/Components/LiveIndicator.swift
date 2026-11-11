@@ -10,6 +10,7 @@ import SwiftUI
 
 struct LiveIndicator: View {
 
+    @ContentBuilder
     var body: some View {
         Text(L10n.live)
             .font(.subheadline)

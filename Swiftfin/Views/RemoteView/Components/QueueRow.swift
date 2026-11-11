@@ -23,6 +23,7 @@ extension RemoteView.QueueView {
         let isPaused: Bool
         let action: () -> Void
 
+        @ContentBuilder
         private var leadingView: some View {
             PosterImage(
                 item: item,
@@ -46,6 +47,7 @@ extension RemoteView.QueueView {
             .subtleShadow()
         }
 
+        @ContentBuilder
         private var trailingView: some View {
             VStack(alignment: .leading, spacing: 4) {
                 switch item.type {
@@ -100,6 +102,7 @@ extension RemoteView.QueueView {
             .lineLimit(1)
         }
 
+        @ContentBuilder
         var body: some View {
             ListRow {
                 leadingView

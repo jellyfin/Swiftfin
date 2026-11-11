@@ -23,7 +23,7 @@ extension RemoteView {
 
         let send: (GeneralCommandType) -> Void
 
-        @ViewBuilder
+        @ContentBuilder
         private func directionalKey(_ command: GeneralCommandType) -> some View {
             let alignment: Alignment = switch command {
             case .moveUp:
@@ -44,6 +44,7 @@ extension RemoteView {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
         }
 
+        @ContentBuilder
         var body: some View {
             ZStack {
                 RoundedRectangle(cornerRadius: 32)

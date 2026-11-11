@@ -18,6 +18,7 @@ struct NowPlayingIndicator: View {
 
     private let restingScale = 0.25
 
+    @ContentBuilder
     var body: some View {
         TimelineView(.animation(paused: !isEnabled)) { context in
             let time = context.date.timeIntervalSinceReferenceDate

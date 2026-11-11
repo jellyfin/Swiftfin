@@ -26,6 +26,7 @@ extension RemoteView {
             editMode?.wrappedValue.isEditing == true
         }
 
+        @ContentBuilder
         var body: some View {
             List {
                 ForEach(proxy.queueItems, id: \.id) { item in

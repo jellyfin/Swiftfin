@@ -18,6 +18,7 @@ extension RemoteView {
 
         let perform: (() -> Void) -> Void
 
+        @ContentBuilder
         var body: some View {
             if let mediaSources = proxy.activeItem?.mediaSources, mediaSources.count > 1 {
                 Menu(L10n.version, systemImage: "list.bullet.rectangle") {
@@ -41,8 +42,8 @@ extension RemoteView {
             }
 
             if proxy.session.supportedCommands.contains(.setAudioStreamIndex),
-               let audioStreams = proxy.activeItem?.audioStreams, audioStreams.isNotEmpty
-            {
+               let audioStreams = proxy.activeItem?.audioStreams,
+               audioStreams.isNotEmpty {
                 streamPicker(
                     L10n.audio,
                     systemImage: VideoPlayerActionButton.audio.systemImage,
@@ -53,8 +54,8 @@ extension RemoteView {
             }
 
             if proxy.session.supportedCommands.contains(.setSubtitleStreamIndex),
-               let subtitleStreams = proxy.activeItem?.subtitleStreams, subtitleStreams.isNotEmpty
-            {
+               let subtitleStreams = proxy.activeItem?.subtitleStreams,
+               subtitleStreams.isNotEmpty {
                 streamPicker(
                     L10n.subtitles,
                     systemImage: VideoPlayerActionButton.subtitles.systemImage,
@@ -75,7 +76,7 @@ extension RemoteView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func streamPicker(
             _ title: String,
             systemImage: String,

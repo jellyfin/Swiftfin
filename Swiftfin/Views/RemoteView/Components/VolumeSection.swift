@@ -27,6 +27,7 @@ extension RemoteView {
         let isMuteSupported: Bool
         let isVolumeSupported: Bool
 
+        @ContentBuilder
         var body: some View {
             HStack(spacing: 16) {
                 if isMuteSupported {

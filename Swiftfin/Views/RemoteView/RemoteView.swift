@@ -32,6 +32,7 @@ struct RemoteView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             if let proxy, let selectedTarget {

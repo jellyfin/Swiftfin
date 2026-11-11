@@ -18,6 +18,7 @@ final class CastViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
 
         var transition: Transition {
@@ -27,10 +28,12 @@ final class CastViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
     }
 
     enum State {
+
         case content
         case error
         case initial

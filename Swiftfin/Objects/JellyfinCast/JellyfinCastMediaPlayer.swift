@@ -149,15 +149,14 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
         }
     }
 
-    // A Play command can outlive dismissal, stop it only once the target reports that item.
+    /// A Play command can outlive dismissal, stop it only once the target reports that item.
     private static func stopPendingLoad(_ itemID: String, sessionID: String, userSession: UserSession) {
         Task {
             let deadline = ContinuousClock.now.advanced(by: .seconds(30))
 
             while ContinuousClock.now < deadline {
                 if let target = try? await Self.session(sessionID, userSession: userSession),
-                   target.nowPlayingItem?.id == itemID
-                {
+                   target.nowPlayingItem?.id == itemID {
                     try? await userSession.send(Paths.sendPlaystateCommand(sessionID: sessionID, command: PlaystateCommand.stop.rawValue))
                     return
                 }
@@ -240,7 +239,7 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
         }
     }
 
-    // Commands run in order so a stop for the previous item never lands after the next play.
+    /// Commands run in order so a stop for the previous item never lands after the next play.
     private func enqueue(_ request: Request<Void>, completion: (@MainActor (Error?) -> Void)? = nil) {
         guard let userSession else { return }
 
@@ -272,9 +271,11 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
         return response.value.first { $0.id == sessionID }
     }
 
-    // The sessions socket is event-driven and not sent to every user, so state is also fetched after each command.
+    /// The sessions socket is event-driven and not sent to every user, so state is also fetched after each command.
     private func refreshState() async {
-        guard let sessionID, let userSession, baseItem != nil,
+        guard let sessionID,
+              let userSession,
+              baseItem != nil,
               let target = try? await Self.session(sessionID, userSession: userSession) else { return }
 
         update(target)
@@ -314,9 +315,10 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
             receiverStopped = true
 
             // Clients clear their now playing item when an item finishes, so only a stop near the runtime counts as finished.
-            if target.nowPlayingItem == nil, let runtime = baseItem.runtime, !baseItem.isLiveStream,
-               runtime - position < .seconds(20)
-            {
+            if target.nowPlayingItem == nil,
+               let runtime = baseItem.runtime,
+               !baseItem.isLiveStream,
+               runtime - position < .seconds(20) {
                 mediaSession.ended(from: self)
             } else {
                 mediaSession.setPlaybackRequestStatus(status: .paused)
