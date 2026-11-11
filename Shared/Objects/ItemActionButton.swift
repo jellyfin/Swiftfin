@@ -16,6 +16,7 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
     case playback
     case shuffle
     case record
+    case playlists
     case subtitles
     case refresh
     case delete
@@ -37,6 +38,8 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
             L10n.shuffle
         case .record:
             L10n.record
+        case .playlists:
+            L10n.playlists
         case .refresh:
             L10n.refreshMetadata
         case .subtitles:
@@ -68,6 +71,8 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
             "shuffle"
         case .record:
             "record.circle.fill"
+        case .playlists:
+            "list.bullet"
         case .refresh:
             "arrow.clockwise"
         case .subtitles:
@@ -115,6 +120,7 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
     ]
 
     static let defaultMenuActionButtons: [ItemActionButton] = [
+        .playlists,
         .refresh,
         .subtitles,
         .delete

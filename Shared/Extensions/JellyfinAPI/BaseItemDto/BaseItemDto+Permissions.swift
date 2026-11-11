@@ -20,6 +20,16 @@ extension BaseItemDto {
         return userPolicy.enableContentDownloading == true && canDownload == true
     }
 
+    /// Indicates whether the item can belong to a playlist
+    var canBeInPlaylist: Bool {
+        switch type {
+        case .audio, .audioBook, .boxSet, .episode, .movie, .musicAlbum, .musicVideo, .season, .series, .trailer, .video:
+            true
+        default:
+            false
+        }
+    }
+
     /// Indicates whether the item's metadata can be edited by the current user
     var canEditMetadata: Bool {
         guard let userPolicy = Container.shared.currentUserSession()?.userData.policy else { return false }

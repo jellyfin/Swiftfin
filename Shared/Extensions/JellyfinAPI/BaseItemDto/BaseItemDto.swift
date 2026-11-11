@@ -543,7 +543,7 @@ extension BaseItemDto {
         else { return false }
 
         switch type {
-        case .series, .season, .boxSet:
+        case .series, .season, .boxSet, .playlist:
             return true
 
         case .collectionFolder, .userView, .folder:
@@ -658,7 +658,7 @@ extension BaseItemDto {
     var hasComponents: Bool {
         switch type {
         case .audio, .audioBook, .book, .boxSet, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder, .movie,
-             .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder, .program, .recording, .season,
+             .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .program, .recording, .season,
              .series, .trailer, .tvProgram, .video:
             true
         default:
