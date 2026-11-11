@@ -47,8 +47,7 @@ extension MediaTrackIndexMap {
 
                     if let codec = stream.codec,
                        let native = track.codec,
-                       MPVTrackIdentity.codecName(codec) != MPVTrackIdentity.codecName(native)
-                    {
+                       MPVTrackIdentity.codecName(codec) != MPVTrackIdentity.codecName(native) {
                         return false
                     }
 
@@ -79,8 +78,7 @@ extension MediaTrackIndexMap {
         for stream in mediaStreams.sidecarSubtitles {
             if let index = stream.index,
                let track = tracks
-                .first(where: { $0.type == .subtitle && $0.isExternal && $0.clientID == MPVTrackIdentity.subtitleID(index) })
-            {
+                .first(where: { $0.type == .subtitle && $0.isExternal && $0.clientID == MPVTrackIdentity.subtitleID(index) }) {
                 map.setPlayerIndex(track.mpvID, for: index)
             }
         }

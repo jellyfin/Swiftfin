@@ -30,6 +30,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             if let playbackItem = mediaSession.playbackItem {
                 Menu {
@@ -109,6 +110,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             )
         }
 
+        @ContentBuilder
         private func trackPicker(_ title: String, secondary: Bool) -> some View {
             Picker(selection: trackIndex(secondary: secondary)) {
                 Text(L10n.none)
@@ -122,8 +124,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 Text(title)
 
                 if let stream = streams(secondary: secondary)
-                    .first(property: \.index, equalTo: playbackItem.subtitleTrackIndex(secondary: secondary))
-                {
+                    .first(property: \.index, equalTo: playbackItem.subtitleTrackIndex(secondary: secondary)) {
                     Text(stream.displayTitle ?? L10n.unknown)
                 } else {
                     Text(L10n.none)
@@ -133,6 +134,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             .disabled(streams(secondary: secondary).isEmpty)
         }
 
+        @ContentBuilder
         var body: some View {
             Section {
                 Picker(L10n.subtitles, selection: isEnabled) {

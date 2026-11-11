@@ -16,6 +16,7 @@ extension ItemActionButtons {
         @EnvironmentObject
         private var provider: ItemContentGroupProvider
 
+        @ContentBuilder
         var body: some View {
             Content(item: provider.item)
         }
@@ -50,7 +51,7 @@ extension ItemActionButtons.Record {
             viewModel.recordingTimer != nil || viewModel.seriesRecordingTimer != nil
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var recordingButtons: some View {
             if let recordingTimer = viewModel.recordingTimer {
                 Button(
@@ -74,6 +75,7 @@ extension ItemActionButtons.Record {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             Group {
                 if isSeries || viewModel.recordingTimer != nil {

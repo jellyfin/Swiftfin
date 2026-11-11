@@ -17,7 +17,9 @@ extension UserSession {
         itemChanges = serverSocketManager.events
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
-                guard let self, self.itemChanges != nil, self.items.isActive,
+                guard let self,
+                      self.itemChanges != nil,
+                      self.items.isActive,
                       case let .message(message) = event else { return }
 
                 switch message {

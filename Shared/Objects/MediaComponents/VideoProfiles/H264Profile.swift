@@ -7,6 +7,7 @@
 //
 
 enum H264Profile: String {
+
     case baseline
     case constrainedBaseline = "constrained baseline"
     case main

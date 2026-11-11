@@ -12,7 +12,9 @@ import Testing
 
 @OptionSet<Int>
 private struct Indicators: Codable, Hashable {
+
     private enum Options: Int {
+
         case favorited
         case played
         case progress
@@ -25,12 +27,15 @@ private struct Indicators: Codable, Hashable {
 }
 
 private struct StoredIndicators: Swift.OptionSet, Codable {
+
     let rawValue: Int
 }
 
 @OptionSet<UInt8>
 public struct SparseOptions: Sendable {
+
     private enum Options: Int {
+
         case first = 1
         case highest = 7
         case third = 3
@@ -44,7 +49,9 @@ public struct SparseOptions: Sendable {
 
 @SwiftfinMacros.OptionSet<Swift.Int>
 private struct ExplicitConformance: Swift.OptionSet {
+
     private enum Options: Int {
+
         case up
         case down
         case `default`
@@ -53,7 +60,9 @@ private struct ExplicitConformance: Swift.OptionSet {
 
 @OptionSet<Int>
 private struct TrailerOptions: Codable, CaseIterable {
+
     private enum Options: Int {
+
         case local
         case external
         case none

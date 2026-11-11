@@ -43,6 +43,7 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }
 
+    @ContentBuilder
     private var contentView: some View {
         ScrollViewReader { proxy in
             ScrollView {
@@ -85,6 +86,7 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         }
     }
 
+    @ContentBuilder
     private var groupContent: some View {
         ZStack {
             switch viewModel.state {
@@ -119,6 +121,7 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Group {
             #if os(tvOS)

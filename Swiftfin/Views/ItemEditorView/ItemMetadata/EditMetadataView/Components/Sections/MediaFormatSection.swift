@@ -17,6 +17,7 @@ extension EditMetadataView {
         @Binding
         var item: BaseItemDto
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.format) {
                 TextField(

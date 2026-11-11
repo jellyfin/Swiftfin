@@ -27,6 +27,7 @@ struct EPGDateMenu: View {
         )
     }
 
+    @ContentBuilder
     var body: some View {
         Menu(L10n.date, systemImage: "calendar") {
             Picker(L10n.date, selection: selection) {

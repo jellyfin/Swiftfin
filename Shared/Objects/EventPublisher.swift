@@ -11,6 +11,7 @@ import Combine
 // TODO: remove
 
 struct LegacyEventPublisher<T>: Publisher {
+
     typealias Output = T
     typealias Failure = Never
 

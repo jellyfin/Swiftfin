@@ -24,6 +24,7 @@ extension SelectUserView {
         let hasUsers: Bool
         let isEditing: Binding<Bool>
 
+        @ContentBuilder
         var body: some View {
             if hasUsers {
                 Toggle(

@@ -17,13 +17,12 @@ struct AboutAppView: View {
     @Router
     private var router
 
+    @ContentBuilder
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
-
             if !viewLayout.isLarge {
                 Section {
                     VStack(alignment: .center, spacing: 10) {
-
                         Image(.jellyfinBlobBlue)
                             .resizable()
                             .aspectRatio(1, contentMode: .fit)
@@ -71,7 +70,6 @@ struct AboutAppView: View {
             }
 
             Section {
-
                 // tvOS cannot open generic web links
                 #if !os(tvOS)
                 ChevronButton(

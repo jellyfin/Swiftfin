@@ -47,7 +47,7 @@ struct NavigationRoute: Identifiable, Hashable {
     init(
         id: String,
         style: TransitionStyle = .push(.automatic),
-        @ViewBuilder content: () -> some View
+        @ContentBuilder content: () -> some View
     ) {
         self.id = id
         self.transitionType = .automatic(style)
@@ -58,7 +58,7 @@ struct NavigationRoute: Identifiable, Hashable {
     init(
         id: String,
         withNamespace: @escaping (Namespace.ID) -> TransitionStyle,
-        @ViewBuilder content: () -> some View
+        @ContentBuilder content: () -> some View
     ) {
         self.id = id
         self.transitionType = .withNamespace(withNamespace)
@@ -74,7 +74,7 @@ struct NavigationRoute: Identifiable, Hashable {
         lhs.id == rhs.id
     }
 
-    @ViewBuilder
+    @ContentBuilder
     var destination: some View {
         if case let .push(.zoom(sourceID, namespace)) = transitionStyle {
             content

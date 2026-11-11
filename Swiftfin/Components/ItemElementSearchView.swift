@@ -52,6 +52,7 @@ struct ItemElementSearchView<Editor: ItemComponentEditor>: View {
         self.existsOnServer = existsOnServer
     }
 
+    @ContentBuilder
     var body: some View {
         Section {
             TextField(L10n.name, text: $input.name)

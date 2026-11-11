@@ -31,6 +31,13 @@ extension FormatStyle where Self == MinuteSecondsFormatStyle {
 
 extension FormatStyle where Self == Duration.UnitsFormatStyle {
 
+    static var spokenRuntime: Duration.UnitsFormatStyle {
+        Duration.UnitsFormatStyle(
+            allowedUnits: [.hours, .minutes, .seconds],
+            width: .wide
+        )
+    }
+
     static var playbackOffset: Duration.UnitsFormatStyle {
         Duration.UnitsFormatStyle(
             allowedUnits: [.seconds],
@@ -64,7 +71,6 @@ extension FormatStyle where Self == Duration.UnitsFormatStyle {
 struct RuntimeFormatStyle: FormatStyle {
 
     func format(_ value: Duration) -> String {
-
         let formatStyle: Duration.TimeFormatStyle = if value.components.seconds.magnitude >= 3600 {
             Duration.TimeFormatStyle(pattern: .hourMinuteSecond)
         } else {
@@ -174,7 +180,6 @@ extension ParseableFormatStyle where Self == NilIfEmptyStringFormatStyle {
 struct LastSeenFormatStyle: FormatStyle {
 
     func format(_ value: Date?) -> String {
-
         guard let value else {
             return L10n.never
         }

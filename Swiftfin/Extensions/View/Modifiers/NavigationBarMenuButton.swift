@@ -25,7 +25,7 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
         isLoading: Bool = false,
         isHidden: Bool = false,
         onPressed: ((Bool) -> Void)? = nil,
-        @ViewBuilder menuContent: () -> MenuContent
+        @ContentBuilder menuContent: () -> MenuContent
     ) {
         self.isLoading = isLoading
         self.isHidden = isHidden
@@ -33,18 +33,17 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
         self.menuContent = menuContent()
     }
 
+    @ContentBuilder
     func body(content: Self.Content) -> some View {
         content
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
-
                     if isLoading {
                         ProgressView()
                     }
 
 //                    if !isHidden, collectedMenuGroups.isNotEmpty {
                     if !isHidden {
-
                         let systemImage = if #available(iOS 26, *) {
                             "ellipsis"
                         } else {

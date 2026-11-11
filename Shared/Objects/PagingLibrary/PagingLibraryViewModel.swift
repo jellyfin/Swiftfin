@@ -81,7 +81,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         case refreshing
     }
 
-    // Collections retain records that the session store holds weakly
+    /// Collections retain records that the session store holds weakly
     @Published
     private(set) var elements: IdentifiedArrayOf<Element>
 
@@ -182,8 +182,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
                 case let .updated(update):
                     // Confirmed progress can move items into or out of filtered collections
                     if update.userDataChanged,
-                       self.library.shouldRefreshForUserDataChange(environment: self.environment)
-                    {
+                       self.library.shouldRefreshForUserDataChange(environment: self.environment) {
                         self.reconcileMembership(withID: update.itemID)
                         self.scheduleRefreshForStoreChange()
                     }
@@ -351,7 +350,9 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             let response = try await library.retrievePage(environment: environment, pageState: page)
 
             // Reject stale pages before their patches can change shared records
-            guard !Task.isCancelled, requestGeneration == generation, !isInvalidated,
+            guard !Task.isCancelled,
+                  requestGeneration == generation,
+                  !isInvalidated,
                   replacing || offset == nextOffset else { return }
 
             try page.userSession.items.validate()
@@ -428,7 +429,8 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             guard !Task.isCancelled,
                   query == normalizedSearchQuery,
                   requestGeneration == searchGeneration,
-                  offset == nextSearchOffset, !isInvalidated
+                  offset == nextSearchOffset,
+                  !isInvalidated
             else { return }
 
             try page.userSession.items.validate()

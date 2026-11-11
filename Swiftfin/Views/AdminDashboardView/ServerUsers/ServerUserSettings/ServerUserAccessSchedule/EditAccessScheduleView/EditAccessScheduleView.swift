@@ -28,6 +28,7 @@ struct EditAccessScheduleView: View {
         self.viewModel = viewModel
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             ListTitleSection(
@@ -60,7 +61,6 @@ struct EditAccessScheduleView: View {
         .navigationTitle(L10n.accessSchedules.localizedCapitalized)
         .navigationBarBackButtonHidden(isEditing)
         .toolbar {
-
             ToolbarItem(placement: .topBarLeading) {
                 if isEditing {
                     navigationBarSelectView
@@ -132,9 +132,8 @@ struct EditAccessScheduleView: View {
         .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarSelectView: some View {
-
         let isAllSelected: Bool = selectedSchedules.count == viewModel.user.policy?.accessSchedules?.count
 
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
@@ -158,7 +157,7 @@ struct EditAccessScheduleView: View {
         .enabled(isEditing)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 

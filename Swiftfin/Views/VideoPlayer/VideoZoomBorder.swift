@@ -12,6 +12,7 @@ struct VideoZoomBorder: View {
 
     let isVisible: Bool
 
+    @ContentBuilder
     var body: some View {
         NotchReader { measurement in
             RoundedRectangle(cornerRadius: measurement?.displayCornerRadius ?? 0, style: .continuous)

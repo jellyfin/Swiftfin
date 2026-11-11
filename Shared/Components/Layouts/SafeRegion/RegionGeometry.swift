@@ -51,6 +51,7 @@ func finiteSize(_ size: CGSize) -> CGSize {
 }
 
 struct RegionGeometry<ID: Hashable> {
+
     let size: CGSize
     let direction: LayoutDirection
     let system: RegionInsets
@@ -64,8 +65,11 @@ struct RegionGeometry<ID: Hashable> {
 
     /// Reserves an edge and its spacing. Empty content reserves neither.
     mutating func reserve(
-        edge: Edge, thickness: CGFloat, spacing: CGFloat,
-        id: ID? = nil, ignoringSystem: Edge.Set = []
+        edge: Edge,
+        thickness: CGFloat,
+        spacing: CGFloat,
+        id: ID? = nil,
+        ignoringSystem: Edge.Set = []
     ) -> CGRect {
         let remaining = region(ignoringSystem: ignoringSystem)
         let vertical = edge == .top || edge == .bottom
@@ -103,7 +107,8 @@ struct RegionGeometry<ID: Hashable> {
     }
 
     func region(
-        ignoringCustom: Edge.Set = [], ignoringSystem: Edge.Set = [],
+        ignoringCustom: Edge.Set = [],
+        ignoringSystem: Edge.Set = [],
         observing: Set<ID>? = nil
     ) -> CGRect {
         let selected = reservations.filter { id, _ in
@@ -139,6 +144,7 @@ struct RegionGeometry<ID: Hashable> {
 
 /// Bounds content that refuses a smaller size proposal.
 struct BoundedContentLayout: Layout {
+
     var fillsProposal: Bool
     var anchor: UnitPoint
 

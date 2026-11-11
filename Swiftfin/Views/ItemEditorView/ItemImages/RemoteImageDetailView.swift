@@ -19,6 +19,7 @@ struct RemoteImageDetailView: View {
 
     let remoteImageInfo: RemoteImageInfo
 
+    @ContentBuilder
     var body: some View {
         List {
             Section {

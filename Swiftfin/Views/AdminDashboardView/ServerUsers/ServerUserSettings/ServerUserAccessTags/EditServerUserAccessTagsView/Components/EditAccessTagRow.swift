@@ -25,6 +25,7 @@ extension EditServerUserAccessTagsView {
 
         // MARK: - Body
 
+        @ContentBuilder
         var body: some View {
             Button(action: action) {
                 HStack {

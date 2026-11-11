@@ -50,7 +50,7 @@ struct BaseItemDtoPosterLabel: View {
         isProgram || episodeLocator != nil || subtitle != nil
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var programSchedule: some View {
         if let startDate = item.startDate {
             ViewThatFits {
@@ -71,7 +71,7 @@ struct BaseItemDtoPosterLabel: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func programStartDate(_ date: Date) -> some View {
         if Calendar.current.isDateInToday(date) {
             Text(date, style: .time)
@@ -80,7 +80,7 @@ struct BaseItemDtoPosterLabel: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var subtitleView: some View {
         if isProgram {
             DotHStack {
@@ -106,6 +106,7 @@ struct BaseItemDtoPosterLabel: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         AlternateLayoutView(alignment: .topLeading) {
             VStack(spacing: 2) {

@@ -25,7 +25,7 @@ struct MediaQueueView: @MainActor VideoPlayerSupplement {
         L10n.queue
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var itemsView: some View {
         if queue.items.isNotEmpty {
             VideoPlayer.PosterCollectionView(
@@ -59,6 +59,7 @@ struct MediaQueueView: @MainActor VideoPlayerSupplement {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         switch queue.state {
         case .content:

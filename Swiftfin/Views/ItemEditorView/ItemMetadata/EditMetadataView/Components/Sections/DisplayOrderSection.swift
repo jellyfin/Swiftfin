@@ -19,6 +19,7 @@ extension EditMetadataView {
 
         let itemType: BaseItemKind
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.displayOrder) {
                 switch itemType {

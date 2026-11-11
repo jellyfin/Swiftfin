@@ -324,7 +324,6 @@ extension MediaStream: @retroactive Transferable, TextTransferable {
 
     @ArrayBuilder<Property>
     var transferProperties: [Property] {
-
         sharedTransferProperties
 
         switch type {

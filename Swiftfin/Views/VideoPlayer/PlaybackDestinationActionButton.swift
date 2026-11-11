@@ -38,6 +38,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             mediaSession.transfer(to: JellyfinCastMediaPlayer(session: target.session))
         }
 
+        @ContentBuilder
         var body: some View {
             Menu(L10n.cast, systemImage: VideoPlayerActionButton.playbackDestination.systemImage) {
                 Button(L10n.playOnThisDevice, systemImage: mediaSession.isRemotePlayback ? "iphone" : "checkmark") {

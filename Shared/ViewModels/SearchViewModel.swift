@@ -93,7 +93,6 @@ final class SearchViewModel: ViewModel {
 
     @Function(\Action.Cases._actuallySearch)
     private func __actuallySearch() async throws {
-
         guard canSearch else { return }
 
         let filters = filterViewModel.currentFilters
@@ -105,7 +104,6 @@ final class SearchViewModel: ViewModel {
 
     @Function(\Action.Cases.getSuggestions)
     private func _getSuggestions() async throws {
-
         await filterViewModel.getQueryFilters()
 
         var parameters = Paths.GetItemsParameters()

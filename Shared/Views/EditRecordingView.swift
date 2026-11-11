@@ -64,6 +64,7 @@ struct EditRecordingView: View {
         }
     }
 
+    @ContentBuilder
     private func seriesSections(_ seriesRecordingTimer: Binding<SeriesTimerInfoDto>) -> some View {
         Section {
             Picker(L10n.record, selection: seriesRecordingTimer.isRecordNewOnly.coalesce(false)) {
@@ -108,6 +109,7 @@ struct EditRecordingView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "recordingtape") {
             Section(L10n.padding) {

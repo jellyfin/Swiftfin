@@ -10,6 +10,7 @@
 struct RectangleCorner {
 
     private enum Options: Int {
+
         case topLeft
         case topRight
         case bottomLeft

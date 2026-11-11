@@ -27,10 +27,12 @@ extension BaseItemPerson: Poster {
         "person.fill"
     }
 
+    @ContentBuilder
     var posterLabel: some View {
         BaseItemDto(person: self).posterLabel
     }
 
+    @ContentBuilder
     var posterContextMenu: some View {
         BaseItemDto(person: self).posterContextMenu
     }

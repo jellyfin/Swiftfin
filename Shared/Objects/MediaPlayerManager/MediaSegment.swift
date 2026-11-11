@@ -18,9 +18,12 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
 
     init?(_ segment: MediaSegmentDto, itemID: String) {
         guard segment.itemID == nil || segment.itemID == itemID,
-              let type = segment.type, type != .unknown,
-              let start = segment.startTicks, let end = segment.endTicks,
-              start >= 0, end > start else { return nil }
+              let type = segment.type,
+              type != .unknown,
+              let start = segment.startTicks,
+              let end = segment.endTicks,
+              start >= 0,
+              end > start else { return nil }
 
         self.id = segment.id ?? "\(type.rawValue):\(start):\(end)"
         self.type = type

@@ -40,6 +40,7 @@ struct MediaChaptersSupplement {
 
 extension MediaChaptersSupplement: VideoPlayerSupplement {
 
+    @ContentBuilder
     var body: some View {
         ChapterOverlay(supplement: self)
     }
@@ -60,6 +61,7 @@ extension MediaChaptersSupplement: VideoPlayerSupplement {
             mediaSession.setPlaybackRequestStatus(status: .playing)
         }
 
+        @ContentBuilder
         var body: some View {
             VideoPlayer.PosterCollectionView(
                 data: supplement.chapters,

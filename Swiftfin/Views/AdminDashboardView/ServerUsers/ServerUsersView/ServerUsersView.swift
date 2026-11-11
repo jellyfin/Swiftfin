@@ -39,6 +39,7 @@ struct ServerUsersView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -168,6 +169,7 @@ struct ServerUsersView: View {
 
     // MARK: - User List View
 
+    @ContentBuilder
     private var userListView: some View {
         List {
             InsetGroupedListHeader(
@@ -211,9 +213,8 @@ struct ServerUsersView: View {
 
     // MARK: - Navigation Bar Select/Remove All Content
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarSelectView: some View {
-
         let isAllSelected: Bool = selectedUsers.count == viewModel.users.count
 
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
@@ -239,7 +240,7 @@ struct ServerUsersView: View {
 
     // MARK: - Delete Selected Users Confirmation Actions
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteSelectedUsersConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 
@@ -252,7 +253,7 @@ struct ServerUsersView: View {
 
     // MARK: - Delete User Confirmation Actions
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteUserConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 

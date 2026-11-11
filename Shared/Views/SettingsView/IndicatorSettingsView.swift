@@ -14,6 +14,7 @@ struct IndicatorSettingsView: View {
     @Default(.Customization.Poster.configuration)
     private var posterConfiguration
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "checkmark.circle.fill") {
             Section(L10n.posters) {

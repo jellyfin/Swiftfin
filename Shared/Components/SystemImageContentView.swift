@@ -19,7 +19,7 @@ struct ContainerRelativeView<Content: View>: View {
 
     init(
         ratio: CGFloat,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.content = content()
         self.ratio = CGSize(width: ratio, height: ratio)
@@ -27,12 +27,13 @@ struct ContainerRelativeView<Content: View>: View {
 
     init(
         ratio: CGSize = CGSize(width: 1, height: 1),
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.content = content()
         self.ratio = ratio
     }
 
+    @ContentBuilder
     var body: some View {
         AlternateLayoutView {
             Color.clear
@@ -48,6 +49,7 @@ struct RelativeSystemImageView: View {
     let systemName: String
     var ratio: CGFloat = 0.5
 
+    @ContentBuilder
     var body: some View {
         ContainerRelativeView(ratio: ratio) {
             Image(systemName: systemName)
@@ -62,6 +64,7 @@ struct SystemImageContentView: View {
     let systemName: String?
     var ratio: CGFloat = 0.3
 
+    @ContentBuilder
     var body: some View {
         ContainerRelativeView(ratio: ratio) {
             Image(systemName: systemName ?? "circle")

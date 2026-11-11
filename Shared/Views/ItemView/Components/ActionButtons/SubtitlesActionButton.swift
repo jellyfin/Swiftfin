@@ -26,6 +26,7 @@ extension ItemActionButtons {
             #endif
         }
 
+        @ContentBuilder
         var body: some View {
             Button(
                 ItemActionButton.subtitles.displayTitle,

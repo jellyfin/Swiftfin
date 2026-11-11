@@ -31,6 +31,7 @@ struct PlaybackAdjustmentSlider: View {
         )
     }
 
+    @ContentBuilder
     private var slider: some View {
         #if os(tvOS)
         SliderContainer(
@@ -60,6 +61,7 @@ struct PlaybackAdjustmentSlider: View {
         #endif
     }
 
+    @ContentBuilder
     private var presetButtons: some View {
         ForEach(presets, id: \.self) { preset in
             Button {
@@ -73,6 +75,7 @@ struct PlaybackAdjustmentSlider: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         VStack(spacing: viewLayout.isLarge ? 24 : 12) {
             Text(formatValue(value))

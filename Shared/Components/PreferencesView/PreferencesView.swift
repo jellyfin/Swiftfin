@@ -12,7 +12,7 @@ struct PreferencesView<Content: View>: UIViewControllerRepresentable {
 
     private let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
+    init(@ContentBuilder content: () -> Content) {
         self.content = content()
     }
 

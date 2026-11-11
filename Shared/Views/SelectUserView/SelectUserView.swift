@@ -136,7 +136,6 @@ struct SelectUserView: View {
 
     private func select(user: UserState) {
         Task { @MainActor in
-
             do {
                 guard let authenticationAction else { return }
 
@@ -156,7 +155,7 @@ struct SelectUserView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var splashScreenBackground: some View {
         let sources = splashScreenImageSources
 
@@ -179,6 +178,7 @@ struct SelectUserView: View {
         }
     }
 
+    @ContentBuilder
     private var contentView: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -271,6 +271,7 @@ struct SelectUserView: View {
         #endif
     }
 
+    @ContentBuilder
     private var userToolbar: some View {
         Toolbar(
             servers: viewModel.servers.keys,
@@ -287,6 +288,7 @@ struct SelectUserView: View {
         #endif
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -414,8 +416,7 @@ struct SelectUserView: View {
             let newValue = viewModel.servers.keys
 
             if case let SelectUserServerSelection.server(id: id) = serverSelection,
-               !newValue.contains(where: { $0.id == id })
-            {
+               !newValue.contains(where: { $0.id == id }) {
                 if newValue.count == 1, let firstServer = newValue.first {
                     let newSelection = SelectUserServerSelection.server(id: firstServer.id)
                     serverSelection = newSelection

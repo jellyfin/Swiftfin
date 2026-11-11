@@ -9,6 +9,7 @@
 import SwiftUI
 
 protocol _PanHandlingAction {
+
     associatedtype Value: Comparable & AdditiveArithmetic
 
     typealias OnChangeAction = (
@@ -24,6 +25,7 @@ protocol _PanHandlingAction {
 }
 
 struct _PanHandlingState {
+
     let translation: CGPoint
     let velocity: CGPoint
     let location: CGPoint
@@ -32,6 +34,7 @@ struct _PanHandlingState {
 }
 
 struct _PanStartHandlingState<Value: Comparable & AdditiveArithmetic> {
+
     let direction: Direction
     let location: CGPoint
     let value: Value

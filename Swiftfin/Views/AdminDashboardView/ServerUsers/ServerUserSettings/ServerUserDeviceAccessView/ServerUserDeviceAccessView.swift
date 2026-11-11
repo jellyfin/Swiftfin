@@ -35,6 +35,7 @@ struct ServerUserDeviceAccessView: View {
         self.tempPolicy = policy
     }
 
+    @ContentBuilder
     var body: some View {
         contentView
             .toolbarTitleDisplayMode(.inline)
@@ -81,6 +82,7 @@ struct ServerUserDeviceAccessView: View {
             .errorMessage($viewModel.error)
     }
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ZStack {

@@ -40,6 +40,7 @@ struct ItemSubtitlesView: View {
         self._viewModel = StateObject(wrappedValue: .init(item: item))
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -152,6 +153,7 @@ struct ItemSubtitlesView: View {
         }
     }
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -170,7 +172,6 @@ struct ItemSubtitlesView: View {
                 }
                 .foregroundStyle(.primary, .secondary)
             } else {
-
                 if viewModel.internalSubtitles.isNotEmpty {
                     Section {
                         ForEach(viewModel.internalSubtitles, id: \.index) { subtitle in

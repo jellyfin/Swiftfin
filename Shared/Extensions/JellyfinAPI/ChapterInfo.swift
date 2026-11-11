@@ -65,6 +65,7 @@ extension ChapterInfo {
             }
         }
 
+        @ContentBuilder
         var posterLabel: some View {
             ChapterPosterLabel(chapter: self)
         }
@@ -78,10 +79,12 @@ extension ChapterInfo {
             )
         }
 
+        @ContentBuilder
         func posterOverlay(for displayType: PosterDisplayType) -> some View {
             PosterSelectionOverlay()
         }
 
+        @ContentBuilder
         func transform(image: Image, displayType: PosterDisplayType) -> some View {
             ZStack {
                 Color.black
@@ -103,6 +106,7 @@ private struct ChapterPosterLabel: View {
 
     let chapter: ChapterInfo.FullInfo
 
+    @ContentBuilder
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(chapter.chapterInfo.displayTitle)

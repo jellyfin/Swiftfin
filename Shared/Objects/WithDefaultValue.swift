@@ -7,5 +7,6 @@
 //
 
 protocol WithDefaultValue: Equatable {
+
     static var `default`: Self { get }
 }

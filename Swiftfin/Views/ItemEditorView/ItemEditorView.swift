@@ -18,6 +18,7 @@ struct ItemEditorView: View {
     @Router
     private var router
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -50,6 +51,7 @@ struct ItemEditorView: View {
         .errorMessage($viewModel.error)
     }
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -59,8 +61,7 @@ struct ItemEditorView: View {
 
             Section(L10n.edit) {
                 if let itemKind = viewModel.item.type,
-                   BaseItemKind.itemIdentifiableCases.contains(itemKind)
-                {
+                   BaseItemKind.itemIdentifiableCases.contains(itemKind) {
                     ChevronButton(L10n.identify) {
                         router.route(to: .identifyItem(item: viewModel.item))
                     }

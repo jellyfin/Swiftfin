@@ -8,6 +8,7 @@
 
 #if os(iOS)
 enum PermissionStatus: Equatable {
+
     case authorized
     case denied
     case unknown

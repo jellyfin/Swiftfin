@@ -12,6 +12,7 @@ import JellyfinAPI
 struct ServerActivityLibrary: PagingLibrary {
 
     struct Environment: WithDefaultValue {
+
         var hasUserID: Bool?
         var minDate: Date?
 

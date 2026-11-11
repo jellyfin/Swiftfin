@@ -12,7 +12,7 @@ import Foundation
 struct FieldRevisions {
 
     private var fields: [String: UInt64] = [:]
-    // A replacement blocks older responses even for fields it omitted
+    /// A replacement blocks older responses even for fields it omitted
     private var replacement: UInt64 = 0
 
     var latest: UInt64 {

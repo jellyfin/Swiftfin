@@ -20,6 +20,7 @@ struct EPGView: View {
     @StateObject
     private var viewModel = EPGViewModel()
 
+    @ContentBuilder
     private var contentView: some View {
         VStack(spacing: 0) {
             if viewLayout.isLarge {
@@ -36,6 +37,7 @@ struct EPGView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         EPGLoadableView(viewModel: viewModel) {
             contentView

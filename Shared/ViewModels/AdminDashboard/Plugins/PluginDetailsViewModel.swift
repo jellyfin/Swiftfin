@@ -15,6 +15,7 @@ final class PluginDetailsViewModel: ViewModel, @MainActor Identifiable {
 
     @CasePathable
     enum Action {
+
         case refresh
         case setEnabled(isEnabled: Bool)
         case install
@@ -31,11 +32,13 @@ final class PluginDetailsViewModel: ViewModel, @MainActor Identifiable {
     }
 
     enum BackgroundState {
+
         case refreshing
         case updating
     }
 
     enum State {
+
         case error
         case initial
     }

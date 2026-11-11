@@ -269,7 +269,10 @@ final class MediaSession {
     /// Re-negotiate for each destination, retaining the local engine and desired transport state.
     @discardableResult
     func transfer(to destination: any MediaPlayer) -> Task<Void, Never>? {
-        guard let player, player !== destination, state != .stopped, state != .error,
+        guard let player,
+              player !== destination,
+              state != .stopped,
+              state != .error,
               destination.mediaSession == nil else { return nil }
 
         let snapshot = currentIntent()
@@ -349,7 +352,10 @@ final class MediaSession {
             // The manager binds Now Playing/audio before load can start producing audio.
             try? await core.send(\._resolve, (intent: intent, id: id))
 
-            guard !Task.isCancelled, let self, resolutionID == id, state == .preparing,
+            guard !Task.isCancelled,
+                  let self,
+                  resolutionID == id,
+                  state == .preparing,
                   let item = playbackItem else { return }
 
             destinationPlayer.load(item)
@@ -488,8 +494,11 @@ final class MediaSession {
     }
 
     func ended(from player: any MediaPlayer) {
-        guard self.player === player, playbackItem != nil, state == .preparing || state == .playback,
-              !isSeeking, !item.isLiveStream else { return }
+        guard self.player === player,
+              playbackItem != nil,
+              state == .preparing || state == .playback,
+              !isSeeking,
+              !item.isLiveStream else { return }
         guard let queue, userSession.userData.configuration?.enableNextEpisodeAutoPlay == true else {
             stop()
             return

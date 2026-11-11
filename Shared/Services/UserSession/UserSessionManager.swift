@@ -59,6 +59,7 @@ final class UserSessionManager: ObservableObject {
     private(set) var currentSession: UserSession?
 
     struct ReauthenticationRequest {
+
         let server: ServerState
         let user: UserState
     }

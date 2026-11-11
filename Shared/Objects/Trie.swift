@@ -9,6 +9,7 @@
 class Trie<Key: Collection & Hashable, Element> where Key.Element: Hashable {
 
     class TrieNode {
+
         var children: [Key.Element: TrieNode] = [:]
         var isLeafNode: Bool = false
         var elements: [Element] = []
@@ -55,7 +56,6 @@ extension Trie {
     }
 
     func search(prefix: Key) -> [Element] {
-
         guard prefix.isNotEmpty else { return [] }
 
         var currentNode = root

@@ -48,6 +48,7 @@ struct SliderContainerBody: ViewStyledView {
 
 extension View {
 
+    @ContentBuilder
     func sliderContainerStyle(_ style: some SliderContainerStyle) -> some View {
         styledViewStyle(SliderContainerBody.self, style: style)
     }

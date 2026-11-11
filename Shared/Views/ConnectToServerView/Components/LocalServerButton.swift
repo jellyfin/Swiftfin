@@ -20,6 +20,7 @@ extension ConnectToServerView {
         let server: ServerState
         let action: () -> Void
 
+        @ContentBuilder
         var body: some View {
             Button(action: action) {
                 HStack {

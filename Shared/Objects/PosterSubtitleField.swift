@@ -20,7 +20,7 @@ enum PosterSubtitleField: String, CaseIterable, Displayable, Storable {
     case studio
     case year
 
-    // Fetch these with poster collections so changing labels needs no per-item requests.
+    /// Fetch these with poster collections so changing labels needs no per-item requests.
     static let itemFields: [ItemFields] = [.mediaStreams, .genres, .studios]
 
     var displayTitle: String {

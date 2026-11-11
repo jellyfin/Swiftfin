@@ -18,6 +18,7 @@ extension ItemActionButtons {
         @Router
         private var router
 
+        @ContentBuilder
         var body: some View {
             Button(
                 ItemActionButton.editMetadata.displayTitle,

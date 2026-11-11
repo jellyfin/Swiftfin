@@ -29,6 +29,7 @@ extension ActiveSessionsView {
             return clamp(c / 100.0, min: 0, max: 1)
         }
 
+        @ContentBuilder
         private var playbackInformation: some View {
             HStack(alignment: .top) {
                 FlowLayout(
@@ -50,8 +51,7 @@ extension ActiveSessionsView {
 
                     if let playMethod = playState.playMethod,
                        let transcodeReasons = transcodingInfo?.transcodeReasons,
-                       playMethod == .transcode
-                    {
+                       playMethod == .transcode {
                         if showTranscodeReason {
                             let transcodeIcons = Set(transcodeReasons.map(\.systemImage)).sorted()
 
@@ -83,6 +83,7 @@ extension ActiveSessionsView {
             .font(.subheadline)
         }
 
+        @ContentBuilder
         var body: some View {
             VStack {
                 ProgressView(value: playbackPercentage)

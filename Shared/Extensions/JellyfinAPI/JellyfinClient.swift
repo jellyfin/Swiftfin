@@ -17,7 +17,6 @@ extension JellyfinClient.Configuration {
         url: URL,
         accessToken: String? = nil
     ) -> Self {
-
         let client = "Swiftfin \(UIDevice.platform)"
         let deviceName = UIDevice.current
             .name

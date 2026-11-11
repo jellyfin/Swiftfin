@@ -7,6 +7,7 @@
 //
 
 enum HEVCProfile: String {
+
     case main
     case main10 = "main 10"
     case main12 = "main 12"

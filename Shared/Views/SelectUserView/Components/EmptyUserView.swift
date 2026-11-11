@@ -17,6 +17,7 @@ extension SelectUserView {
 
         let action: () -> Void
 
+        @ContentBuilder
         private var imageView: some View {
             RelativeSystemImageView(systemName: "plus")
                 .foregroundStyle(Color.secondary)
@@ -25,6 +26,7 @@ extension SelectUserView {
                 .glassEffect(in: .circle)
         }
 
+        @ContentBuilder
         private var addUserButton: some View {
             Button(action: action) {
                 if viewLayout.isLarge {
@@ -55,6 +57,7 @@ extension SelectUserView {
             #endif
         }
 
+        @ContentBuilder
         var body: some View {
             GeometryReader { geometry in
                 #if os(iOS)

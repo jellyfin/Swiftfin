@@ -36,10 +36,18 @@ final class NowPlayableObserver: MediaSessionObserver {
 
     private var registeredCommands: [NowPlayableCommand] {
         [
-            .play, .pause, .stop, .togglePausePlay,
-            .skipBackward, .skipForward, .changePlaybackPosition,
-            .nextTrack, .previousTrack, .changePlaybackRate,
-            .enableLanguageOption, .disableLanguageOption,
+            .play,
+            .pause,
+            .stop,
+            .togglePausePlay,
+            .skipBackward,
+            .skipForward,
+            .changePlaybackPosition,
+            .nextTrack,
+            .previousTrack,
+            .changePlaybackRate,
+            .enableLanguageOption,
+            .disableLanguageOption,
         ]
     }
 
@@ -87,8 +95,11 @@ final class NowPlayableObserver: MediaSessionObserver {
             },
             ObservationToken { [weak mediaSession] in
                 (
-                    mediaSession?.state, mediaSession?.playbackRequestStatus, mediaSession?.playbackState,
-                    mediaSession?.isSeeking, mediaSession?.rate
+                    mediaSession?.state,
+                    mediaSession?.playbackRequestStatus,
+                    mediaSession?.playbackState,
+                    mediaSession?.isSeeking,
+                    mediaSession?.rate
                 )
             } onChange: { [weak self] _ in
                 self?.updatePlaybackInfo()
@@ -204,7 +215,10 @@ final class NowPlayableObserver: MediaSessionObserver {
                 guard let item else { return }
 
                 let image = await item.thumbnailProvider?()
-                guard !Task.isCancelled, let self, isActive, mediaSession?.playbackItem === item,
+                guard !Task.isCancelled,
+                      let self,
+                      isActive,
+                      mediaSession?.playbackItem === item,
                       item.baseItem.nowPlayingImageSources == sources else { return }
 
                 itemArtwork = image
@@ -328,7 +342,7 @@ final class NowPlayableObserver: MediaSessionObserver {
             .isEnabled(canSelectLanguage && languageOptions.current.contains { $0.languageOptionType == .legible })
     }
 
-    // Decode framework events at registration and keep transport decisions on the main actor.
+    /// Decode framework events at registration and keep transport decisions on the main actor.
     func handle(_ action: NowPlayableCommand.Action) -> MPRemoteCommandHandlerStatus {
         guard isActive, let mediaSession, mediaSession.canControlPlayback else { return .commandFailed }
 
@@ -372,7 +386,9 @@ final class NowPlayableObserver: MediaSessionObserver {
             guard mediaSession.seek(to: position) else { return .commandFailed }
 
         case let .rate(rate):
-            guard rate.isFinite, rate > 0, !mediaSession.item.isLiveStream,
+            guard rate.isFinite,
+                  rate > 0,
+                  !mediaSession.item.isLiveStream,
                   let supported = supportedRates.first(where: { abs($0 - rate) < 0.0001 }) else { return .commandFailed }
 
             mediaSession.rate = supported

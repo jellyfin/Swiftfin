@@ -108,6 +108,7 @@ private struct CoordinatedFocusScopeModifier<Value: Hashable>: ViewModifier {
         lastSelection.flatMap { values.contains($0) ? $0 : nil } ?? values.first
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .focusSection()
@@ -135,6 +136,7 @@ private struct CoordinatedInitialFocusModifier: ViewModifier {
 
     let role: FocusCoordinator.InitialFocusRole
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         switch role {
         case .placeholder:
@@ -184,6 +186,7 @@ private struct CoordinatedFocusModifier: ViewModifier {
         focus.wrappedValue = id
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .focused(focus, equals: id)
@@ -208,6 +211,7 @@ extension View {
     #if os(tvOS)
     /// Remembers focus within a container, using the first value when no remembered target remains.
     /// Apply this to the stack or scroll view containing the coordinated controls.
+    @ContentBuilder
     func coordinatedFocusScope<Value: Hashable>(
         _ selection: FocusState<Value?>.Binding,
         values: [Value]
@@ -216,14 +220,17 @@ extension View {
     }
     #endif
 
+    @ContentBuilder
     func coordinatedFocus(_ role: FocusCoordinator.InitialFocusRole) -> some View {
         modifier(CoordinatedInitialFocusModifier(role: role))
     }
 
+    @ContentBuilder
     func coordinatedFocus(_ id: String) -> some View {
         modifier(CoordinatedFocusModifier(id: id))
     }
 
+    @ContentBuilder
     func coordinatedFocus(
         _ id: String,
         selection: FocusState<String?>.Binding

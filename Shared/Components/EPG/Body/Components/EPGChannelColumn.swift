@@ -26,6 +26,7 @@ struct EPGChannelColumn: View {
     let bottomInset: CGFloat
     let action: (BaseItemDto) -> Void
 
+    @ContentBuilder
     var body: some View {
         let layout = EPGLayout(viewLayout: viewLayout)
 

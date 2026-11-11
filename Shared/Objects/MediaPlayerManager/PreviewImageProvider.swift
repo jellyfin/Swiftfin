@@ -110,12 +110,17 @@ final class PreviewImageProvider {
         guard let itemID = item.id, let mediaSourceID, let resolutions = item.trickplay?[mediaSourceID] else { return nil }
 
         for info in resolutions.values.sorted(by: { ($0.width ?? 0) < ($1.width ?? 0) }) {
-            guard let width = info.width, width > 0,
-                  let height = info.height, height > 0,
-                  let columns = info.tileWidth, columns > 0,
-                  let rows = info.tileHeight, rows > 0,
+            guard let width = info.width,
+                  width > 0,
+                  let height = info.height,
+                  height > 0,
+                  let columns = info.tileWidth,
+                  columns > 0,
+                  let rows = info.tileHeight,
+                  rows > 0,
                   !columns.multipliedReportingOverflow(by: rows).overflow,
-                  let milliseconds = info.interval, milliseconds > 0
+                  let milliseconds = info.interval,
+                  milliseconds > 0
             else { continue }
 
             return Trickplay(

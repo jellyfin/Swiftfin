@@ -113,9 +113,10 @@ extension VideoPlayer {
 
         let videoSize: () -> CGSize
 
-        @ViewBuilder
+        @ContentBuilder
         let content: (VideoLayout) -> Content
 
+        @ContentBuilder
         private var viewport: some View {
             GeometryReader { viewport in
                 content(VideoLayout(
@@ -134,6 +135,7 @@ extension VideoPlayer {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             #if os(iOS)
             NotchReader { notchMeasurement in

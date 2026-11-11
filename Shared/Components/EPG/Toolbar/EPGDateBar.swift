@@ -27,6 +27,7 @@ struct EPGDateBar: View {
         Calendar.current.isDate(date, inSameDayAs: selectedDate)
     }
 
+    @ContentBuilder
     var body: some View {
         AlternateLayoutView {
             ZStack {

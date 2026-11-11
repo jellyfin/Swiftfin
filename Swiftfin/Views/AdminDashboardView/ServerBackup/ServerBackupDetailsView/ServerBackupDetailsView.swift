@@ -26,6 +26,7 @@ struct ServerBackupDetailsView: View {
 
     let backup: BackupManifestDto
 
+    @ContentBuilder
     var body: some View {
         List {
             Section(L10n.details) {

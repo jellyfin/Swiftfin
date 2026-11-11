@@ -60,6 +60,7 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
+        @ContentBuilder
         var body: some View {
             if viewLayout.isCompact {
                 compactView
@@ -68,7 +69,7 @@ extension SelectUserView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var compactView: some View {
             if !isEditing {
                 HStack(spacing: 16) {
@@ -83,6 +84,7 @@ extension SelectUserView {
             }
         }
 
+        @ContentBuilder
         private var regularView: some View {
             HStack(alignment: .top, spacing: viewLayout.value(standard: nil, large: 32)) {
                 if isEditing {
@@ -103,7 +105,7 @@ extension SelectUserView {
             )
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var editView: some View {
             Button(action: toggleUsers) {
                 Text(selectedUsers.count == allUsers.count ? L10n.removeAll : L10n.selectAll)
@@ -128,7 +130,7 @@ extension SelectUserView {
             .disabled(selectedUsers.isEmpty)
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var regularContentView: some View {
             Menu {
                 AdvancedMenuContent(

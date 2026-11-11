@@ -29,10 +29,10 @@ extension VideoPlayer {
         @Toaster
         private var toaster: ToastProxy
 
+        @ContentBuilder
         func body(content: Content) -> some View {
             content
                 .keyCommands {
-
                     // MARK: Aspect Fill
 
                     KeyCommandAction(
