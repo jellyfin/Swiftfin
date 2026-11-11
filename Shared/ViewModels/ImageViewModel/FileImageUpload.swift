@@ -12,11 +12,13 @@ import UIKit
 enum FileImageUpload {
 
     struct Payload: Sendable {
+
         let body: Data
         let contentType: String
     }
 
     enum PreparationError: Error {
+
         case accessDenied
         case invalidImage
     }

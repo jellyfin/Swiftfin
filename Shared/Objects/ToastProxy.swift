@@ -41,6 +41,8 @@ class ToastProxy: ObservableObject {
     }
 
     func present(_ title: String, systemName: String? = nil) {
+        UIAccessibility.post(notification: .announcement, argument: title)
+
         present(Text(title), systemName: systemName)
     }
 

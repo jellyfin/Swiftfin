@@ -414,6 +414,10 @@ extension VideoPlayer {
         var didSwipe: Bool = false
         var lastTapLocation: CGPoint?
 
+        var isAccessibilityFocusOnVideo: Bool = false {
+            didSet { refreshAutoDismiss() }
+        }
+
         func cancelTapGesture() {
             lastTapLocation = nil
             jumpProgressObserver.timer.stop()
@@ -679,6 +683,14 @@ extension VideoPlayer {
                   interactions.isEmpty,
                   mediaSession?.activity == nil,
                   mediaSession?.playbackRequestStatus != .paused else { return false }
+
+            #if os(iOS)
+            // With an assistive technology, the controls are dismissed by
+            // resting focus on the video, so they must not fade while being read.
+            let isAssistiveTechnologyRunning = UIAccessibility.isVoiceOverRunning || UIAccessibility.isSwitchControlRunning
+            guard !isAssistiveTechnologyRunning || isAccessibilityFocusOnVideo else { return false }
+
+            #endif
 
             #if os(tvOS)
             // Menus take focus out of the player, including nested system menus.

@@ -31,6 +31,13 @@ extension FormatStyle where Self == MinuteSecondsFormatStyle {
 
 extension FormatStyle where Self == Duration.UnitsFormatStyle {
 
+    static var spokenRuntime: Duration.UnitsFormatStyle {
+        Duration.UnitsFormatStyle(
+            allowedUnits: [.hours, .minutes, .seconds],
+            width: .wide
+        )
+    }
+
     static var playbackOffset: Duration.UnitsFormatStyle {
         Duration.UnitsFormatStyle(
             allowedUnits: [.seconds],
