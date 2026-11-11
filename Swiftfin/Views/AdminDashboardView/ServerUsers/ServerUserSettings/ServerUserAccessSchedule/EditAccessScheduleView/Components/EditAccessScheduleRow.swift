@@ -32,6 +32,7 @@ extension EditAccessScheduleView {
 
         // MARK: - Body
 
+        @ContentBuilder
         var body: some View {
             Button(action: action) {
                 rowContent
@@ -45,6 +46,7 @@ extension EditAccessScheduleView {
 
         // MARK: - Row Content
 
+        @ContentBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {

@@ -39,9 +39,9 @@ struct AddServerUserView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         List {
-
             Section {
                 TextField(L10n.username, text: $username) {
                     focusedfield = .password

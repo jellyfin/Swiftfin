@@ -22,6 +22,7 @@ extension SelectUserView {
 
         let servers: OrderedSet<ServerState>
 
+        @ContentBuilder
         var body: some View {
             ConditionalMenu(tracking: serverSelection.server(from: servers)) { server in
                 router.route(to: .userSignIn(server: server))

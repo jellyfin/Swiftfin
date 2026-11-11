@@ -73,6 +73,7 @@ struct EPGProgramCell: View {
             .eraseToAnyPublisher()
     }
 
+    @ContentBuilder
     var body: some View {
         Button(action: action) {
             StickyProgramContentLayout(

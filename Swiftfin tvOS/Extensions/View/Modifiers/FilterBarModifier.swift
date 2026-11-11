@@ -29,6 +29,7 @@ struct FilterBarModifier: ViewModifier {
         letterPickerOrientation == .trailing ? .leading : .trailing
     }
 
+    @ContentBuilder
     private var filters: some View {
         VStack(spacing: 20) {
             ForEach(subviews: FilterTrack(
@@ -53,6 +54,7 @@ struct FilterBarModifier: ViewModifier {
         )
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         if types.isEmpty {
             content

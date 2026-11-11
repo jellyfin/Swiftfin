@@ -38,6 +38,7 @@ struct UserButton: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Button(action: action) {
             labelView
@@ -59,7 +60,7 @@ struct UserButton: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var labelView: some View {
         // tvOS breaks HoverEffects when using a VStack
         if viewLayout.isLarge {
@@ -75,6 +76,7 @@ struct UserButton: View {
         }
     }
 
+    @ContentBuilder
     private var imageView: some View {
         image
             .hoverEffect(.highlight)
@@ -94,7 +96,7 @@ struct UserButton: View {
             }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var titleView: some View {
         Text(title)
             .font(.headline)

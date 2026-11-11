@@ -15,6 +15,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @Environment(MediaSession.self)
         private var mediaSession
 
+        @ContentBuilder
         var body: some View {
             if let queue = mediaSession.queue {
                 _PlayPreviousItem(queue: queue)
@@ -29,6 +30,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         let queue: any MediaPlayerQueue
 
+        @ContentBuilder
         var body: some View {
             Button(
                 L10n.playPreviousItem,

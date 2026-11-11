@@ -19,11 +19,11 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
     let padding: CGFloat
     let alignment: Alignment
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         AlternateLayoutView(alignment: alignment) {
             Color.clear
         } content: { layoutSize in
-
             let isHorizontallyLarger: Bool = (contentSize.width + padding >= layoutSize.width) && axes.contains(.horizontal)
             let isVerticallyLarger: Bool = (contentSize.height + padding >= layoutSize.height) && axes.contains(.vertical)
 

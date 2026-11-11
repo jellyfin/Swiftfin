@@ -15,7 +15,7 @@ protocol BackportButtonStyle {
 
     typealias Configuration = PrimitiveButtonStyleConfiguration
 
-    @ViewBuilder
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> Body
 }
 
@@ -23,6 +23,7 @@ struct BackportPrimitiveButtonStyle<Style: BackportButtonStyle>: PrimitiveButton
 
     let style: Style
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         style.makeBody(configuration: configuration)
     }

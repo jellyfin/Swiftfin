@@ -218,6 +218,7 @@ struct EdgePaddingModifier: ViewModifier {
 
     let edges: Edge.Set
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content.padding(edges, viewLayout.edgePadding)
     }
@@ -225,6 +226,7 @@ struct EdgePaddingModifier: ViewModifier {
 
 extension View {
 
+    @ContentBuilder
     func layoutContainer(size: CGSize) -> some View {
         transformEnvironment(\.frameForParentView) { frames in
             frames[.layoutContainer] = .init(frame: CGRect(origin: .zero, size: size), safeAreaInsets: .zero)

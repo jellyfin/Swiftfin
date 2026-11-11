@@ -28,8 +28,7 @@ extension NetworkLogger {
                 let pathComponents = url.pathComponents
 
                 if pathComponents.last == "AuthenticateByName",
-                   var body = try? JSONDecoder().decode(AuthenticateUserByName.self, from: requestBody)
-                {
+                   var body = try? JSONDecoder().decode(AuthenticateUserByName.self, from: requestBody) {
                     body.pw = redactedMessage
                     task.requestBody = try? JSONEncoder().encode(body)
 
@@ -37,8 +36,7 @@ extension NetworkLogger {
                 }
 
                 if pathComponents.last == "Password",
-                   var body = try? JSONDecoder().decode(UpdateUserPassword.self, from: requestBody)
-                {
+                   var body = try? JSONDecoder().decode(UpdateUserPassword.self, from: requestBody) {
                     body.currentPassword = redactedMessage
                     body.currentPw = redactedMessage
                     body.newPw = redactedMessage

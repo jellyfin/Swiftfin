@@ -18,6 +18,7 @@ final class DevicesViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
         case delete(ids: Set<String>)
         case update(id: String, options: DeviceOptionsDto)
@@ -35,15 +36,18 @@ final class DevicesViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
         case updating
     }
 
     enum Event {
+
         case updated
     }
 
     enum State {
+
         case error
         case initial
         case refreshing

@@ -27,8 +27,7 @@ struct ExternalTrailerURL {
 
         for source in Source.allCases where source.hostPatterns.contains(where: { host.contains($0) }) {
             if let requiredPathComponents = source.requiredPathComponents,
-               !requiredPathComponents.contains(where: { url.path.contains($0) })
-            {
+               !requiredPathComponents.contains(where: { url.path.contains($0) }) {
                 continue
             }
 

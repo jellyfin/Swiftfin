@@ -19,10 +19,11 @@ struct WithTransitionReaderPublisher<Content: View>: View {
 
     let content: Content
 
-    init(@ViewBuilder content: @escaping () -> Content) {
+    init(@ContentBuilder content: @escaping () -> Content) {
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .environment(\.transitionReader, publishedBox.value)

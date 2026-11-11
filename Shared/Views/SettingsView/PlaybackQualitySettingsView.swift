@@ -35,6 +35,7 @@ struct PlaybackQualitySettingsView: View {
     @Router
     private var router
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "play.rectangle.on.rectangle") {
             Section(L10n.quality) {

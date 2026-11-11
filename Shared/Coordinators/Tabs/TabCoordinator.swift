@@ -12,6 +12,7 @@ import SwiftUI
 final class TabCoordinator: ObservableObject {
 
     struct SelectedEvent {
+
         let isRoot: Bool
         let isRepeat: Bool
     }

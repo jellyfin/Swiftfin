@@ -27,6 +27,7 @@ struct IdentifyItemView: View {
         self._viewModel = StateObject(wrappedValue: IdentifyItemViewModel(item: item))
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             ListTitleSection(

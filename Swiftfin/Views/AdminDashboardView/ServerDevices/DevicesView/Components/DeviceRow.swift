@@ -42,6 +42,7 @@ extension DevicesView {
 
         // MARK: - Device Image View
 
+        @ContentBuilder
         private var deviceImage: some View {
             ZStack {
                 device.type.clientColor
@@ -63,6 +64,7 @@ extension DevicesView {
 
         // MARK: - Row Content
 
+        @ContentBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {
@@ -98,6 +100,7 @@ extension DevicesView {
 
         // MARK: - Body
 
+        @ContentBuilder
         var body: some View {
             ListRow {
                 deviceImage

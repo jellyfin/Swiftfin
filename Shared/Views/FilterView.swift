@@ -18,7 +18,7 @@ struct FilterView: View {
 
     let type: ItemFilterType
 
-    @ViewBuilder
+    @ContentBuilder
     private func selector(group: ItemFilterType.Group) -> some View {
         let source = viewModel.allFilters[keyPath: group.keyPath]
 
@@ -40,6 +40,7 @@ struct FilterView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: type.systemImage) {
             ForEach(type.group) { element in

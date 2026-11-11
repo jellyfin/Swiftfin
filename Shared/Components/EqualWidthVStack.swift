@@ -22,13 +22,14 @@ struct EqualWidthVStack<Content: View>: View {
     init(
         alignment: HorizontalAlignment = .center,
         spacing: CGFloat? = nil,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.alignment = alignment
         self.content = content()
         self.spacing = spacing
     }
 
+    @ContentBuilder
     var body: some View {
         _VariadicView.Tree(
             EqualWidthVStackRoot(
@@ -59,6 +60,7 @@ private struct EqualWidthVStackRoot: _VariadicView_UnaryViewRoot {
         }
     }
 
+    @ContentBuilder
     func body(children: _VariadicView.Children) -> some View {
         VStack(alignment: alignment, spacing: spacing) {
             ForEach(children) { child in

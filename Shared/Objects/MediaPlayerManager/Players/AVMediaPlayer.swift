@@ -458,8 +458,7 @@ extension AVMediaPlayer {
         from streams: [MediaStream]
     ) -> AVMediaSelectionOption? {
         if streams.count == group.options.count,
-           let position = streams.firstIndex(where: { $0.index == index })
-        {
+           let position = streams.firstIndex(where: { $0.index == index }) {
             return group.options[position]
         }
 
@@ -599,6 +598,7 @@ extension AVMediaPlayer: AVPictureInPictureControllerDelegate {
 
 extension AVMediaPlayer: VideoMediaPlayer {
 
+    @ContentBuilder
     func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
         AVVideoPlayerView(player: self, layout: layout)
     }

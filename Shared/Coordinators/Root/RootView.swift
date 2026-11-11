@@ -14,6 +14,7 @@ struct RootView: View {
     @StateObject
     private var rootCoordinator: RootCoordinator = .init()
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch rootCoordinator.state {

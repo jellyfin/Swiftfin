@@ -33,6 +33,7 @@ struct ServerActivityFilterView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         List {
             Section {
@@ -46,7 +47,7 @@ struct ServerActivityFilterView: View {
                 .labelsHidden()
             }
 
-            /// Reset button to remove the filter
+            // Reset button to remove the filter
             if environment.wrappedValue.minDate != nil {
                 Section {
                     Button(role: .destructive) {

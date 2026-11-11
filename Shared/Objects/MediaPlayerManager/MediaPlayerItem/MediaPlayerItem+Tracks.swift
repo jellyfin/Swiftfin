@@ -149,9 +149,9 @@ extension MediaPlayerItem {
     }
 
     private var defaultSubtitleTrackIndex: Int {
-        if let index = mediaSource.defaultSubtitleStreamIndex, index >= 0,
-           subtitleStreams.contains(where: { $0.index == index })
-        {
+        if let index = mediaSource.defaultSubtitleStreamIndex,
+           index >= 0,
+           subtitleStreams.contains(where: { $0.index == index }) {
             return index
         }
 

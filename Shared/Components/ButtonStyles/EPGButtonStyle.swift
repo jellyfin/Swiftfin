@@ -11,6 +11,7 @@ import SwiftUI
 /// Suppresses the tvOS system focus background.
 struct EPGButtonStyle: ButtonStyle {
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.8 : 1)

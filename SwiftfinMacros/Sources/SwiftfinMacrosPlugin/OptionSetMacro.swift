@@ -74,7 +74,9 @@ struct OptionSetMacro: MemberMacro, ExtensionMacro {
         let arguments = node.attributeName.as(IdentifierTypeSyntax.self)?.genericArgumentClause?.arguments
             ?? node.attributeName.as(MemberTypeSyntax.self)?.genericArgumentClause?.arguments
 
-        guard let arguments, arguments.count == 1, let rawType = arguments.first?.argument,
+        guard let arguments,
+              arguments.count == 1,
+              let rawType = arguments.first?.argument,
               let width = bitWidth(of: rawType)
         else {
             throw MacroExpansionErrorMessage("@OptionSet requires a standard integer raw type, such as @OptionSet<Int>")
@@ -153,8 +155,7 @@ struct OptionSetMacro: MemberMacro, ExtensionMacro {
 
             if let initializer = member.decl.as(InitializerDeclSyntax.self),
                initializer.signature.parameterClause.parameters.count == 1,
-               initializer.signature.parameterClause.parameters.first?.firstName.text == "rawValue"
-            {
+               initializer.signature.parameterClause.parameters.first?.firstName.text == "rawValue" {
                 throw MacroExpansionErrorMessage("@OptionSet generates init(rawValue:); remove the existing initializer")
             }
         }

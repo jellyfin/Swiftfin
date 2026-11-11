@@ -16,9 +16,9 @@ extension ServerUserPermissionsView {
         @Binding
         var policy: UserPolicy
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.remoteControl) {
-
                 Toggle(
                     L10n.controlOtherUsers,
                     isOn: $policy.enableRemoteControlOfOtherUsers.coalesce(false)

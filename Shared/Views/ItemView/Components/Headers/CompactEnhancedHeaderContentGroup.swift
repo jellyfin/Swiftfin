@@ -62,6 +62,7 @@ extension ItemView {
                 return layoutDirection == .leftToRight ? offset : -offset
             }
 
+            @ContentBuilder
             private var logo: some View {
                 ImageView(
                     provider.item.imageSource(
@@ -93,6 +94,7 @@ extension ItemView {
                 .accessibilityRemoveTraits(.isImage)
             }
 
+            @ContentBuilder
             private var overlay: some View {
                 VStack(alignment: .center, spacing: 10) {
                     ZStack(alignment: .bottom) {
@@ -147,6 +149,7 @@ extension ItemView {
                 }
             }
 
+            @ContentBuilder
             var body: some View {
                 overlay
                     .edgePadding(.horizontal)

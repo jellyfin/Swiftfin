@@ -35,6 +35,7 @@ extension ItemView {
                 provider.item.type == .person ? .portrait : .landscape
             }
 
+            @ContentBuilder
             private var title: some View {
                 VStack(alignment: .leading, spacing: 5) {
                     if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
@@ -51,6 +52,7 @@ extension ItemView {
                 }
             }
 
+            @ContentBuilder
             var body: some View {
                 ImageContentColumnsLayout(
                     idealContentWidth: 600,

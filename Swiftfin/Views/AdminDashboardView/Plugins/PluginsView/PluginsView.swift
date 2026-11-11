@@ -17,6 +17,7 @@ struct PluginsView: View {
     @StateObject
     private var viewModel = PluginsViewModel()
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -39,6 +40,7 @@ struct PluginsView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {

@@ -21,6 +21,7 @@ extension ItemView {
         let title: String
         let id: String
 
+        @ContentBuilder
         var body: some View {
             Button {
                 router.route(to: .item(id: id))

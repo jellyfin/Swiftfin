@@ -122,7 +122,6 @@ final class FilterViewModel: ViewModel {
 
     @Function(\Action.Cases.reset)
     private func resetCurrentFilters(_ type: ItemFilterType?) {
-
         guard let type else {
             selectedSavedFilterID = nil
             currentFilters = .default.mutating(\.itemTypes, with: currentFilters.itemTypes)
@@ -165,13 +164,11 @@ final class FilterViewModel: ViewModel {
 
     @Function(\Action.Cases.getQueryFilters)
     private func _getQueryFilters() async throws {
-
         try await getFilters()
         try await getFiltersLegacy()
     }
 
     private func getFiltersLegacy() async throws {
-
         let parameters = try Paths.GetQueryFiltersLegacyParameters(
             userID: authenticatedUser.id,
             parentID: parent?.id,
@@ -194,7 +191,6 @@ final class FilterViewModel: ViewModel {
     }
 
     private func getFilters() async throws {
-
         let parameters = try Paths.GetQueryFiltersParameters(
             userID: authenticatedUser.id,
             parentID: parent?.id,

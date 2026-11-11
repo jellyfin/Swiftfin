@@ -27,9 +27,8 @@ extension MediaPlayerType {
         DirectPlayProfile(type: .video) {
             mpvAudioCodecs
         } videoCodecs: {
-
-            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices
-            ///  - Defaulting to disabled but can be enabled in custom profiles if desired.
+            // This is possible with non-AV1 supported devices but the FPS is terrible on some devices
+            //  - Defaulting to disabled but can be enabled in custom profiles if desired.
             if UIDevice.PlaybackCapabilities.supportsAV1 {
                 VideoCodec.av1
             }
@@ -95,10 +94,9 @@ extension MediaPlayerType {
             AudioCodec.opus
             AudioCodec.truehd
         } videoCodecs: {
-
-            /// - Note: Transcode Profiles prioritizes codecs by order
-            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices
-            ///  - Defaulting to disabled but can be enabled in custom profiles if desired.
+            // - Note: Transcode Profiles prioritizes codecs by order
+            // This is possible with non-AV1 supported devices but the FPS is terrible on some devices
+            //  - Defaulting to disabled but can be enabled in custom profiles if desired.
             if UIDevice.PlaybackCapabilities.supportsAV1 {
                 VideoCodec.av1
             }
@@ -129,8 +127,8 @@ extension MediaPlayerType {
             SubtitleFormat.xsub
         }
 
-        /// - Note: Sidecar files are opened with `sub-add`, so only formats with an enabled demuxer are listed
-        /// - Note: Unmatched text subtitles are converted to the first option (subrip)
+        // - Note: Sidecar files are opened with `sub-add`, so only formats with an enabled demuxer are listed
+        // - Note: Unmatched text subtitles are converted to the first option (subrip)
         SubtitleProfile.build(method: .external) {
             SubtitleFormat.subrip
             SubtitleFormat.ass
@@ -291,7 +289,6 @@ extension MediaPlayerType {
     @MainActor
     @ArrayBuilder<VideoRangeType>
     private static func mpvHDRProfiles(configuration: MediaPlaybackConfiguration) -> [VideoRangeType] {
-
         VideoRangeType.sdr
 
         if !configuration.forceHDRTranscode {

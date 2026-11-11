@@ -16,9 +16,9 @@ extension ServerUserPermissionsView {
         @Binding
         var policy: UserPolicy
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.management) {
-
                 Toggle(
                     L10n.administrator,
                     isOn: $policy.isAdministrator.coalesce(false)

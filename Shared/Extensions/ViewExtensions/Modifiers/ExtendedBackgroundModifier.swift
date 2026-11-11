@@ -10,10 +10,11 @@ import SwiftUI
 
 extension View {
 
+    @ContentBuilder
     func background(
         alignment: Alignment = .center,
         extendedBy insets: EdgeInsets,
-        @ViewBuilder background: () -> some View
+        @ContentBuilder background: () -> some View
     ) -> some View {
         modifier(
             ExtendedBackgroundModifier(
@@ -24,10 +25,11 @@ extension View {
         )
     }
 
+    @ContentBuilder
     func mask(
         alignment: Alignment = .center,
         extendedBy insets: EdgeInsets,
-        @ViewBuilder mask: () -> some View
+        @ContentBuilder mask: () -> some View
     ) -> some View {
         modifier(
             ExtendedMaskModifier(
@@ -38,10 +40,11 @@ extension View {
         )
     }
 
+    @ContentBuilder
     func overlay(
         alignment: Alignment = .center,
         extendedBy insets: EdgeInsets,
-        @ViewBuilder overlay: () -> some View
+        @ContentBuilder overlay: () -> some View
     ) -> some View {
         modifier(
             ExtendedOverlayModifier(
@@ -65,13 +68,14 @@ struct ExtendedBackgroundModifier<Background: View>: ViewModifier {
     init(
         alignment: Alignment,
         insets: EdgeInsets = .init(),
-        @ViewBuilder background: () -> Background
+        @ContentBuilder background: () -> Background
     ) {
         self.alignment = alignment
         self.background = background()
         self.insets = insets
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .trackingSize($contentSize)
@@ -98,13 +102,14 @@ struct ExtendedMaskModifier<Mask: View>: ViewModifier {
     init(
         alignment: Alignment,
         insets: EdgeInsets,
-        @ViewBuilder mask: () -> Mask
+        @ContentBuilder mask: () -> Mask
     ) {
         self.alignment = alignment
         self.insets = insets
         self.mask = mask()
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .trackingSize($contentSize)
@@ -131,13 +136,14 @@ struct ExtendedOverlayModifier<Overlay: View>: ViewModifier {
     init(
         alignment: Alignment,
         insets: EdgeInsets,
-        @ViewBuilder overlay: () -> Overlay
+        @ContentBuilder overlay: () -> Overlay
     ) {
         self.alignment = alignment
         self.insets = insets
         self.overlay = overlay()
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .trackingSize($contentSize)

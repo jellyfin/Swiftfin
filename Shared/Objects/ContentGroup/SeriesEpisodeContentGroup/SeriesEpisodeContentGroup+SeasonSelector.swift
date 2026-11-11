@@ -35,6 +35,7 @@ extension SeriesEpisodeContentGroup {
             router.route(to: .library(library: season.library))
         }
 
+        @ContentBuilder
         private func singleSeasonButton(
             _ season: PagingLibraryViewModel<EpisodeLibrary>
         ) -> some View {
@@ -58,6 +59,7 @@ extension SeriesEpisodeContentGroup {
             }
         }
 
+        @ContentBuilder
         var largeView: some View {
             ScrollView(.horizontal) {
                 SelectionTrack(
@@ -102,6 +104,7 @@ extension SeriesEpisodeContentGroup {
             selection = seasonID
         }
 
+        @ContentBuilder
         var standardView: some View {
             if seasons.count == 1, let season = seasons.first {
                 singleSeasonButton(season)

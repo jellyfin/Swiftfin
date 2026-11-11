@@ -36,14 +36,14 @@ extension ItemView {
 
         private var backgroundImageItem: BaseItemDto {
             if provider.item.type == .person || provider.item.type == .musicArtist,
-               let randomItem = provider.randomBackdropItem
-            {
+               let randomItem = provider.randomBackdropItem {
                 randomItem
             } else {
                 provider.item
             }
         }
 
+        @ContentBuilder
         private var background: some View {
             AlternateLayoutView {
                 Color.clear
@@ -74,6 +74,7 @@ extension ItemView {
             .animation(.linear(duration: 0.2), value: isHeaderFocused)
         }
 
+        @ContentBuilder
         var body: some View {
             ZStack {
                 if viewLayout.isLarge, isEnhanced {

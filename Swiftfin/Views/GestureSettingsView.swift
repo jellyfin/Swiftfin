@@ -35,11 +35,10 @@ struct GestureSettingsView: View {
     @Default(.VideoPlayer.Gesture.verticalPanRightAction)
     private var verticalPanRightAction
 
+    @ContentBuilder
     var body: some View {
         Form {
-
             Section {
-
                 // TODO: make toggle sections
 
                 Picker(L10n.horizontalPan, selection: $horizontalPanAction)

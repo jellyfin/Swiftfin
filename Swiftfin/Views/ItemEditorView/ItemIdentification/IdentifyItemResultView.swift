@@ -19,6 +19,7 @@ struct IdentifyItemResultView: View {
 
     let result: RemoteSearchResult
 
+    @ContentBuilder
     var body: some View {
         List {
             FormItemSection(item: result)

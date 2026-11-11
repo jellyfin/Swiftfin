@@ -21,6 +21,7 @@ extension ItemSubtitlesView {
         let subtitle: MediaStream
         let action: () -> Void
 
+        @ContentBuilder
         var body: some View {
             Button(action: action) {
                 HStack {

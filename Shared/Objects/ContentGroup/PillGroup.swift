@@ -52,6 +52,7 @@ struct PillGroup<Element: Displayable>: ContentGroup {
         let displayTitle: String
         let elements: [Element]
 
+        @ContentBuilder
         var body: some View {
             ContentGroupSection {
                 ScrollView(.horizontal) {

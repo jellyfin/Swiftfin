@@ -11,6 +11,7 @@ import Foundation
 struct DeepLink: Equatable {
 
     enum Destination: Equatable {
+
         case item(id: String)
 
         // TODO: able to launch library by ID without item pre-retrieval?
@@ -45,6 +46,7 @@ struct DeepLink: Equatable {
 }
 
 enum DeepLinkError: Error {
+
     case missingServer(String)
     case missingUser(String)
 }

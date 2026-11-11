@@ -12,7 +12,6 @@ import Foundation
 extension AnyStoredData {
 
     static func fetch<Value: Codable>(ownerID: String, field: String, key: String) throws -> Value? {
-
         let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == ownerID)
         let keyFilter: Where<AnyStoredData> = Where(\.$key == key)
         let fieldFilter: Where<AnyStoredData> = Where(\.$field == field)
@@ -35,7 +34,6 @@ extension AnyStoredData {
     }
 
     static func store(value: some Codable, ownerID: String, field: String, key: String) throws {
-
         let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == ownerID)
         let keyFilter: Where<AnyStoredData> = Where(\.$key == key)
         let fieldFilter: Where<AnyStoredData> = Where(\.$field == field)
@@ -80,7 +78,6 @@ extension AnyStoredData {
     /// Creates a fetch clause to be used within local transactions
     ///
     static func fetchClause(ownerID: String, field: String, key: String) -> FetchChainBuilder<AnyStoredData> {
-
         let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == ownerID)
         let keyFilter: Where<AnyStoredData> = Where(\.$key == key)
         let fieldFilter: Where<AnyStoredData> = Where(\.$field == field)

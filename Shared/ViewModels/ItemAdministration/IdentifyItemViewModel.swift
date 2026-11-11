@@ -94,7 +94,6 @@ final class IdentifyItemViewModel: ViewModel {
 
     @Function(\Action.Cases._actuallySearch)
     private func __actuallySearch(_ query: SearchQuery) async throws {
-
         guard query.isNotEmpty else {
             searchResults = []
             return

@@ -19,6 +19,7 @@ private struct FilterTrackLabelStyle: LabelStyle {
     let showsTitle: Bool
     let iconEdge: HorizontalEdge
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: viewLayout.value(standard: 4, large: 12)) {
             if iconEdge == .leading {
@@ -110,6 +111,7 @@ struct FilterTrack: View {
         viewModel.reset(filterType: nil)
     }
 
+    @ContentBuilder
     private func buttonIcon(for target: FocusTarget) -> some View {
         Image(systemName: target.systemImage)
             #if os(tvOS)
@@ -120,6 +122,7 @@ struct FilterTrack: View {
             #endif
     }
 
+    @ContentBuilder
     private func buttonLabel(for target: FocusTarget) -> some View {
         Label {
             Text(target.title)
@@ -128,7 +131,7 @@ struct FilterTrack: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var menuActions: some View {
         Button(
             viewModel.selectedSavedFilter == nil ? L10n.save : L10n.edit,
@@ -147,6 +150,7 @@ struct FilterTrack: View {
             .disabled(!viewModel.hasActiveFilters)
     }
 
+    @ContentBuilder
     private func button(for target: FocusTarget) -> some View {
         Group {
             switch target {
@@ -214,6 +218,7 @@ struct FilterTrack: View {
         .accessibilityLabel(target.title)
     }
 
+    @ContentBuilder
     var body: some View {
         ForEach(targets, id: \.self) { target in
             button(for: target)

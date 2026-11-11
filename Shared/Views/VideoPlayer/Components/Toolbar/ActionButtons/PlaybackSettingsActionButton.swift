@@ -26,6 +26,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 || item.mediaSource.supportedBitrates.isNotEmpty
         }
 
+        @ContentBuilder
         var body: some View {
             if let playbackItem = mediaSession.playbackItem {
                 let bitrates = playbackItem.mediaSource.supportedBitrates

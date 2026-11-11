@@ -31,6 +31,7 @@ enum SwiftfinStore {
 extension SwiftfinStore {
 
     private struct V1ServerSnapshot {
+
         let id: String
         let name: String
         let currentURI: String
@@ -38,6 +39,7 @@ extension SwiftfinStore {
     }
 
     private struct V1UserSnapshot {
+
         let id: String
         let username: String
         let serverID: String?
@@ -45,6 +47,7 @@ extension SwiftfinStore {
     }
 
     private struct V2AnyDataSnapshot {
+
         let data: Data?
         let ownerID: String
         let domain: String

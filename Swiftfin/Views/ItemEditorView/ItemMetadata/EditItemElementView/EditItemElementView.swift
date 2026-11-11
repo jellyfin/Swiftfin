@@ -36,7 +36,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
         self.elements = viewModel.editor.elements(in: viewModel.item)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarSelectView: some View {
         let isAllSelected = selectedElements.count == (elements.count)
 
@@ -57,6 +57,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
         .enabled(isEditing)
     }
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             InsetGroupedListHeader(viewModel.editor.displayTitle, description: viewModel.editor.description)
@@ -105,6 +106,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
         .environment(\.editMode, isReordering ? .constant(.active) : .constant(.inactive))
     }
 
+    @ContentBuilder
     var body: some View {
         contentView
             .navigationTitle(viewModel.editor.displayTitle)

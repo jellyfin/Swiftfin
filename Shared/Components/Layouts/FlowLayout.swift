@@ -14,6 +14,7 @@ struct FlowLayout: Layout {
     // MARK: - Fill Direction
 
     enum Direction {
+
         case up
         case down
     }
@@ -21,6 +22,7 @@ struct FlowLayout: Layout {
     // MARK: - Cache Structure
 
     struct CacheData {
+
         let subviewSizes: [CGSize]
         let rows: [[Int]]
         let totalSize: CGSize

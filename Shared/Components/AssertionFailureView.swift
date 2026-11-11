@@ -18,6 +18,7 @@ struct AssertionFailureView: View {
         assertionFailure(message)
     }
 
+    @ContentBuilder
     var body: some View {
         EmptyView()
     }

@@ -33,6 +33,7 @@ struct Quadrant: View {
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         let size = size ?? viewLayout.indicatorSize
         let cornerRadius = cornerRadius ?? viewLayout.value(standard: 6, large: 18)
@@ -70,6 +71,7 @@ struct Quadrant: View {
 }
 
 enum QuadrantCorner: CaseIterable {
+
     case topLeading
     case topTrailing
     case bottomLeading
@@ -106,6 +108,7 @@ struct QuadrantItem: View {
         self.label = label()
     }
 
+    @ContentBuilder
     var body: some View {
         label
             .fixedSize()

@@ -44,8 +44,8 @@ struct Stepper<
         in range: ClosedRange<Value>,
         step: Value.Stride = 1,
         format: Format,
-        @ViewBuilder label: @escaping () -> Label,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder label: @escaping () -> Label,
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self._value = value
         self.content = content
@@ -58,6 +58,7 @@ struct Stepper<
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         ChevronButton {
             isPresented = true
@@ -131,8 +132,8 @@ extension Stepper where Format == VerbatimFormatStyle<Value> {
         value: Binding<Value>,
         in range: ClosedRange<Value>,
         step: Value.Stride = 1,
-        @ViewBuilder label: @escaping () -> Label,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder label: @escaping () -> Label,
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.init(
             title,
@@ -175,7 +176,7 @@ extension Stepper where Format == VerbatimFormatStyle<Value>, Content == EmptyVi
         value: Binding<Value>,
         in range: ClosedRange<Value>,
         step: Value.Stride = 1,
-        @ViewBuilder label: @escaping () -> Label
+        @ContentBuilder label: @escaping () -> Label
     ) {
         self.init(
             title,

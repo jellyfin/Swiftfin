@@ -167,8 +167,7 @@ extension EPGCollectionView {
 
             if contentSignature != renderContentSignature {
                 if let renderContentSignature,
-                   renderContentSignature.startDate != contentSignature.startDate
-                {
+                   renderContentSignature.startDate != contentSignature.startDate {
                     representable.proxy.reset()
                 }
 

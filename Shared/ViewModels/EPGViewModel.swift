@@ -203,7 +203,8 @@ final class EPGViewModel: ViewModel {
             userSession: page.pageState.userSession
         )
 
-        guard !Task.isCancelled, generation == requestGeneration,
+        guard !Task.isCancelled,
+              generation == requestGeneration,
               replacing || offset == nextChannelOffset else { return }
 
         try page.pageState.userSession.items.validate()
@@ -292,8 +293,7 @@ final class EPGViewModel: ViewModel {
         let calendar = Calendar.current
 
         if calendar.isDateInToday(startDate) ||
-            startDate < calendar.startOfDay(for: .now)
-        {
+            startDate < calendar.startOfDay(for: .now) {
             return defaultStartDate()
         }
 

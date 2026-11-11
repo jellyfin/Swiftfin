@@ -15,6 +15,7 @@ extension ItemActionButtons {
         @EnvironmentObject
         private var provider: ItemContentGroupProvider
 
+        @ContentBuilder
         var body: some View {
             ShuffleButton(item: provider.item)
         }

@@ -120,6 +120,7 @@ struct CapsuleButtonStyle: ButtonStyle {
         return isFocused || isSelectionActive ? 1 : 0.8
     }
 
+    @ContentBuilder
     private var background: some View {
         // Keep the glass configuration stable as focus and selection change.
         Color.clear
@@ -144,6 +145,7 @@ struct CapsuleButtonStyle: ButtonStyle {
         return 1
     }
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(font ?? metrics.font)

@@ -110,11 +110,12 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             }
         }
 
+        @ContentBuilder
         private var menuLabel: some View {
             Label(L10n.menu, systemImage: menuSystemImage)
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func view(for button: VideoPlayerActionButton) -> some View {
             switch button {
             case .aspectFill:
@@ -152,7 +153,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var compactView: some View {
             let barButtons = barActionButtons
             let menuButtons = menuActionButtons.subtracting(barActionButtons)
@@ -178,6 +179,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             .withViewContext(.isInMenu)
         }
 
+        @ContentBuilder
         private var regularView: some View {
             HStack(spacing: viewLayout.toolbarButtonSpacing) {
                 ForEach(barActionButtons) { button in
@@ -208,6 +210,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             .focusSection()
         }
 
+        @ContentBuilder
         var body: some View {
             Group {
                 if viewState.isCompact {

@@ -19,6 +19,7 @@ struct EPGSupplement {
 
 extension EPGSupplement: VideoPlayerSupplement {
 
+    @ContentBuilder
     var body: some View {
         GuideOverlay()
     }
@@ -38,6 +39,7 @@ extension EPGSupplement: VideoPlayerSupplement {
 
         private let refreshInterval: TimeInterval = 3 * 60
 
+        @ContentBuilder
         private var content: some View {
             EPGLoadableView(viewModel: viewModel) {
                 EPGContentView(
@@ -78,10 +80,12 @@ extension EPGSupplement: VideoPlayerSupplement {
             .focusSection()
         }
 
+        @ContentBuilder
         var standardView: some View {
             content
         }
 
+        @ContentBuilder
         var largeView: some View {
             content
                 .focusSection()

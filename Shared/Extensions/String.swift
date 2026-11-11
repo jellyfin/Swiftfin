@@ -27,6 +27,7 @@ extension String: @retroactive Identifiable {
 
 extension String: LibraryElement {
 
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
@@ -48,6 +49,7 @@ private struct StringLibraryListElement: View {
     let value: String
     var action: (() -> Void)?
 
+    @ContentBuilder
     var body: some View {
         Button {
             action?()
@@ -181,7 +183,6 @@ extension String {
     }
 
     func trimmingSuffix(_ suffix: String) -> String {
-
         guard suffix.count <= count else { return self }
 
         var s = self
@@ -247,7 +248,7 @@ extension String? {
 
 extension CharacterSet {
 
-    // Character that appears on tvOS with voice input
+    /// Character that appears on tvOS with voice input
     static var objectReplacement: CharacterSet = .init(charactersIn: "\u{fffc}")
 }
 

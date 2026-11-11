@@ -66,7 +66,8 @@ extension UserSession {
 
         users.changes
             .sink { [weak self] change in
-                guard let self, self.users.isActive,
+                guard let self,
+                      self.users.isActive,
                       case let .updated(data) = change,
                       let storedUser = StoredValues[.User.users].first(where: {
                           $0.id == data.id && $0.serverID == self.server.id

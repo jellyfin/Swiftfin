@@ -20,6 +20,7 @@ struct ItemOverviewView: View {
     @SharedBaseItem
     var item: BaseItemDto
 
+    @ContentBuilder
     var body: some View {
         ScrollView {
             VStack(alignment: viewLayout.value(standard: .leading, large: .center), spacing: 10) {

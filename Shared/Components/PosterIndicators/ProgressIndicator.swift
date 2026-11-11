@@ -42,6 +42,7 @@ struct ProgressIndicator: View {
         progress.isFinite ? clamp(progress, min: 0, max: 1) : 0
     }
 
+    @ContentBuilder
     private var progressBar: some View {
         ProgressView(value: normalizedProgress)
             .progressViewStyle(.playback)
@@ -52,6 +53,7 @@ struct ProgressIndicator: View {
             .accessibilityHidden(true)
     }
 
+    @ContentBuilder
     private var compactProgressBar: some View {
         Rectangle()
             .fill(theme.accentColor)
@@ -61,6 +63,7 @@ struct ProgressIndicator: View {
             .accessibilityHidden(true)
     }
 
+    @ContentBuilder
     private var runtime: some View {
         Text(title)
             .font(.system(.footnote, design: .rounded, weight: .semibold))
@@ -75,12 +78,14 @@ struct ProgressIndicator: View {
             }
     }
 
+    @ContentBuilder
     private var indicatorTrack: some View {
         Quadrant(.bottomTrailing, isFloating: true) {
             indicators
         }
     }
 
+    @ContentBuilder
     private func landscapeView(showsIndicators: Bool) -> some View {
         VStack(spacing: inset) {
             HStack(spacing: inset) {
@@ -98,6 +103,7 @@ struct ProgressIndicator: View {
         }
     }
 
+    @ContentBuilder
     private func compactView(showsIndicators: Bool) -> some View {
         VStack(alignment: .trailing, spacing: inset) {
             if showsIndicators {
@@ -110,6 +116,7 @@ struct ProgressIndicator: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Group {
             if posterDisplayType == .landscape {

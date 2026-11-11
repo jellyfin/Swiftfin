@@ -26,6 +26,7 @@ struct HorizontalLabelStyle: LabelStyle {
 
     var iconEdge: HorizontalEdge
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: CapsuleButtonStyle.CapsuleControlMetrics(controlSize).labelSpacing) {
             if iconEdge == .leading {

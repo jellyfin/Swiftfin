@@ -16,6 +16,7 @@ struct SavedFiltersView: View {
     @StoredValue(.User.savedFilters)
     private var savedFilters
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "line.3.horizontal.decrease") {
             if savedFilters.isEmpty {

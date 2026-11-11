@@ -16,6 +16,7 @@ struct PosterStyleModifier: ViewModifier {
     let type: PosterDisplayType
     let contentMode: ContentMode
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .posterAspectRatio(type, contentMode: contentMode)

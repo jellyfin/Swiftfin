@@ -13,15 +13,14 @@ extension CultureDto: Displayable {
 
     var displayTitle: String {
         if let twoLetterISOLanguageName,
-           let name = Locale.current.localizedString(forLanguageCode: twoLetterISOLanguageName)
-        {
+           let name = Locale.current.localizedString(forLanguageCode: twoLetterISOLanguageName) {
             return name
         }
 
-        if let threeLetterISOLanguageNames, let displayName = threeLetterISOLanguageNames
+        if let threeLetterISOLanguageNames,
+           let displayName = threeLetterISOLanguageNames
             .compactMap({ Locale.current.localizedString(forLanguageCode: $0) })
-            .first
-        {
+            .first {
             return displayName
         }
 

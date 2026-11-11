@@ -11,6 +11,7 @@ import SwiftUI
 struct MaskGradientModifier: ViewModifier {
 
     enum Style {
+
         case linear
         case eased(EasedGradient.Curve)
     }
@@ -29,7 +30,7 @@ struct MaskGradientModifier: ViewModifier {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var gradient: some View {
         switch style {
         case .linear:
@@ -49,6 +50,7 @@ struct MaskGradientModifier: ViewModifier {
         }
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .mask {

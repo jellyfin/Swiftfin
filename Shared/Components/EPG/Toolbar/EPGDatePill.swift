@@ -39,6 +39,7 @@ extension EPGDateBar {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             Button(action: action) {
                 Text(title)

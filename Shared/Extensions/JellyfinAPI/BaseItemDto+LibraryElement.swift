@@ -56,6 +56,7 @@ extension BaseItemDto: LibraryElement {
         }
     }
 
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
@@ -64,7 +65,7 @@ extension BaseItemDto: LibraryElement {
     }
 
     @MainActor
-    @ViewBuilder
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?,
@@ -95,6 +96,7 @@ private struct BaseItemDtoLibraryGridElement: View {
         item.supportedLibraryStyleOptions(grouping: grouping).normalized(libraryStyle)
     }
 
+    @ContentBuilder
     var body: some View {
         PosterButton(
             item: item,
@@ -136,6 +138,7 @@ private struct BaseItemDtoLibraryListElement: View {
         item.supportedLibraryStyleOptions(grouping: grouping).normalized(libraryStyle)
     }
 
+    @ContentBuilder
     private func currentProgramView(_ program: BaseItemDto) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             if program.id != item.id {
@@ -173,6 +176,7 @@ private struct BaseItemDtoLibraryListElement: View {
         }
     }
 
+    @ContentBuilder
     private var accessoryView: some View {
         DotHStack {
             if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLabel {
@@ -191,6 +195,7 @@ private struct BaseItemDtoLibraryListElement: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ListRow(insets: .init(vertical: 8, horizontal: viewLayout.edgePadding)) {
             PosterImage(

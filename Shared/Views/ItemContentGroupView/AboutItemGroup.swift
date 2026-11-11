@@ -42,7 +42,7 @@ struct AboutItemGroup: ContentGroup {
                 title: String,
                 subtitle: String? = nil,
                 action: @escaping () -> Void,
-                @ViewBuilder content: () -> Content
+                @ContentBuilder content: () -> Content
             ) {
                 self.title = title
                 self.subtitle = subtitle
@@ -50,6 +50,7 @@ struct AboutItemGroup: ContentGroup {
                 self.content = content()
             }
 
+            @ContentBuilder
             var body: some View {
                 Button(action: action) {
                     VStack(alignment: .leading) {
@@ -89,7 +90,7 @@ struct AboutItemGroup: ContentGroup {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var descriptionCard: some View {
             let subtitle = item.taglines?.first ?? item.parentTitle
             let hasOverviewContent = item.taglines?.first?.isNotEmpty == true || item.overview?.isNotEmpty == true
@@ -112,7 +113,7 @@ struct AboutItemGroup: ContentGroup {
             .aspectRatio(cardAspectRatio, contentMode: .fit)
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func mediaSourceCard(for mediaSource: MediaSourceInfo, hasMultipleSources: Bool) -> some View {
             let subtitle = hasMultipleSources ? mediaSource.displayTitle : nil
 
@@ -135,6 +136,7 @@ struct AboutItemGroup: ContentGroup {
             .aspectRatio(cardAspectRatio, contentMode: .fit)
         }
 
+        @ContentBuilder
         private func ratingsCard(criticRating: Float, communityRating: Float) -> some View {
             AboutCard(
                 title: L10n.ratings,
@@ -183,6 +185,7 @@ struct AboutItemGroup: ContentGroup {
 
         private let cardAspectRatio: CGFloat = 1.77
 
+        @ContentBuilder
         var body: some View {
             ContentGroupSection {
                 ScrollView(.horizontal) {

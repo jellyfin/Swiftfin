@@ -28,6 +28,7 @@ struct ItemSubtitleUploadView: View {
     @State
     private var selectedFile: URL?
 
+    @ContentBuilder
     var body: some View {
         Form {
             Section(L10n.options) {

@@ -26,6 +26,7 @@ extension LetterPickerBar {
 
         let letter: ItemLetter
 
+        @ContentBuilder
         var body: some View {
             AlternateLayoutView {
                 ZStack {

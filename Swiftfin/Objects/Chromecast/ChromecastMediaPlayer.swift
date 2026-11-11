@@ -27,6 +27,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
     weak var mediaSession: MediaSession?
 
     private enum Command {
+
         case load
         case seek(PlaybackTimeline.Seek)
         case transport
@@ -244,7 +245,9 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
     }
 
     private func stopOwnedMediaForTransfer() {
-        guard transferContinuation != nil, let client, owns(client.mediaStatus),
+        guard transferContinuation != nil,
+              let client,
+              owns(client.mediaStatus),
               !commands.values.contains(where: {
                   if case .stopForTransfer = $0.command {
                       true
@@ -430,7 +433,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
     }
 }
 
-// Google Cast delivers delegate callbacks on the main thread.
+/// Google Cast delivers delegate callbacks on the main thread.
 extension ChromecastMediaPlayer: @preconcurrency GCKRemoteMediaClientListener, @preconcurrency GCKRequestDelegate {
 
     func remoteMediaClient(_ client: GCKRemoteMediaClient, didUpdate mediaStatus: GCKMediaStatus?) {

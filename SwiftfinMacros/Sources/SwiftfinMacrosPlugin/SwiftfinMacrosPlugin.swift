@@ -11,5 +11,6 @@ import SwiftSyntaxMacros
 
 @main
 struct SwiftfinMacrosPlugin: CompilerPlugin {
+
     let providingMacros: [Macro.Type] = [DefaultDecodableMacro.self, OptionSetMacro.self]
 }

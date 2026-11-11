@@ -40,8 +40,7 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
 
         if let id = parent.id,
            Defaults[.Customization.Library.rememberFilters],
-           staticFilters.union(filters).itemTypes.isEmpty
-        {
+           staticFilters.union(filters).itemTypes.isEmpty {
             filters = filters.union(StoredValues[.User.libraryFilters(parentID: id)])
         }
 
@@ -95,7 +94,7 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
 
     func makeLibraryBody(
         viewModel: PagingLibraryViewModel<Self>,
-        @ViewBuilder content: @escaping () -> some View
+        @ContentBuilder content: @escaping () -> some View
     ) -> AnyView {
         ItemLibraryBody(
             filterViewModel: filterViewModel,
@@ -170,9 +169,9 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
         var parameters = parameters
         let groupedFolders: [String]?
 
-        if environment.grouping == .folders, parent.libraryType == .userView,
-           parent.collectionType == .movies || parent.collectionType == .tvshows
-        {
+        if environment.grouping == .folders,
+           parent.libraryType == .userView,
+           parent.collectionType == .movies || parent.collectionType == .tvshows {
             groupedFolders = pageState.userSession.userData.configuration?.groupedFolders ?? []
             guard let groupedFolders, groupedFolders.isNotEmpty else { return [] }
 
@@ -329,13 +328,14 @@ private struct ItemLibraryBody<Content: View>: View {
     init(
         filterViewModel: FilterViewModel,
         viewModel: PagingLibraryViewModel<ItemLibrary>,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.filterViewModel = filterViewModel
         self.viewModel = viewModel
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .onFirstAppear {

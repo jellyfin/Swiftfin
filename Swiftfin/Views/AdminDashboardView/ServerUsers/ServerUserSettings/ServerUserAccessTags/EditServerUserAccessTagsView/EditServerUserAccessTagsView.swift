@@ -55,6 +55,7 @@ struct EditServerUserAccessTagsView: View {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -135,6 +136,7 @@ struct EditServerUserAccessTagsView: View {
         .errorMessage($viewModel.error)
     }
 
+    @ContentBuilder
     private func makeRow(tag: TagWithAccess) -> some View {
         EditAccessTagRow(tag: tag.tag) {
             if isEditing {
@@ -148,6 +150,7 @@ struct EditServerUserAccessTagsView: View {
         .isSelected(selectedTags.contains(tag))
     }
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -189,7 +192,7 @@ struct EditServerUserAccessTagsView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarSelectView: some View {
         let isAllSelected = selectedTags.count == blockedTags.count + allowedTags.count
 
@@ -210,7 +213,7 @@ struct EditServerUserAccessTagsView: View {
         .enabled(isEditing)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteSelectedConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 

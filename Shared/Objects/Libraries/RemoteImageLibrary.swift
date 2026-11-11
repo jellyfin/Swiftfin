@@ -11,6 +11,7 @@ import JellyfinAPI
 struct RemoteImageLibrary: PagingLibrary {
 
     struct Environment: Equatable, WithDefaultValue {
+
         var includeAllLanguages: Bool = false
         var provider: String?
 

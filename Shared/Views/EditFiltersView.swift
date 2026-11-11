@@ -67,6 +67,7 @@ struct EditFiltersView: View {
         router.dismiss()
     }
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "line.3.horizontal.decrease") {
             Section {

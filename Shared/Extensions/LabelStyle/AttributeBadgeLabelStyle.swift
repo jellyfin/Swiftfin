@@ -31,6 +31,7 @@ struct FillAttributeBadgeLabelStyle: LabelStyle {
         font ?? .caption.weight(.semibold)
     }
 
+    @ContentBuilder
     private func content(configuration: Configuration) -> some View {
         HStack(spacing: 2) {
             configuration.icon
@@ -39,6 +40,7 @@ struct FillAttributeBadgeLabelStyle: LabelStyle {
         }
     }
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         content(configuration: configuration)
             .padding(.init(vertical: 1, horizontal: 4))
@@ -64,6 +66,7 @@ struct OutlineAttributeBadgeLabelStyle: LabelStyle {
         font ?? .caption.weight(.semibold)
     }
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 2) {
             configuration.icon

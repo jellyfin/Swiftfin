@@ -16,6 +16,7 @@ import UIKit
 extension SwiftfinStore.State {
 
     struct User: Hashable, Identifiable, Codable {
+
         let id: String
         let serverID: String
         let username: String

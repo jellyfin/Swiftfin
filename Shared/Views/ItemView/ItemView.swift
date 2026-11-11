@@ -98,7 +98,7 @@ struct ItemView: View {
         return [header] + viewModel.groups
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var content: some View {
         if isEnhanced, !viewLayout.isLarge {
             BlurredNavigationBarScrollView(groups: contentGroups)
@@ -111,6 +111,7 @@ struct ItemView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         let (_, overflow, menu) = buttonConfiguration.resolvedButtons(for: provider)
 

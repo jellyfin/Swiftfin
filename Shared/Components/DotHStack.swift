@@ -16,11 +16,12 @@ struct DotHStack<Content: View>: View {
     private let padding: CGFloat?
     private let content: Content
 
-    init(padding: CGFloat? = nil, @ViewBuilder content: () -> Content) {
+    init(padding: CGFloat? = nil, @ContentBuilder content: () -> Content) {
         self.padding = padding
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         let dotSize: CGFloat = viewLayout.value(standard: 2, large: 5)
         SeparatorHStack {
