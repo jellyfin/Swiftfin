@@ -15,10 +15,9 @@ import Observation
 
 @MainActor
 @Observable
-final class JellyfinCastMediaPlayer: MediaPlayer {
+final class JellyfinCastMediaPlayer: MediaPlayer, MediaPlayerTrackProviding {
 
-    // The target client negotiates its own stream, direct play keeps the server from transcoding for this device.
-    let playbackProfile = PlaybackProfile.local(.mpv)
+    let playbackProfile = PlaybackProfile.jellyfinCast
     let playbackLocation = MediaPlaybackLocation.remote
     let supportedRates = 1.0 ... 1.0
     let sessionID: String?
@@ -44,6 +43,8 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
     private var receiverStopped = false
     private var handledEnd = false
     private var position: Duration = .zero
+    private var audioStreamIndex: Int?
+    private var subtitleStreamIndex: Int?
     private var suppressSyncUntil: Date = .distantPast
 
     init(session: SessionInfoDto) {
@@ -67,6 +68,18 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
         baseItem = item.baseItem
         receiverStopped = false
         position = item.baseItem.startSeconds ?? .zero
+        audioStreamIndex = item.selectedAudioStreamIndex
+        subtitleStreamIndex = item.selectedSubtitleStreamIndex ?? -1
+
+        // The target addresses tracks by their Jellyfin index.
+        item.setTrackIndexes(
+            MediaTrackIndexMap(
+                Dictionary(
+                    (item.audioStreams + item.subtitleStreams).compactMap(\.index).map { ($0, $0) },
+                    uniquingKeysWith: { first, _ in first }
+                )
+            )
+        )
 
         let request = Paths.play(
             sessionID: sessionID,
@@ -134,6 +147,54 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
 
     func setRate(_ rate: Double) {}
 
+    func setStream(_ stream: MediaStream) {
+        guard isReady, let sessionID, let index = stream.index else { return }
+
+        let name: GeneralCommandType
+
+        switch stream.type {
+        case .audio:
+            guard index != audioStreamIndex else { return }
+
+            audioStreamIndex = index
+            name = .setAudioStreamIndex
+
+        case .subtitle:
+            guard index != subtitleStreamIndex else { return }
+
+            subtitleStreamIndex = index
+            name = .setSubtitleStreamIndex
+
+        default:
+            return
+        }
+
+        let command = GeneralCommand(arguments: ["Index": "\(index)"], name: name)
+
+        enqueue(Paths.sendFullGeneralCommand(sessionID: sessionID, command)) { [weak self] error in
+            guard let self, error != nil else { return }
+
+            if name == .setAudioStreamIndex {
+                audioStreamIndex = nil
+            } else {
+                subtitleStreamIndex = nil
+            }
+
+            mediaSession?.commandError = L10n.remoteCommandFailed
+        }
+    }
+
+    /// Selections made while the target was still loading.
+    private func applySelectedTracks() {
+        guard let item = mediaSession?.playbackItem else { return }
+
+        if let audio = item.selectedAudioStreamIndex {
+            setStream(.init(index: audio, type: .audio))
+        }
+
+        setStream(.init(index: item.effectiveSubtitleStreamIndex, type: .subtitle))
+    }
+
     func stop() {
         let shouldStop = isReady && !receiverStopped
         let pendingItemID = !isReady && !receiverStopped ? baseItem?.id : nil
@@ -155,7 +216,7 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
             let deadline = ContinuousClock.now.advanced(by: .seconds(30))
 
             while ContinuousClock.now < deadline {
-                if let target = try? await Self.session(sessionID, userSession: userSession),
+                if let target = try? await Self.sessions(userSession: userSession).first(where: { $0.id == sessionID }),
                    target.nowPlayingItem?.id == itemID {
                     try? await userSession.send(Paths.sendPlaystateCommand(sessionID: sessionID, command: PlaystateCommand.stop.rawValue))
                     return
@@ -264,11 +325,11 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
         suppressSyncUntil = .now.addingTimeInterval(5)
     }
 
-    private static func session(_ sessionID: String, userSession: UserSession) async throws -> SessionInfoDto? {
+    private static func sessions(userSession: UserSession) async throws -> [SessionInfoDto] {
         let response = try await userSession.send(Paths.getSessions(parameters: .init()))
         defer { withExtendedLifetime(response) {} }
 
-        return response.value.first { $0.id == sessionID }
+        return response.value
     }
 
     /// The sessions socket is event-driven and not sent to every user, so state is also fetched after each command.
@@ -276,9 +337,23 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
         guard let sessionID,
               let userSession,
               baseItem != nil,
-              let target = try? await Self.session(sessionID, userSession: userSession) else { return }
+              let sessions = try? await Self.sessions(userSession: userSession) else { return }
 
-        update(target)
+        if let target = sessions.first(where: { $0.id == sessionID }) {
+            update(target)
+        } else {
+            sessionEnded()
+        }
+    }
+
+    /// The target left the server, so there is no receiver to stop or to keep controlling.
+    private func sessionEnded() {
+        guard let mediaSession, mediaSession.player === self, baseItem != nil else { return }
+
+        receiverStopped = true
+        mediaSession.setPlaybackRequestStatus(status: .paused)
+        mediaSession.returnToLocalPlayback()
+        mediaSession.commandError = L10n.castConnectionFailed
     }
 
     private func advancePosition() {
@@ -344,12 +419,16 @@ final class JellyfinCastMediaPlayer: MediaPlayer {
         publishState()
         mediaSession.playerDidUpdatePosition(position, from: self)
 
+        guard mediaSession.player === self else { return }
+
         if !wasReady {
             if mediaSession.playbackRequestStatus == .paused, isPlaying {
                 pause()
             } else if mediaSession.playbackRequestStatus == .playing, !isPlaying {
                 play()
             }
+
+            applySelectedTracks()
         } else if Date.now >= suppressSyncUntil {
             mediaSession.playerDidRequestPlayback(isPlaying ? .playing : .paused, from: self)
         }

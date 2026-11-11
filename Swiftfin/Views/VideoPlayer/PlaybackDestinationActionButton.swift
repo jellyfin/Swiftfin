@@ -20,8 +20,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @State
         private var controller: ChromecastController?
 
-        @StateObject
-        private var castViewModel = CastViewModel()
+        @State
+        private var jellyfinCastController = JellyfinCastController()
 
         private var selectedDeviceID: String? {
             (mediaSession.player as? ChromecastMediaPlayer)?.session.device.uniqueID
@@ -29,14 +29,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         private var selectedSessionID: String? {
             (mediaSession.player as? JellyfinCastMediaPlayer)?.sessionID
-        }
-
-        private func select(_ target: SessionViewModel) {
-            guard mediaSession.canControlPlayback,
-                  mediaSession.item.mediaType == .video,
-                  selectedSessionID != target.id else { return }
-
-            mediaSession.transfer(to: JellyfinCastMediaPlayer(session: target.session))
         }
 
         @ContentBuilder
@@ -49,14 +41,14 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
                 Divider()
 
-                if castViewModel.targets.isNotEmpty {
+                if jellyfinCastController.devices.isNotEmpty {
                     Section(L10n.jellyfin) {
-                        ForEach(castViewModel.targets.values.elements, id: \.id) { target in
+                        ForEach(jellyfinCastController.devices, id: \.id) { device in
                             Button(
-                                target.session.deviceName ?? L10n.unknown,
-                                systemImage: selectedSessionID == target.id ? "checkmark" : "tv"
+                                device.deviceName ?? L10n.cast,
+                                systemImage: selectedSessionID == device.id ? "checkmark" : "tv"
                             ) {
-                                select(target)
+                                jellyfinCastController.select(device, for: mediaSession)
                             }
                             .disabled(!mediaSession.canControlPlayback)
                         }
@@ -75,12 +67,12 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             .disabled(!mediaSession.canControlPlayback)
                         }
                     }
-                } else if castViewModel.targets.isEmpty {
+                } else if jellyfinCastController.devices.isEmpty {
                     Text(L10n.noCastDevicesFound)
                 }
             }
             .onAppear {
-                castViewModel.refresh()
+                jellyfinCastController.startDiscovery()
 
                 guard Defaults[.Experimental.chromecast] else { return }
 
@@ -89,6 +81,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 controller.startDiscovery()
             }
             .onDisappear {
+                jellyfinCastController.stopDiscovery()
                 controller?.stopDiscovery()
             }
         }

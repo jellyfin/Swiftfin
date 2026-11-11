@@ -13,6 +13,7 @@ enum PlaybackProfile: Equatable {
 
     #if os(iOS)
     case chromecast
+    case jellyfinCast
     #endif
     case local(MediaPlayerType)
 
@@ -30,6 +31,8 @@ enum PlaybackProfile: Equatable {
         #if os(iOS)
         case .chromecast:
             true
+        case .jellyfinCast:
+            false
         #endif
         case .local:
             false
@@ -84,6 +87,10 @@ enum PlaybackProfile: Equatable {
             }
 
             return profile
+
+        case .jellyfinCast:
+            // The target client negotiates its own stream
+            return .build(for: .mpv, configuration: configuration, maxBitrate: maxBitrate, mediaSource: mediaSource)
         #endif
 
         case let .local(player):

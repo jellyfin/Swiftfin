@@ -208,7 +208,7 @@ final class MediaPlayerItem {
         guard oldIndex != newIndex else { return false }
 
         if mediaSession?.isRemotePlayback == true, type == .audio || type == .subtitle {
-            return true
+            return !(mediaSession?.player is any MediaPlayerTrackProviding)
         }
 
         let isTranscoding = mediaSource.transcodingURL != nil

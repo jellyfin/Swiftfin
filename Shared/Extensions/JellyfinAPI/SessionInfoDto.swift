@@ -68,6 +68,13 @@ extension SessionInfoDto: @retroactive Comparable {
 
 extension SessionInfoDto {
 
+    func isCastTarget(for userSession: UserSession) -> Bool {
+        capabilities?.isSupportsMediaControl == true
+            && deviceID != userSession.client.configuration.deviceID
+            && userID == userSession.user.id
+            && playableMediaTypes?.contains(.video) == true
+    }
+
     func isPlaying(item: BaseItemDto) -> Bool {
         guard let nowPlayingItem else { return false }
 

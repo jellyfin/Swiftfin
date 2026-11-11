@@ -97,18 +97,10 @@ final class CastViewModel: ViewModel {
 
         guard let userSession else { return }
 
-        let deviceID = userSession.client.configuration.deviceID
-        let userID = userSession.user.id
-
         var updatedTargets: OrderedDictionary<String, SessionViewModel> = [:]
 
         let controllableSessions = incomingSessions
-            .filter { session in
-                session.capabilities?.isSupportsMediaControl == true
-                    && session.deviceID != deviceID
-                    && session.userID == userID
-                    && session.playableMediaTypes?.contains(.video) == true
-            }
+            .filter { $0.isCastTarget(for: userSession) }
             .sorted()
 
         let records = mergeItems ? try? userSession.receiveSessionItems(controllableSessions) : nil
