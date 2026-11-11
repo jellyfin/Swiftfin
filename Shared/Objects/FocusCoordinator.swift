@@ -12,15 +12,19 @@ import SwiftUI
 final class FocusCoordinator: ObservableObject {
 
     fileprivate struct Request: Equatable {
+
         let id: String
         let token = UUID()
     }
 
     enum InitialFocusRole {
+
         /// Holds focus while waiting for the initial content, optionally requesting it once.
         case placeholder
+
         /// Becomes available after the initial target receives focus.
         case secondary
+
         /// Releases secondary controls when there is no initial target, such as an empty or error view.
         case fallback
     }
@@ -54,7 +58,9 @@ final class FocusCoordinator: ObservableObject {
 
     fileprivate func claimInitialPlaceholderFocus() -> Bool {
         guard isInitialFocusPending, shouldFocusInitialPlaceholder else { return false }
+
         shouldFocusInitialPlaceholder = false
+
         return true
     }
 
@@ -66,6 +72,7 @@ final class FocusCoordinator: ObservableObject {
     /// Completes initial focus once, including when loading ends without a target.
     func resolveInitialFocus() {
         guard pendingInitialFocusID != nil else { return }
+
         pendingInitialFocusID = nil
     }
 
@@ -101,6 +108,7 @@ private struct CoordinatedFocusScopeModifier<Value: Hashable>: ViewModifier {
         lastSelection.flatMap { values.contains($0) ? $0 : nil } ?? values.first
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .focusSection()
@@ -111,6 +119,7 @@ private struct CoordinatedFocusScopeModifier<Value: Hashable>: ViewModifier {
             )
             .onChange(of: selection.wrappedValue) { _, newValue in
                 guard let newValue else { return }
+
                 lastSelection = newValue
             }
     }
@@ -127,7 +136,7 @@ private struct CoordinatedInitialFocusModifier: ViewModifier {
 
     let role: FocusCoordinator.InitialFocusRole
 
-    @ViewBuilder
+    @ContentBuilder
     func body(content: Content) -> some View {
         switch role {
         case .placeholder:
@@ -142,9 +151,11 @@ private struct CoordinatedInitialFocusModifier: ViewModifier {
                     }
                 }
                 #endif
+
         case .secondary:
             content
                 .disabled(coordinator.isInitialFocusPending)
+
         case .fallback:
             content
                 .onAppear {
@@ -171,9 +182,11 @@ private struct CoordinatedFocusModifier: ViewModifier {
 
     private func apply(_ request: FocusCoordinator.Request?) {
         guard request?.id == id else { return }
+
         focus.wrappedValue = id
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .focused(focus, equals: id)
@@ -198,6 +211,7 @@ extension View {
     #if os(tvOS)
     /// Remembers focus within a container, using the first value when no remembered target remains.
     /// Apply this to the stack or scroll view containing the coordinated controls.
+    @ContentBuilder
     func coordinatedFocusScope<Value: Hashable>(
         _ selection: FocusState<Value?>.Binding,
         values: [Value]
@@ -206,14 +220,17 @@ extension View {
     }
     #endif
 
+    @ContentBuilder
     func coordinatedFocus(_ role: FocusCoordinator.InitialFocusRole) -> some View {
         modifier(CoordinatedInitialFocusModifier(role: role))
     }
 
+    @ContentBuilder
     func coordinatedFocus(_ id: String) -> some View {
         modifier(CoordinatedFocusModifier(id: id))
     }
 
+    @ContentBuilder
     func coordinatedFocus(
         _ id: String,
         selection: FocusState<String?>.Binding

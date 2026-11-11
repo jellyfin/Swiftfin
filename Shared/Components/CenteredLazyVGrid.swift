@@ -17,6 +17,7 @@ struct CenteredLazyVGrid<Data: RandomAccessCollection, ID: Hashable, Content: Vi
     var spacing: CGFloat = 0
     let content: (Data.Element) -> Content
 
+    @ContentBuilder
     var body: some View {
         FixedColumnContentView(
             columns: columns,
@@ -34,7 +35,7 @@ extension CenteredLazyVGrid where Data.Element: Identifiable, ID == Data.Element
         data: Data,
         columns: Int,
         spacing: CGFloat = 0,
-        @ViewBuilder content: @escaping (Data.Element) -> Content
+        @ContentBuilder content: @escaping (Data.Element) -> Content
     ) {
         self.init(
             data: data,
@@ -80,6 +81,7 @@ extension CenteredLazyVGrid {
             return CGFloat(lastRowMissingCount) * (elementSize.width + spacing) / 2
         }
 
+        @ContentBuilder
         var body: some View {
             let columns = Array(
                 repeating: GridItem(

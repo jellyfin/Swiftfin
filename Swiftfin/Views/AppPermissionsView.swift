@@ -14,6 +14,7 @@ struct AppPermissionsView: View {
     @State
     private var statuses: OrderedDictionary<AppPermission, PermissionStatus> = [:]
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "hand.raised.fill") {
             ForEach(AppPermission.allCases) { permission in
@@ -24,7 +25,8 @@ struct AppPermissionsView: View {
                     StateAdapter(initialValue: nil as String?) { errorMessage in
                         Button {
                             switch status {
-                            case .authorized: ()
+                            case .authorized:
+                                ()
                             default:
                                 Task { @MainActor in
                                     do {
@@ -41,6 +43,7 @@ struct AppPermissionsView: View {
                                     Label(L10n.active, systemImage: "circle.fill")
                                         .foregroundStyle(.green)
                                         .labelStyle(.iconOnly)
+
                                 default:
                                     Text(L10n.allow.localizedUppercase)
                                         .font(.subheadline)
@@ -85,8 +88,7 @@ struct AppPermissionsView: View {
                     systemName: "gearshape.fill",
                     external: true
                 ) {
-                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                    UIApplication.shared.open(url)
+                    Task { try? await SystemSettings.application.open() }
                 }
             } footer: {
                 Text(L10n.permissionsSettingsAppFooter)

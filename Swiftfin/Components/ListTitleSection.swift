@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 // TODO: image
@@ -18,10 +17,10 @@ struct ListTitleSection: View {
     private let learnMoreAction: (() -> Void)?
     private let title: Text
 
+    @ContentBuilder
     var body: some View {
         Section {
             VStack(alignment: .center, spacing: 10) {
-
                 title
                     .font(.title3)
                     .fontWeight(.semibold)
@@ -49,7 +48,7 @@ extension ListTitleSection {
 
     init(
         _ title: some WithText,
-        description: (some WithText)? = nil
+        description: some WithText? = nil
     ) {
         self.init(
             description: description?.textBody,
@@ -60,7 +59,7 @@ extension ListTitleSection {
 
     init(
         _ title: some WithText,
-        description: (some WithText)? = nil,
+        description: some WithText? = nil,
         learnMoreAction: @escaping () -> Void
     ) {
         self.init(
@@ -75,21 +74,20 @@ extension ListTitleSection {
 /// used as a header for a `List` with `listStyle(.plain)`.
 struct InsetGroupedListHeader<Content: View>: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     private let content: Content
     private let description: Text?
     private let learnMoreAction: (() -> Void)?
     private let title: Text?
 
-    @ViewBuilder
+    @ContentBuilder
     private var header: some View {
         Button {
             learnMoreAction?()
         } label: {
             VStack(alignment: .center, spacing: 10) {
-
                 if let title {
                     title
                         .font(.title3)
@@ -103,7 +101,7 @@ struct InsetGroupedListHeader<Content: View>: View {
 
                 if learnMoreAction != nil {
                     Text(L10n.learnMore + .ellipsis)
-                        .foregroundStyle(accentColor)
+                        .foregroundStyle(theme.accentColor)
                 }
             }
             .font(.subheadline)
@@ -113,6 +111,7 @@ struct InsetGroupedListHeader<Content: View>: View {
         .foregroundStyle(.primary, .secondary)
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 16)
@@ -138,9 +137,9 @@ extension InsetGroupedListHeader {
 
     init(
         _ title: some WithText,
-        description: (some WithText)? = nil,
+        description: some WithText? = nil,
         learnMoreAction: (() -> Void)? = nil,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.init(
             content: content(),
@@ -155,7 +154,7 @@ extension InsetGroupedListHeader where Content == EmptyView {
 
     init(
         _ title: some WithText,
-        description: (some WithText)? = nil,
+        description: some WithText? = nil,
         learnMoreAction: (() -> Void)? = nil
     ) {
         self.init(

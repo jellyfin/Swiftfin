@@ -8,7 +8,6 @@
 
 import Combine
 import Foundation
-import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 
@@ -18,21 +17,23 @@ final class ServerUsersViewModel: ViewModel, Identifiable {
 
     @CasePathable
     enum Action {
-        case refreshUser(String)
+
         case getUsers(isHidden: Bool, isDisabled: Bool)
         case deleteUsers([String])
         case appendUser(UserDto)
 
         var transition: Transition {
             switch self {
-            case .refreshUser, .getUsers:
+            case .getUsers:
                 .to(.content)
                     .whenBackground(.gettingUsers)
                     .onRepeat(.cancel)
+
             case .deleteUsers:
                 .to(.content)
                     .whenBackground(.deletingUsers)
                     .onRepeat(.cancel)
+
             case .appendUser:
                 .to(.content)
                     .whenBackground(.appendingUsers)
@@ -42,51 +43,36 @@ final class ServerUsersViewModel: ViewModel, Identifiable {
     }
 
     enum BackgroundState {
+
         case gettingUsers
         case deletingUsers
         case appendingUsers
     }
 
     enum Event {
+
         case deleted
     }
 
     enum State {
+
         case content
         case error
         case initial
     }
 
     @Published
-    var users: IdentifiedArrayOf<UserDto> = []
+    private var userRecords: [UserRecord] = []
+    @Published
+    private var isHiddenFilterActive = false
+    @Published
+    private var isDisabledFilterActive = false
 
-    // MARK: - Initializer
-
-    override init() {
-        super.init()
-
-        Notifications[.didChangeUserProfile]
-            .publisher
-            .sink { [weak self] userID in
-                self?.refreshUser(userID)
-            }
-            .store(in: &cancellables)
-    }
-
-    // MARK: - Refresh User
-
-    @Function(\Action.Cases.refreshUser)
-    private func _refreshUser(_ userID: String) async throws {
-        await cancel()
-
-        let request = Paths.getUserByID(userID: userID)
-        let response = try await send(request)
-
-        let newUser = response.value
-
-        if let index = users.firstIndex(where: { $0.id == userID }) {
-            users[index] = newUser
-        }
+    var users: [UserDto] {
+        userRecords.compactMap(\.value)
+            .filter { !isHiddenFilterActive || $0.policy?.isHidden == true }
+            .filter { !isDisabledFilterActive || $0.policy?.isDisabled == true }
+            .sorted(using: \.name)
     }
 
     // MARK: - Load Users
@@ -95,13 +81,12 @@ final class ServerUsersViewModel: ViewModel, Identifiable {
     private func _getUsers(_ isHidden: Bool, _ isDisabled: Bool) async throws {
         await cancel()
 
-        let request = Paths.getUsers(isHidden: isHidden ? true : nil, isDisabled: isDisabled ? true : nil)
-        let response = try await send(request)
+        let session = try requireUserSession()
+        let response = try await session.send(Paths.getUsers())
 
-        let newUsers = response.value
-            .sorted(using: \.name)
-
-        users = IdentifiedArray(uniqueElements: newUsers)
+        isHiddenFilterActive = isHidden
+        isDisabledFilterActive = isDisabled
+        userRecords = try response.value.map { try session.users.record(for: $0) }
     }
 
     // MARK: - Delete Users
@@ -129,25 +114,30 @@ final class ServerUsersViewModel: ViewModel, Identifiable {
             try await group.waitForAll()
         }
 
-        users.removeAll(where: { userIdsToDelete.contains($0.id ?? "") })
+        userRecords.removeAll(where: { userIdsToDelete.contains($0.id) })
         events.send(.deleted)
     }
 
     // MARK: - Delete User
 
     private func deleteUser(id: String) async throws {
+        let session = try requireUserSession()
         let request = Paths.deleteUser(userID: id)
-        try await send(request)
+        try await session.send(request)
+        session.users.delete(id: id)
     }
 
     // MARK: - Append User
 
     @Function(\Action.Cases.appendUser)
-    private func _appendUser(_ user: UserDto) async {
+    private func _appendUser(_ user: UserDto) async throws {
         await cancel()
 
-        users.append(user)
-        users.sort(by: { $0.name ?? "" < $1.name ?? "" })
+        let session = try requireUserSession()
+        let record = try session.users.record(for: user)
+        if !userRecords.contains(where: { $0.id == record.id }) {
+            userRecords.append(record)
+        }
         events.send(.deleted)
     }
 }

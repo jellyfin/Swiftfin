@@ -1,0 +1,31 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import SwiftUI
+
+struct PictureInPictureSubtitleOverlay: View {
+
+    let presentation: TextSubtitlePresentation
+
+    @ContentBuilder
+    var body: some View {
+        GeometryReader { geometry in
+            if let snapshot = presentation.snapshot {
+                TextSubtitleOverlay(
+                    snapshot: snapshot,
+                    videoLayout: VideoPlayer.VideoLayout(
+                        videoSize: geometry.size,
+                        viewportSize: geometry.size,
+                        behavior: .fit
+                    ),
+                    reportCaptions: nil
+                )
+            }
+        }
+    }
+}

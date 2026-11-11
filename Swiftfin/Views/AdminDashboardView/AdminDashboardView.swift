@@ -15,9 +15,9 @@ struct AdminDashboardView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         List {
-
             ListTitleSection(
                 L10n.dashboard,
                 description: L10n.dashboardDescription
@@ -40,7 +40,6 @@ struct AdminDashboardView: View {
             }
 
             Section(L10n.advanced) {
-
                 ChevronButton(L10n.apiKeys) {
                     router.route(to: .apiKeys)
                 }
@@ -51,6 +50,10 @@ struct AdminDashboardView: View {
 
                 ChevronButton(L10n.logs) {
                     router.route(to: .serverLogs)
+                }
+
+                ChevronButton(L10n.plugins) {
+                    router.route(to: .plugins)
                 }
 
                 ChevronButton(L10n.tasks) {

@@ -14,15 +14,27 @@ extension NavigationRoute {
 
     static func actionBarButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
         NavigationRoute(id: "actionBarButtonSelector") {
-            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: VideoPlayerActionButton.allCases)
-                .navigationTitle(L10n.barButtons.localizedCapitalized)
+            OrderedSectionSelectorView(
+                selection: selectedButtonsBinding.map(
+                    getter: { $0.filter { VideoPlayerActionButton.supportedCases.contains($0) } },
+                    setter: { $0 + selectedButtonsBinding.wrappedValue.subtracting(VideoPlayerActionButton.supportedCases) }
+                ),
+                sources: VideoPlayerActionButton.supportedCases
+            )
+            .navigationTitle(L10n.barButtons.localizedCapitalized)
         }
     }
 
     static func actionMenuButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
         NavigationRoute(id: "actionMenuButtonSelector") {
-            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: VideoPlayerActionButton.allCases)
-                .navigationTitle(L10n.menuButtons.localizedCapitalized)
+            OrderedSectionSelectorView(
+                selection: selectedButtonsBinding.map(
+                    getter: { $0.filter { VideoPlayerActionButton.supportedCases.contains($0) } },
+                    setter: { $0 + selectedButtonsBinding.wrappedValue.subtracting(VideoPlayerActionButton.supportedCases) }
+                ),
+                sources: VideoPlayerActionButton.supportedCases
+            )
+            .navigationTitle(L10n.menuButtons.localizedCapitalized)
         }
     }
 
@@ -40,12 +52,12 @@ extension NavigationRoute {
         }
     }
 
-    static func supplementSelector(selectedSupplementsBinding: Binding<[VideoPlayerSupplement]>) -> NavigationRoute {
+    static func supplementSelector(selectedSupplementsBinding: Binding<[VideoPlayerSupplementType]>) -> NavigationRoute {
         NavigationRoute(id: "supplementSelector") {
             OrderedSectionSelectorView(
                 selection: selectedSupplementsBinding,
-                sources: VideoPlayerSupplement.allCases,
-                removable: VideoPlayerSupplement.allCases.subtracting(VideoPlayerSupplement.supportedCases)
+                sources: VideoPlayerSupplementType.allCases,
+                removable: VideoPlayerSupplementType.allCases.subtracting(VideoPlayerSupplementType.supportedCases)
             )
             .navigationTitle(L10n.supplements.localizedCapitalized)
         }
@@ -167,12 +179,6 @@ extension NavigationRoute {
             id: "experimentalSettings"
         ) {
             ExperimentalSettingsView()
-        }
-    }
-
-    static func fontPicker(selection: Binding<String>) -> NavigationRoute {
-        NavigationRoute(id: "fontPicker") {
-            FontPickerView(selection: selection)
         }
     }
 

@@ -6,14 +6,13 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Mantis
 import SwiftUI
 
 struct PhotoCropView: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @StateObject
     private var coordinator: _PhotoCropView.Coordinator = .init()
@@ -34,6 +33,7 @@ struct PhotoCropView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         _PhotoCropView(
             initialImage: image,
@@ -48,7 +48,7 @@ struct PhotoCropView: View {
                 Button(L10n.rotate, systemImage: "rotate.right") {
                     coordinator.rotate()
                 }
-                .foregroundStyle(accentColor)
+                .foregroundStyle(theme.accentColor)
             }
 
             // TODO: make a style for crop labels

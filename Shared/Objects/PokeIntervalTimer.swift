@@ -27,13 +27,12 @@ class PokeIntervalTimer: ObservableObject, Publisher {
     }
 
     func poke(interval: TimeInterval? = nil) {
-
         let interval = interval ?? defaultInterval
 
         delayedWorkItem?.cancel()
 
-        let newPollItem = DispatchWorkItem {
-            self.delaySubject.send(())
+        let newPollItem = DispatchWorkItem { [weak self] in
+            self?.delaySubject.send(())
         }
 
         delayedWorkItem = newPollItem
@@ -43,5 +42,6 @@ class PokeIntervalTimer: ObservableObject, Publisher {
 
     func stop() {
         delayedWorkItem?.cancel()
+        delayedWorkItem = nil
     }
 }

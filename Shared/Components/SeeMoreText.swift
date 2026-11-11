@@ -40,7 +40,7 @@ struct SeeMoreText: View {
         self.isTruncatedBinding = isTruncated
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var seeMoreText: some View {
         Text(L10n.seeMore)
             .textCase(.uppercase)
@@ -48,6 +48,7 @@ struct SeeMoreText: View {
             .lineLimit(1, reservesSpace: false)
     }
 
+    @ContentBuilder
     var body: some View {
         text
             .trackingSize($layoutTextSize)

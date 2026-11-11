@@ -19,6 +19,7 @@ struct RemoteImageDetailView: View {
 
     let remoteImageInfo: RemoteImageInfo
 
+    @ContentBuilder
     var body: some View {
         List {
             Section {
@@ -107,6 +108,7 @@ struct RemoteImageDetailView: View {
             case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()
+
             case .deleted:
                 break
             }

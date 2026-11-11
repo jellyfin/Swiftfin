@@ -27,9 +27,7 @@ struct GenreComponentEditor: ItemComponentEditor {
 
     func adding(_ genres: [String], to item: BaseItemDto) -> BaseItemDto {
         var item = item
-        if item.genres == nil {
-            item.genres = []
-        }
+        item.genres ?= []
         item.genres?.append(contentsOf: genres)
         return item
     }
@@ -49,7 +47,7 @@ struct GenreComponentEditor: ItemComponentEditor {
     func search(_ searchTerm: String, userSession: UserSession) async throws -> [String] {
         let parameters = Paths.GetGenresParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getGenres(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await userSession.send(request)
 
         return response.value.items?.compactMap(\.name) ?? []
     }

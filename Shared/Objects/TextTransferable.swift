@@ -29,6 +29,7 @@ public extension TextTransferable {
     }
 
     #if os(iOS)
+    @ContentBuilder
     var shareLink: some View {
         ShareLink(
             item: self,
@@ -36,7 +37,8 @@ public extension TextTransferable {
         )
     }
 
-    func shareLink(@ViewBuilder label: () -> some View) -> some View {
+    @ContentBuilder
+    func shareLink(@ContentBuilder label: () -> some View) -> some View {
         ShareLink(
             item: self,
             preview: SharePreview(transferTitle),

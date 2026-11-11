@@ -31,9 +31,7 @@ struct StudioComponentEditor: ItemComponentEditor {
 
     func adding(_ studios: [NameIDPair], to item: BaseItemDto) -> BaseItemDto {
         var item = item
-        if item.studios == nil {
-            item.studios = []
-        }
+        item.studios ?= []
         item.studios?.append(contentsOf: studios)
         return item
     }
@@ -53,7 +51,7 @@ struct StudioComponentEditor: ItemComponentEditor {
     func search(_ searchTerm: String, userSession: UserSession) async throws -> [NameIDPair] {
         let parameters = Paths.GetStudiosParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getStudios(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await userSession.send(request)
 
         return response.value.items?.map { studio in
             NameIDPair(id: studio.id, name: studio.name)

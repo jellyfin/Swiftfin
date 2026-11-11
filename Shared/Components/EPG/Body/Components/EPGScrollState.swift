@@ -23,6 +23,7 @@ final class EPGScrollState {
 
     func update(visibleLeadingOffset: CGFloat) {
         guard abs(self.visibleLeadingOffset - visibleLeadingOffset) > 0.5 else { return }
+
         visibleLeadingOffsetSubject.send(visibleLeadingOffset)
     }
 }

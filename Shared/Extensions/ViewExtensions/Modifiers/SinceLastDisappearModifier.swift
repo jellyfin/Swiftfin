@@ -15,10 +15,12 @@ struct SinceLastDisappearModifier: ViewModifier {
 
     let action: (TimeInterval) -> Void
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .onAppear {
                 guard let lastDisappear else { return }
+
                 let interval = Date.now.timeIntervalSince(lastDisappear)
                 action(interval)
             }

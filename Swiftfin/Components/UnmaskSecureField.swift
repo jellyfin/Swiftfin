@@ -29,7 +29,6 @@ struct _UnmaskSecureField: PlatformViewRepresentable {
     }
 
     func makeUIView(context: Context) -> UITextField {
-
         let textField = UITextField()
         textField.font = context.environment.font?.uiFont ?? UIFont.preferredFont(forTextStyle: .body)
         textField.adjustsFontForContentSizeCategory = true
@@ -96,6 +95,7 @@ struct _UnmaskSecureField: PlatformViewRepresentable {
         @objc
         func buttonPressed() {
             guard let textField else { return }
+
             textField.toggleSecureEntry()
 
             let eye = textField.isSecureTextEntry ? "eye.fill" : "eye.slash"
@@ -105,6 +105,7 @@ struct _UnmaskSecureField: PlatformViewRepresentable {
         @objc
         func textDidChange() {
             guard let textField, let text = textField.text else { return }
+
             button?.isEnabled = !text.isEmpty
             textBinding.wrappedValue = text
         }
@@ -118,6 +119,7 @@ struct _UnmaskSecureField: PlatformViewRepresentable {
 
 extension _UnmaskSecureField {
 
+    @ContentBuilder
     func onSubmit(_ action: @escaping () -> Void) -> some View {
         copy(modifying: \.submitAction, with: action)
     }
@@ -125,9 +127,8 @@ extension _UnmaskSecureField {
 
 private extension UITextField {
 
-    // https://stackoverflow.com/a/48115361
+    /// https://stackoverflow.com/a/48115361
     func toggleSecureEntry() {
-
         isSecureTextEntry.toggle()
 
         if let existingText = text, isSecureTextEntry {

@@ -14,10 +14,16 @@ import SwiftUI
 
 struct SelectUserView: View {
 
+    enum Focus: String {
+
+        case focusedUserButton
+    }
+
     typealias UserItem = (user: UserState, server: ServerState)
 
-    @Default(.accentColor)
-    private var accentColor
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.selectUserUseSplashscreen)
     private var selectUserUseSplashscreen
     @Default(.selectUserAllServersSplashscreen)
@@ -31,8 +37,6 @@ struct SelectUserView: View {
 
     @Environment(\.localUserAuthenticationAction)
     private var authenticationAction
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass
 
     @Injected(\.userSessionManager)
     private var userSessionManager: UserSessionManager
@@ -47,6 +51,8 @@ struct SelectUserView: View {
     @State
     private var isPresentingConfirmDeleteUsers = false
 
+    @StateObject
+    private var focusCoordinator = FocusCoordinator(waitingFor: Focus.focusedUserButton.rawValue)
     @StateObject
     private var viewModel = SelectUserViewModel()
 
@@ -72,7 +78,6 @@ struct SelectUserView: View {
             viewModel
                 .servers
                 .keys
-                .shuffled()
                 .map(\.splashScreenImageSource)
 
         case let (.server(id), _), let (.all, .server(id)):
@@ -93,10 +98,12 @@ struct SelectUserView: View {
                         users.map { UserItem(user: $0, server: server) }
                     }
                     .flattened()
+
             case let .server(id: id):
                 guard let server = viewModel.servers.keys.first(where: { $0.id == id }) else {
                     return []
                 }
+
                 return viewModel.servers[server]!
                     .map { UserItem(user: $0, server: server) }
             }
@@ -110,6 +117,7 @@ struct SelectUserView: View {
                 items.sorted { lhs, rhs in
                     let lhsDate = lhs.user.data.lastActivityDate ?? .distantPast
                     let rhsDate = rhs.user.data.lastActivityDate ?? .distantPast
+
                     return lhsDate < rhsDate
                 }
             }
@@ -128,7 +136,6 @@ struct SelectUserView: View {
 
     private func select(user: UserState) {
         Task { @MainActor in
-
             do {
                 guard let authenticationAction else { return }
 
@@ -136,6 +143,7 @@ struct SelectUserView: View {
                     policy: user.accessPolicy,
                     reason: user.accessPolicy.authenticateReason(user: user)
                 )
+
                 let pin = (evaluatedPolicy as? PinEvaluatedUserAccessPolicy)?.pin ?? ""
 
                 await viewModel.signIn(user, pin: pin)
@@ -147,25 +155,30 @@ struct SelectUserView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var splashScreenBackground: some View {
-        if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
-            AlternateLayoutView {
-                Color.clear
-            } content: {
-                ImageView(splashScreenImageSources)
+        let sources = splashScreenImageSources
+
+        if selectUserUseSplashscreen, sources.isNotEmpty {
+            GeometryReader { geometry in
+                ImageView(sources.shuffled())
                     .pipeline(.Swiftfin.local)
-                    .aspectRatio(contentMode: .fill)
-                    .id(splashScreenImageSources)
+                    .image { image in
+                        image.scaledToFill()
+                    }
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .clipped()
+                    .overlay {
+                        Color.black.opacity(0.9)
+                    }
+                    .id(sources)
             }
-            .overlay {
-                Color.black
-                    .opacity(0.9)
-            }
+            .ignoresSafeArea(.container)
+            .accessibilityHidden(true)
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -200,6 +213,7 @@ struct SelectUserView: View {
                             action: { select(user: $0) },
                             onDelete: { delete(user: $0) }
                         )
+
                     case .grid:
                         GridView(
                             userItems: userItems,
@@ -215,10 +229,10 @@ struct SelectUserView: View {
             .animation(.linear(duration: 0.1), value: userListDisplayType)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .focusSection()
+            #if os(tvOS)
             .mask {
                 VStack(spacing: 0) {
-                    #if os(tvOS)
-                    if userListDisplayType == .list {
+                    if viewLayout.isLarge, userListDisplayType == .list {
                         LinearGradient(
                             stops: [
                                 .init(color: .clear, location: 0),
@@ -229,7 +243,6 @@ struct SelectUserView: View {
                         )
                         .frame(height: 30)
                     }
-                    #endif
 
                     Color.white
 
@@ -245,33 +258,58 @@ struct SelectUserView: View {
                 }
                 .ignoresSafeArea(.all, edges: .horizontal)
             }
+            #endif
 
-            Toolbar(
-                servers: viewModel.servers.keys,
-                allUsers: userItems,
-                isEditing: $isEditing,
-                selectedUsers: $selectedUsers,
-                onDelete: {
-                    isPresentingConfirmDeleteUsers = true
-                }
-            )
-            .focusSection()
+            #if os(tvOS)
+            userToolbar
+            #endif
         }
+        #if os(iOS)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+                userToolbar
+            }
+        #endif
     }
 
+    @ContentBuilder
+    private var userToolbar: some View {
+        Toolbar(
+            servers: viewModel.servers.keys,
+            allUsers: userItems,
+            isEditing: $isEditing,
+            selectedUsers: $selectedUsers,
+            onDelete: {
+                isPresentingConfirmDeleteUsers = true
+            }
+        )
+        .focusSection()
+        #if os(tvOS)
+        .coordinatedFocus(.secondary)
+        #endif
+    }
+
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .initial, .loading:
                 ProgressView()
+                    #if os(tvOS)
+                        .coordinatedFocus(.placeholder)
+                    #endif
+
             case .content:
                 if viewModel.servers.isEmpty {
                     ConnectToJellyfinView()
+                        #if os(tvOS)
+                            .coordinatedFocus(.fallback)
+                        #endif
                 } else {
                     contentView
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .animation(.linear(duration: 0.1), value: selectedServer)
         .withViewContext(.isOverComplexContent)
@@ -279,16 +317,25 @@ struct SelectUserView: View {
         .onFirstAppear {
             viewModel.getServers()
         }
+        .onReceive(userSessionManager.$reauthenticationRequest) { request in
+            guard request != nil else { return }
+
+            Task { @MainActor in
+                guard let request = userSessionManager.consumeReauthenticationRequest() else { return }
+
+                router.route(to: .userSignIn(server: request.server, user: request.user))
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Image(.jellyfinBlobBlue)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: UIDevice.isTV ? 100 : 30)
+                    .frame(width: viewLayout.value(standard: 30, large: 100))
             }
 
             #if os(iOS)
-            if horizontalSizeClass == .compact {
+            if viewLayout.isCompact {
                 ToolbarItem(placement: .topBarLeading) {
                     if isEditing {
                         Button(
@@ -356,20 +403,20 @@ struct SelectUserView: View {
         }
         .background {
             splashScreenBackground
-                .ignoresSafeArea()
         }
         #if os(iOS)
         .ignoresSafeArea(.keyboard, edges: .bottom)
         #endif
         .onChange(of: isEditing) {
             guard !isEditing, !isPresentingConfirmDeleteUsers else { return }
+
             selectedUsers.removeAll()
         }
         .onChange(of: viewModel.servers.keys) {
             let newValue = viewModel.servers.keys
+
             if case let SelectUserServerSelection.server(id: id) = serverSelection,
-               !newValue.contains(where: { $0.id == id })
-            {
+               !newValue.contains(where: { $0.id == id }) {
                 if newValue.count == 1, let firstServer = newValue.first {
                     let newSelection = SelectUserServerSelection.server(id: firstServer.id)
                     serverSelection = newSelection
@@ -379,10 +426,6 @@ struct SelectUserView: View {
                     selectUserAllServersSplashscreen = .all
                 }
             }
-        }
-        .onReceive(viewModel.$error) { error in
-            guard error != nil else { return }
-            UIDevice.feedback(.error)
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -395,6 +438,9 @@ struct SelectUserView: View {
                         await viewModel.error(error)
                     }
                 }
+
+            case .error:
+                UIDevice.feedback(.error)
             }
         }
         .onNotification(.didConnectToServer) { server in
@@ -425,5 +471,6 @@ struct SelectUserView: View {
             }
         }
         .errorMessage($viewModel.error)
+        .environmentObject(focusCoordinator)
     }
 }

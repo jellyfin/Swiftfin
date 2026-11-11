@@ -11,6 +11,9 @@ import SwiftUI
 
 struct SearchView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.Customization.Search.enabledDrawerFilters)
     private var enabledDrawerFilters
 
@@ -33,7 +36,7 @@ struct SearchView: View {
     @TabItemSelected
     private var tabItemSelected
 
-    @ViewBuilder
+    @ContentBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions) { item in
@@ -46,8 +49,10 @@ struct SearchView: View {
                 #endif
             }
         }
+        .multilineTextAlignment(.center)
     }
 
+    @ContentBuilder
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -67,7 +72,7 @@ struct SearchView: View {
                             (viewModel.filterViewModel.hasActiveFilters ? [.reset] : [])
                     )
                     .edgePadding(.horizontal)
-                    .padding(.vertical, EdgeInsets.itemSpacing)
+                    .padding(.vertical, viewLayout.itemSpacing)
                 }
                 #endif
 
@@ -75,6 +80,7 @@ struct SearchView: View {
                     switch viewModel.state {
                     case .error:
                         viewModel.error.map(ErrorView.init)
+
                     case .initial:
                         if viewModel.canSearch {
                             if viewModel.isEmpty {
@@ -87,6 +93,7 @@ struct SearchView: View {
                         } else {
                             suggestionsView
                         }
+
                     case .searching:
                         ProgressView()
                     }
@@ -95,7 +102,8 @@ struct SearchView: View {
                 .focusSection()
             }
         }
-        .ignoresSafeArea(edges: .horizontal)
+        .ignoresSafeArea(edges: viewLayout.scrollContentEdges(extendsTop: false))
+        .defaultScrollAnchor(viewModel.canSearch ? .top : .center, for: .alignment)
         .scrollIndicators(.hidden)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard)

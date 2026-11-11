@@ -23,7 +23,7 @@ struct UserProfileImage: View {
     var pipeline: ImagePipeline = .Swiftfin.posters
 
     private var overlayOpacity: Double {
-        /// Dim the Profile Image if Editing & Unselected or if Disabled
+        // Dim the Profile Image if Editing & Unselected or if Disabled
         if (isEditing && !isSelected) || !isEnabled {
             0.5
         } else {
@@ -31,42 +31,37 @@ struct UserProfileImage: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             Rectangle()
                 .fill(.complexSecondary)
 
-            RedrawOnNotificationView(
-                .didChangeUserProfile,
-                filter: {
-                    $0 == userID
-                }
-            ) {
-                AlternateLayoutView {
-                    Color.clear
-                } content: {
-                    ImageView(source)
-                        .pipeline(pipeline)
-                        .image { image in
-                            image.aspectRatio(contentMode: .fill)
-                        }
-                        .placeholder { _ in
-                            SystemImageContentView(
-                                systemName: "person.fill",
-                                ratio: 0.5
-                            )
-                        }
-                        .failure {
-                            SystemImageContentView(
-                                systemName: "person.fill",
-                                ratio: 0.5
-                            )
-                        }
-                        .overlay {
-                            Color.black
-                                .opacity(overlayOpacity)
-                        }
-                }
+            AlternateLayoutView {
+                Color.clear
+            } content: {
+                ImageView(source)
+                    .pipeline(pipeline)
+                    .image { image in
+                        image.aspectRatio(contentMode: .fill)
+                    }
+                    .placeholder { _ in
+                        SystemImageContentView(
+                            systemName: "person.fill",
+                            ratio: 0.5
+                        )
+                    }
+                    .failure {
+                        SystemImageContentView(
+                            systemName: "person.fill",
+                            ratio: 0.5
+                        )
+                    }
+                    .overlay {
+                        Color.black
+                            .opacity(overlayOpacity)
+                    }
+                    .id(source.url)
             }
         }
         .posterBorder()

@@ -35,6 +35,7 @@ extension EditMetadataView {
 
         // MARK: - Body
 
+        @ContentBuilder
         var body: some View {
             if showTaglines {
                 // There doesn't seem to be a usage anywhere of more than 1 tagline?

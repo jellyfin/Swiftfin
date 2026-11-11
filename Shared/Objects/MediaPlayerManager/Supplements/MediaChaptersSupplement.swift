@@ -9,75 +9,66 @@
 import JellyfinAPI
 import SwiftUI
 
-class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
+@MainActor
+struct MediaChaptersSupplement {
 
-    let chapters: [ChapterInfo.FullInfo]
     let displayTitle: String = L10n.chapters
     let id: String
-
-    @Published
-    var activeChapterID: ChapterInfo.FullInfo.ID?
-
-    init(chapters: [ChapterInfo.FullInfo]) {
-        self.chapters = chapters
-        self.id = "Chapters-\(chapters.hashValue)"
-    }
+    let chapters: [ChapterInfo.FullInfo]
 
     func chapterID(at seconds: Duration) -> ChapterInfo.FullInfo.ID? {
-        guard let nextIndex = chapters.firstIndex(where: {
-            guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
-            return startSeconds > seconds
-        }) else {
-            return chapters.last?.id
-        }
-        return chapters[safe: max(0, nextIndex - 1)]?.id
+        let started = chapters.split(after: seconds, sortedBy: \.startSeconds).atOrBefore
+        return (started.last ?? chapters.first)?.id
     }
 
-    var videoPlayerBody: some PlatformView {
-        ChapterOverlay(supplement: self)
+    func nextChapterStart(after seconds: Duration) -> Duration? {
+        chapters.split(after: seconds, sortedBy: \.startSeconds).after.first?.startSeconds
+    }
+
+    func previousChapterStart(before seconds: Duration) -> Duration? {
+        let started = chapters.split(after: seconds, sortedBy: \.startSeconds).atOrBefore
+        guard let current = started.last else { return chapters.first?.startSeconds }
+
+        // Restart the current chapter once playback is more than three seconds into it.
+        if seconds - current.startSeconds > .seconds(3) {
+            return current.startSeconds
+        }
+
+        return started.dropLast().last?.startSeconds ?? current.startSeconds
     }
 }
 
-extension MediaChaptersSupplement {
+extension MediaChaptersSupplement: VideoPlayerSupplement {
 
-    private struct ChapterOverlay: PlatformView {
+    @ContentBuilder
+    var body: some View {
+        ChapterOverlay(supplement: self)
+    }
+
+    private struct ChapterOverlay: View {
 
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
-        @ObservedObject
         var supplement: MediaChaptersSupplement
 
         private func select(chapter: ChapterInfo.FullInfo) {
             guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
-            manager.proxy?.setSeconds(startSeconds)
-            manager.setPlaybackRequestStatus(status: .playing)
+
+            mediaSession.seek(to: startSeconds)
+            mediaSession.setPlaybackRequestStatus(status: .playing)
         }
 
-        @ViewBuilder
-        private var content: some View {
+        @ContentBuilder
+        var body: some View {
             VideoPlayer.PosterCollectionView(
                 data: supplement.chapters,
-                currentElementID: supplement.activeChapterID,
+                currentElementID: supplement.chapterID(at: mediaSession.seconds),
                 isCompact: viewState.isCompact,
                 action: select
             )
-            .onReceive(manager.secondsBox.$value) { seconds in
-                let newID = supplement.chapterID(at: seconds)
-                if newID != supplement.activeChapterID {
-                    supplement.activeChapterID = newID
-                }
-            }
-        }
-
-        var iOSView: some View {
-            content
-        }
-
-        var tvOSView: some View {
-            content
         }
     }
 }

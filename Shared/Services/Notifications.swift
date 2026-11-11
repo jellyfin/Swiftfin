@@ -14,6 +14,7 @@ import JellyfinAPI
 import UIKit
 
 extension Container {
+
     var notificationCenter: Factory<NotificationCenter> {
         self { NotificationCenter.default }.singleton
     }
@@ -24,6 +25,7 @@ enum Notifications {
     typealias Keys = _AnyKey
 
     class _AnyKey {
+
         typealias Key = Notifications.Key
     }
 
@@ -39,6 +41,7 @@ enum Notifications {
             if let payload = userInfo["payload"] as? Payload {
                 return payload
             }
+
             return nil
         }
 
@@ -113,35 +116,8 @@ extension Notifications.Key {
         Key("didChangeServerConnection")
     }
 
-    static var didSendStopReport: Key<Void> {
-        Key("didSendStopReport")
-    }
-
     static var didRequestGlobalRefresh: Key<Void> {
         Key("didRequestGlobalRefresh")
-    }
-
-    // MARK: - Media Items
-
-    // TODO: come up with a cleaner, more defined way for item update notifications
-
-    static var itemUserDataDidChange: Key<UserItemDataDto> {
-        Key("itemUserDataDidChange")
-    }
-
-    /// - Payload: The new item with updated metadata.
-    static var itemMetadataDidChange: Key<BaseItemDto> {
-        Key("itemMetadataDidChange")
-    }
-
-    /// - Payload: The ID of the item that should refresh
-    static var itemShouldRefreshMetadata: Key<String> {
-        Key("itemShouldRefresh")
-    }
-
-    /// - Payload: The ID of the deleted item.
-    static var didDeleteItem: Key<String> {
-        Key("didDeleteItem")
     }
 
     static var recordingTimersDidChange: Key<Void> {
@@ -159,11 +135,6 @@ extension Notifications.Key {
     }
 
     // MARK: - User
-
-    /// - Payload: The ID of the user whose Profile Image changed.
-    static var didChangeUserProfile: Key<String> {
-        Key("didChangeUserProfile")
-    }
 
     static var didAddServerUser: Key<UserDto> {
         Key("didAddServerUser")
@@ -188,6 +159,10 @@ extension Notifications.Key {
     }
 
     // MARK: - UIApplication
+
+    static var applicationDidBecomeActive: Key<Void> {
+        Key(UIApplication.didBecomeActiveNotification)
+    }
 
     static var applicationDidEnterBackground: Key<Void> {
         Key(UIApplication.didEnterBackgroundNotification)
@@ -220,10 +195,17 @@ extension Notifications.Key {
             else {
                 return nil
             }
+
             let options = (userInfo[AVAudioSessionInterruptionOptionKey] as? UInt)
                 .map(AVAudioSession.InterruptionOptions.init(rawValue:)) ?? []
 
             return (type, options)
+        }
+    }
+
+    static var avAudioSessionRouteChange: Key<AVAudioSession.RouteChangeReason> {
+        Key(AVAudioSession.routeChangeNotification) { userInfo in
+            (userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt).flatMap(AVAudioSession.RouteChangeReason.init(rawValue:))
         }
     }
 }

@@ -15,15 +15,16 @@ import Nuke
 //       host and only use path + query which has ids and tags
 
 extension DataCache {
+
     enum Swiftfin {}
 }
 
 extension DataCache.Swiftfin {
 
     static let posters: DataCache? = {
-
         let dataCache = try? DataCache(name: "org.jellyfin.swiftfin/Posters") { name in
             guard let url = name.url else { return nil }
+
             return ImagePipeline.cacheKey(for: url)
         }
 
@@ -42,18 +43,15 @@ extension DataCache.Swiftfin {
         let path = root.appendingPathComponent("Caches/org.jellyfin.swiftfin.local", isDirectory: true)
 
         return try? DataCache(path: path) { name in
-
             guard let url = name.url else { return nil }
 
             // Since multi-url servers are supported, key splashscreens with the server ID.
             if url.path.contains("Splashscreen") {
-
                 // Account for hosting at a path
-                guard let prefixURL = url.absoluteString.trimmingSuffix("/Branding/Splashscreen?").url else { return nil }
-
-                guard let server = StoredValues[.Server.servers].first(
-                    where: { $0.hasServerConnection(url: prefixURL) }
-                ) else { return nil }
+                guard let prefixURL = url.absoluteString.trimmingSuffix("/Branding/Splashscreen?").url,
+                      let server = StoredValues[.Server.servers].first(
+                          where: { $0.hasServerConnection(url: prefixURL) }
+                      ) else { return nil }
 
                 return "\(server.id)-splashscreen".sha1
             } else {

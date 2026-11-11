@@ -18,7 +18,7 @@ struct ServerTasksView: View {
     @StateObject
     private var viewModel = ServerTasksViewModel()
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -56,7 +56,7 @@ struct ServerTasksView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func destructiveServerTask(
         title: String,
         systemName: String,
@@ -88,15 +88,18 @@ struct ServerTasksView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
                 contentView
+
             case .error:
                 viewModel.error.map {
                     ErrorView(error: $0)
                 }
+
             case .initial:
                 ProgressView()
             }

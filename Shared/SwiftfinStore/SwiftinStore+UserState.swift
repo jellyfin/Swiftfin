@@ -11,12 +11,12 @@ import FactoryKit
 import Foundation
 import JellyfinAPI
 import KeychainSwift
-import Pulse
 import UIKit
 
 extension SwiftfinStore.State {
 
     struct User: Hashable, Identifiable, Codable {
+
         let id: String
         let serverID: String
         let username: String
@@ -41,6 +41,7 @@ extension UserState {
         }
     }
 
+    /// Persisted profile for signed-out user selection. Active sessions use `UserSession.userData`.
     var data: UserDto {
         get {
             StoredValues[.User.data(id: id)]
@@ -119,27 +120,13 @@ extension UserState {
         UserDefaults.userSuite(id: id).removeAll()
     }
 
-    /// Must pass the server to create a JellyfinClient
-    /// with an access token
-    func getUserData(server: ServerState) async throws -> UserDto {
-        let client = JellyfinClient(
-            configuration: .swiftfinConfiguration(url: server.effectiveServerURL, accessToken: accessToken),
-            sessionConfiguration: .swiftfin,
-            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
-        )
-
-        let request = Paths.getCurrentUser
-        let response = try await client.send(request)
-
-        return response.value
-    }
-
     @MainActor
-    func updateUserData(server: ServerState) async throws {
-        let users = StoredValues[.User.users]
-        guard let currentUser = users.first(where: { $0.id == id }) else { return }
+    func updateUserData(_ userData: UserDto) {
+        guard userData.id == id else { return }
 
-        let userData = try await getUserData(server: server)
+        let users = StoredValues[.User.users]
+        guard let currentUser = users.first(where: { $0.id == id && $0.serverID == serverID }) else { return }
+
         let updatedUsername = userData.name ?? currentUser.username
 
         let updatedUser = UserState(
@@ -148,8 +135,12 @@ extension UserState {
             username: updatedUsername
         )
 
-        StoredValues[.User.users] = users.map { $0.id == id ? updatedUser : $0 }
-        StoredValues[.User.data(id: currentUser.id)] = userData
+        if updatedUser != currentUser {
+            StoredValues[.User.users] = users.map { $0 == currentUser ? updatedUser : $0 }
+        }
+        if data != userData {
+            data = userData
+        }
     }
 
     func profileImageSource(

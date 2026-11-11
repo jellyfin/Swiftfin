@@ -37,18 +37,21 @@ struct BackportGlass {
         var copy = self
         copy.tint = tint
         copy.selectionAppearance = nil
+
         return copy
     }
 
     func shadow(_ isEnabled: Bool = true) -> Self {
         var copy = self
         copy.drawsLegacyShadow = isEnabled
+
         return copy
     }
 
     func interactive(_ isInteractive: Bool = true) -> Self {
         var copy = self
         copy.isInteractive = isInteractive
+
         return copy
     }
 
@@ -58,9 +61,11 @@ struct BackportGlass {
     ) -> Self {
         var copy = self
         copy.tint = tint
+
         copy.selectionAppearance = SelectionAppearance(
             foregroundColor: foregroundColor
         )
+
         return copy
     }
 }
@@ -77,7 +82,7 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
         Color.gray.opacity(0.3)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func body(content: Content) -> some View {
         if glass.selectionAppearance != nil {
             appearanceBody(
@@ -90,12 +95,13 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
         }
     }
 
+    @ContentBuilder
     private func appearanceBody(_ content: some View) -> some View {
         platformAppearanceBody(content)
             .contentShape(shape)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func platformAppearanceBody(_ content: some View) -> some View {
         if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
             glassBody(content)
@@ -122,7 +128,7 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
         return AnyShapeStyle(selectionAppearance.foregroundColor)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var legacyBackground: some View {
         if glass.isVisible {
             if let resolvedTint {
@@ -143,7 +149,7 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var appearanceBorder: some View {
         if glass.isVisible {
             shape
@@ -152,6 +158,7 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
         }
     }
 
+    @ContentBuilder
     private func legacyContent(_ content: some View) -> some View {
         content
             .background {
@@ -164,7 +171,7 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
             }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func legacyBody(_ content: some View) -> some View {
         if glass.isVisible, glass.drawsLegacyShadow {
             legacyContent(content)
@@ -175,7 +182,7 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
     }
 
     @available(iOS 26.0, tvOS 26.0, *)
-    @ViewBuilder
+    @ContentBuilder
     private func glassBody(_ content: some View) -> some View {
         if glass.isVisible {
             content

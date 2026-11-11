@@ -15,6 +15,7 @@ import os
 final class ServerSocketManager {
 
     private struct Claim {
+
         let subscription: JellyfinSocket.Subscription
         let delay: Duration
         let interval: Duration
@@ -22,6 +23,7 @@ final class ServerSocketManager {
     }
 
     private struct State {
+
         var session: JellyfinSocket.Session?
         var claims: [UUID: Claim] = [:]
         var reconnectRequested = false
@@ -57,6 +59,7 @@ final class ServerSocketManager {
 
     private func start() {
         stop()
+
         tasks = [
             Task { [weak self] in await self?.runConnection() },
             Task { [weak self] in await self?.observeServerConnectionChange() },
@@ -86,6 +89,7 @@ final class ServerSocketManager {
 
         let session = state.withLock { state -> JellyfinSocket.Session? in
             state.claims[id] = Claim(subscription: subscription, delay: delay, interval: interval)
+
             return state.session
         }
 
@@ -114,7 +118,10 @@ final class ServerSocketManager {
         while !Task.isCancelled {
             guard let userSession else { break }
 
-            let session = userSession.client.socket(
+            let client = await userSession.client
+            guard !Task.isCancelled else { break }
+
+            let session = client.socket(
                 supportsMediaControl: true,
                 supportedCommands: [
                     .displayContent,
@@ -132,6 +139,7 @@ final class ServerSocketManager {
 
             let claims = state.withLock { state in
                 state.session = session
+
                 return state.claims
             }
 
@@ -154,21 +162,24 @@ final class ServerSocketManager {
                     switch event {
                     case .connecting:
                         logger.debug("Socket retrying...")
+
                     case let .connected(url):
                         logger.info("Socket connected", metadata: ["url": .stringConvertible(url)])
                         isConnected.send(true)
+
                     case .disconnected:
                         logger.info("Socket disconnected")
                         isConnected.send(false)
+
                     case let .message(message):
                         logger.debug("Socket message", metadata: ["message": .string("\(message)")])
                     }
+
                     allEvents.send(event)
                 }
             } catch {
                 if let socketError = error as? JellyfinSocket.Session.SocketError,
-                   case .unauthorized = socketError
-                {
+                   case .unauthorized = socketError {
                     wasRefused = true
                 }
 
@@ -178,6 +189,7 @@ final class ServerSocketManager {
             let (hasClaims, explicit) = state.withLock { state -> (Bool, Bool) in
                 state.session = nil
                 defer { state.reconnectRequested = false }
+
                 return (state.claims.isNotEmpty, state.reconnectRequested)
             }
 
@@ -227,6 +239,7 @@ extension ServerSocketManager {
     var generalCommands: AnyPublisher<GeneralCommand, Never> {
         commands { event in
             guard case let .message(.generalCommandMessage(message)) = event else { return nil }
+
             return message.data
         }
     }
@@ -234,6 +247,7 @@ extension ServerSocketManager {
     var playCommands: AnyPublisher<PlayRequest, Never> {
         commands { event in
             guard case let .message(.playMessage(message)) = event else { return nil }
+
             return message.data
         }
     }
@@ -241,6 +255,7 @@ extension ServerSocketManager {
     var playstateCommands: AnyPublisher<PlaystateRequest, Never> {
         commands { event in
             guard case let .message(.playstateMessage(message)) = event else { return nil }
+
             return message.data
         }
     }
@@ -265,6 +280,7 @@ extension ServerSocketManager {
     ) -> AnyPublisher<[SessionInfoDto], Never> {
         publisher(for: .sessions, delay: delay, interval: interval) { event in
             guard case let .message(.sessionsMessage(message)) = event else { return nil }
+
             return message.data
         }
     }
@@ -275,6 +291,7 @@ extension ServerSocketManager {
     ) -> AnyPublisher<[ActivityLogEntry], Never> {
         publisher(for: .activityLog, delay: delay, interval: interval) { event in
             guard case let .message(.activityLogEntryMessage(message)) = event else { return nil }
+
             return message.data
         }
     }
@@ -285,6 +302,7 @@ extension ServerSocketManager {
     ) -> AnyPublisher<[TaskInfo], Never> {
         publisher(for: .scheduledTasks, delay: delay, interval: interval) { event in
             guard case let .message(.scheduledTasksInfoMessage(message)) = event else { return nil }
+
             return message.data
         }
     }

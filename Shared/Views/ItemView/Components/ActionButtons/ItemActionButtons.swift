@@ -11,13 +11,16 @@ import SwiftUI
 
 private struct ItemActionButtonLabelStyle: LabelStyle {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Environment(\.isSelected)
     private var isSelected
 
     var activeColor: Color?
 
     private var iconSize: CGFloat {
-        UIDevice.isTV ? 40 : 24
+        viewLayout.value(standard: 24, large: 40)
     }
 
     private var tint: Color {
@@ -36,12 +39,13 @@ private struct ItemActionButtonLabelStyle: LabelStyle {
         return activeColor.overlayColor
     }
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         Label(configuration)
             .labelStyle(.iconOnly)
-            .font(UIDevice.isTV ? .system(size: 30) : .title3)
+            .font(.system(size: viewLayout.value(standard: 20, large: 30)))
             .frame(width: iconSize, height: iconSize)
-            .padding(UIDevice.isTV ? 16 : 8)
+            .padding(viewLayout.value(standard: 8, large: 16))
             .frame(minWidth: 0, maxWidth: .infinity, maxHeight: .infinity)
             .backport
             .glassEffect(
@@ -55,6 +59,9 @@ private struct ItemActionButtonLabelStyle: LabelStyle {
 }
 
 struct ItemActionButtons: View {
+
+    @AdaptiveLayout
+    private var viewLayout
 
     static let maximumButtons = 4
 
@@ -94,7 +101,9 @@ struct ItemActionButtons: View {
         case .trailers:
             hasTrailers(for: provider, enabledTrailers: enabledTrailers)
         case .playback:
-            provider.item.presentPlayButton && provider.mediaPlayerItemProvider?.mediaSource != nil
+            provider.item.presentPlayButton && provider.playbackIntent?.mediaSource != nil
+        case .shuffle:
+            provider.item.canShuffle
         case .record:
             provider.item.canBeRecorded
         case .refresh:
@@ -129,7 +138,7 @@ struct ItemActionButtons: View {
         let bar = availableButtons(bar, for: provider, enabledTrailers: enabledTrailers)
         let menu = availableButtons(menu, for: provider, enabledTrailers: enabledTrailers)
 
-        let hasBarMenu = UIDevice.isTV && (menu.isNotEmpty || bar.count > maximumButtons)
+        let hasBarMenu = ViewLayout.platformDefault.isLarge && (menu.isNotEmpty || bar.count > maximumButtons)
         let visible = Array(bar.prefix(hasBarMenu ? maximumButtons - 1 : maximumButtons))
         let overflow = Array(bar.dropFirst(visible.count))
 
@@ -140,7 +149,7 @@ struct ItemActionButtons: View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     static func view(for button: ItemActionButton) -> some View {
         Group {
             switch button {
@@ -152,6 +161,8 @@ struct ItemActionButtons: View {
                 Trailers()
             case .playback:
                 Playback()
+            case .shuffle:
+                Shuffle()
             case .record:
                 Record()
             case .refresh:
@@ -170,11 +181,12 @@ struct ItemActionButtons: View {
         .foregroundStyle(.primary, .secondary)
     }
 
+    @ContentBuilder
     var body: some View {
-        let hasBarMenu = UIDevice.isTV && (overflowButtons.isNotEmpty || menuButtons.isNotEmpty)
+        let hasBarMenu = viewLayout.isLarge && (overflowButtons.isNotEmpty || menuButtons.isNotEmpty)
 
         if buttons.isNotEmpty || hasBarMenu {
-            HStack(alignment: .center, spacing: UIDevice.isTV ? 24 : 8) {
+            HStack(alignment: .center, spacing: viewLayout.value(standard: 8, large: 24)) {
                 ForEach(buttons) { button in
                     Self.view(for: button)
                         .labelStyle(ItemActionButtonLabelStyle(activeColor: button.activeColor))
@@ -198,7 +210,7 @@ struct ItemActionButtons: View {
                     .focused(focusedButton, equals: ItemView.Component.menu)
                 }
             }
-            .frame(height: UIDevice.isTV ? 75 : 44)
+            .frame(height: viewLayout.controlHeight)
             .environmentObject(provider)
             .buttonBorderShape(.capsule)
             .buttonStyle(BasicHoverButtonStyle())
@@ -240,6 +252,7 @@ extension ItemActionButtons {
         let buttons: [ItemActionButton]
         let menuButtons: [ItemActionButton]
 
+        @ContentBuilder
         var body: some View {
             Group {
                 ForEach(

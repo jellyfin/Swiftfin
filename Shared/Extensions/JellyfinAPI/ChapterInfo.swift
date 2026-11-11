@@ -21,6 +21,7 @@ extension ChapterInfo {
 
     var startSeconds: Duration? {
         guard let startPositionTicks else { return nil }
+
         return Duration.ticks(startPositionTicks)
     }
 }
@@ -38,6 +39,10 @@ extension ChapterInfo {
         let imageSource: ImageSource?
         let preferredPosterDisplayType: PosterDisplayType = .landscape
         let systemImage: String = "film"
+
+        var startSeconds: Duration {
+            chapterInfo.startSeconds ?? .zero
+        }
 
         var subtitle: String?
 
@@ -60,22 +65,26 @@ extension ChapterInfo {
             }
         }
 
+        @ContentBuilder
         var posterLabel: some View {
             ChapterPosterLabel(chapter: self)
         }
 
         func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
-            let startTime = PosterAccessibility.duration(chapterInfo.startSeconds ?? .zero)
+            let startTime = PosterAccessibility.duration(startSeconds)
+
             return PosterAccessibility(
                 label: displayTitle,
                 value: L10n.posterAccessibilityStartTime(startTime)
             )
         }
 
+        @ContentBuilder
         func posterOverlay(for displayType: PosterDisplayType) -> some View {
             PosterSelectionOverlay()
         }
 
+        @ContentBuilder
         func transform(image: Image, displayType: PosterDisplayType) -> some View {
             ZStack {
                 Color.black
@@ -92,8 +101,12 @@ extension ChapterInfo {
 
 private struct ChapterPosterLabel: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     let chapter: ChapterInfo.FullInfo
 
+    @ContentBuilder
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(chapter.chapterInfo.displayTitle)
@@ -102,8 +115,8 @@ private struct ChapterPosterLabel: View {
                 .foregroundStyle(.primary)
                 .lineLimit(1)
 
-            Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-                .font(UIDevice.isTV ? .caption : .subheadline.weight(.semibold))
+            Text(chapter.startSeconds, format: .runtime)
+                .font(viewLayout.value(standard: .subheadline.weight(.semibold), large: .caption))
                 .foregroundStyle(Color(UIColor.systemBlue))
                 .padding(.horizontal, 4)
                 .background {

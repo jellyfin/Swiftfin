@@ -26,6 +26,7 @@ extension ItemTrait: ItemFilter {
 }
 
 extension ItemTrait: Displayable {
+
     var displayTitle: String {
         switch self {
         case .isUnplayed:
@@ -51,5 +52,23 @@ extension ItemTrait: SupportedCaseIterable {
             .isFavorite,
             .likes,
         ]
+    }
+}
+
+extension UserItemDataDto {
+
+    /// Missing fields cannot disqualify a partial response
+    func matches(_ filters: some Sequence<JellyfinAPI.ItemFilter>) -> Bool {
+        filters.allSatisfy { filter in
+            switch filter {
+            case .isFavorite: isFavorite != false
+            case .isPlayed: isPlayed != false
+            case .isUnplayed: isPlayed != true
+            case .isResumable: isPlayed != true && playbackPositionTicks != 0
+            case .likes: isLikes != false
+            case .dislikes: isLikes != true
+            default: true
+            }
+        }
     }
 }

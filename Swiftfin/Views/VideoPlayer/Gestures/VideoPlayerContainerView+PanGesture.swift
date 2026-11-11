@@ -41,11 +41,17 @@ extension VideoPlayer.UIContainerViewController {
             return
         }
 
+        if viewState.canPanZoom || viewState.zoom.isPanning {
+            handleZoomPan(translation: translation, state: state)
+            return
+        }
+
         let direction: Direction = {
             // Prioritize horizontal detection just a bit more
             if velocity.y.magnitude < velocity.x.magnitude + 20 {
                 return velocity.x > 0 ? .right : .left
             }
+
             return velocity.y > 0 ? .down : .up
         }()
 
@@ -60,8 +66,7 @@ extension VideoPlayer.UIContainerViewController {
         if Defaults[.VideoPlayer.Gesture.horizontalSwipeAction] != .none, direction.isHorizontal {
             if !viewState.didSwipe,
                max(velocity.x.magnitude, velocity.y.magnitude) >= 1200,
-               max(translation.x.magnitude, translation.y.magnitude) >= 80
-            {
+               max(translation.x.magnitude, translation.y.magnitude) >= 80 {
                 handleSwipeAction(direction: direction)
                 viewState.didSwipe = true
             }
@@ -93,6 +98,29 @@ extension VideoPlayer.UIContainerViewController {
         guard state != .ended, state != .cancelled, state != .failed else {
             viewState.panHandlingAction = nil
             return
+        }
+    }
+
+    private func handleZoomPan(translation: CGPoint, state: UIGestureRecognizer.State) {
+        switch state {
+        case .began:
+            viewState.zoom.beginPan()
+            viewState.zoom.updatePan(translation: translation)
+
+        case .changed:
+            viewState.zoom.updatePan(translation: translation)
+
+        case .ended:
+            viewState.zoom.updatePan(translation: translation)
+            fallthrough
+
+        case .cancelled, .failed:
+            withAnimation(.spring(response: 0.3, dampingFraction: 1)) {
+                viewState.zoom.endPan()
+            }
+
+        default:
+            break
         }
     }
 
@@ -136,11 +164,13 @@ extension VideoPlayer.UIContainerViewController {
             action: Handler
         ) -> Handler {
             var action = action
+
             action.startState = _PanStartHandlingState(
                 direction: direction,
                 location: location,
                 value: action.startValue(viewState)
             )
+
             return action
         }
 
@@ -148,7 +178,7 @@ extension VideoPlayer.UIContainerViewController {
     }
 
     private func panActionForGestureAction(for gestureAction: PanGestureAction) -> any _PanHandlingAction {
-        let isLiveStream = viewState.manager?.item.isLiveStream == true
+        let isLiveStream = viewState.mediaSession?.item.isLiveStream == true
 
         switch (gestureAction, isLiveStream) {
         case (.none, _), (.scrub, true), (.slowScrub, true):
@@ -165,13 +195,14 @@ extension VideoPlayer.UIContainerViewController {
     }
 
     private func handleSwipeAction(direction: Direction) {
-        guard viewState.manager?.item.isLiveStream == false else { return }
+        guard viewState.mediaSession?.canSeek == true else { return }
+
         let jumpProgressObserver = viewState.jumpProgressObserver
         viewState.showProgress()
 
         if direction == .left {
             let interval = Defaults[.VideoPlayer.jumpBackwardInterval]
-            viewState.manager?.proxy?.jumpBackward(interval.rawValue)
+            viewState.mediaSession?.seek(by: .zero - (interval.rawValue))
             jumpProgressObserver.jumpBackward()
 
             viewState.toastProxy.present(
@@ -183,7 +214,7 @@ extension VideoPlayer.UIContainerViewController {
             )
         } else if direction == .right {
             let interval = Defaults[.VideoPlayer.jumpForwardInterval]
-            viewState.manager?.proxy?.jumpForward(interval.rawValue)
+            viewState.mediaSession?.seek(by: interval.rawValue)
             jumpProgressObserver.jumpForward()
 
             viewState.toastProxy.present(
@@ -205,7 +236,9 @@ extension VideoPlayer.UIContainerViewController {
 
     private static var BrightnessPanHandlingAction: PanHandlingAction<CGFloat> {
         PanHandlingAction<CGFloat>(
-            startValue: UIScreen.main.brightness
+            startValue: { state in
+                state.containerView?.view.window?.windowScene?.screen.brightness ?? 0.5
+            }
         ) { startState, handlingState, viewState in
             guard handlingState.gestureState != .ended else { return }
 
@@ -229,7 +262,7 @@ extension VideoPlayer.UIContainerViewController {
             )
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                UIScreen.main.brightness = newBrightness
+                viewState.containerView?.view.window?.windowScene?.screen.brightness = newBrightness
             }
         }
     }
@@ -241,19 +274,22 @@ extension VideoPlayer.UIContainerViewController {
     ) -> PanHandlingAction<Duration> {
         PanHandlingAction<Duration>(
             startValue: { viewState in
-                viewState.scrubbedSeconds.value
+                viewState.beginScrub()
+
+                return viewState.scrubbedSeconds
             }
         ) { startState, handlingState, viewState in
-            if handlingState.gestureState == .ended ||
-                handlingState.gestureState == .cancelled ||
-                handlingState.gestureState == .failed
-            {
-                viewState.isScrubbing = false
-
+            if handlingState.gestureState == .cancelled || handlingState.gestureState == .failed {
+                viewState.cancelScrub()
                 return
             }
 
-            guard let runtime = viewState.manager?.item.runtime else { return }
+            if handlingState.gestureState == .ended {
+                viewState.commitScrub()
+                return
+            }
+
+            guard viewState.mediaSession?.canSeek == true, let runtime = viewState.mediaSession?.item.runtime else { return }
 
             let translation: CGFloat = {
                 if startState.direction.isHorizontal {
@@ -262,6 +298,7 @@ extension VideoPlayer.UIContainerViewController {
                     -handlingState.translation.y
                 }
             }()
+
             let totalSize: CGFloat = {
                 if startState.direction.isHorizontal {
                     handlingState.location.x / handlingState.unitPoint.x
@@ -270,7 +307,9 @@ extension VideoPlayer.UIContainerViewController {
                 }
             }()
 
-            viewState.isScrubbing = true
+            viewState.beginScrub()
+
+            guard totalSize.isFinite, totalSize > 0 else { return }
 
             let newSeconds = clamp(
                 startState.value.seconds + (translation / totalSize) * runtime.seconds * damping,
@@ -280,7 +319,7 @@ extension VideoPlayer.UIContainerViewController {
 
             let newSecondsDuration = Duration.seconds(newSeconds)
 
-            viewState.scrubbedSeconds.value = newSecondsDuration
+            viewState.scrubbedSeconds = newSecondsDuration
         }
     }
 
@@ -307,11 +346,11 @@ extension VideoPlayer.UIContainerViewController {
         return PanHandlingAction<Float>(
             startValue: AVAudioSession.sharedInstance().outputVolume
         ) { startState, handlingState, _ in
-            guard handlingState.gestureState != .ended else { return }
+            guard handlingState.gestureState != .ended,
+                  let slider = volumeView
+                    .subviews
+                    .first(where: { $0 is UISlider }) as? UISlider else { return }
 
-            guard let slider = volumeView
-                .subviews
-                .first(where: { $0 is UISlider }) as? UISlider else { return }
             let translation: CGFloat = {
                 if startState.direction.isHorizontal {
                     handlingState.translation.x

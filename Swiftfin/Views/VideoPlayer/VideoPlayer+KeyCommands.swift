@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import PreferencesView
 import SwiftUI
 
 // TODO: protect against holding down
@@ -24,16 +23,16 @@ extension VideoPlayer {
         @Environment(ViewState.self)
         private var viewState
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         @Toaster
         private var toaster: ToastProxy
 
+        @ContentBuilder
         func body(content: Content) -> some View {
             content
                 .keyCommands {
-
                     // MARK: Aspect Fill
 
                     KeyCommandAction(
@@ -48,15 +47,17 @@ extension VideoPlayer {
                         title: L10n.playAndPause,
                         input: " "
                     ) {
-                        manager.togglePlayPause()
+                        guard mediaSession.canControlPlayback else { return }
+
+                        mediaSession.togglePlayPause()
 
                         if !viewState.isPresentingControls {
-                            if manager.playbackRequestStatus == .paused {
+                            if mediaSession.playbackRequestStatus == .paused {
                                 toaster.present(
                                     L10n.pause,
                                     systemName: "pause.circle"
                                 )
-                            } else if manager.playbackRequestStatus == .playing {
+                            } else if mediaSession.playbackRequestStatus == .playing {
                                 toaster.present(
                                     L10n.play,
                                     systemName: "play.circle"
@@ -73,12 +74,12 @@ extension VideoPlayer {
                         modifierFlags: .command
                     ) {
                         let newRate = clamp(
-                            manager.rate - 0.25,
+                            mediaSession.rate - 0.25,
                             min: 0.25,
                             max: 4
                         )
 
-                        manager.setRate(rate: newRate)
+                        mediaSession.rate = newRate
 
                         toaster.present(
                             Text(newRate, format: .playbackRate),
@@ -94,12 +95,12 @@ extension VideoPlayer {
                         modifierFlags: .command
                     ) {
                         let newRate = clamp(
-                            manager.rate + 0.25,
+                            mediaSession.rate + 0.25,
                             min: 0.25,
                             max: 4
                         )
 
-                        manager.setRate(rate: newRate)
+                        mediaSession.rate = newRate
 
                         toaster.present(
                             Text(newRate, format: .playbackRate),
@@ -114,7 +115,8 @@ extension VideoPlayer {
                         input: "\\",
                         modifierFlags: .command
                     ) {
-                        manager.setRate(rate: 1)
+                        mediaSession.rate = 1
+
                         toaster.present(
                             Text(1, format: .playbackRate),
                             systemName: VideoPlayerActionButton.playbackSpeed.systemImage
@@ -128,8 +130,9 @@ extension VideoPlayer {
                         input: UIKeyCommand.inputRightArrow,
                         modifierFlags: .command
                     ) {
-                        guard let nextItem = manager.queue?.nextItem else { return }
-                        manager.playNewItem(provider: nextItem)
+                        guard let nextItem = mediaSession.queue?.nextItem else { return }
+
+                        mediaSession.playNewItem(intent: nextItem)
                     }
 
                     // MARK: Play Previous Item
@@ -139,8 +142,9 @@ extension VideoPlayer {
                         input: UIKeyCommand.inputLeftArrow,
                         modifierFlags: .command
                     ) {
-                        guard let previousItem = manager.queue?.previousItem else { return }
-                        manager.playNewItem(provider: previousItem)
+                        guard let previousItem = mediaSession.queue?.previousItem else { return }
+
+                        mediaSession.playNewItem(intent: previousItem)
                     }
 
                     // MARK: - Jump Backward
@@ -149,9 +153,11 @@ extension VideoPlayer {
                         title: L10n.jumpBackward,
                         input: UIKeyCommand.inputLeftArrow
                     ) {
+                        guard mediaSession.canSeek else { return }
+
                         viewState.showProgress()
                         viewState.jumpProgressObserver.jumpBackward()
-                        manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
+                        mediaSession.seek(by: .zero - (jumpBackwardInterval.rawValue))
 
                         toaster.present(
                             Text(
@@ -168,9 +174,11 @@ extension VideoPlayer {
                         title: L10n.jumpForward,
                         input: UIKeyCommand.inputRightArrow
                     ) {
+                        guard mediaSession.canSeek else { return }
+
                         viewState.showProgress()
                         viewState.jumpProgressObserver.jumpForward()
-                        manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
+                        mediaSession.seek(by: jumpForwardInterval.rawValue)
 
                         toaster.present(
                             Text(

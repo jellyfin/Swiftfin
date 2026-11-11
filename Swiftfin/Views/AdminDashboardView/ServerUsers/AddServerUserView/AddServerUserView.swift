@@ -11,6 +11,7 @@ import SwiftUI
 struct AddServerUserView: View {
 
     private enum Field {
+
         case username
         case password
         case confirmPassword
@@ -38,9 +39,9 @@ struct AddServerUserView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         List {
-
             Section {
                 TextField(L10n.username, text: $username) {
                     focusedfield = .password
@@ -108,6 +109,9 @@ struct AddServerUserView: View {
                 UIDevice.feedback(.success)
                 Notifications[.didAddServerUser].post(newUser)
                 router.dismiss()
+
+            case .error:
+                break
             }
         }
         .topBarTrailing {

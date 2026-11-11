@@ -6,13 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct GaugeProgressViewStyle: ProgressViewStyle {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @State
     private var contentSize: CGSize = .zero
@@ -25,9 +24,9 @@ struct GaugeProgressViewStyle: ProgressViewStyle {
         self.systemImage = systemImage
     }
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
-
             if let systemImage {
                 Image(systemName: systemImage)
                     .resizable()
@@ -46,7 +45,7 @@ struct GaugeProgressViewStyle: ProgressViewStyle {
             Circle()
                 .trim(from: 0, to: configuration.fractionCompleted ?? 0)
                 .stroke(
-                    accentColor,
+                    theme.accentColor,
                     style: StrokeStyle(
                         lineWidth: contentSize.width * lineWidthRatio,
                         lineCap: .round

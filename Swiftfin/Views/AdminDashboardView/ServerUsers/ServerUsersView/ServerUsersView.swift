@@ -12,6 +12,9 @@ import SwiftUI
 
 struct ServerUsersView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -36,6 +39,7 @@ struct ServerUsersView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -60,6 +64,7 @@ struct ServerUsersView: View {
                     navigationBarSelectView
                 }
             }
+
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
                     Button(L10n.cancel, role: .cancel) {
@@ -84,6 +89,7 @@ struct ServerUsersView: View {
                     .controlSize(.small)
                 }
             }
+
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
                     Button(L10n.delete, role: .destructive) {
@@ -153,7 +159,7 @@ struct ServerUsersView: View {
         .alert(L10n.deleteUserFailed, isPresented: $isPresentingSelfDeleteError) {
             Button(L10n.ok, role: .cancel) {}
         } message: {
-            Text(L10n.deleteUserSelfDeletion(viewModel.userSession?.user.username ?? ""))
+            Text(L10n.deleteUserSelfDeletion(viewModel.userSession?.userData.name ?? ""))
         }
         .onNotification(.didAddServerUser) { newUser in
             viewModel.appendUser(newUser)
@@ -163,7 +169,7 @@ struct ServerUsersView: View {
 
     // MARK: - User List View
 
-    @ViewBuilder
+    @ContentBuilder
     private var userListView: some View {
         List {
             InsetGroupedListHeader(
@@ -182,7 +188,7 @@ struct ServerUsersView: View {
                     .listRowSeparator(.hidden)
                     .listRowInsets(.zero)
             } else {
-                ForEach(viewModel.users, id: \.self) { user in
+                ForEach(viewModel.users, id: \.id) { user in
                     if let userID = user.id {
                         ServerUsersRow(user: user) {
                             if isEditing {
@@ -197,7 +203,7 @@ struct ServerUsersView: View {
                         }
                         .isEditing(isEditing)
                         .isSelected(selectedUsers.contains(userID))
-                        .listRowInsets(.edgeInsets)
+                        .listRowInsets(viewLayout.edgeInsets)
                     }
                 }
             }
@@ -207,9 +213,8 @@ struct ServerUsersView: View {
 
     // MARK: - Navigation Bar Select/Remove All Content
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarSelectView: some View {
-
         let isAllSelected: Bool = selectedUsers.count == viewModel.users.count
 
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
@@ -235,7 +240,7 @@ struct ServerUsersView: View {
 
     // MARK: - Delete Selected Users Confirmation Actions
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteSelectedUsersConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 
@@ -248,7 +253,7 @@ struct ServerUsersView: View {
 
     // MARK: - Delete User Confirmation Actions
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteUserConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 

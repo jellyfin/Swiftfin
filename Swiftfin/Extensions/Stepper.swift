@@ -15,7 +15,7 @@ extension Stepper {
         value: Binding<V>,
         in range: ClosedRange<V>,
         step: V.Stride = 1,
-        @ViewBuilder label: @escaping () -> Label
+        @ContentBuilder label: @escaping () -> Label
     ) {
         self.init(value: value, in: range, step: step, label: label)
     }

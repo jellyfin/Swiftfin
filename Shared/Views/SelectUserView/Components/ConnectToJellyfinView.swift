@@ -6,42 +6,64 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension SelectUserView {
 
     struct ConnectToJellyfinView: View {
 
-        @Default(.accentColor)
-        private var accentColor
+        @AdaptiveLayout
+        private var viewLayout
+
+        @AppTheme
+        private var theme
 
         @Router
         private var router
 
+        @ContentBuilder
         var body: some View {
+            #if os(iOS)
+            ScrollView {
+                content
+                    .edgePadding(.vertical)
+                    .frame(maxWidth: .infinity)
+            }
+            .defaultScrollAnchor(.center, for: .alignment)
+            .scrollBounceBehavior(.basedOnSize)
+            .edgePadding(.horizontal)
+            #else
+            content
+            #endif
+        }
+
+        @ContentBuilder
+        private var content: some View {
             VStack {
                 Text(L10n.connectToJellyfinServerStart)
                     .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 Button {
                     router.route(to: .connectToServer)
                 } label: {
                     Text(L10n.connect)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity)
                 }
                 .fontWeight(.semibold)
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
+                .tint(theme.accentColor)
                 #if os(iOS)
                 .controlSize(.large)
+                .frame(minHeight: viewLayout.controlHeight)
+                #else
+                .frame(height: viewLayout.controlHeight)
                 #endif
-                .frame(
-                    height: UIDevice.isTV ? 75 : 44
-                )
             }
-            .frame(maxWidth: UIDevice.isTV ? 400 : 250)
+            .frame(maxWidth: viewLayout.value(standard: viewLayout.isAccessibilitySize ? 400 : 250, large: 400))
         }
     }
 }

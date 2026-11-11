@@ -33,9 +33,9 @@ extension UIDevice {
         let model = withUnsafeBytes(of: systemInfo.machine) { buffer in
             String(decoding: buffer.prefix { $0 != 0 }, as: UTF8.self)
         }
-        /// Apple TV HD and Apple TV 4K (1st gen) run tvOS 26 without Liquid Glass
-        /// - https://support.apple.com/en-us/106336
-        /// - See tvOS 26, footnote 2
+        // Apple TV HD and Apple TV 4K (1st gen) run tvOS 26 without Liquid Glass
+        // - https://support.apple.com/en-us/106336
+        // - See tvOS 26, footnote 2
         return !["AppleTV5,3", "AppleTV6,2"].contains(model)
         #else
         if #available(iOS 26.0, *) {
@@ -51,14 +51,17 @@ extension UIDevice {
         L10n.tvOS
         #else
         if UIDevice.isPad {
-            return L10n.iPadOS
+            L10n.iPadOS
         } else {
-            return L10n.iOS
+            L10n.iOS
         }
         #endif
     }
 
     /// - Important: Does nothing on non-iOS platforms.
+    ///
+    /// - Note: For real-time interactions, manually manage a
+    ///         `UIImpactFeedbackGenerator` with `prepare()`.
     static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
         #if os(iOS)
         UINotificationFeedbackGenerator().notificationOccurred(type)
@@ -68,26 +71,21 @@ extension UIDevice {
     // TODO: make more custom feedback types with Core Haptics
     //       - soft with intensity
     /// - Important: Does nothing on non-iOS platforms.
+    ///
+    /// - Note: For real-time interactions, manually manage a
+    ///         `UIImpactFeedbackGenerator` with `prepare()`.
     static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
         #if os(iOS)
         UIImpactFeedbackGenerator(style: type).impactOccurred()
         #endif
     }
-
-    #if os(iOS)
-    static var isPortrait: Bool {
-        current.orientation.isPortrait
-    }
-
-    static var isLandscape: Bool {
-        isPad || current.orientation.isLandscape
-    }
-    #endif
 }
 
 #if os(tvOS)
 enum UINotificationFeedbackGenerator {
+
     enum FeedbackType {
+
         case success
         case warning
         case error
@@ -95,7 +93,9 @@ enum UINotificationFeedbackGenerator {
 }
 
 enum UIImpactFeedbackGenerator {
+
     enum FeedbackStyle {
+
         case light
         case medium
         case heavy

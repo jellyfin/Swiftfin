@@ -22,8 +22,8 @@ extension VideoPlayer {
 
         @Environment(ViewState.self)
         var viewState
-        @EnvironmentObject
-        var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        var mediaSession
 
         @EnvironmentObject
         private var focusCoordinator: FocusCoordinator
@@ -34,18 +34,16 @@ extension VideoPlayer {
         var speedBoostTimer: Timer?
         @State
         var isSpeedBoosting: Bool = false
-        @State
-        var pendingJumpWork: DispatchWorkItem?
 
         @Toaster
         var toaster: ToastProxy
 
+        @ContentBuilder
         var body: some View {
             @Bindable
             var viewState = viewState
 
             VStack(spacing: 0) {
-
                 Toolbar()
                     .isVisible(viewState.visibleElements.contains(.toolbar))
                     .enabled(viewState.visibleElements.contains(.toolbar))
@@ -67,7 +65,7 @@ extension VideoPlayer {
                 Button(L10n.cancel, role: .cancel) {}
 
                 Button(L10n.ok, role: .destructive) {
-                    manager.stop()
+                    mediaSession.stop()
                 }
             } message: {
                 Text(L10n.closePlayerWarning)
@@ -77,8 +75,12 @@ extension VideoPlayer {
             }
             .onDisappear {
                 stopSpeedBoost()
-                pendingJumpWork?.cancel()
                 viewState.cancelScrub()
+            }
+            .onChange(of: mediaSession.playbackItem.map(ObjectIdentifier.init), initial: true) { _, _ in
+                stopSpeedBoost()
+                seekingPress = nil
+                viewState.jumpProgressObserver.reset()
             }
             .onReceive(
                 focusCoordinator.$focusedIDs
@@ -87,6 +89,7 @@ extension VideoPlayer {
                     .dropFirst()
             ) { isFocused in
                 guard !isFocused else { return }
+
                 viewState.cancelScrub()
 
                 stopSpeedBoost()

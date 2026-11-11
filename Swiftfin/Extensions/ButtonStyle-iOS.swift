@@ -11,6 +11,7 @@ import SwiftUI
 /// - Important: On iOS, this is a `BorderlessButtonStyle` instead.
 /// This is only used to allow platform shared views.
 extension PrimitiveButtonStyle where Self == BorderlessButtonStyle {
+
     static var card: BorderlessButtonStyle {
         .init()
     }
@@ -27,6 +28,7 @@ struct IsPressedButtonStyle: ButtonStyle {
 
     let isPressed: (Bool) -> Void
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .onChange(of: configuration.isPressed) {

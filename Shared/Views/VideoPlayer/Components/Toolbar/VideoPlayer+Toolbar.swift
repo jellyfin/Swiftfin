@@ -15,23 +15,24 @@ extension VideoPlayer.PlaybackControls {
 
         typealias ViewState = VideoPlayer.ViewState
 
-        static let buttonSize: CGFloat = UIDevice.isTV ? 56 : 44
+        @AdaptiveLayout
+        private var viewLayout
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         @Router
         private var router
 
-        @ViewBuilder
+        @ContentBuilder
         private var closeButton: some View {
             Button {
                 if viewState.isPresentingSupplement {
                     viewState.selectedSupplementID = nil
                 } else {
-                    manager.stop()
+                    mediaSession.stop()
                     router.dismiss()
                 }
             } label: {
@@ -41,30 +42,31 @@ extension VideoPlayer.PlaybackControls {
                 )
                 .labelStyle(.iconOnly)
             }
-            .frame(width: Self.buttonSize, height: Self.buttonSize)
+            .accessibilityIdentifier("closePlayerButton")
+            .frame(width: viewLayout.toolbarButtonSize, height: viewLayout.toolbarButtonSize)
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var content: some View {
-            HStack(alignment: UIDevice.isTV ? .bottom : .center) {
-
-                if !UIDevice.isTV {
+            HStack(alignment: viewLayout.value(standard: .center, large: .bottom)) {
+                if !viewLayout.isLarge {
                     closeButton
                         .modifier(OverlayBarButtonStyleModifier())
                 }
 
-                TitleView(item: manager.item)
+                TitleView(item: mediaSession.item)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 ActionButtons()
-                    .frame(height: Self.buttonSize)
+                    .frame(height: viewLayout.toolbarButtonSize)
                     .padding(.horizontal)
             }
         }
 
+        @ContentBuilder
         var body: some View {
             content
-                .font(.system(size: UIDevice.isTV ? 30 : 24, weight: .semibold))
+                .font(.system(size: viewLayout.isLarge ? 30 : 24, weight: .semibold))
                 .menuStyle(OverlayMenuStyle())
                 #if os(iOS)
                 .background {
@@ -77,33 +79,36 @@ extension VideoPlayer.PlaybackControls {
 
 extension VideoPlayer.PlaybackControls.Toolbar {
 
-    struct TitleView: PlatformView {
+    struct TitleView: PresentationView {
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @State
         private var subtitleContentSize: CGSize = .zero
 
-        let item: BaseItemDto
+        @SharedBaseItem
+        var item: BaseItemDto
 
         private var _titleSubtitle: (title: String, subtitle: String?) {
-            if item.type == .episode {
-                if let parentTitle = item.parentTitle {
-                    return (title: parentTitle, subtitle: item.seasonEpisodeLabel)
-                }
+            if item.type == .episode, let parentTitle = item.parentTitle {
+                return (title: parentTitle, subtitle: item.seasonEpisodeLabel)
             }
 
             return (title: item.displayTitle, subtitle: nil)
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func _subtitle(_ subtitle: String) -> some View {
             Text(subtitle)
-                .font(UIDevice.isTV ? .caption : .subheadline)
+                .font(viewLayout.value(standard: .subheadline, large: .caption))
                 .fontWeight(.medium)
                 .foregroundStyle(.white)
                 .trackingSize($subtitleContentSize)
         }
 
-        var iOSView: some View {
+        @ContentBuilder
+        var standardView: some View {
             Text(_titleSubtitle.title)
                 .fontWeight(.semibold)
                 .lineLimit(1)
@@ -118,7 +123,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 .accessibilityElement(children: .combine)
         }
 
-        var tvOSView: some View {
+        @ContentBuilder
+        var largeView: some View {
             VStack(alignment: .leading) {
                 if let subtitle = _titleSubtitle.subtitle {
                     Text(subtitle)

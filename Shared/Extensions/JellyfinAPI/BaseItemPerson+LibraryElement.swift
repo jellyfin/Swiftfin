@@ -23,7 +23,7 @@ extension BaseItemPerson: LibraryElement {
             .libraryDidSelectElement(router: router, in: namespace)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?

@@ -14,12 +14,10 @@ extension ItemView {
 
         let groups: [any ContentGroup]
 
+        @ContentBuilder
         var body: some View {
-            WithBlurNavigationBar {
-                _Body(groups: groups)
-            }
-            .ignoresSafeArea()
-            .trackingFrame(for: .scrollView)
+            _Body(groups: groups)
+                .trackingFrame(for: .scrollView)
         }
     }
 
@@ -30,12 +28,12 @@ extension ItemView {
 
         let groups: [any ContentGroup]
 
+        @ContentBuilder
         var body: some View {
             ScrollView {
                 ContentGroupVStack(groups: groups)
                     .edgePadding(.bottom)
             }
-            .ignoresSafeArea(edges: .horizontal)
             .scrollIndicators(.hidden)
             .backport
             .scrollEdgeEffectStyle(.soft, for: .top)
@@ -50,10 +48,9 @@ extension ItemView {
                         height: frameForParentView[.scrollView, default: .zero]
                             .safeAreaInsets.top + 20
                     )
-                    .offset(
-                        y: -frameForParentView[.scrollView, default: .zero]
-                            .safeAreaInsets.top
-                    )
+                    .offset(y: -frameForParentView[.scrollView, default: .zero].safeAreaInsets.top)
+                    .padding(.leading, -frameForParentView[.scrollView, default: .zero].safeAreaInsets.leading)
+                    .padding(.trailing, -frameForParentView[.scrollView, default: .zero].safeAreaInsets.trailing)
                     .colorScheme(.dark)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)

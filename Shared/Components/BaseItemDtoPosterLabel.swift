@@ -16,7 +16,8 @@ struct BaseItemDtoPosterLabel: View {
     @Environment(\.posterDisplayType)
     private var posterDisplayType
 
-    let item: BaseItemDto
+    @SharedBaseItem
+    var item: BaseItemDto
 
     private var isTitlePresented: Bool {
         switch item.type {
@@ -30,12 +31,14 @@ struct BaseItemDtoPosterLabel: View {
 
     private var episodeLocator: String? {
         guard item.type == .episode else { return nil }
+
         return item.seasonEpisodeLabel ?? item.episodeLocator
     }
 
     private var subtitle: String? {
         guard let subtitle = item.posterSubtitle(using: posterConfiguration.subtitleField),
               item.extraType != nil || subtitle != item.displayTitle else { return nil }
+
         return subtitle
     }
 
@@ -47,7 +50,7 @@ struct BaseItemDtoPosterLabel: View {
         isProgram || episodeLocator != nil || subtitle != nil
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var programSchedule: some View {
         if let startDate = item.startDate {
             ViewThatFits {
@@ -68,7 +71,7 @@ struct BaseItemDtoPosterLabel: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func programStartDate(_ date: Date) -> some View {
         if Calendar.current.isDateInToday(date) {
             Text(date, style: .time)
@@ -77,7 +80,7 @@ struct BaseItemDtoPosterLabel: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var subtitleView: some View {
         if isProgram {
             DotHStack {
@@ -103,6 +106,7 @@ struct BaseItemDtoPosterLabel: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         AlternateLayoutView(alignment: .topLeading) {
             VStack(spacing: 2) {

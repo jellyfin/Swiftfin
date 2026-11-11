@@ -26,6 +26,7 @@ enum MaxBitratePolicy: Int, Displayable, CaseIterable {
 
     init?(rawValue: Int?) {
         guard let rawValue else { return nil }
+
         self.init(rawValue: rawValue)
     }
 }

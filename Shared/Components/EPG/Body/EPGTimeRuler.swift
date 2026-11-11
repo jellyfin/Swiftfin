@@ -10,17 +10,21 @@ import SwiftUI
 
 struct EPGTimeRuler: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @ObservedObject
     var viewModel: EPGViewModel
 
-    private let layout = EPGLayout()
-
-    // Count of timestamps needed for the period (30m increments)
+    /// Count of timestamps needed for the period (30m increments)
     private var labelCount: Int {
         max(0, Int(viewModel.startDate.distance(to: viewModel.endDate) / (Double(30) * 60)))
     }
 
+    @ContentBuilder
     var body: some View {
+        let layout = EPGLayout(viewLayout: viewLayout)
+
         LazyHStack(spacing: 0) {
             ForEach(0 ..< labelCount, id: \.self) { index in
                 let date = viewModel.startDate.addingTimeInterval(Double(index * 30 * 60))
@@ -40,7 +44,7 @@ struct EPGTimeRuler: View {
         .frame(height: layout.rulerHeight)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func timestamp(for date: Date) -> some View {
         let components = Calendar.current.dateComponents([.hour, .minute], from: date)
         let isDayStart = components.hour == 0 && components.minute == 0

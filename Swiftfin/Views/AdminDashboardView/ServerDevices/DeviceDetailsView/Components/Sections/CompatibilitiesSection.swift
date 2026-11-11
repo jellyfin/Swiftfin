@@ -10,9 +10,12 @@ import JellyfinAPI
 import SwiftUI
 
 extension DeviceDetailsView {
+
     struct CapabilitiesSection: View {
+
         var device: DeviceInfoDto
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.capabilities) {
                 if let supportsMediaControl = device.capabilities?.isSupportsMediaControl {

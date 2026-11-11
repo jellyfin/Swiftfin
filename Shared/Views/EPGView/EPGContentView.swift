@@ -19,21 +19,23 @@ struct EPGLoadableView<Content: View>: View {
 
     init(
         viewModel: EPGViewModel,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.viewModel = viewModel
         self.content = content()
     }
 
-    @ViewBuilder
+    @ContentBuilder
     var body: some View {
         switch viewModel.state {
         case .initial, .refreshing:
             ProgressView()
+
         case .error:
             if let error = viewModel.error {
                 ErrorView(error: error)
             }
+
         case .content:
             if viewModel.channels.isEmpty {
                 ContentUnavailableView(L10n.noPrograms, systemImage: "tv")
@@ -82,9 +84,11 @@ struct EPGContentView: View {
     // TODO: turn into FormatStyle
     private func programTitle(for program: BaseItemDto) -> String {
         guard let start = program.startDate else { return program.displayTitle }
+
         return "\(start.formatted(date: .omitted, time: .shortened)) \(String.bullet) \(program.displayTitle)"
     }
 
+    @ContentBuilder
     var body: some View {
         AlternateLayoutView {
             Color.clear
@@ -129,6 +133,7 @@ struct EPGContentView: View {
             }
             .ignoresSafeArea(edges: .bottom)
         }
+        .trackingFrame(for: .layoutContainer)
         .confirmationDialog(
             L10n.programs,
             isPresented: isPresentingGroup,

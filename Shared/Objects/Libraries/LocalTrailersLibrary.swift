@@ -21,7 +21,7 @@ struct LocalTrailerLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         guard let itemID = parent.id else { return [] }
 
         let request = Paths.getLocalTrailers(
@@ -30,6 +30,6 @@ struct LocalTrailerLibrary: BaseItemKindLibrary {
         )
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value
+        return try pageState.items(from: response)
     }
 }

@@ -17,10 +17,12 @@ enum NoneStyle: Displayable {
         switch self {
         case .text:
             return L10n.none
+
         case let .dash(length):
             assert(length >= 1, "Dash must have length of at least 1.")
 
             return String(repeating: .hyphen, count: length)
+
         case let .custom(text):
             assert(text.isNotEmpty, "Custom text must have length of at least 1.")
 

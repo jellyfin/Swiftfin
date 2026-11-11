@@ -12,6 +12,7 @@ extension VideoPlayer.PlaybackControls {
 
     struct OverlayMenuStyle: MenuStyle {
 
+        @ContentBuilder
         func makeBody(configuration: Configuration) -> some View {
             Menu(configuration)
                 .menuStyle(.button)
@@ -23,9 +24,13 @@ extension VideoPlayer.PlaybackControls {
 
     struct OverlayBarButtonStyleModifier: ViewModifier {
 
+        @AdaptiveLayout
+        private var viewLayout
+
+        @ContentBuilder
         func body(content: Content) -> some View {
             content
-                .font(.system(size: UIDevice.isTV ? 30 : 20, weight: .semibold))
+                .font(.system(size: viewLayout.isLarge ? 30 : 20, weight: .semibold))
                 .buttonStyle(OverlayButtonStyle(isInBar: true))
                 #if os(iOS)
                 .if(UIDevice.supportsLiquidGlass) { view in
@@ -40,6 +45,9 @@ extension VideoPlayer.PlaybackControls {
     struct OverlayButtonStyle: ButtonStyle {
 
         private static let padding: CGFloat = 8
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Environment(\.isEnabled)
         private var isEnabled
@@ -57,13 +65,14 @@ extension VideoPlayer.PlaybackControls {
         var symbolEffectSpeed: Double = 1
 
         private var labelSize: CGFloat? {
-            isInBar && UIDevice.isTV ? Toolbar.buttonSize - 2 * Self.padding : nil
+            isInBar && viewLayout.isLarge ? viewLayout.toolbarButtonSize - 2 * Self.padding : nil
         }
 
         private var interaction: ViewState.Interaction {
             isMenu ? .menu(interactionID) : .button(interactionID)
         }
 
+        @ContentBuilder
         func makeBody(configuration: Configuration) -> some View {
             styledLabel(configuration)
                 .onChange(of: configuration.isPressed) {
@@ -75,6 +84,7 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
+        @ContentBuilder
         private func label(_ configuration: Configuration) -> some View {
             configuration.label
                 .foregroundStyle(isEnabled ? isFocused ? AnyShapeStyle(Color.black) : AnyShapeStyle(HierarchicalShapeStyle.primary) :
@@ -86,10 +96,10 @@ extension VideoPlayer.PlaybackControls {
                 .contentTransition(.symbolEffect(.replace, options: .speed(symbolEffectSpeed)))
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func styledLabel(_ configuration: Configuration) -> some View {
             if #available(iOS 26.0, tvOS 26.0, *), UIDevice.supportsLiquidGlass {
-                if isInBar, !UIDevice.isTV {
+                if isInBar, !viewLayout.isLarge {
                     // The bar supplies one glass surface for all of its buttons.
                     label(configuration)
                         .padding(Self.padding)
@@ -105,6 +115,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        @ContentBuilder
         private func legacyLabel(_ configuration: Configuration) -> some View {
             label(configuration)
                 .scaleEffect(configuration.isPressed ? 0.8 : 1)

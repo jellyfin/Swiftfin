@@ -35,6 +35,7 @@ struct ServerUserDeviceAccessView: View {
         self.tempPolicy = policy
     }
 
+    @ContentBuilder
     var body: some View {
         contentView
             .toolbarTitleDisplayMode(.inline)
@@ -46,6 +47,7 @@ struct ServerUserDeviceAccessView: View {
                 if viewModel.background.is(.updating) {
                     ProgressView()
                 }
+
                 let saveAction: () -> Void = {
                     if tempPolicy != viewModel.user.policy {
                         viewModel.updatePolicy(tempPolicy)
@@ -80,7 +82,7 @@ struct ServerUserDeviceAccessView: View {
             .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         List {
             ZStack {
@@ -105,9 +107,8 @@ struct ServerUserDeviceAccessView: View {
                             if let index = tempPolicy.enabledDevices?.firstIndex(of: device.id!) {
                                 tempPolicy.enabledDevices?.remove(at: index)
                             } else {
-                                if tempPolicy.enabledDevices == nil {
-                                    tempPolicy.enabledDevices = []
-                                }
+                                tempPolicy.enabledDevices ?= []
+
                                 tempPolicy.enabledDevices?.append(device.id!)
                             }
                         }

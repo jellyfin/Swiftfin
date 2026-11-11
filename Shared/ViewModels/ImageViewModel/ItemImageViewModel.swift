@@ -16,6 +16,7 @@ final class ItemImageViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case deleteImage(ImageInfo)
         case refresh
         case saveRemoteImage(RemoteImageInfo)
@@ -35,22 +36,25 @@ final class ItemImageViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case deleting
         case updating
     }
 
     enum Event {
+
         case deleted
         case updated
     }
 
     enum State {
+
         case initial
         case content
         case error
     }
 
-    @Published
+    @SharedBaseItem
     var item: BaseItemDto
 
     @Published
@@ -68,10 +72,12 @@ final class ItemImageViewModel: ViewModel {
         let request = Paths.getItemImageInfos(itemID: itemID)
         let response = try await send(request)
 
-        images = response.value.grouped(by: \.imageType)
+        images = response.value
+            .grouped(by: \.imageType)
             .mapValues { $0.sorted(using: \.imageIndex) }
             .reduce(into: [:]) { partialResult, kv in
                 guard let k = kv.key else { return }
+
                 partialResult[k] = kv.value
             }
     }
@@ -79,34 +85,49 @@ final class ItemImageViewModel: ViewModel {
     @Function(\Action.Cases.uploadImage)
     private func _uploadImage(_ image: UIImage, _ type: ImageType) async throws {
         let (imageData, contentType) = try image.data()
-        try await upload(imageData: imageData, imageType: type, contentType: contentType)
+        try await upload(body: imageData.base64EncodedData(), imageType: type, contentType: contentType)
         try await _refresh()
         events.send(.updated)
     }
 
     @Function(\Action.Cases.uploadFile)
     private func _uploadFile(_ file: URL, _ type: ImageType) async throws {
-        guard file.startAccessingSecurityScopedResource() else {
+        try Task.checkCancellation()
+
+        let uploadSession = userSession
+        let uploadItemID = item.id
+        let payload: FileImageUpload.Payload
+
+        do {
+            payload = try await FileImageUpload.prepare(file)
+        } catch FileImageUpload.PreparationError.accessDenied {
             logger.error("Unable to access file at \(file)")
             throw ErrorMessage(L10n.unknownError)
-        }
-        defer { file.stopAccessingSecurityScopedResource() }
-
-        guard let image = try UIImage(data: Data(contentsOf: file)) else {
+        } catch FileImageUpload.PreparationError.invalidImage {
             logger.error("Unable to create image from file at \(file)")
             throw ErrorMessage(L10n.unknownError)
         }
 
-        try await _uploadImage(image, type)
+        try Task.checkCancellation()
+
+        guard userSession === uploadSession,
+              item.id == uploadItemID
+        else {
+            throw CancellationError()
+        }
+
+        try await upload(body: payload.body, imageType: type, contentType: payload.contentType)
+        try await _refresh()
+        events.send(.updated)
     }
 
-    private func upload(imageData: Data, imageType: ImageType, contentType: String) async throws {
+    private func upload(body: Data, imageType: ImageType, contentType: String) async throws {
         guard let itemID = item.id else { return }
 
         var request = Paths.setItemImage(
             itemID: itemID,
             imageType: imageType.rawValue,
-            imageData.base64EncodedData()
+            body
         )
         request.headers = ["Content-Type": contentType]
 
@@ -147,7 +168,7 @@ final class ItemImageViewModel: ViewModel {
             try await send(request)
         }
 
-        item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
+        $item = try await requireUserSession().getFullItem(item)
 
         try await _refresh()
         events.send(.deleted)

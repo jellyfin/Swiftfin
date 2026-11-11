@@ -26,7 +26,7 @@ protocol LibraryElement: Displayable, Hashable, Identifiable {
         in namespace: Namespace.ID
     )
 
-    @ViewBuilder
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
@@ -35,7 +35,8 @@ protocol LibraryElement: Displayable, Hashable, Identifiable {
     static func layout(
         for libraryStyle: LibraryStyle,
         options: LibraryStyleOptions,
-        insets: EdgeInsets
+        insets: EdgeInsets,
+        viewLayout: ViewLayout
     ) -> CollectionVGridLayout
 }
 
@@ -59,58 +60,42 @@ extension LibraryElement {
 
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {}
 
-    @ViewBuilder
     func makeBody(libraryStyle: LibraryStyle) -> Body {
+        // By default, have conformers determine action
+        // internally for navigation with their namespace
         makeBody(libraryStyle: libraryStyle, action: nil)
     }
 
     static func layout(
         for libraryStyle: LibraryStyle,
         options: LibraryStyleOptions,
-        insets: EdgeInsets
+        insets: EdgeInsets,
+        viewLayout: ViewLayout
     ) -> CollectionVGridLayout {
         let libraryStyle = options.normalized(libraryStyle)
 
-        #if os(iOS)
         switch libraryStyle.displayType {
         case .grid:
-            if UIDevice.isPhone {
-                return .columns(
-                    libraryStyle.posterDisplayType == .landscape ? 2 : 3,
-                    insets: insets,
-                    itemSpacing: EdgeInsets.itemSpacing,
-                    lineSpacing: EdgeInsets.itemSpacing
-                )
-            }
-
             return .minWidth(
-                libraryStyle.posterDisplayType == .landscape ? 220 : 140,
+                viewLayout.value(
+                    standard: viewLayout.posterMinimumWidth(for: libraryStyle.posterDisplayType),
+                    large: libraryStyle.posterDisplayType == .landscape ? 350 : 220
+                ),
                 insets: insets,
-                itemSpacing: EdgeInsets.itemSpacing,
-                lineSpacing: EdgeInsets.itemSpacing
+                itemSpacing: viewLayout.itemSpacing,
+                lineSpacing: viewLayout.itemSpacing
             )
-        case .list:
-            return .columns(
-                libraryStyle.listColumnCount,
-                insets: insets,
-                itemSpacing: 0,
-                lineSpacing: 0
-            )
-        }
-        #else
-        let columnCount = switch libraryStyle.displayType {
-        case .grid:
-            libraryStyle.posterDisplayType == .landscape ? 4 : 7
-        case .list:
-            libraryStyle.listColumnCount
-        }
 
-        return .columns(
-            columnCount,
-            insets: insets,
-            itemSpacing: EdgeInsets.itemSpacing,
-            lineSpacing: EdgeInsets.itemSpacing
-        )
-        #endif
+        case .list:
+            // Keep the saved preference as an upper bound so it returns in wider windows.
+            let columns = viewLayout.libraryListColumns(maximumCount: libraryStyle.listColumnCount)
+            return .columns(
+                columns.count(for: viewLayout.size.width - insets.leading - insets.trailing),
+                insets: insets,
+                itemSpacing: columns.spacing,
+                lineSpacing: columns.spacing,
+                itemSizing: .height
+            )
+        }
     }
 }

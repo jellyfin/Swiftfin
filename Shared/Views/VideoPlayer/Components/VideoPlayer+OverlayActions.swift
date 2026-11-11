@@ -12,16 +12,23 @@ extension VideoPlayer {
 
     struct OverlayActions: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Environment(ViewState.self)
         private var viewState
 
         @FocusState
         private var focusedAction: String?
 
+        @State
+        private var offsets: [ViewState.OverlayAction.ID: CGFloat] = [:]
+
         private var actions: [ViewState.OverlayAction] {
             viewState.visibleElements.contains(.overlayActions) ? viewState.overlayActions : []
         }
 
+        @ContentBuilder
         var body: some View {
             ViewThatFits(in: .horizontal) {
                 buttons(axis: .horizontal)
@@ -40,7 +47,10 @@ extension VideoPlayer {
             #if os(tvOS)
             .focusSection()
             .onMoveCommand { direction in
-                if viewState.presentation == .hidden, direction == .up || direction == .down {
+                if direction == .left || direction == .right,
+                   let action = actions.first(where: { $0.id.focusID == focusedAction }) {
+                    dismissOverlayAction(action, towards: direction == .left ? .left : .right)
+                } else if viewState.presentation == .hidden, direction == .up || direction == .down {
                     viewState.showControls()
                 }
             }
@@ -58,12 +68,13 @@ extension VideoPlayer {
             #endif
         }
 
+        @ContentBuilder
         private func buttons(axis: Axis) -> some View {
             let layout = axis == .horizontal
-                ? AnyLayout(HStackLayout(spacing: UIDevice.isTV ? 24 : 12))
+                ? AnyLayout(HStackLayout(spacing: viewLayout.isLarge ? 24 : 12))
                 : AnyLayout(VStackLayout(alignment: .trailing, spacing: 12))
 
-            return layout {
+            layout {
                 ForEach(actions) { action in
                     Button {
                         viewState.performOverlayAction(action.id)
@@ -76,12 +87,43 @@ extension VideoPlayer {
                     }
                     .buttonStyle(OverlayActionButtonStyle())
                     .coordinatedFocus(action.id.focusID, selection: $focusedAction)
+                    .offset(x: offsets[action.id] ?? 0)
+                    .opacity(1 - min(abs(offsets[action.id] ?? 0) / 60, 1))
+                    #if os(iOS)
+                    .highPriorityGesture(
+                        DragGesture(minimumDistance: 10)
+                            .onChanged { value in
+                                offsets[action.id] = value.translation.width
+                            }
+                            .onEnded { value in
+                                if abs(value.predictedEndTranslation.width) > 120 {
+                                    dismissOverlayAction(action, towards: value.predictedEndTranslation.width < 0 ? .left : .right)
+                                } else {
+                                    withAnimation(.spring(duration: 0.3)) {
+                                        offsets[action.id] = 0
+                                    }
+                                }
+                            }
+                    )
+                    #endif
                 }
+            }
+        }
+
+        private func dismissOverlayAction(_ action: ViewState.OverlayAction, towards direction: Direction) {
+            withAnimation(.easeOut(duration: 0.25)) {
+                offsets[action.id] = direction == .left ? -60 : 60
+            } completion: {
+                viewState.dismissOverlayAction(action.id)
+                offsets[action.id] = nil
             }
         }
     }
 
     private struct OverlayActionButtonStyle: ButtonStyle {
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Environment(\.isFocused)
         private var isFocused
@@ -90,14 +132,15 @@ extension VideoPlayer {
         @Environment(\.accessibilityReduceMotion)
         private var reduceMotion
 
+        @ContentBuilder
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .font(.headline)
                 .fontWeight(.semibold)
                 .foregroundStyle(.black)
                 .symbolRenderingMode(.monochrome)
-                .padding(.horizontal, UIDevice.isTV ? 28 : 20)
-                .padding(.vertical, UIDevice.isTV ? 16 : 10)
+                .padding(.horizontal, viewLayout.isLarge ? 28 : 20)
+                .padding(.vertical, viewLayout.isLarge ? 16 : 10)
                 .frame(minHeight: 44)
                 .background(.white, in: Capsule())
                 .contentShape(Capsule())

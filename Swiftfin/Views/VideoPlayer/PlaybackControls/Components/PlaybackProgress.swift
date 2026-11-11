@@ -21,6 +21,25 @@ extension VideoPlayer.PlaybackControls {
 
     struct PlaybackProgress: View {
 
+        private struct GlassSliderStyle: SliderContainerStyle {
+
+            @ContentBuilder
+            func makeBody(configuration: SliderContainerStyleConfiguration) -> some View {
+                CapsuleSliderStyle()
+                    .makeBody(configuration: configuration)
+                    .background {
+                        // Glass must not composite or clip the expanding progress fill.
+                        Color.clear
+                            .backport
+                            .glassEffect(.regular.interactive(false), in: .capsule)
+                            .allowsHitTesting(false)
+                    }
+            }
+        }
+
+        @AdaptiveLayout
+        private var viewLayout
+
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
         @Default(.VideoPlayer.jumpBackwardInterval)
@@ -30,10 +49,10 @@ extension VideoPlayer.PlaybackControls {
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<Duration>
+        @Environment(\.accessibilityReduceMotion)
+        private var reduceMotion
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         @AccessibilityFocusState
         private var isAccessibilityFocused: Bool
@@ -48,21 +67,15 @@ extension VideoPlayer.PlaybackControls {
         private var sliderSize: CGSize = .zero
 
         private var isScrubbing: Bool {
-            get {
-                viewState.isScrubbing
-            }
-            nonmutating set {
-                viewState.isScrubbing = newValue
-            }
+            viewState.isScrubbing
+        }
+
+        private var isLoading: Bool {
+            mediaSession.activity == .loading || mediaSession.playbackState.isBuffering
         }
 
         private var isSlowScrubbing: Bool {
             isScrubbing && (currentTranslation.y >= 60)
-        }
-
-        private var insetSliderWidth: CGFloat {
-            guard sliderSize.width.isFinite else { return 0 }
-            return max(0, sliderSize.width - EdgeInsets.edgePadding * 2)
         }
 
         private var previewXOffset: CGFloat {
@@ -70,11 +83,12 @@ extension VideoPlayer.PlaybackControls {
 
             let videoWidth = 85 * videoSizeAspectRatio
             let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
+
             return clamp(p, min: 0, max: max(0, sliderSize.width - videoWidth))
         }
 
         private var scrubbedProgress: Double {
-            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+            guard let runtime = mediaSession.item.runtime, runtime > .zero else { return 0 }
 
             let progress = scrubbedSeconds / runtime
             guard progress.isFinite else { return 0 }
@@ -83,13 +97,13 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var scrubbedSeconds: Duration {
-            scrubbedSecondsBox.value
+            viewState.scrubbedSeconds
         }
 
         private var videoSizeAspectRatio: CGFloat {
-            guard let aspectRatio = (manager.proxy as? any VideoMediaPlayerProxy)?
+            guard let aspectRatio = (mediaSession.player as? any VideoMediaPlayer)?
+                .videoState
                 .videoSize
-                .value
                 .aspectRatio
             else {
                 return 1.77
@@ -99,12 +113,13 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var sliderTotal: Double {
-            let total = (manager.item.runtime ?? .zero).seconds
+            let total = (mediaSession.item.runtime ?? .zero).seconds
             guard total.isFinite, total > 0 else { return 1 }
+
             return total
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var liveIndicator: some View {
             Text(L10n.live)
                 .font(.subheadline)
@@ -118,7 +133,7 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var slowScrubbingIndicator: some View {
             HStack {
                 Image(systemName: "backward.fill")
@@ -128,50 +143,58 @@ extension VideoPlayer.PlaybackControls {
             .font(.caption)
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var capsuleSlider: some View {
             AlternateLayoutView {
                 EmptyHitTestView()
                     .frame(height: 10)
                     .trackingSize($sliderSize)
             } content: {
-                // Use scale effect, slider doesn't respond well to horizontal frame changes
-                let xScale = insetSliderWidth > 0 ? max(1, sliderSize.width / insetSliderWidth) : 1
-
                 SliderContainer(
-                    value: $scrubbedSecondsBox.value.map(
+                    value: Bindable(viewState).scrubbedSeconds.map(
                         getter: { $0.seconds },
                         setter: { .seconds($0) }
                     ),
-                    total: sliderTotal
+                    total: sliderTotal,
+                    isScrollingEnabled: mediaSession.canSeek
                 )
                 .translation($currentTranslation)
                 .valueDamping(isSlowScrubbing ? 0.1 : 1)
                 .gesturePadding(30)
                 .onEditingChanged { newValue in
-                    isScrubbing = newValue
+                    if newValue {
+                        viewState.beginScrub()
+                    } else {
+                        viewState.commitScrub()
+                    }
                 }
+                .onEditingCancelled { viewState.cancelScrub() }
+                .sliderContainerStyle(GlassSliderStyle())
                 .if(chapterSlider) { view in
-                    view.ifLet(manager.item.chapters) { view, chapters in
+                    view.ifLet(mediaSession.item.chapters) { view, chapters in
                         if chapters.isEmpty {
                             view
                         } else {
-                            view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
+                            view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: mediaSession.item.runtime ?? .zero) }
                         }
                     }
                 }
-                .frame(maxWidth: sliderSize != .zero ? insetSliderWidth : .infinity)
-                .scaleEffect(x: isScrubbing ? xScale : 1, y: 1, anchor: .center)
+                .frame(maxWidth: .infinity)
                 .frame(height: isScrubbing ? 20 : 10)
-                .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
+                .foregroundStyle(mediaSession.canSeek ? Color.white : Color.gray)
+                .phaseAnimator(isLoading && !reduceMotion ? [false, true] : [false]) { content, dimmed in
+                    content.opacity(dimmed ? 0.8 : 1)
+                } animation: { _ in
+                    .easeInOut(duration: 1.1)
+                }
             }
             .animation(.linear(duration: 0.05), value: scrubbedSeconds)
             .frame(height: 10)
-            .disabled(manager.state == .loadingItem)
+            .disabled(!mediaSession.canSeek)
         }
 
         private var accessibilityValue: String {
-            guard let runtime = manager.item.runtime, runtime > .zero else {
+            guard let runtime = mediaSession.item.runtime, runtime > .zero else {
                 return announcedSeconds.formatted(.spokenRuntime)
             }
 
@@ -189,21 +212,20 @@ extension VideoPlayer.PlaybackControls {
             @unknown default: .zero
             }
 
-            guard interval != .zero, let runtime = manager.item.runtime, runtime > .zero else { return }
+            guard interval != .zero, let runtime = mediaSession.item.runtime, runtime > .zero else { return }
 
             let newSeconds = clamp(scrubbedSeconds + interval, min: .zero, max: runtime)
 
-            announcedSeconds = newSeconds
-            scrubbedSecondsBox.value = newSeconds
-            manager.seconds = newSeconds
-            manager.proxy?.setSeconds(newSeconds)
+            guard mediaSession.seek(to: newSeconds) else { return }
+
+            announcedSeconds = mediaSession.seconds
         }
 
+        @ContentBuilder
         var body: some View {
             VStack(spacing: 5) {
-                if manager.item.isLiveStream {
+                if mediaSession.item.isLiveStream {
                     liveIndicator
-                        .edgePadding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     capsuleSlider
@@ -217,13 +239,12 @@ extension VideoPlayer.PlaybackControls {
 
                     SplitTimeStamp()
                         .offset(y: isScrubbing ? 5 : 0)
-                        .frame(maxWidth: isScrubbing ? nil : insetSliderWidth)
                 }
             }
             .frame(maxWidth: .infinity)
             .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
             .overlay(alignment: .topLeading) {
-                if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
+                if isScrubbing, let previewImageProvider = mediaSession.playbackItem?.previewImageProvider {
                     PreviewImageView(previewImageProvider: previewImageProvider)
                         .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
                         .frame(height: 85)
@@ -236,13 +257,14 @@ extension VideoPlayer.PlaybackControls {
             .overlay(alignment: .bottom) {
                 if isSlowScrubbing {
                     slowScrubbingIndicator
-                        .offset(y: EdgeInsets.edgePadding * 2)
+                        .offset(y: viewLayout.edgePadding * 2)
                         .transition(.opacity.animation(.linear(duration: 0.1)))
                         .accessibilityHidden(true)
                 }
             }
             .onChange(of: isSlowScrubbing) {
                 guard isScrubbing else { return }
+
                 UIDevice.impact(.soft)
             }
             .onChange(of: scrubbedSeconds) {

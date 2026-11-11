@@ -38,6 +38,7 @@ struct AddItemElementView<Editor: ItemComponentEditor>: View {
         input.name.isNotEmpty && !alreadyOnItem
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             ItemElementSearchView(

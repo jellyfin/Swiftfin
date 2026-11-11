@@ -19,9 +19,9 @@ extension EditMetadataView {
 
         // MARK: - Body
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.reviews) {
-
                 // MARK: - Critics Rating
 
                 StateAdapter(initialValue: false) { isPresented in
@@ -29,7 +29,8 @@ extension EditMetadataView {
                         L10n.critics,
                         content: item.criticRating
                             .map { FloatingPointFormatStyle<Float>.number
-                                .precision(.fractionLength(0 ... 2)).format($0)
+                                .precision(.fractionLength(0 ... 2))
+                                .format($0)
                             } ?? .emptyDash
                     ) {
                         isPresented.wrappedValue = true
@@ -58,7 +59,8 @@ extension EditMetadataView {
                         L10n.community,
                         content: item.communityRating
                             .map { FloatingPointFormatStyle<Float>.number
-                                .precision(.fractionLength(0 ... 2)).format($0)
+                                .precision(.fractionLength(0 ... 2))
+                                .format($0)
                             } ?? .emptyDash
                     ) {
                         isPresented.wrappedValue = true

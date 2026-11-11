@@ -19,15 +19,17 @@ extension SettingsView {
         @Injected(\.currentUserSession)
         private var userSession: UserSession?
 
-        let user: UserDto
+        @SharedUser
+        var user: UserDto
+
         var action: (() -> Void)?
 
+        @ContentBuilder
         var body: some View {
             Button {
                 action?()
             } label: {
                 HStack {
-
                     // `.aspectRatio(contentMode: .fill)` on `imageView` alone
                     // causes a crash on some iOS versions
                     ZStack {

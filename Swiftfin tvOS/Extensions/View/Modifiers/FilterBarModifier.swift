@@ -11,6 +11,9 @@ import SwiftUI
 
 struct FilterBarModifier: ViewModifier {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
 
@@ -26,7 +29,7 @@ struct FilterBarModifier: ViewModifier {
         letterPickerOrientation == .trailing ? .leading : .trailing
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var filters: some View {
         VStack(spacing: 20) {
             ForEach(subviews: FilterTrack(
@@ -51,6 +54,7 @@ struct FilterBarModifier: ViewModifier {
         )
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         if types.isEmpty {
             content
@@ -60,7 +64,7 @@ struct FilterBarModifier: ViewModifier {
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     filters
                         .coordinatedFocus(.secondary)
-                        .padding(edge.asEdgeSet, EdgeInsets.itemSpacing)
+                        .padding(edge.asEdgeSet, viewLayout.itemSpacing)
                 }
                 .ignoresSafeArea(.all, edges: edge.asEdgeSet)
         }

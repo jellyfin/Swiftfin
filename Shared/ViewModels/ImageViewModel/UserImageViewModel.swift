@@ -17,6 +17,7 @@ final class UserImageViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case delete
         case upload(UIImage)
 
@@ -31,21 +32,24 @@ final class UserImageViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case deleting
         case updating
     }
 
     enum Event {
+
         case deleted
         case updated
     }
 
     enum State {
+
         case initial
         case error
     }
 
-    @Published
+    @SharedUser
     var user: UserDto
 
     init(user: UserDto) {
@@ -68,6 +72,7 @@ final class UserImageViewModel: ViewModel {
         _ = try await send(request)
 
         await cleanImageCache()
+        $user = try await requireUserSession().getUser(id: userID)
         events.send(.updated)
     }
 
@@ -79,6 +84,7 @@ final class UserImageViewModel: ViewModel {
         _ = try await send(request)
 
         await cleanImageCache()
+        $user = try await requireUserSession().getUser(id: userID)
         events.send(.deleted)
     }
 
@@ -90,10 +96,6 @@ final class UserImageViewModel: ViewModel {
                 await ImagePipeline.Swiftfin.local.removeItem(for: url)
                 await ImagePipeline.Swiftfin.posters.removeItem(for: url)
             }
-        }
-
-        if let userID = user.id {
-            Notifications[.didChangeUserProfile].post(userID)
         }
     }
 }

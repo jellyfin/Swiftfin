@@ -6,14 +6,16 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct ItemSubtitleSearchView: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AdaptiveLayout
+    private var viewLayout
+
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var viewModel: ItemSubtitlesViewModel
@@ -26,6 +28,7 @@ struct ItemSubtitleSearchView: View {
     @State
     private var selectedSubtitles: Set<String> = []
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -55,13 +58,14 @@ struct ItemSubtitleSearchView: View {
             if viewModel.background.states.isNotEmpty {
                 ProgressView()
             }
+
             #if os(iOS)
             if #available(iOS 26, *) {
                 Button(L10n.save, role: .confirm, action: save)
                     .disabled(selectedSubtitles.isEmpty)
             } else {
                 Button(L10n.save, action: save)
-                    .foregroundStyle(accentColor.overlayColor, accentColor)
+                    .foregroundStyle(theme.accentColor.overlayColor, theme.accentColor)
                     .disabled(selectedSubtitles.isEmpty)
                     .backport
                     .buttonStyle(.glassProminent)
@@ -74,34 +78,32 @@ struct ItemSubtitleSearchView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         Form(systemImage: "textformat") {
-
             Section(L10n.options) {
                 CulturePicker(L10n.language, threeLetterISOLanguageName: $viewModel.language)
 
                 Toggle(L10n.perfectMatch, isOn: $isPerfectMatch)
             }
 
-            #if os(tvOS)
-            Section {
-                Button(action: save) {
-                    Text(L10n.save)
-                        .frame(maxWidth: .infinity)
+            if viewLayout.isLarge {
+                Section {
+                    Button(action: save) {
+                        Text(L10n.save)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .disabled(selectedSubtitles.isEmpty)
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .tint(theme.accentColor)
                 }
-                .disabled(selectedSubtitles.isEmpty)
-                .listRowInsets(.zero)
-                .listRowBackground(Color.clear)
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
             }
-            #endif
 
             Section(L10n.search) {
-
                 if viewModel.results.isEmpty {
                     if viewModel.background.is(.searching) {
                         ProgressView()
@@ -115,6 +117,7 @@ struct ItemSubtitleSearchView: View {
                     ForEach(viewModel.results) { subtitle in
                         SearchResultRow(subtitle: subtitle) {
                             guard let subtitleID = subtitle.id else { return }
+
                             selectedSubtitles.toggle(value: subtitleID)
                         }
                         .isSelected(subtitle.id.map { selectedSubtitles.contains($0) } == true)
@@ -126,6 +129,7 @@ struct ItemSubtitleSearchView: View {
 
     private func save() {
         guard selectedSubtitles.isNotEmpty else { return }
+
         viewModel.set(selectedSubtitles)
     }
 }

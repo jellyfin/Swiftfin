@@ -22,7 +22,6 @@ extension ServerTaskDetailsView {
 
         // TODO: make FormatStyle
         private var buttonLabel: String {
-
             guard let triggerType = taskTriggerInfo.type else { return L10n.unknown }
 
             switch triggerType {
@@ -35,10 +34,10 @@ extension ServerTaskDetailsView {
                             .formatted(date: .omitted, time: .shortened)
                     )
                 }
+
             case .weeklyTrigger:
                 if let dayOfWeek = taskTriggerInfo.dayOfWeek,
-                   let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks
-                {
+                   let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
                     return L10n.itemAtItem(
                         dayOfWeek.rawValue.capitalized,
                         Duration.ticks(timeOfDayTicks)
@@ -46,6 +45,7 @@ extension ServerTaskDetailsView {
                             .formatted(date: .omitted, time: .shortened)
                     )
                 }
+
             case .intervalTrigger:
                 if let intervalTicks = taskTriggerInfo.intervalTicks {
                     return L10n.everyInterval(
@@ -53,6 +53,7 @@ extension ServerTaskDetailsView {
                             .formatted(.hourMinuteAbbreviated)
                     )
                 }
+
             case .startupTrigger:
                 return triggerType.displayTitle
             }
@@ -60,11 +61,10 @@ extension ServerTaskDetailsView {
             return L10n.unknown
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var contentView: some View {
             HStack {
                 VStack(alignment: .leading) {
-
                     Text(buttonLabel)
                         .fontWeight(.semibold)
 
@@ -90,6 +90,7 @@ extension ServerTaskDetailsView {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             contentView
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {

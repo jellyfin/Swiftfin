@@ -26,6 +26,7 @@ struct SplitLoginWindowView<Leading: View, Trailing: View>: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 22) {
@@ -48,7 +49,7 @@ struct SplitLoginWindowView<Leading: View, Trailing: View>: View {
                 Image(uiImage: .jellyfinBlobBlue)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: UIDevice.isTV ? 100 : 30)
+                    .frame(width: 100)
             }
             ToolbarItem(placement: .topBarTrailing) {
                 if isLoading {
@@ -79,8 +80,8 @@ extension SplitLoginWindowView {
     init(
         isLoading: Bool = false,
         backgroundImageSource: ImageSource? = nil,
-        @ViewBuilder leadingContentView: @escaping () -> Leading,
-        @ViewBuilder trailingContentView: @escaping () -> Trailing
+        @ContentBuilder leadingContentView: @escaping () -> Leading,
+        @ContentBuilder trailingContentView: @escaping () -> Trailing
     ) {
         self.backgroundImageSource = backgroundImageSource
         self.isLoading = isLoading

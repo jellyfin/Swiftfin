@@ -16,13 +16,15 @@ extension ItemView {
         @Router
         private var router
 
-        let item: BaseItemDto
+        @SharedBaseItem
+        var item: BaseItemDto
 
         private var isPresented: Bool {
             item.taglines?.contains(where: \.isNotEmpty) == true ||
                 item.overview?.isNotEmpty == true
         }
 
+        @ContentBuilder
         var body: some View {
             if isPresented {
                 VStack(alignment: .leading, spacing: 5) {
@@ -34,7 +36,7 @@ extension ItemView {
                     }
 
                     if let itemOverview = item.overview, itemOverview.isNotEmpty {
-                        InlinePlatformView {
+                        PresentationContent {
                             Button {
                                 router.route(to: .itemOverview(item: item))
                             } label: {
@@ -43,7 +45,7 @@ extension ItemView {
                                     .lineLimit(3)
                             }
                             .buttonStyle(.plain)
-                        } tvOSView: {
+                        } largeView: {
                             Text(itemOverview)
                                 .font(.footnote)
                                 .lineLimit(3)

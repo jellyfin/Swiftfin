@@ -17,14 +17,15 @@ extension SelectUserView {
         @Default(.selectUserServerSelection)
         private var serverSelection
 
-        @Environment(\.horizontalSizeClass)
-        private var horizontalSizeClass
+        @AdaptiveLayout
+        private var viewLayout
 
         @Router
         private var router
 
         let servers: OrderedSet<ServerState>
 
+        @ContentBuilder
         var body: some View {
             Menu {
                 Section {
@@ -43,7 +44,6 @@ extension SelectUserView {
                 }
 
                 Picker(L10n.servers, selection: $serverSelection) {
-
                     if servers.count > 1 {
                         Label(L10n.allServers, systemImage: "person.2.fill")
                             .tag(SelectUserServerSelection.all)
@@ -58,7 +58,7 @@ extension SelectUserView {
                     }
                 }
             } label: {
-                HStack(spacing: horizontalSizeClass == .compact ? nil : 16) {
+                HStack(spacing: viewLayout.isCompact ? nil : 16) {
                     switch serverSelection {
                     case .all:
                         Label(L10n.allServers, systemImage: "person.2.fill")
@@ -74,8 +74,15 @@ extension SelectUserView {
                         .foregroundStyle(.secondary)
                         .font(.subheadline)
                 }
+                .if(viewLayout.isAccessibilitySize) { label in
+                    label.labelStyle(.titleOnly)
+                }
                 .fontWeight(.semibold)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.vertical, viewLayout.value(standard: 12, large: 0))
+                .padding(.horizontal, viewLayout.value(standard: 16, large: 0))
+                .frame(maxWidth: .infinity, minHeight: viewLayout.controlHeight)
             }
             .foregroundStyle(.primary, .secondary)
             .menuOrder(.fixed)

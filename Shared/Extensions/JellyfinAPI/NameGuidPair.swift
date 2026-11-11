@@ -27,6 +27,7 @@ extension NameIDPair: LibraryParent {
 
 extension NameIDPair: LibraryElement {
 
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
@@ -48,6 +49,7 @@ private struct NameIDPairLibraryListElement: View {
     let element: NameIDPair
     var action: (() -> Void)?
 
+    @ContentBuilder
     var body: some View {
         Button {
             action?()
@@ -61,14 +63,9 @@ private struct NameIDPairLibraryListElement: View {
                         isEditing ? (isSelected ? .primary : .secondary) : .primary
                     )
 
-                if isEditing {
-                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .resizable()
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(isSelected ? Color.accentColor : .secondary)
-                }
+                ListRowCheckbox()
             }
+            .edgePadding()
         }
         .foregroundStyle(.primary, .secondary)
     }

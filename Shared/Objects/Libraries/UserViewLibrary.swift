@@ -15,6 +15,9 @@ private let userViewLibraryListImageWidth: CGFloat = 110
 
 struct UserViewLibrary: PagingLibrary {
 
+    typealias Element = UserViewLibraryElement
+    typealias PageElement = ItemPatch
+
     let hasNextPage: Bool = false
     let parent: TitledLibraryParent = .init(
         displayTitle: L10n.media,
@@ -28,38 +31,40 @@ struct UserViewLibrary: PagingLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [UserViewLibraryElement] {
+    ) async throws -> [ItemPatch] {
         guard pageState.pageOffset == 0 else { return [] }
 
         let parameters = Paths.GetUserViewsParameters(userID: pageState.userSession.user.id)
         let request = Paths.getUserViews(parameters: parameters)
 
         async let userViews = pageState.userSession.client.send(request)
-        async let currentUser = pageState.userSession.client.send(Paths.getCurrentUser)
+        async let currentUser = pageState.userSession.getUser(id: pageState.userSession.user.id)
 
-        let excludedLibraryIDs = try await currentUser.value.configuration?.myMediaExcludes ?? []
-        let elements = try await (userViews.value.items ?? [])
-            .coalesced(property: \.collectionType, with: .folders)
-            .intersecting(CollectionType.supportedCases, using: \.collectionType)
-            .subtracting(excludedLibraryIDs, using: \.id)
-            .map { item in
-                if item.type == .userView, item.collectionType == .folders {
-                    return item.mutating(\.type, with: .folder)
-                }
+        let excludedLibraryIDs = try await currentUser.value?.configuration?.myMediaExcludes ?? []
+        let response = try await userViews
 
-                return item
+        return try pageState.items(from: response)
+            .filter { patch in
+                CollectionType.supportedCases.contains(patch.value.collectionType ?? .folders) &&
+                    !excludedLibraryIDs.contains(patch.value.id ?? "")
             }
-            .map(UserViewLibraryElement.userView)
+    }
 
-        return elements
-            .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
+    func materialize(_ page: [ItemPatch], pageState: LibraryPageState) throws -> [UserViewLibraryElement] {
+        let elements: [UserViewLibraryElement] = try page.compactMap { patch in
+            guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
+
+            return .userView(ItemEntry(item: record))
+        }
+
+        return elements.prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
     }
 }
 
 enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement, SystemImageable {
 
     case favorites
-    case userView(BaseItemDto)
+    case userView(ItemEntry)
 
     static var supportedLibraryStyleOptions: LibraryStyleOptions {
         BaseItemKind.libraryStyleOptions(for: [.userView])
@@ -79,7 +84,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         case .favorites:
             "favorites"
         case let .userView(item):
-            item.id ?? item.displayTitle
+            item.itemID
         }
     }
 
@@ -88,7 +93,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         case .favorites:
             "heart.fill"
         case let .userView(item):
-            if item.collectionType == .livetv {
+            if item.snapshot.collectionType == .livetv {
                 "tv"
             } else {
                 "folder.fill"
@@ -123,28 +128,36 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
                 ),
                 in: namespace
             )
+
         case let .userView(item):
-            if item.collectionType == .livetv {
+            if item.snapshot.collectionType == .livetv {
                 router.route(to: .liveTV, in: namespace)
             } else {
                 router.route(
-                    to: .library(library: ItemLibrary(parent: item, filters: .default)),
+                    to: .library(library: ItemLibrary(parent: item.snapshot, filters: .default)),
                     in: namespace
                 )
             }
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
     ) -> some View {
-        switch libraryStyle.displayType {
-        case .grid:
-            UserViewLibraryGridElement(element: self)
-        case .list:
-            UserViewLibraryListElement(element: self)
+        Group {
+            switch libraryStyle.displayType {
+            case .grid:
+                UserViewLibraryGridElement(element: self)
+            case .list:
+                UserViewLibraryListElement(element: self)
+            }
+        }
+        .contextMenu {
+            if case let .userView(item) = self {
+                ShuffleButton(item: item.snapshot)
+            }
         }
     }
 }
@@ -174,6 +187,7 @@ private struct UserViewLibraryGridElement: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Button {
             element.libraryDidSelectElement(router: router, in: namespace)
@@ -208,9 +222,10 @@ private struct UserViewLibraryGridElement: View {
             setImageSources()
         }
         .buttonStyle(.card)
+        .accessibilityLabel(element.displayTitle)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var titleLabel: some View {
         Text(element.displayTitle)
             .font(.title2)
@@ -220,7 +235,7 @@ private struct UserViewLibraryGridElement: View {
             .frame(alignment: .center)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func titleLabelOverlay(with content: some View) -> some View {
         ZStack {
             content
@@ -242,6 +257,9 @@ private struct UserViewLibraryGridElement: View {
 
 private struct UserViewLibraryListElement: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.Customization.Library.randomImage)
     private var useRandomImage
 
@@ -256,8 +274,9 @@ private struct UserViewLibraryListElement: View {
 
     let element: UserViewLibraryElement
 
+    @ContentBuilder
     var body: some View {
-        ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+        ListRow(insets: .init(vertical: 8, horizontal: viewLayout.edgePadding)) {
             imageView
         } content: {
             Text(element.displayTitle)
@@ -279,7 +298,7 @@ private struct UserViewLibraryListElement: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var imageView: some View {
         ZStack {
             Color.secondarySystemFill
@@ -307,9 +326,9 @@ private struct UserViewLibraryListElement: View {
     }
 }
 
+@MainActor
 private extension UserViewLibraryElement {
 
-    @MainActor
     func libraryImageSources(useRandomImage: Bool) async -> [ImageSource] {
         switch self {
         case .favorites:
@@ -319,11 +338,11 @@ private extension UserViewLibraryElement {
                 return await (try? randomItemImageSources()) ?? []
             }
 
-            return [item.imageSource(.primary, itemID: item.id, environment: ImageSourceOptions(maxWidth: 500))].compactMap(\.self)
+            return [item.snapshot.imageSource(.primary, itemID: item.itemID, environment: ImageSourceOptions(maxWidth: 500))]
+                .compactMap(\.self)
         }
     }
 
-    @MainActor
     func randomItemImageSources() async throws -> [ImageSource] {
         guard let userSession = Container.shared.currentUserSession() else {
             throw UserSessionError.missingCurrentSession
@@ -337,10 +356,10 @@ private extension UserViewLibraryElement {
         case .favorites:
             filters = [.isFavorite]
         case let .userView(item):
-            if item.collectionType == .livetv {
+            if item.snapshot.collectionType == .livetv {
                 includeItemTypes = [.tvProgram, .liveTvProgram]
             } else {
-                parentID = item.id
+                parentID = item.itemID
             }
         }
 
@@ -354,7 +373,7 @@ private extension UserViewLibraryElement {
         parameters.userID = userSession.user.id
 
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await userSession.send(request)
 
         return (response.value.items ?? [])
             .flatMap { $0.imageSources(for: .landscape, size: .custom(width: 200)) }

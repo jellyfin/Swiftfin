@@ -14,6 +14,9 @@ extension ItemActionButtons {
 
     struct Trailers: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @EnvironmentObject
         private var provider: ItemContentGroupProvider
 
@@ -23,8 +26,8 @@ extension ItemActionButtons {
         @ViewContextContains(.isInMenu)
         private var isInMenu
 
-        @Router
-        private var router
+        @PlayMedia
+        private var playMedia
 
         @State
         private var error: Error?
@@ -44,25 +47,21 @@ extension ItemActionButtons {
         }
 
         private func playLocalTrailer(_ trailer: BaseItemDto) {
-            guard let provider = trailer.getPlaybackItemProvider(userSession: nil) else {
-                logger.log(level: .error, "Unable to build provider")
+            guard let intent = trailer.getPlaybackIntent(userSession: nil) else {
+                logger.log(level: .error, "Unable to build playback intent")
                 error = ErrorMessage(L10n.unknownError)
                 return
             }
 
-            router.route(to: .videoPlayer(provider: provider))
+            playMedia(intent: intent)
         }
 
         private func playExternalTrailer(_ trailer: NamedURL) {
             #if os(tvOS)
             guard let urlString = trailer.url,
-                  let externalURL = ExternalTrailerURL(string: urlString)
+                  let externalURL = ExternalTrailerURL(string: urlString),
+                  externalURL.canBeOpened
             else {
-                error = ErrorMessage(L10n.unableToOpenTrailer)
-                return
-            }
-
-            guard externalURL.canBeOpened else {
                 error = ErrorMessage(L10n.unableToOpenTrailer)
                 return
             }
@@ -86,6 +85,7 @@ extension ItemActionButtons {
             #endif
         }
 
+        @ContentBuilder
         var body: some View {
             Menu(
                 ItemActionButton.trailers.displayTitle,
@@ -121,7 +121,7 @@ extension ItemActionButtons {
                 .symbolRenderingMode(.monochrome)
                 .foregroundStyle(.primary)
             }
-            .if(!isInMenu && UIDevice.isTV) { menu in
+            .if(!isInMenu && viewLayout.isLarge) { menu in
                 menu.menuStyle(.button)
             }
             .errorMessage($error)

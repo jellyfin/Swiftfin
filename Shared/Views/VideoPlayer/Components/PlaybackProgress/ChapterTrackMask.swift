@@ -13,7 +13,9 @@ extension VideoPlayer.PlaybackControls.PlaybackProgress {
 
     struct ChapterTrackMask: View {
 
-        // Tick marks only need timestamps, not the chapter image URLs in FullInfo.
+        @AdaptiveLayout
+        private var viewLayout
+
         let chapters: [ChapterInfo]
         let runtime: Duration
 
@@ -34,14 +36,15 @@ extension VideoPlayer.PlaybackControls.PlaybackProgress {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             GeometryReader { proxy in
                 ZStack(alignment: .leading) {
                     ForEach(unitPoints, id: \.self) { unitPoint in
                         if unitPoint > 0 {
                             Color.black
-                                .frame(width: UIDevice.isTV ? 3 : 1.5)
-                                .offset(x: proxy.size.width * unitPoint - 0.75)
+                                .frame(width: viewLayout.value(standard: 1.5, large: 3))
+                                .offset(x: proxy.size.width * unitPoint - viewLayout.value(standard: 0.75, large: 1.5))
                         }
                     }
                 }

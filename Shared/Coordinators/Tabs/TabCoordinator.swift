@@ -12,6 +12,7 @@ import SwiftUI
 final class TabCoordinator: ObservableObject {
 
     struct SelectedEvent {
+
         let isRoot: Bool
         let isRepeat: Bool
     }
@@ -48,6 +49,7 @@ final class TabCoordinator: ObservableObject {
 
     func route(to route: NavigationRoute) async {
         guard let tab = tabs.first(where: { $0.item.id == selectedTabID }) else { return }
+
         tab.coordinator.push(route)
     }
 }

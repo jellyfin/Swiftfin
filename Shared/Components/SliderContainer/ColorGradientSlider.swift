@@ -13,6 +13,7 @@ struct ColorGradientSlider: View {
     let color: Binding<Color>
     let component: WritableKeyPath<Color.RGBA, CGFloat>
 
+    @ContentBuilder
     var body: some View {
         SliderContainer(
             value: color.rgbaComponents.map(
@@ -36,11 +37,13 @@ struct ColorGradientSlider: View {
                     0,
                     (color.wrappedValue.rgbaComponents[keyPath: component] * 255 - step) / 255
                 )
+
             case .right:
                 color.wrappedValue.rgbaComponents[keyPath: component] = min(
                     1,
                     (color.wrappedValue.rgbaComponents[keyPath: component] * 255 + step) / 255
                 )
+
             default:
                 break
             }

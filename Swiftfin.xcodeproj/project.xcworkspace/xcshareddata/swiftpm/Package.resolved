@@ -1,5 +1,5 @@
 {
-  "originHash" : "172fa81da963fb365f44b7771b055ebb784420e1a02316cadc96e02e818d401f",
+  "originHash" : "e930b4eee421af04e4e5bc5144afa95b3ab22fb8ffca8cf44f7fe39ad7562c92",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -22,19 +22,19 @@
     {
       "identity" : "collectionhstack",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/CollectionHStack",
+      "location" : "https://github.com/LePips/CollectionHStack.git",
       "state" : {
         "branch" : "main",
-        "revision" : "5824801d31b67f89a125013d642cce7d284143c2"
+        "revision" : "628736a349dc086f828674f74e6808ea083a5d95"
       }
     },
     {
       "identity" : "collectionvgrid",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/CollectionVGrid",
+      "location" : "https://github.com/LePips/CollectionVGrid.git",
       "state" : {
         "branch" : "main",
-        "revision" : "7e4c4d8f20c8534cc5736e46f06265cd3686c944"
+        "revision" : "48f32f9dd08f7510d618c2a3391564912cf9f708"
       }
     },
     {
@@ -53,15 +53,6 @@
       "state" : {
         "revision" : "00a7465a0668a87fa159e779b9d80f1f9652357e",
         "version" : "9.0.9"
-      }
-    },
-    {
-      "identity" : "differencekit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ra1028/DifferenceKit",
-      "state" : {
-        "revision" : "073b9671ce2b9b5b96398611427a1f929927e428",
-        "version" : "1.3.0"
       }
     },
     {
@@ -101,12 +92,30 @@
       }
     },
     {
+      "identity" : "google-cast-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googlecast/google-cast-ios-sdk",
+      "state" : {
+        "revision" : "104500df8ce2a827ca3b3392bf16877fae413a33",
+        "version" : "4.8.6"
+      }
+    },
+    {
+      "identity" : "gtm-session-fetcher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/gtm-session-fetcher.git",
+      "state" : {
+        "revision" : "a2ab612cb980066ee56d90d60d8462992c07f24b",
+        "version" : "3.5.0"
+      }
+    },
+    {
       "identity" : "jellyfin-sdk-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "bf2f30b9a17c03da82f47d8faa50a666043f2196",
-        "version" : "3.2.0"
+        "revision" : "e69dd0358ad33148aded867661e27d71de29d0c3",
+        "version" : "3.4.0"
       }
     },
     {
@@ -159,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/MediaAccessibilityKit",
       "state" : {
-        "revision" : "fb4073607e083964d746b6533afddabc6fb4f2d1",
-        "version" : "0.2.0"
+        "revision" : "afb0f472fa98b5abf5861bed243c5cda7909b927",
+        "version" : "0.4.0"
       }
     },
     {
@@ -168,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/MPVUI",
       "state" : {
-        "revision" : "cf277d979465b919b34bbdb33d62fdb24c377fbe",
-        "version" : "0.5.0"
+        "revision" : "9f15a49dfa04170729047587df81aa0f5ae39ce3",
+        "version" : "0.10.0"
       }
     },
     {
@@ -204,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/StatefulMacro",
       "state" : {
-        "revision" : "12d7ee449891457e8cc73074ac7aeba4b50f48ca",
-        "version" : "0.1.7"
+        "revision" : "afb27fb5d49e1ee92097286a712e2f448be28fb2",
+        "version" : "0.2.0"
       }
     },
     {
@@ -332,15 +341,6 @@
       "state" : {
         "revision" : "a37eca1db7bebc9437ee89508e7b4433ff34adb4",
         "version" : "27.0.0"
-      }
-    },
-    {
-      "identity" : "swiftvlc",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/harflabs/SwiftVLC",
-      "state" : {
-        "revision" : "192393a45cdcd7ebb6befac26586360b8b1676b3",
-        "version" : "1.0.0"
       }
     },
     {

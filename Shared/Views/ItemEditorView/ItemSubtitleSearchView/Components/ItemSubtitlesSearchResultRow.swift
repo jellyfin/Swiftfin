@@ -13,12 +13,16 @@ extension ItemSubtitleSearchView {
 
     struct SearchResultRow: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Environment(\.isSelected)
         private var isSelected
 
         let subtitle: RemoteSubtitleInfo
         let action: () -> Void
 
+        @ContentBuilder
         var body: some View {
             Button(action: action) {
                 HStack {
@@ -49,7 +53,7 @@ extension ItemSubtitleSearchView {
 
                     ListRowCheckbox()
                 }
-                .if(UIDevice.isTV) { row in
+                .if(viewLayout.isLarge) { row in
                     row
                         .padding(.vertical)
                 }

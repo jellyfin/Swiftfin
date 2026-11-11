@@ -33,6 +33,7 @@ struct ServerUserParentalRatingView: View {
         self.tempPolicy = policy
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             maxParentalRatingsView
@@ -84,7 +85,7 @@ struct ServerUserParentalRatingView: View {
         .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var maxParentalRatingsView: some View {
         Section(
             L10n.maxParentalRating,
@@ -104,7 +105,7 @@ struct ServerUserParentalRatingView: View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var blockUnratedItemsView: some View {
         Section {
             ForEach(UnratedItem.allCases.sorted(using: \.displayTitle), id: \.self) { item in
@@ -124,7 +125,8 @@ struct ServerUserParentalRatingView: View {
 
     private func reducedParentalRatings() -> [ParentalRating] {
         [ParentalRating(name: L10n.none, value: nil)] +
-            parentalRatingsViewModel.elements.grouped { $0.value ?? 0 }
+            parentalRatingsViewModel.elements
+            .grouped { $0.value ?? 0 }
             .map { key, group in
                 if key < 100 {
                     if key == 0 {

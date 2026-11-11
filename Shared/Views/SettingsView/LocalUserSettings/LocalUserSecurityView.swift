@@ -59,6 +59,7 @@ struct LocalUserSecurityView: View {
                 newPin: (newEvaluatedPolicy as? PinEvaluatedUserAccessPolicy)?.pin ?? "",
                 newPinHint: signInPolicy == .requirePin ? pinHint : ""
             )
+
             router.dismiss()
         } catch is CancellationError {
             return
@@ -68,6 +69,7 @@ struct LocalUserSecurityView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "lock.fill") {
             securitySection
@@ -105,12 +107,14 @@ struct LocalUserSecurityView: View {
         .navigationTitle(L10n.security)
         .onFirstAppear {
             guard let user = viewModel.userSession?.user else { return }
+
             signInPolicy = user.accessPolicy
             pinHint = user.pinHint
         }
         .topBarTrailing {
             if let user = viewModel.userSession?.user {
                 let isChangingPIN = signInPolicy == .requirePin && signInPolicy == user.accessPolicy
+
                 let saveAction: () -> Void = {
                     Task { @MainActor in
                         await performSaveSecurityPolicy()
@@ -136,7 +140,7 @@ struct LocalUserSecurityView: View {
         .errorMessage($error)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var securitySection: some View {
         Section(L10n.security) {
             #if os(iOS)
@@ -157,12 +161,14 @@ struct LocalUserSecurityView: View {
                 LocalUserAccessPolicy.none.displayTitle,
                 value: L10n.saveUserWithoutAuthDescription
             )
+
             #if os(iOS)
             LabeledContent(
                 LocalUserAccessPolicy.requireDeviceAuthentication.displayTitle,
                 value: L10n.requireDeviceAuthDescription
             )
             #endif
+
             LabeledContent(
                 LocalUserAccessPolicy.requirePin.displayTitle,
                 value: L10n.requirePinDescription

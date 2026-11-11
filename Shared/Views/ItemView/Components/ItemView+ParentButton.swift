@@ -12,12 +12,16 @@ extension ItemView {
 
     struct ParentButton: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Router
         private var router
 
         let title: String
         let id: String
 
+        @ContentBuilder
         var body: some View {
             Button {
                 router.route(to: .item(id: id))
@@ -34,7 +38,7 @@ extension ItemView {
             .foregroundStyle(.primary, .secondary)
             .labelStyle(.trailingIcon)
             .buttonStyle(.capsule)
-            .controlSize(UIDevice.isTV ? .large : .regular)
+            .controlSize(viewLayout.value(standard: .regular, large: .large))
         }
     }
 }

@@ -22,6 +22,7 @@ final class ServerTasksViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case restartApplication
         case shutdownApplication
         case refresh
@@ -38,10 +39,12 @@ final class ServerTasksViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
     }
 
     enum State {
+
         case content
         case error
         case initial
@@ -53,7 +56,8 @@ final class ServerTasksViewModel: ViewModel {
     override init() {
         super.init()
 
-        Container.shared.userSessionManager()
+        Container.shared
+            .userSessionManager()
             .$currentSession
             .compactMap { $0?.serverSocketManager.scheduledTasks(interval: .seconds(2)) }
             .switchToLatest()
@@ -89,6 +93,7 @@ final class ServerTasksViewModel: ViewModel {
         for category in tasks.keys {
             tasks[category]?.removeAll { taskViewModel in
                 guard let id = taskViewModel.task.id else { return false }
+
                 return removedTaskIDs.contains(id)
             }
             if tasks[category]?.isEmpty == true {
@@ -99,6 +104,7 @@ final class ServerTasksViewModel: ViewModel {
         let existingIDs = existingTaskIDs.filter { allTaskIDs.contains($0) }
         let newTasks = allTasks.filter { task in
             guard let id = task.id else { return false }
+
             return !existingTaskIDs.contains(id)
         }
 
@@ -106,8 +112,7 @@ final class ServerTasksViewModel: ViewModel {
             if let taskViewModel = tasks.values
                 .flattened()
                 .first(where: { $0.task.id == id }),
-                let updatedTask = allTasks.first(where: { $0.id == id })
-            {
+               let updatedTask = allTasks.first(where: { $0.id == id }) {
                 taskViewModel.task = updatedTask
             }
         }

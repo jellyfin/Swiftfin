@@ -10,6 +10,7 @@
 struct PosterIndicator: Hashable, Storable {
 
     private enum Options: Int {
+
         case favorited
         case played
         case progress

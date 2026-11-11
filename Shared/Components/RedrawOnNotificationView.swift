@@ -20,18 +20,20 @@ struct RedrawOnNotificationView<Content: View, P>: View {
     init(
         _ key: Notifications.Key<P>,
         filter: @escaping (P) -> Bool = { _ in true },
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.filter = filter
         self.key = key
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .id(id)
             .onNotification(key) { p in
                 guard filter(p) else { return }
+
                 id += 1
             }
     }

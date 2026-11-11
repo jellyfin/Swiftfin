@@ -27,7 +27,7 @@ struct ParentalRatingPicker: View {
         viewModel.elements.first(property: \.name, equalTo: selection.wrappedValue)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var picker: some View {
         Picker(
             title,
@@ -39,6 +39,7 @@ struct ParentalRatingPicker: View {
         )
     }
 
+    @ContentBuilder
     var body: some View {
         Group {
             #if os(tvOS)

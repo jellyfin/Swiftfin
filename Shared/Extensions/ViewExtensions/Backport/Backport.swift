@@ -15,7 +15,16 @@ struct Backport<Content> {
 
 extension Backport where Content: View {
 
-    @ViewBuilder
+    @ContentBuilder
+    func backgroundExtensionEffect() -> some View {
+        if #available(iOS 26.0, tvOS 26.0, *) {
+            content.backgroundExtensionEffect()
+        } else {
+            content
+        }
+    }
+
+    @ContentBuilder
     func buttonStyle(
         _ style: some BackportButtonStyle
     ) -> some View {
@@ -24,7 +33,7 @@ extension Backport where Content: View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func glassEffect(
         _ glass: BackportGlass = .regular,
         in shape: some Shape
@@ -37,7 +46,7 @@ extension Backport where Content: View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func scrollEdgeEffectStyle(
         _ style: ScrollEdgeEffectStyle?,
         for edges: Edge.Set

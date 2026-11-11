@@ -6,20 +6,20 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct UnplayedIndicator: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     let count: Int?
 
+    @ContentBuilder
     var body: some View {
         if let count, count > 0 {
             Quadrant(.topTrailing) {
-                QuadrantItem(color: accentColor) {
+                QuadrantItem(color: theme.accentColor) {
                     Text(count.description)
                         .font(.body)
                         .fontWeight(.semibold)
@@ -29,7 +29,7 @@ struct UnplayedIndicator: View {
             .accessibilityLabel(L10n.posterAccessibilityUnplayedCount(count.formatted()))
         } else {
             Q3RightTriangle()
-                .fill(accentColor)
+                .fill(theme.accentColor)
                 .aspectRatio(1, contentMode: .fit)
                 .accessibilityLabel(L10n.unplayed)
         }

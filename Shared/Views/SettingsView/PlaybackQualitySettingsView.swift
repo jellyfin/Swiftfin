@@ -35,6 +35,7 @@ struct PlaybackQualitySettingsView: View {
     @Router
     private var router
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "play.rectangle.on.rectangle") {
             Section(L10n.quality) {
@@ -54,6 +55,7 @@ struct PlaybackQualitySettingsView: View {
                     L10n.auto,
                     value: L10n.birateAutoDescription
                 )
+
                 LabeledContent(
                     L10n.maximum,
                     value: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
@@ -92,14 +94,17 @@ struct PlaybackQualitySettingsView: View {
                     L10n.auto,
                     value: L10n.autoDescription
                 )
+
                 LabeledContent(
                     L10n.compatible,
                     value: L10n.compatibleDescription
                 )
+
                 LabeledContent(
                     L10n.directPlay,
                     value: L10n.directDescription
                 )
+
                 LabeledContent(
                     L10n.custom,
                     value: L10n.customDescription
@@ -111,6 +116,7 @@ struct PlaybackQualitySettingsView: View {
                     L10n.forceDVTranscode,
                     isOn: $forceDVTranscode
                 )
+
                 Toggle(
                     L10n.forceHDRTranscode,
                     isOn: $forceHDRTranscode
@@ -120,7 +126,8 @@ struct PlaybackQualitySettingsView: View {
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.forceDVHDRTranscodeMessage)
-                    if !PlaybackCapabilities.isDeviceHDRCapable {
+
+                    if !UIDevice.PlaybackCapabilities.isDeviceHDRCapable {
                         Label(L10n.deviceHDRWarning, systemImage: "exclamationmark.circle.fill")
                             .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                     }

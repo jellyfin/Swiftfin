@@ -13,8 +13,10 @@ extension ItemView {
 
     struct MetadataHStack: View {
 
-        let item: BaseItemDto
+        @SharedBaseItem
+        var item: BaseItemDto
 
+        @ContentBuilder
         var body: some View {
             DotHStack {
                 if let firstGenre = item.genres?.first {

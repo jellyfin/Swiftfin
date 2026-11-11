@@ -19,9 +19,6 @@ private struct EmptyCGRectPreferenceKey: PreferenceKey {
 
 struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value == FrameAndSafeAreaInsets {
 
-    @Environment(\.frameForParentView)
-    private var frameForParentView
-
     @State
     private var frame: CGRect = .zero
     @State
@@ -41,9 +38,9 @@ struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value =
         self.key = key
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func attachingFramePreference(
-        @ViewBuilder to content: @escaping () -> some View
+        @ContentBuilder to content: @escaping () -> some View
     ) -> some View {
         if let key {
             content()
@@ -56,6 +53,7 @@ struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value =
         }
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         attachingFramePreference {
             content
@@ -64,20 +62,16 @@ struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value =
                     $frame,
                     $safeAreaInsets
                 )
-                .environment(
-                    \.frameForParentView,
-                    frameForParentView.inserting(
-                        value: .init(frame: frame, safeAreaInsets: safeAreaInsets),
-                        for: coordinateSpace
-                    )
-                )
+                .transformEnvironment(\.frameForParentView) { frames in
+                    frames[coordinateSpace] = .init(frame: frame, safeAreaInsets: safeAreaInsets)
+                }
         }
     }
 }
 
 extension View {
 
-    @ViewBuilder
+    @ContentBuilder
     func trackingFrame(
         in containerCoordinateSpace: CoordinateSpace = .global,
         _ frameBinding: Binding<CGRect>,
@@ -94,7 +88,7 @@ extension View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func trackingFrame(
         in containerCoordinateSpace: CoordinateSpace = .global,
         for coordinateSpace: CoordinateSpace
@@ -108,7 +102,7 @@ extension View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func trackingFrame<K: PreferenceKey>(
         in containerCoordinateSpace: CoordinateSpace = .global,
         for coordinateSpace: CoordinateSpace,
@@ -123,7 +117,7 @@ extension View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func onFrameChanged(perform action: @escaping (CGRect, EdgeInsets) -> Void) -> some View {
         onGeometryChange(for: FrameAndSafeAreaInsets.self) { proxy in
             .init(
@@ -138,14 +132,14 @@ extension View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func trackingFrame(_ binding: Binding<CGRect>) -> some View {
         onFrameChanged { newFrame, _ in
             binding.wrappedValue = newFrame
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func trackingSize(
         _ sizeBinding: Binding<CGSize>,
         _ safeAreaInsetBinding: Binding<EdgeInsets> = .constant(.zero)

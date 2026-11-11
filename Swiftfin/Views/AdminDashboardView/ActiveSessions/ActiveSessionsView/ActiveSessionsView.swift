@@ -18,7 +18,7 @@ struct ActiveSessionsView: View {
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
 
-    @ViewBuilder
+    @ContentBuilder
     private var activeWithinFilterButton: some View {
         Picker(selection: $viewModel.environment.activeWithinSeconds) {
             Label(
@@ -64,7 +64,7 @@ struct ActiveSessionsView: View {
         .pickerStyle(.menu)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var showInactiveSessionsButton: some View {
         Picker(selection: $viewModel.environment.showSessionType) {
             ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in
@@ -82,7 +82,7 @@ struct ActiveSessionsView: View {
         .pickerStyle(.menu)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         if viewModel.sessions.isEmpty {
             ContentUnavailableView(
@@ -104,15 +104,18 @@ struct ActiveSessionsView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
                 contentView
+
             case .error:
                 viewModel.error.map {
                     ErrorView(error: $0)
                 }
+
             case .initial:
                 ProgressView()
             }

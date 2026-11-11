@@ -6,17 +6,21 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct FilterTrack: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     enum Style {
+
         case compact
         case regular
     }
 
     enum FocusTarget: Hashable {
+
         case reset
         case filter(ItemFilterType)
 
@@ -39,8 +43,8 @@ struct FilterTrack: View {
         }
     }
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var viewModel: FilterViewModel
@@ -70,10 +74,11 @@ struct FilterTrack: View {
         #if os(tvOS)
         focus.wrappedValue = types.first.map(FocusTarget.filter)
         #endif
+
         viewModel.reset(filterType: nil)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func buttonIcon(for target: FocusTarget) -> some View {
         Image(systemName: target.systemImage)
             #if os(tvOS)
@@ -84,11 +89,11 @@ struct FilterTrack: View {
             #endif
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func buttonLabel(for target: FocusTarget) -> some View {
         let showsTitle = style == .regular || focus.wrappedValue == target
 
-        HStack(spacing: UIDevice.isTV ? 12 : 4) {
+        HStack(spacing: viewLayout.value(standard: 4, large: 12)) {
             if iconEdge == .leading {
                 buttonIcon(for: target)
             }
@@ -105,7 +110,7 @@ struct FilterTrack: View {
         .frame(width: showsTitle ? nil : 32, alignment: iconEdge == .leading ? .leading : .trailing)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var resetButton: some View {
         #if os(iOS)
         Menu(FocusTarget.reset.title, systemImage: FocusTarget.reset.systemImage) {
@@ -119,7 +124,7 @@ struct FilterTrack: View {
         #endif
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func button(for target: FocusTarget) -> some View {
         Group {
             switch target {
@@ -138,14 +143,15 @@ struct FilterTrack: View {
         .accessibilityLabel(target.title)
     }
 
+    @ContentBuilder
     var body: some View {
         ForEach(targets, id: \.self) { target in
             button(for: target)
                 .fixedSize()
         }
-        .font(UIDevice.isTV ? .callout : .footnote)
-        .controlSize(UIDevice.isTV ? .large : .small)
-        .buttonStyle(.capsule(selectionTint: accentColor, focusTint: UIDevice.isTV ? .white : nil))
+        .font(viewLayout.value(standard: .footnote, large: .callout))
+        .controlSize(viewLayout.value(standard: .small, large: .large))
+        .buttonStyle(.capsule(selectionTint: theme.accentColor, focusTint: viewLayout.value(standard: nil, large: .white)))
         #if os(tvOS)
         .animation(.snappy(duration: 0.2), value: focus.wrappedValue)
         #endif

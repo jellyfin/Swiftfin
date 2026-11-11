@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension BackportButtonStyle where Self == BackportGlassButtonStyle {
@@ -33,6 +32,7 @@ struct BackportGlassButtonStyle: BackportButtonStyle {
         return copy
     }
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         BackportGlassButtonStyleBody(
             configuration: configuration,
@@ -52,6 +52,7 @@ struct BackportGlassProminentButtonStyle: BackportButtonStyle {
         return copy
     }
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         BackportGlassButtonStyleBody(
             configuration: configuration,
@@ -64,12 +65,13 @@ struct BackportGlassProminentButtonStyle: BackportButtonStyle {
 private struct BackportGlassButtonStyleBody: View {
 
     enum Prominence {
+
         case standard
         case prominent
     }
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @Environment(\.controlSize)
     private var controlSize
@@ -81,7 +83,7 @@ private struct BackportGlassButtonStyleBody: View {
     let legacyGlass: BackportGlass
     let prominence: Prominence
 
-    @ViewBuilder
+    @ContentBuilder
     var body: some View {
         if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
             nativeBody
@@ -91,7 +93,7 @@ private struct BackportGlassButtonStyleBody: View {
     }
 
     @available(iOS 26.0, tvOS 26.0, *)
-    @ViewBuilder
+    @ContentBuilder
     private var nativeBody: some View {
         switch prominence {
         case .standard:
@@ -99,6 +101,7 @@ private struct BackportGlassButtonStyleBody: View {
                 #if !os(iOS)
                     .buttonStyle(.glass)
                 #endif
+
         case .prominent:
             nativeButton
                 .buttonStyle(.glassProminent)
@@ -106,6 +109,7 @@ private struct BackportGlassButtonStyleBody: View {
         }
     }
 
+    @ContentBuilder
     private var nativeButton: some View {
         Button(role: configuration.role) {
             configuration.trigger()
@@ -114,7 +118,7 @@ private struct BackportGlassButtonStyleBody: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var buttonLabel: some View {
         if prominence == .prominent, isEnabled {
             configuration.label
@@ -124,13 +128,14 @@ private struct BackportGlassButtonStyleBody: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var fallbackBody: some View {
         switch prominence {
         case .standard:
             fallbackButton
                 .backport
                 .glassEffect(legacyGlass, in: .capsule)
+
         case .prominent:
             fallbackButton
                 .backport
@@ -144,7 +149,7 @@ private struct BackportGlassButtonStyleBody: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var fallbackButton: some View {
         let button = Button(role: configuration.role) {
             configuration.trigger()
@@ -160,7 +165,7 @@ private struct BackportGlassButtonStyleBody: View {
         #endif
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var fallbackLabel: some View {
         if isEnabled {
             buttonLabel
@@ -192,7 +197,7 @@ private struct BackportGlassButtonStyleBody: View {
         case .destructive, .cancel:
             .red
         default:
-            accentColor
+            theme.accentColor
         }
     }
 }

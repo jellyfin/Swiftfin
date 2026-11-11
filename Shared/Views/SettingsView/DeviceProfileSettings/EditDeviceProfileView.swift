@@ -12,6 +12,9 @@ extension CustomDeviceProfilesView {
 
     struct EditDeviceProfileView: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @StoredValue(.User.customDeviceProfiles)
         private var customDeviceProfiles
 
@@ -33,7 +36,6 @@ extension CustomDeviceProfilesView {
         }
 
         init(profile: Binding<CustomDeviceProfile>?) {
-
             createProfile = profile == nil
 
             if let profile {
@@ -45,6 +47,7 @@ extension CustomDeviceProfilesView {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             contentView
                 .interactiveDismissDisabled(true)
@@ -61,6 +64,7 @@ extension CustomDeviceProfilesView {
                         } else {
                             source?.wrappedValue = profile
                         }
+
                         UIDevice.impact(.light)
                         router.dismiss()
                     }
@@ -93,7 +97,7 @@ extension CustomDeviceProfilesView {
                 #endif
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var contentView: some View {
             Form(systemImage: "doc") {
                 Section(L10n.behavior) {
@@ -129,6 +133,7 @@ extension CustomDeviceProfilesView {
             }
         }
 
+        @ContentBuilder
         private func componentLabel(_ title: String, value: String) -> some View {
             LabeledContent {
                 if value.isEmpty {
@@ -141,7 +146,7 @@ extension CustomDeviceProfilesView {
                 Text(title)
             }
             .labeledContentStyle(.deviceProfile)
-            .if(UIDevice.isTV) { text in
+            .if(viewLayout.isLarge) { text in
                 text
                     .padding(.vertical)
             }

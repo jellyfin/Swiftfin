@@ -10,10 +10,10 @@ import SwiftUI
 
 struct SettingsBarButton: View {
 
-    let server: ServerState
-    let user: UserState
+    let userSession: UserSession
     let action: () -> Void
 
+    @ContentBuilder
     var body: some View {
         Button(action: action) {
             AlternateLayoutView {
@@ -21,9 +21,9 @@ struct SettingsBarButton: View {
                 Image(systemName: "gearshape.fill")
             } content: {
                 UserProfileImage(
-                    userID: user.id,
-                    source: user.profileImageSource(
-                        client: server.client
+                    userID: userSession.user.id,
+                    source: userSession.userData.profileImageSource(
+                        client: userSession.client
                     ),
                     pipeline: .Swiftfin.local
                 )

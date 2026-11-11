@@ -15,6 +15,7 @@ final class RecordingTimerViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
         case toggleRecording
         case toggleSeriesRecording
@@ -32,15 +33,18 @@ final class RecordingTimerViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
         case updating
     }
 
     enum Event {
+
         case updated
     }
 
     enum State {
+
         case error
         case initial
     }
@@ -67,6 +71,7 @@ final class RecordingTimerViewModel: ViewModel {
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         guard !background.is(.updating) else { return }
+
         try await refreshRecordingTimers()
     }
 
@@ -81,6 +86,7 @@ final class RecordingTimerViewModel: ViewModel {
             try await send(request)
         } else {
             guard program.canBeRecorded else { return }
+
             try await createRecordingTimer(for: program)
         }
 
@@ -98,6 +104,7 @@ final class RecordingTimerViewModel: ViewModel {
             try await send(request)
         } else {
             guard program.canBeRecorded else { return }
+
             try await createSeriesRecordingTimer(for: program)
         }
 
@@ -143,6 +150,7 @@ final class RecordingTimerViewModel: ViewModel {
 
     private func resolveProgram() async throws -> BaseItemDto? {
         guard let itemID = item.id else { return nil }
+
         let userSession = try requireUserSession()
 
         switch item.type {
@@ -156,12 +164,14 @@ final class RecordingTimerViewModel: ViewModel {
             let request = Paths.getLiveTvPrograms(parameters: parameters)
             let response = try await send(request)
             return response.value.items?.first
+
         case .program, .liveTvProgram, .tvProgram:
             let request = Paths.getProgram(
                 programID: itemID,
                 userID: userSession.user.id
             )
             return try await send(request).value
+
         default:
             return nil
         }

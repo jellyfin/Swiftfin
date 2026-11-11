@@ -28,7 +28,7 @@ struct ServerTaskTriggerView: View {
         viewModel.task.triggers?.contains(where: { $0 == taskTriggerInfo }) == true
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var dayPicker: some View {
         Picker(
             L10n.dayOfWeek,
@@ -36,7 +36,7 @@ struct ServerTaskTriggerView: View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var timePicker: some View {
         DatePicker(
             L10n.time,
@@ -44,7 +44,8 @@ struct ServerTaskTriggerView: View {
                 get: {
                     Duration.ticks(
                         taskTriggerInfo.timeOfDayTicks ?? 0
-                    ).timeOfDayDate
+                    )
+                    .timeOfDayDate
                 },
                 set: { date in
                     taskTriggerInfo.timeOfDayTicks = Duration.timeOfDay(date).ticks
@@ -54,7 +55,7 @@ struct ServerTaskTriggerView: View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var intervalPicker: some View {
         HourMinutePicker(
             title: L10n.every,
@@ -67,28 +68,31 @@ struct ServerTaskTriggerView: View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         Form {
             Section {
-
                 Picker(
                     L10n.type,
                     selection: $taskTriggerInfo.type.coalesce(.startupTrigger)
                 )
                 .onChange(of: taskTriggerInfo.type) {
                     guard let newValue = taskTriggerInfo.type else { return }
+
                     taskTriggerInfo = TaskTriggerInfo.make(type: newValue)
                 }
 
                 switch taskTriggerInfo.type {
                 case .dailyTrigger:
                     timePicker
+
                 case .weeklyTrigger:
                     dayPicker
                     timePicker
+
                 case .intervalTrigger:
                     intervalPicker
+
                 default:
                     EmptyView()
                 }
@@ -113,6 +117,7 @@ struct ServerTaskTriggerView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         contentView
             .animation(.linear(duration: 0.2), value: isDuplicate)

@@ -10,6 +10,7 @@ import SwiftUI
 
 extension View {
 
+    @ContentBuilder
     func pinEntry(
         isPresented: Binding<Bool>,
         requestID: UUID? = nil,
@@ -45,6 +46,7 @@ private struct PinEntryModifier: ViewModifier {
         completion(result)
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             #if os(tvOS)
@@ -141,6 +143,7 @@ private struct PinTextField: UIViewRepresentable {
             // Wait until SwiftUI has finished updating the presentation state.
             DispatchQueue.main.async { [weak self] in
                 guard let self, window != nil else { return }
+
                 if isPresented, !isFirstResponder {
                     // A second PIN request must wait for the previous text entry controller to dismiss.
                     var controller = window?.rootViewController
@@ -150,8 +153,7 @@ private struct PinTextField: UIViewRepresentable {
                     if let transition = controller?.transitionCoordinator,
                        transition.animate(alongsideTransition: nil, completion: { [weak self] _ in
                            self?.presentIfNeeded()
-                       })
-                    {
+                       }) {
                         return
                     }
                     becomeFirstResponder()

@@ -13,6 +13,9 @@ struct PosterHStack<
     Data: Collection
 >: View where Data.Element: Poster, Data.Index == Int {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     let elements: Data
     let displayType: PosterDisplayType
     let size: PosterDisplayType.Size
@@ -26,49 +29,15 @@ struct PosterHStack<
             columnTrailingInset: 0
         )
         #else
-        if UIDevice.isPad {
-            let minWidth: CGFloat = {
-                switch (displayType, size) {
-                case (.landscape, .small):
-                    220
-                case (.landscape, .medium):
-                    300
-                case (_, .small):
-                    140
-//                case (_, .medium):
-                default:
-                    200
-                }
-            }()
-
-            return .minimumWidth(
-                columnWidth: minWidth,
-                rows: 1
-            )
-        } else {
-            let columnCount: CGFloat = {
-                switch (displayType, size) {
-                case (.landscape, .small):
-                    2
-                case (.landscape, .medium):
-                    1.5
-                case (_, .small):
-                    3
-//                case (_, .medium):
-                default:
-                    2
-                }
-            }()
-
-            return .grid(
-                columns: columnCount,
-                rows: 1,
-                columnTrailingInset: 0
-            )
-        }
+        .minimumWidth(
+            columnWidth: viewLayout.posterMinimumWidth(for: displayType, size: size),
+            rows: 1,
+            columnFraction: 0.5
+        )
         #endif
     }
 
+    @ContentBuilder
     var body: some View {
         CollectionHStack(
             uniqueElements: elements,
@@ -83,9 +52,10 @@ struct PosterHStack<
             }
         }
         .clipsToBounds(false)
-        .insets(horizontal: EdgeInsets.edgePadding)
-        .itemSpacing(EdgeInsets.itemSpacing)
+        .insets(horizontal: viewLayout.edgePadding)
+        .itemSpacing(viewLayout.itemSpacing)
         .scrollBehavior(.continuousLeadingEdge)
+        .contentInsetAdjustmentBehavior(.never)
         .withViewContext(.isThumb)
     }
 }

@@ -12,6 +12,7 @@ import SwiftUI
 struct EditServerUserAccessTagsView: View {
 
     private struct TagWithAccess: Hashable {
+
         let tag: String
         let access: Bool
     }
@@ -35,13 +36,17 @@ struct EditServerUserAccessTagsView: View {
     }
 
     private var allowedTags: [TagWithAccess] {
-        viewModel.user.policy?.allowedTags?
+        viewModel.user
+            .policy?
+            .allowedTags?
             .sorted()
             .map { TagWithAccess(tag: $0, access: true) } ?? []
     }
 
     private var blockedTags: [TagWithAccess] {
-        viewModel.user.policy?.blockedTags?
+        viewModel.user
+            .policy?
+            .blockedTags?
             .sorted()
             .map { TagWithAccess(tag: $0, access: false) } ?? []
     }
@@ -50,6 +55,7 @@ struct EditServerUserAccessTagsView: View {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -73,6 +79,7 @@ struct EditServerUserAccessTagsView: View {
                     navigationBarSelectView
                 }
             }
+
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
                     Button(L10n.cancel, role: .cancel) {
@@ -93,6 +100,7 @@ struct EditServerUserAccessTagsView: View {
                     .controlSize(.small)
                 }
             }
+
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
                     Button(L10n.delete, role: .destructive) {
@@ -128,7 +136,7 @@ struct EditServerUserAccessTagsView: View {
         .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func makeRow(tag: TagWithAccess) -> some View {
         EditAccessTagRow(tag: tag.tag) {
             if isEditing {
@@ -142,7 +150,7 @@ struct EditServerUserAccessTagsView: View {
         .isSelected(selectedTags.contains(tag))
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -168,6 +176,7 @@ struct EditServerUserAccessTagsView: View {
                         }
                     }
                 }
+
                 if blockedTags.isNotEmpty {
                     Section {
                         DisclosureGroup(L10n.blocked) {
@@ -183,7 +192,7 @@ struct EditServerUserAccessTagsView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarSelectView: some View {
         let isAllSelected = selectedTags.count == blockedTags.count + allowedTags.count
 
@@ -204,7 +213,7 @@ struct EditServerUserAccessTagsView: View {
         .enabled(isEditing)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteSelectedConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 

@@ -17,9 +17,10 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
+        @ContentBuilder
         var body: some View {
             Button {
                 viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.audioOffset)
@@ -30,7 +31,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 )
 
                 if isInMenu {
-                    Text(manager.audioOffset, format: .playbackOffset)
+                    Text(mediaSession.playbackItem?.audioOffset ?? .zero, format: .playbackOffset)
                 }
             }
         }

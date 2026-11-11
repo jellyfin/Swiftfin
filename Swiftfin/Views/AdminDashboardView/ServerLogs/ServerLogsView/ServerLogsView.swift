@@ -15,13 +15,16 @@ import SwiftUI
 
 struct ServerLogsView: View {
 
+    @Router
+    private var router
+
     @State
     private var filter: ServerLogType?
 
     @StateObject
     private var viewModel = ServerLogsViewModel()
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -34,8 +37,7 @@ struct ServerLogsView: View {
             if viewModel.logs.isNotEmpty {
                 ForEach(viewModel.logs, id: \.self) { log in
                     ChevronButton(external: true) {
-                        guard let url = log.url else { return }
-                        UIApplication.shared.open(url)
+                        router.route(to: .jellyfinWebPage("dashboard/logs/\(log.name)"))
                     } label: {
                         VStack(alignment: .leading) {
                             Text(log.name)
@@ -56,6 +58,7 @@ struct ServerLogsView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {

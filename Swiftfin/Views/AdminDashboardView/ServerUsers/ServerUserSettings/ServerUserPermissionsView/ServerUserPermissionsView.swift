@@ -33,6 +33,7 @@ struct ServerUserPermissionsView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -58,6 +59,7 @@ struct ServerUserPermissionsView: View {
             if viewModel.background.is(.updating) {
                 ProgressView()
             }
+
             let saveAction: () -> Void = {
                 if tempPolicy != viewModel.user.policy {
                     viewModel.updatePolicy(tempPolicy)
@@ -86,7 +88,7 @@ struct ServerUserPermissionsView: View {
         .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         List {
             StatusSection(policy: $tempPolicy)

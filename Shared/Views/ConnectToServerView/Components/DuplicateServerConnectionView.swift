@@ -10,7 +10,7 @@ import SwiftUI
 
 extension ConnectToServerView {
 
-    struct DuplicateServerConnectionView: PlatformView {
+    struct DuplicateServerConnectionView: PresentationView {
 
         @Environment(\.dismiss)
         private var dismiss
@@ -21,7 +21,8 @@ extension ConnectToServerView {
         let server: ServerState
         let action: () -> Void
 
-        var iOSView: some View {
+        @ContentBuilder
+        var standardView: some View {
             NavigationStack {
                 Form {
                     Section {
@@ -70,7 +71,8 @@ extension ConnectToServerView {
             }
         }
 
-        var tvOSView: some View {
+        @ContentBuilder
+        var largeView: some View {
             VStack(spacing: 8) {
                 Text(L10n.connection)
                     .font(.title3)

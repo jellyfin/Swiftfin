@@ -6,10 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import FactoryKit
 import JellyfinAPI
-import PreferencesView
 import SwiftUI
 import Transmission
 
@@ -50,70 +47,13 @@ extension NavigationRoute {
     }
 
     @MainActor
-    static func videoPlayer(
-        provider: MediaPlayerItemProvider,
-        queue: (any MediaPlayerQueue)? = nil
-    ) -> NavigationRoute {
-        let manager = MediaPlayerManager(
-            provider: provider,
-            queue: queue
-        )
-
-        return Self.videoPlayer(manager: manager)
-    }
-
-    @MainActor
-    static func videoPlayer(manager: MediaPlayerManager) -> NavigationRoute {
-
-        Container.shared.mediaPlayerManager.register {
-            manager
-        }
-
-        Container.shared.mediaPlayerManagerPublisher()
-            .send(manager)
-
-        return NavigationRoute(
+    static func videoPlayer(session: MediaSession) -> NavigationRoute {
+        NavigationRoute(
             id: "videoPlayer",
             style: .fullscreen
         ) {
-            VideoPlayerViewShim(manager: manager)
-        }
-    }
-}
-
-// TODO: shim until native vs swiftfin player is replace with vlc vs av layers
-//       - when removed, ensure same behavior with safe area
-//       - may just need to make a VC wrapper to capture them
-
-struct VideoPlayerViewShim: View {
-
-    @State
-    private var safeAreaInsets: EdgeInsets = .init()
-
-    let manager: MediaPlayerManager
-
-    var body: some View {
-        Group {
-            switch Defaults[.VideoPlayer.videoPlayerType] {
-            case .native:
-                NativeVideoPlayer()
-            case .vlc, .mpv:
-                VideoPlayer()
-            }
-        }
-        .colorScheme(.dark) // use over `preferredColorScheme(.dark)` to not have destination change
-        .environment(\.safeAreaInsets, safeAreaInsets)
-        .supportedOrientations(.allButUpsideDown)
-        .ignoresSafeArea()
-        .persistentSystemOverlays(.hidden)
-        .toolbar(.hidden, for: .navigationBar)
-        .onSceneDidEnterBackground {
-            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
-                manager.setPlaybackRequestStatus(status: .paused)
-            }
-        }
-        .onFrameChanged { _, safeArea in
-            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
+            VideoPlayer(mediaSession: session)
+                .id(session.id)
         }
     }
 }

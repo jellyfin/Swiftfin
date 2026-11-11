@@ -40,6 +40,7 @@ struct ItemSubtitlesView: View {
         self._viewModel = StateObject(wrappedValue: .init(item: item))
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -85,6 +86,7 @@ struct ItemSubtitlesView: View {
                     .controlSize(.small)
                 }
             }
+
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
                     Button(L10n.cancel, role: .cancel) {
@@ -104,6 +106,7 @@ struct ItemSubtitlesView: View {
                     .controlSize(.small)
                 }
             }
+
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
                     Button(L10n.delete, role: .destructive) {
@@ -150,7 +153,7 @@ struct ItemSubtitlesView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -169,7 +172,6 @@ struct ItemSubtitlesView: View {
                 }
                 .foregroundStyle(.primary, .secondary)
             } else {
-
                 if viewModel.internalSubtitles.isNotEmpty {
                     Section {
                         ForEach(viewModel.internalSubtitles, id: \.index) { subtitle in

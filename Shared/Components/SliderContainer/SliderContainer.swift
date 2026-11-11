@@ -25,6 +25,7 @@ struct SliderContainer<Value: BinaryFloatingPoint>: View {
     private let isScrollingEnabled: Bool
     private let originProgress: Value?
     private var onEditingChanged: (Bool) -> Void
+    private var onEditingCancelled: () -> Void = {}
 
     #if os(iOS)
     private var translationBinding: Binding<CGPoint> = .constant(.zero)
@@ -64,11 +65,13 @@ struct SliderContainer<Value: BinaryFloatingPoint>: View {
             translationBinding: translationBinding,
             valueDamping: valueDamping,
             gesturePadding: gesturePadding,
-            onEditingChanged: setEditing
+            onEditingChanged: setEditing,
+            onEditingCancelled: onEditingCancelled
         )
         #endif
     }
 
+    @ContentBuilder
     var body: some View {
         SliderContainerBody(configuration: .init(
             isEditing: containerState.isEditing,
@@ -81,6 +84,9 @@ struct SliderContainer<Value: BinaryFloatingPoint>: View {
         .modifier(interaction)
         .onChange(of: isScrollingEnabled) {
             if !isScrollingEnabled {
+                if containerState.isEditing {
+                    onEditingCancelled()
+                }
                 setEditing(false)
             }
         }
@@ -88,6 +94,7 @@ struct SliderContainer<Value: BinaryFloatingPoint>: View {
 
     private func setEditing(_ isEditing: Bool) {
         guard containerState.isEditing != isEditing else { return }
+
         containerState.isEditing = isEditing
         onEditingChanged(isEditing)
     }
@@ -97,6 +104,10 @@ extension SliderContainer {
 
     func onEditingChanged(_ action: @escaping (Bool) -> Void) -> Self {
         copy(modifying: \.onEditingChanged, with: action)
+    }
+
+    func onEditingCancelled(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onEditingCancelled, with: action)
     }
 }
 

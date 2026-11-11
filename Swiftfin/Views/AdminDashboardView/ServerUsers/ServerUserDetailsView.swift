@@ -29,6 +29,7 @@ struct ServerUserDetailsView: View {
         self._profileViewModel = StateObject(wrappedValue: UserImageViewModel(user: user))
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             if let userSession = viewModel.userSession {
@@ -55,6 +56,7 @@ struct ServerUserDetailsView: View {
                         case .updated:
                             UIDevice.feedback(.success)
                             isPhotoPickerPresented.wrappedValue = false
+
                         case .deleted:
                             UIDevice.feedback(.success)
                         }

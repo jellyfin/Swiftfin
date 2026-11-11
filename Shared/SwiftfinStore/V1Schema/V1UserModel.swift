@@ -30,6 +30,7 @@ extension SwiftfinStore.V1 {
 
         var state: UserState {
             guard let server else { fatalError("No server associated with user") }
+
             return .init(id: id, serverID: server.id, username: username)
         }
     }

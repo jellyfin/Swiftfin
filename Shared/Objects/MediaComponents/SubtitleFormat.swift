@@ -142,6 +142,7 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
         }
     }
 
+    // TODO: correct
     /// Whether this format is a text-based subtitle
     var isText: Bool {
         switch self {

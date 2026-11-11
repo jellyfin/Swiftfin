@@ -6,13 +6,15 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
-struct LetterPickerBar: PlatformView {
+struct LetterPickerBar: PresentationView {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AdaptiveLayout
+    private var viewLayout
+
+    @AppTheme
+    private var theme
 
     @FocusState
     private var focusedLetter: ItemLetter?
@@ -30,6 +32,7 @@ struct LetterPickerBar: PlatformView {
     private let letters = ItemLetter.allCases
 
     private enum Row: Hashable {
+
         case letter(ItemLetter)
         case dot
     }
@@ -70,6 +73,7 @@ struct LetterPickerBar: PlatformView {
 
     private func letter(atY y: CGFloat) -> ItemLetter? {
         guard barHeight > 0, !letters.isEmpty else { return nil }
+
         let clamped = min(max(y - contentInset, 0), contentHeight - 1)
         let index = Int(clamped / contentHeight * CGFloat(letters.count))
         return letters[min(max(index, 0), letters.count - 1)]
@@ -78,6 +82,7 @@ struct LetterPickerBar: PlatformView {
     private func row(atY y: CGFloat) -> Row? {
         let localY = y - contentInset
         guard barHeight > 0, localY >= 0, localY < contentHeight else { return nil }
+
         let index = Int(localY / dimension)
         return rows.indices.contains(index) ? rows[index] : nil
     }
@@ -90,8 +95,9 @@ struct LetterPickerBar: PlatformView {
         }
     }
 
+    @ContentBuilder
     private var letterBar: some View {
-        VStack(spacing: UIDevice.isTV ? dimension * 0.1 : 0) {
+        VStack(spacing: viewLayout.value(standard: 0, large: dimension * 0.1)) {
             ForEach(rows) { row in
                 switch row {
                 case let .letter(letter):
@@ -101,10 +107,11 @@ struct LetterPickerBar: PlatformView {
                     .isSelected(selectedLetter == letter)
                     .frame(width: dimension, height: dimension)
                     .focused($focusedLetter, equals: letter)
-                    .allowsHitTesting(UIDevice.isTV)
+                    .allowsHitTesting(viewLayout.isLarge)
+
                 case .dot:
                     Circle()
-                        .fill(accentColor.opacity(0.5))
+                        .fill(theme.accentColor.opacity(0.5))
                         .frame(width: 3, height: 3)
                         .frame(width: dimension, height: dimension)
                 }
@@ -121,10 +128,11 @@ struct LetterPickerBar: PlatformView {
             .fixedSize()
             .trackingSize($letterSize)
         }
-        .font(UIDevice.isTV ? .system(size: 22, weight: .semibold) : .footnote)
+        .font(viewLayout.value(standard: .footnote, large: .system(size: 22, weight: .semibold)))
     }
 
-    var iOSView: some View {
+    @ContentBuilder
+    var standardView: some View {
         letterBar
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay {
@@ -135,13 +143,16 @@ struct LetterPickerBar: PlatformView {
                         switch state {
                         case .began, .changed:
                             guard let target = letter(atY: location.y), target != activeLetter else { return }
+
                             activeLetter = target
                             UIDevice.impact(.light)
+
                         case .ended, .cancelled, .failed:
                             if let target = letter(atY: location.y) {
                                 viewModel.currentFilters.letter = [target]
                             }
                             activeLetter = nil
+
                         default:
                             break
                         }
@@ -162,12 +173,13 @@ struct LetterPickerBar: PlatformView {
                 barHeight = size.height
             }
             .frame(width: dimension)
-            .padding(.vertical, EdgeInsets.edgePadding / 2)
+            .padding(.vertical, viewLayout.edgePadding / 2)
             .preference(key: PresentationControllerShouldDismissPreferenceKey.self, value: activeLetter == nil)
             .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)
     }
 
-    var tvOSView: some View {
+    @ContentBuilder
+    var largeView: some View {
         letterBar
             .scrollIfLargerThanContainer()
             .frame(width: dimension)
@@ -181,8 +193,10 @@ struct LetterPickerBar: PlatformView {
             .task(id: focusedLetter) {
                 activeLetter = focusedLetter
                 guard focusedLetter != nil else { return }
+
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { return }
+
                 activeLetter = nil
             }
             .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)

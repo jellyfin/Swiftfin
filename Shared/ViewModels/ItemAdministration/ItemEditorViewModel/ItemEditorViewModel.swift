@@ -20,7 +20,7 @@ class ItemEditorViewModel: ViewModel {
 
         /// Generic Actions
         case delete
-        case refreshItem(sendNotification: Bool)
+        case refreshItem
         case refreshMetadata(
             metadataRefreshMode: MetadataRefreshMode,
             imageRefreshMode: MetadataRefreshMode,
@@ -39,23 +39,26 @@ class ItemEditorViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case updating
     }
 
     enum Event {
+
         case deleted
         case metadataRefreshStarted
         case updated
     }
 
     enum State {
+
         case initial
         case error
     }
 
     // MARK: - Published Properties
 
-    @Published
+    @SharedBaseItem
     var item: BaseItemDto
 
     // MARK: - Initialization
@@ -74,7 +77,7 @@ class ItemEditorViewModel: ViewModel {
         let request = Paths.deleteItem(itemID: itemID)
         _ = try await send(request)
 
-        Notifications[.didDeleteItem].post(itemID)
+        userSession?.items.delete(id: itemID)
         events.send(.deleted)
     }
 
@@ -103,12 +106,9 @@ class ItemEditorViewModel: ViewModel {
 
         events.send(.metadataRefreshStarted)
 
-        // TODO: Remove this call when we have a WebSocket
-        // - Both lines below this can be replaced by the WebSocket
-        // - Centralized, WebSocket gets the new information and updates when new
-        // - Currently, waits 5 seconds before a manual refresh
+        // Fall back to one refresh if the server doesn't report the library change over its socket
         try await Task.sleep(for: .seconds(5))
-        await refreshItem(sendNotification: true)
+        await refreshItem()
     }
 
     @Function(\Action.Cases.update)
@@ -117,8 +117,8 @@ class ItemEditorViewModel: ViewModel {
     }
 
     @Function(\Action.Cases.refreshItem)
-    private func _refreshItem(_ isRefresh: Bool) async throws {
-        self.item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: isRefresh)
+    private func _refreshItem() async throws {
+        $item = try await requireUserSession().getFullItem(item)
         events.send(.updated)
     }
 
@@ -129,12 +129,14 @@ class ItemEditorViewModel: ViewModel {
     func updateItem(_ newItem: BaseItemDto) async throws {
         guard let itemId = item.id else { return }
 
+        let session = try requireUserSession()
         var updateItem = newItem
         updateItem.trickplay = nil
 
         let request = Paths.updateItem(itemID: itemId, updateItem)
         _ = try await send(request)
+        try session.items.acceptMetadataDraft(newItem)
 
-        await refreshItem(sendNotification: true)
+        await refreshItem()
     }
 }

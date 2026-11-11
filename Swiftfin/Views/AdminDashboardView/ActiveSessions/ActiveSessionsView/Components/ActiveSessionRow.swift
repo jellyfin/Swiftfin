@@ -14,6 +14,9 @@ extension ActiveSessionsView {
 
     struct ActiveSessionRow: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @CurrentDate
         private var currentDate: Date
 
@@ -30,7 +33,7 @@ extension ActiveSessionsView {
             session.nowPlayingItem != nil && session.playState != nil
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var rowLeading: some View {
             if let nowPlayingItem = session.nowPlayingItem {
                 PosterImage(
@@ -56,7 +59,7 @@ extension ActiveSessionsView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func activeSessionDetails(_ nowPlayingItem: BaseItemDto, playState: PlayerStateInfo) -> some View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(session.userName ?? L10n.unknown)
@@ -77,10 +80,9 @@ extension ActiveSessionsView {
             .font(.subheadline)
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var idleSessionDetails: some View {
             VStack(alignment: .leading, spacing: 4) {
-
                 Text(session.userName ?? L10n.unknown)
                     .font(.headline)
 
@@ -111,8 +113,9 @@ extension ActiveSessionsView {
             .font(.subheadline)
         }
 
+        @ContentBuilder
         var body: some View {
-            ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+            ListRow(insets: .init(vertical: 8, horizontal: viewLayout.edgePadding)) {
                 rowLeading
             } content: {
                 if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {

@@ -27,6 +27,7 @@ extension String: @retroactive Identifiable {
 
 extension String: LibraryElement {
 
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
@@ -48,6 +49,7 @@ private struct StringLibraryListElement: View {
     let value: String
     var action: (() -> Void)?
 
+    @ContentBuilder
     var body: some View {
         Button {
             action?()
@@ -61,14 +63,9 @@ private struct StringLibraryListElement: View {
                         isEditing ? (isSelected ? .primary : .secondary) : .primary
                     )
 
-                if isEditing {
-                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .resizable()
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(isSelected ? Color.accentColor : .secondary)
-                }
+                ListRowCheckbox()
             }
+            .edgePadding()
         }
         .foregroundStyle(.primary, .secondary)
     }
@@ -171,7 +168,7 @@ extension String {
 
     var shortFileName: String {
         (split(separator: "/").last?.description ?? self)
-            .replacingOccurrences(of: ".swift", with: "")
+            .replacing(".swift", with: "")
     }
 
     static func random(count: Int) -> String {
@@ -186,7 +183,6 @@ extension String {
     }
 
     func trimmingSuffix(_ suffix: String) -> String {
-
         guard suffix.count <= count else { return self }
 
         var s = self
@@ -194,6 +190,7 @@ extension String {
 
         while s.last == suffix.last {
             guard s.isNotEmpty else { break }
+
             s.removeLast()
             suffix.removeLast()
         }
@@ -203,6 +200,7 @@ extension String {
 
     var sha1: String? {
         guard let input = data(using: .utf8) else { return nil }
+
         return Insecure.SHA1.hash(data: input)
             .reduce(into: "") { partialResult, byte in
                 partialResult += String(format: "%02x", byte)
@@ -211,6 +209,7 @@ extension String {
 
     var base64Decoded: String? {
         guard let data = Data(base64Encoded: self) else { return nil }
+
         return String(data: data, encoding: .utf8)
     }
 
@@ -225,6 +224,13 @@ extension String {
     var nilIfBlank: String? {
         let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
+    }
+
+    var markdown: AttributedString {
+        (try? AttributedString(
+            markdown: self,
+            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        )) ?? AttributedString(self)
     }
 }
 
@@ -242,7 +248,7 @@ extension String? {
 
 extension CharacterSet {
 
-    // Character that appears on tvOS with voice input
+    /// Character that appears on tvOS with voice input
     static var objectReplacement: CharacterSet = .init(charactersIn: "\u{fffc}")
 }
 

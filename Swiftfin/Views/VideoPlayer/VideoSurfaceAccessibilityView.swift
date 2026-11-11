@@ -16,8 +16,8 @@ extension VideoPlayer {
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         @AccessibilityFocusState
         private var isAccessibilityFocused: Bool
@@ -30,7 +30,7 @@ extension VideoPlayer {
         }
 
         private var accessibilityValue: String {
-            guard let runtime = manager.item.runtime, runtime > .zero else {
+            guard let runtime = mediaSession.item.runtime, runtime > .zero else {
                 return announcedSeconds.formatted(.spokenRuntime)
             }
 
@@ -68,9 +68,9 @@ extension VideoPlayer {
                     guard !isPresentingOverlay, UIAccessibility.isVoiceOverRunning else { return }
                     isAccessibilityFocused = true
                 }
-                .onReceive(manager.secondsBox.$value) { newValue in
+                .onChange(of: mediaSession.seconds, initial: true) {
                     guard !isAccessibilityFocused else { return }
-                    announcedSeconds = newValue
+                    announcedSeconds = mediaSession.seconds
                 }
         }
     }

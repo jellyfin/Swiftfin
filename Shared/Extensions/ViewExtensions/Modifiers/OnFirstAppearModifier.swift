@@ -15,10 +15,12 @@ struct OnFirstAppearModifier: ViewModifier {
 
     let action: () -> Void
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .onAppear {
                 guard !didAppear else { return }
+
                 didAppear = true
                 action()
             }

@@ -9,28 +9,27 @@
 import JellyfinAPI
 import SwiftUI
 
-struct EPGSupplement: MediaPlayerSupplement {
+@MainActor
+struct EPGSupplement {
 
     let displayTitle: String = L10n.guide
     let id: String = "EPG"
-    let presentationStyle: MediaPlayerSupplementPresentationStyle = .expanded
-
-    var videoPlayerBody: some PlatformView {
-        GuideOverlay()
-    }
+    let presentationStyle: VideoPlayerSupplementPresentationStyle = .expanded
 }
 
-extension EPGSupplement {
+extension EPGSupplement: VideoPlayerSupplement {
 
-    private struct GuideOverlay: PlatformView {
+    @ContentBuilder
+    var body: some View {
+        GuideOverlay()
+    }
 
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
+    private struct GuideOverlay: PresentationView {
 
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         @State
         private var lastSuccessfulRefresh = Date.distantPast
@@ -40,24 +39,23 @@ extension EPGSupplement {
 
         private let refreshInterval: TimeInterval = 3 * 60
 
-        @ViewBuilder
+        @ContentBuilder
         private var content: some View {
             EPGLoadableView(viewModel: viewModel) {
                 EPGContentView(
                     viewModel: viewModel,
-                    selectedChannelID: manager.item.id,
+                    selectedChannelID: mediaSession.item.id,
                     action: select
                 )
             }
-            .if(UIDevice.isPhone) { view in
-                view
-                    .padding(.leading, safeAreaInsets.leading)
-            }
+            .padding(.leading, viewState.supplementInsets.leading)
+            .padding(.trailing, viewState.supplementInsets.trailing)
             .onFirstAppear {
                 viewModel.refresh(startDate: nil)
             }
             .onChange(of: viewModel.state) { _, state in
                 guard state == .content else { return }
+
                 lastSuccessfulRefresh = .now
             }
             .onChange(of: viewState.selectedSupplementID) { _, id in
@@ -82,11 +80,13 @@ extension EPGSupplement {
             .focusSection()
         }
 
-        var iOSView: some View {
+        @ContentBuilder
+        var standardView: some View {
             content
         }
 
-        var tvOSView: some View {
+        @ContentBuilder
+        var largeView: some View {
             content
                 .focusSection()
         }
@@ -94,20 +94,20 @@ extension EPGSupplement {
         private func select(_ item: BaseItemDto) {
             let playbackItem = item.channelID
                 .flatMap { channelID in
-                    viewModel.channels.first { $0.id == channelID }
+                    viewModel.channels.first { $0.itemID == channelID }?.value
                 } ?? item
 
-            if playbackItem.id == manager.item.id {
+            if playbackItem.id == mediaSession.item.id {
                 viewState.selectedSupplementID = nil
                 return
             }
 
-            guard let provider = playbackItem.getPlaybackItemProvider(userSession: viewModel.userSession) else {
+            guard let intent = playbackItem.getPlaybackIntent(userSession: viewModel.userSession) else {
                 return
             }
 
             viewState.selectedSupplementID = nil
-            manager.playNewItem(provider: provider)
+            mediaSession.playNewItem(intent: intent)
         }
     }
 }

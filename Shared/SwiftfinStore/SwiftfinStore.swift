@@ -31,6 +31,7 @@ enum SwiftfinStore {
 extension SwiftfinStore {
 
     private struct V1ServerSnapshot {
+
         let id: String
         let name: String
         let currentURI: String
@@ -38,6 +39,7 @@ extension SwiftfinStore {
     }
 
     private struct V1UserSnapshot {
+
         let id: String
         let username: String
         let serverID: String?
@@ -45,6 +47,7 @@ extension SwiftfinStore {
     }
 
     private struct V2AnyDataSnapshot {
+
         let data: Data?
         let ownerID: String
         let domain: String
@@ -83,6 +86,7 @@ extension SwiftfinStore {
         for migrationTypes: [MigrationType]
     ) async throws -> Bool {
         guard hasMigrationStep(from: "V1", to: "V2", in: migrationTypes) else { return false }
+
         let sourceStoreURL = storage.fileURL
         try await withTemporaryStoreURL(fileName: sourceStoreURL.lastPathComponent) { temporaryStoreURL in
             let snapshots = try await loadV1Snapshots(from: sourceStoreURL)
@@ -101,6 +105,7 @@ extension SwiftfinStore {
         for migrationTypes: [MigrationType]
     ) async throws {
         guard hasMigrationStep(from: "V2", to: "V3", in: migrationTypes) else { return }
+
         let sourceStoreURL = storage.fileURL
 
         try await withTemporaryStoreURL(fileName: sourceStoreURL.lastPathComponent) { temporaryStoreURL in
@@ -364,6 +369,7 @@ extension SwiftfinStore {
 
     static func persistAccessTokenToKeychain(userID: String, accessToken: String?) {
         guard let accessToken else { return }
+
         Container.shared.keychainService().set(accessToken, forKey: "\(userID)-accessToken")
     }
 

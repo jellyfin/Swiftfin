@@ -11,6 +11,7 @@ import JellyfinAPI
 struct LiveTVGroupProvider: ContentGroupProvider {
 
     private enum LiveTVPill: Displayable, SystemImageable {
+
         case channels
         case guide
         case recordings
@@ -47,7 +48,6 @@ struct LiveTVGroupProvider: ContentGroupProvider {
     let displayTitle: String = L10n.liveTV
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
-
         PillGroup(
             displayTitle: "",
             id: "live-tv-channels",
@@ -63,12 +63,15 @@ struct LiveTVGroupProvider: ContentGroupProvider {
                         )
                     )
                 )
+
             case .guide:
                 router.route(to: .liveGuide)
+
             case .recordings:
                 router.route(
                     to: .library(library: RecordingsLibrary())
                 )
+
             case .schedule:
                 router.route(
                     to: .library(library: ScheduledRecordingsLibrary())

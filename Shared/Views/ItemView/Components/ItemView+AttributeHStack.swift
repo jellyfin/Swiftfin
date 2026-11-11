@@ -13,19 +13,24 @@ extension ItemView {
 
     struct AttributesHStack: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         let attributes: [ItemViewAttribute]
-        let item: BaseItemDto
+        @SharedBaseItem
+        var item: BaseItemDto
         let selectedMediaSource: MediaSourceInfo?
 
         var alignment: HorizontalAlignment = .center
         var flowDirection: FlowLayout.Direction = .up
 
+        @ContentBuilder
         var body: some View {
             if attributes.isNotEmpty {
                 FlowLayout(
                     alignment: alignment,
                     direction: flowDirection,
-                    spacing: UIDevice.isTV ? 20 : 8
+                    spacing: viewLayout.value(standard: 8, large: 20)
                 ) {
                     ForEach(attributes, id: \.self) { attribute in
                         switch attribute {
@@ -42,7 +47,7 @@ extension ItemView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func CriticRating() -> some View {
             if let criticRating = item.criticRating {
                 Label {
@@ -60,7 +65,7 @@ extension ItemView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func CommunityRating() -> some View {
             if let communityRating = item.communityRating {
                 Label {
@@ -73,7 +78,7 @@ extension ItemView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func OfficialRating() -> some View {
             if let officialRating = item.officialRating {
                 EmptyLabel(officialRating)
@@ -81,7 +86,7 @@ extension ItemView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func VideoQuality() -> some View {
             if let mediaStreams = selectedMediaSource?.mediaStreams {
                 if mediaStreams.has4KVideo {
@@ -102,7 +107,7 @@ extension ItemView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func AudioChannels() -> some View {
             if let mediaStreams = selectedMediaSource?.mediaStreams {
                 if mediaStreams.has51AudioChannelLayout {
@@ -116,11 +121,10 @@ extension ItemView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func Subtitles() -> some View {
             if let mediaStreams = selectedMediaSource?.mediaStreams,
-               mediaStreams.hasSubtitles
-            {
+               mediaStreams.hasSubtitles {
                 EmptyLabel("CC")
                     .labelStyle(.attributeBadgeOutline)
             }

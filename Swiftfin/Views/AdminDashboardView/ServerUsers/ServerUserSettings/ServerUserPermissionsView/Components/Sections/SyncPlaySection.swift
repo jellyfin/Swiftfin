@@ -16,9 +16,9 @@ extension ServerUserPermissionsView {
         @Binding
         var policy: UserPolicy
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.syncPlay) {
-
                 Picker(
                     L10n.permissions,
                     selection: $policy.syncPlayAccess.coalesce(.none)

@@ -22,7 +22,6 @@ extension AppPermission {
             guard CLLocationManager.locationServicesEnabled() else {
                 return .denied
             }
-
             guard CLLocationManager().authorizationStatus == .notDetermined else {
                 return Self.locationStatus
             }

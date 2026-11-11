@@ -1,8 +1,14 @@
 name: "Build 🔨"
 
 on:
+  schedule:
+    - cron: '0 0 * * *'
   push:
     branches: [ main ]
+    paths:
+      - '**'
+      - '!Translations/*.lproj/**'
+      - 'Translations/en.lproj/**'
   pull_request:
     types:
       - opened
@@ -11,20 +17,30 @@ on:
       - ready_for_review
     branches: [ main ]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: "Build 🔨"
     if: github.event.pull_request.draft == false
     strategy:
+      fail-fast: false
       matrix:
         scheme:
           - "Swiftfin"
           - "Swiftfin tvOS"
 
-    runs-on: macos-26
+    runs-on: xcode-27
 
     env:
-      XCODE_VERSION: "26.6"
+      XCODE_VERSION: "27.1"
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "120"
+      FASTLANE_XCODEBUILD_SETTINGS_RETRIES: "2"
 
     steps:
       - name: Checkout
@@ -54,13 +70,27 @@ jobs:
 
       - name: Build
         uses: nick-fields/retry@v4
+        env:
+          SCHEME: ${{ matrix.scheme }}
         with:
           max_attempts: 3
           retry_on: error
           timeout_minutes: 60
-          command: bundle exec fastlane buildLane \
-            scheme:"\"${{ matrix.scheme }}\"" \
-            xcodeVersion:${{ env.XCODE_VERSION }}
+          command: |
+            bundle exec fastlane buildLane \
+              "scheme:$SCHEME" \
+              "xcodeVersion:$XCODE_VERSION"
+
+      - name: Save Swift packages
+        if: ${{ (github.event_name == 'push' || github.event_name == 'schedule') && steps.swift-packages.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            build/SourcePackages/checkouts
+            build/SourcePackages/repositories
+            build/SourcePackages/artifacts
+            build/SourcePackages/workspace-state.json
+          key: ${{ steps.swift-packages.outputs.cache-primary-key }}
 
       - name: Package unsigned IPA
         env:
@@ -79,16 +109,3 @@ jobs:
           path: fastlane/build/*-unsigned.ipa
           if-no-files-found: error
           compression-level: 0
-
-      # Populate the shared cache from main,
-      # PR caches are isolated to their merge ref
-      - name: Save Swift packages
-        if: ${{ github.event_name == 'push' && steps.swift-packages.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v6
-        with:
-          path: |
-            build/SourcePackages/checkouts
-            build/SourcePackages/repositories
-            build/SourcePackages/artifacts
-            build/SourcePackages/workspace-state.json
-          key: ${{ steps.swift-packages.outputs.cache-primary-key }}

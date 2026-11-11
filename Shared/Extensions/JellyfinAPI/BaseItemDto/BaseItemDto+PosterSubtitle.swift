@@ -20,6 +20,7 @@ extension BaseItemDto {
             posterSubtitleValue(for: field)
         }
         guard let value = value?.trimmingCharacters(in: .whitespacesAndNewlines), !value.isEmpty else { return nil }
+
         return value
     }
 
@@ -27,25 +28,35 @@ extension BaseItemDto {
         switch field {
         case .none:
             return nil
+
         case .year:
             if let year = productionYear, year > 0 {
                 return year.description
             }
             return premiereDate?.formatted(.dateTime.year())
+
         case .runtime:
             return runtime?.formatted(.hourMinuteAbbreviated)
+
         case .officialRating:
             return officialRating
+
         case .communityRating:
             guard let rating = communityRating, rating.isFinite, (0 ... 10).contains(rating) else { return nil }
+
             return "★ \(rating.formatted(.number.precision(.fractionLength(0 ... 1))))"
+
         case .criticRating:
             guard let rating = criticRating, rating.isFinite, (0 ... 100).contains(rating) else { return nil }
+
             return L10n.posterCriticScore(rating.formatted(.number.precision(.fractionLength(0))))
+
         case .quality:
             return posterQualityLabel
+
         case .genre:
             return genres?.first
+
         case .studio:
             return studios?.first?.name
         }

@@ -11,6 +11,7 @@ import Foundation
 struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
 
     enum Interface: String, CaseIterable, Displayable, Storable {
+
         case any
         case wifi
         case cellular
@@ -28,6 +29,7 @@ struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
     }
 
     enum TestState {
+
         case idle
         case testing
         case success
@@ -65,12 +67,15 @@ struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
         switch interface {
         case .any:
             return context.isSatisfied
+
         case .wifi:
             guard context.interface == .wifi else { return false }
             guard wifiSSIDs.isNotEmpty else { return true }
+
             return wifiSSIDs.contains {
                 $0.caseInsensitiveCompare(context.wifiSSID ?? .empty) == .orderedSame
             }
+
         case .cellular:
             return context.interface == .cellular
         }

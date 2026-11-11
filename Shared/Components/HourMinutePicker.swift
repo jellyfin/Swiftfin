@@ -14,6 +14,9 @@ import TVOSPicker
 
 struct HourMinutePicker: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @State
     private var isPresented = false
 
@@ -31,6 +34,7 @@ struct HourMinutePicker: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ChevronButton(
             title,
@@ -38,8 +42,8 @@ struct HourMinutePicker: View {
         ) {
             isPresented.toggle()
         }
-        #if os(tvOS)
-        .sheet(isPresented: $isPresented) {
+        .if(viewLayout.isLarge) { button in
+            button.sheet(isPresented: $isPresented) {
                 VStack(spacing: 8) {
                     Text(title.localizedCapitalized)
                         .font(.title3)
@@ -50,13 +54,11 @@ struct HourMinutePicker: View {
                 }
                 .edgePadding()
             }
-        #endif
+        }
 
-        #if !os(tvOS)
-        if isPresented {
+        if !viewLayout.isLarge, isPresented {
             _HourMinutePickerView(interval: interval, maximumHours: maximumHours)
         }
-        #endif
     }
 }
 
@@ -189,6 +191,7 @@ private struct _HourMinutePickerView: PlatformViewRepresentable {
     }
 
     class Coordinator: TVOSPickerViewDelegate {
+
         var callback: ((TimeInterval) -> Void)?
 
         private var selectedHour: TimeInterval = 0

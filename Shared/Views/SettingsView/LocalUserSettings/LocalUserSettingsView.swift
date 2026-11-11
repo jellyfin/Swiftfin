@@ -23,6 +23,7 @@ struct LocalUserSettingsView: View {
         self._imageViewModel = StateObject(wrappedValue: UserImageViewModel(user: user))
     }
 
+    @ContentBuilder
     var body: some View {
         Form {
             #if os(iOS)
@@ -30,7 +31,7 @@ struct LocalUserSettingsView: View {
                 StateAdapter(initialValue: false) { isPhotoPickerPresented in
                     UserProfileHeroImage(
                         user: imageViewModel.user,
-                        source: userSession.user.profileImageSource(
+                        source: imageViewModel.user.profileImageSource(
                             client: userSession.client
                         )
                     ) {
@@ -50,6 +51,7 @@ struct LocalUserSettingsView: View {
                         case .updated:
                             UIDevice.feedback(.success)
                             isPhotoPickerPresented.wrappedValue = false
+
                         case .deleted:
                             UIDevice.feedback(.success)
                         }
@@ -60,7 +62,7 @@ struct LocalUserSettingsView: View {
             if let userSession = imageViewModel.userSession {
                 Section {
                     ChevronButton(L10n.quickConnect) {
-                        router.route(to: .quickConnectAuthorize(user: userSession.user.data))
+                        router.route(to: .quickConnectAuthorize(user: userSession.userData))
                     }
 
                     ChevronButton(L10n.password) {
@@ -106,7 +108,7 @@ struct LocalUserSettingsView: View {
             if let userSession = imageViewModel.userSession {
                 UserProfileImage(
                     userID: userSession.user.id,
-                    source: userSession.user.profileImageSource(
+                    source: imageViewModel.user.profileImageSource(
                         client: userSession.client
                     )
                 )

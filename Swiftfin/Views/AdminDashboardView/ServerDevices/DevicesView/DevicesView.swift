@@ -12,6 +12,9 @@ import SwiftUI
 
 struct DevicesView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -29,6 +32,7 @@ struct DevicesView: View {
     @StateObject
     private var viewModel = DevicesViewModel()
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -36,8 +40,10 @@ struct DevicesView: View {
                 viewModel.error.map {
                     ErrorView(error: $0)
                 }
+
             case .initial:
                 contentView
+
             case .refreshing:
                 ProgressView()
             }
@@ -55,11 +61,13 @@ struct DevicesView: View {
                     navigationBarSelectView
                 }
             }
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 if viewModel.devices.isNotEmpty {
                     navigationBarEditView
                 }
             }
+
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
                     Button(L10n.delete, role: .destructive) {
@@ -102,7 +110,7 @@ struct DevicesView: View {
 
     // MARK: - Device List View
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         List {
             InsetGroupedListHeader(
@@ -143,7 +151,7 @@ struct DevicesView: View {
                     }
                     .isEditing(isEditing)
                     .isSelected(selectedDevices.contains(device.id ?? ""))
-                    .listRowInsets(.edgeInsets)
+                    .listRowInsets(viewLayout.edgeInsets)
                 }
             }
         }
@@ -152,7 +160,7 @@ struct DevicesView: View {
 
     // MARK: - Navigation Bar Edit Content
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarEditView: some View {
         if viewModel.background.is(.refreshing) {
             ProgressView()
@@ -186,7 +194,7 @@ struct DevicesView: View {
 
     // MARK: - Navigation Bar Select/Remove All Content
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarSelectView: some View {
         let isAllSelected: Bool = selectedDevices.count == viewModel.devices.count
 
@@ -213,7 +221,7 @@ struct DevicesView: View {
 
     // MARK: - Delete Selected Devices Confirmation Actions
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteSelectedDevicesConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 
@@ -226,7 +234,7 @@ struct DevicesView: View {
 
     // MARK: - Delete Device Confirmation Actions
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteDeviceConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 

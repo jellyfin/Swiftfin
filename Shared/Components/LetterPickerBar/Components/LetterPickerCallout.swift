@@ -21,8 +21,12 @@ extension LetterPickerBar {
 
     struct LetterPickerCallout: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         let letter: ItemLetter
 
+        @ContentBuilder
         var body: some View {
             AlternateLayoutView {
                 ZStack {
@@ -40,7 +44,7 @@ extension LetterPickerBar {
                     .backport
                     .glassEffect(
                         .regular,
-                        in: .rect(cornerRadius: UIDevice.isTV ? 12 : 8)
+                        in: .rect(cornerRadius: viewLayout.selectionBorderWidth)
                     )
             }
         }

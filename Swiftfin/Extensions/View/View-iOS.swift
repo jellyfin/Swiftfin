@@ -14,11 +14,12 @@ import SwiftUI
 extension View {
 
     /// - Important: This does nothing on iOS.
+    @ContentBuilder
     func focusSection() -> some View {
         self
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func navigationBarFilterDrawer(
         viewModel: FilterViewModel,
         types: [ItemFilterType]
@@ -31,7 +32,7 @@ extension View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func navigationBarCloseButton(
         disabled: Bool = false,
         _ action: @escaping () -> Void
@@ -44,11 +45,11 @@ extension View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func navigationBarMenuButton(
         isLoading: Bool = false,
         isHidden: Bool = false,
-        @ViewBuilder
+        @ContentBuilder
         _ items: @escaping () -> some View
     ) -> some View {
         modifier(
@@ -60,7 +61,7 @@ extension View {
         )
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func listRowCornerRadius(_ radius: CGFloat) -> some View {
         introspect(.listCell, on: .iOS(.v18...)) { cell in
             if #available(iOS 26, *) {
@@ -72,6 +73,7 @@ extension View {
     }
 
     /// Photo Picker with cropping after selection
+    @ContentBuilder
     func photoPicker(
         isPresented: Binding<Bool>,
         isSaving: Bool,

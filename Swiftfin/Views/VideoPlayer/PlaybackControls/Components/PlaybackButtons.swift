@@ -20,50 +20,54 @@ extension VideoPlayer.PlaybackControls {
         @Default(.VideoPlayer.jumpForwardInterval)
         private var jumpForwardInterval
 
-        @EnvironmentObject
-        private var centerOffsetBox: PublishedBox<CGFloat>
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         private var shouldShowJumpButtons: Bool {
-            !manager.item.isLiveStream
+            !mediaSession.item.isLiveStream
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var playButton: some View {
             Button {
-                switch manager.playbackRequestStatus {
+                switch mediaSession.playbackRequestStatus {
                 case .playing:
-                    manager.setPlaybackRequestStatus(status: .paused)
+                    mediaSession.setPlaybackRequestStatus(status: .paused)
                 case .paused:
-                    manager.setPlaybackRequestStatus(status: .playing)
+                    mediaSession.setPlaybackRequestStatus(status: .playing)
                 }
             } label: {
                 Label(
-                    manager.playbackRequestStatus == .playing ? L10n.pause : L10n.play,
-                    systemImage: manager.playbackRequestStatus == .playing ? "pause.fill" : "play.fill"
+                    mediaSession.playbackRequestStatus == .playing ? L10n.pause : L10n.play,
+                    systemImage: mediaSession.playbackRequestStatus == .playing ? "pause.fill" : "play.fill"
                 )
                 .font(.system(size: 36, weight: .bold, design: .default))
                 .labelStyle(.iconOnly)
                 .frame(width: 44, height: 44)
                 .padding(16)
             }
+            .disabled(!mediaSession.canControlPlayback)
         }
 
+        @ContentBuilder
         private var jumpForwardButton: some View {
             JumpButton(interval: jumpForwardInterval, isForward: true) {
-                manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
+                mediaSession.seek(by: jumpForwardInterval.rawValue)
             }
+            .disabled(!mediaSession.canSeek)
         }
 
+        @ContentBuilder
         private var jumpBackwardButton: some View {
             JumpButton(interval: jumpBackwardInterval, isForward: false) {
-                manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
+                mediaSession.seek(by: .zero - (jumpBackwardInterval.rawValue))
             }
+            .disabled(!mediaSession.canSeek)
         }
 
+        @ContentBuilder
         var body: some View {
             HStack(spacing: 0) {
                 if shouldShowJumpButtons {
@@ -79,7 +83,6 @@ extension VideoPlayer.PlaybackControls {
             }
             .buttonStyle(OverlayButtonStyle(symbolEffectSpeed: 2))
             .padding(.horizontal, 50)
-            .offset(y: centerOffsetBox.value / 2)
         }
     }
 
@@ -94,11 +97,13 @@ extension VideoPlayer.PlaybackControls {
         let isForward: Bool
         let action: () -> Void
 
+        @ContentBuilder
         var body: some View {
             Button {
                 action()
 
                 let now = ContinuousClock.now
+
                 // A burst gets one finite effect. Further taps still seek immediately,
                 // but cannot queue rotations that outlive the user's interaction.
                 guard lastRotationStart.map({ $0.duration(to: now) >= .milliseconds(500) }) ?? true
@@ -110,7 +115,7 @@ extension VideoPlayer.PlaybackControls {
                 Image(systemName: isForward ? interval.systemImage : interval.secondarySystemImage)
                     .symbolEffect(
                         isForward ? .rotate.clockwise.byLayer : .rotate.counterClockwise.byLayer,
-                        options: .nonRepeating.speed(4),
+                        options: .nonRepeating.speed(10),
                         value: rotationTrigger
                     )
                     .font(.system(size: 28, weight: .regular))

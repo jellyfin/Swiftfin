@@ -10,6 +10,7 @@ import JellyfinAPI
 
 struct ServerUsersLibrary: PagingLibrary {
 
+    let hasNextPage = false
     let parent = TitledLibraryParent(displayTitle: L10n.users, id: "server-users")
 
     func retrievePage(
@@ -17,7 +18,7 @@ struct ServerUsersLibrary: PagingLibrary {
         pageState: LibraryPageState
     ) async throws -> [UserDto] {
         let request = Paths.getUsers()
-        let response = try await pageState.userSession.client.send(request)
+        let response = try await pageState.userSession.send(request)
 
         return response.value
     }

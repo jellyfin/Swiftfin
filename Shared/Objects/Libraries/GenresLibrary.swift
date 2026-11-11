@@ -16,7 +16,7 @@ struct GenresLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = Paths.GetGenresParameters()
         parameters.limit = pageState.pageSize
         parameters.startIndex = pageState.pageOffset
@@ -24,6 +24,6 @@ struct GenresLibrary: BaseItemKindLibrary {
         let request = Paths.getGenres(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value.items ?? []
+        return try pageState.items(from: response)
     }
 }

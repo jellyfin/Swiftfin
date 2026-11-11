@@ -46,6 +46,7 @@ struct NetworkConnectionContext: Equatable {
         return await withCheckedContinuation { continuation in
             monitor.pathUpdateHandler = { path in
                 guard resumeState.resume() else { return }
+
                 monitor.cancel()
 
                 Task {
@@ -96,6 +97,7 @@ struct NetworkConnectionContext: Equatable {
             defer { lock.unlock() }
 
             guard !didResume else { return false }
+
             didResume = true
             return true
         }

@@ -21,23 +21,11 @@ extension VideoPlayer.UIContainerViewController {
                 L10n.pressAndHoldToUnlock,
                 systemName: VideoPlayerActionButton.gestureLock.systemImage
             )
+
             return false
         }
+
         return true
-    }
-
-    func handleTapGestureInSupplement(
-        location: CGPoint,
-        unitPoint: UnitPoint,
-        count: Int
-    ) {
-        guard !viewState.isPresentingSupplement else { return }
-
-        handleTapGesture(
-            location: location,
-            unitPoint: unitPoint,
-            count: count
-        )
     }
 
     func handleTapGesture(
@@ -67,7 +55,7 @@ extension VideoPlayer.UIContainerViewController {
         unitPoint: UnitPoint
     ) {
         let action = Defaults[.VideoPlayer.Gesture.multiTapGesture]
-        let canMultiTap = action != .none && viewState.manager?.item.isLiveStream == false
+        let canMultiTap = action != .none && viewState.mediaSession?.canSeek == true
 
         guard canMultiTap else {
             viewState.cancelTapGesture()
@@ -80,10 +68,10 @@ extension VideoPlayer.UIContainerViewController {
         var isMultiTap = false
 
         switch action {
-        case .none: ()
+        case .none:
+            ()
         case .jump:
             if canMultiTap, let lastTapLocation = viewState.lastTapLocation {
-
                 let (isSameSide, isLeftSide) = pointsAreSameSide(
                     lastTapLocation,
                     location,
@@ -92,12 +80,14 @@ extension VideoPlayer.UIContainerViewController {
                 )
 
                 if isSameSide {
+                    guard viewState.mediaSession?.canSeek == true else { return }
+
                     isMultiTap = true
                     viewState.hideControls()
 
                     if isLeftSide {
                         let interval = Defaults[.VideoPlayer.jumpBackwardInterval]
-                        viewState.manager?.proxy?.jumpBackward(interval.rawValue)
+                        viewState.mediaSession?.seek(by: .zero - (interval.rawValue))
 
                         viewState.toastProxy.present(
                             Text(
@@ -108,7 +98,7 @@ extension VideoPlayer.UIContainerViewController {
                         )
                     } else {
                         let interval = Defaults[.VideoPlayer.jumpForwardInterval]
-                        viewState.manager?.proxy?.jumpForward(interval.rawValue)
+                        viewState.mediaSession?.seek(by: interval.rawValue)
 
                         viewState.toastProxy.present(
                             Text(
@@ -122,7 +112,7 @@ extension VideoPlayer.UIContainerViewController {
             }
         }
 
-        // Respond to the first tap immediately; subsequent seek taps keep controls hidden.
+        // Respond to the first tap immediately and keep controls hidden during subsequent seek taps.
         if !isMultiTap {
             performSingleTapGesture()
         }
@@ -132,6 +122,7 @@ extension VideoPlayer.UIContainerViewController {
             width: width,
             midPadding: viewState.isCompact ? 20 : 50
         )
+
         viewState.lastTapLocation = location
 
         if side {
@@ -184,10 +175,14 @@ extension VideoPlayer.UIContainerViewController {
         let action = Defaults[.VideoPlayer.Gesture.doubleTouchGesture]
 
         switch action {
-        case .none: ()
+        case .none:
+            ()
+
         case .aspectFill:
             guard checkGestureLock() else { return }
+
             viewState.toggleAspectFillBehavior()
+
         case .gestureLock:
             if viewState.isGestureLocked {
                 viewState.isGestureLocked = false
@@ -204,9 +199,11 @@ extension VideoPlayer.UIContainerViewController {
                     systemName: VideoPlayerActionButton.gestureLock.systemImage
                 )
             }
+
         case .pausePlay:
             guard checkGestureLock() else { return }
-            viewState.manager?.togglePlayPause()
+
+            viewState.mediaSession?.togglePlayPause()
         }
     }
 
@@ -228,13 +225,16 @@ extension VideoPlayer.UIContainerViewController {
                 L10n.gesturesUnlocked,
                 systemName: VideoPlayerActionButton.gestureLock.secondarySystemImage
             )
+
             return
         }
 
         let action = Defaults[.VideoPlayer.Gesture.longPressAction]
 
         switch action {
-        case .none: ()
+        case .none:
+            ()
+
         case .gestureLock:
             guard state == .began else { return }
 
@@ -244,16 +244,19 @@ extension VideoPlayer.UIContainerViewController {
                 L10n.gesturesLocked,
                 systemName: VideoPlayerActionButton.gestureLock.systemImage
             )
+
         case .playbackSpeed:
-            guard viewState.manager?.item.isLiveStream == false else { return }
+            guard viewState.mediaSession?.item.isLiveStream == false else { return }
 
             switch state {
             case .began:
-                viewState.originalPlaybackRate = viewState.manager?.rate
+                guard viewState.mediaSession?.canControlPlayback == true else { return }
+
+                viewState.originalPlaybackRate = viewState.mediaSession?.rate
 
                 let multiplier = Defaults[.VideoPlayer.Gesture.longPressSpeedMultiplier]
 
-                viewState.manager?.setRate(rate: multiplier.rawValue)
+                viewState.mediaSession?.rate = multiplier.rawValue
 
                 viewState.toastProxy.present(
                     Text(multiplier.displayTitle),
@@ -262,7 +265,8 @@ extension VideoPlayer.UIContainerViewController {
 
             case .ended, .cancelled:
                 guard let originalRate = viewState.originalPlaybackRate else { return }
-                viewState.manager?.setRate(rate: originalRate)
+
+                viewState.mediaSession?.rate = originalRate
 
                 viewState.originalPlaybackRate = nil
 

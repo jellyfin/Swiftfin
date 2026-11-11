@@ -22,6 +22,7 @@ struct APIKeysView: View {
     @StateObject
     private var viewModel = APIKeysViewModel()
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -47,6 +48,7 @@ struct APIKeysView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -54,8 +56,10 @@ struct APIKeysView: View {
                 viewModel.error.map {
                     ErrorView(error: $0)
                 }
+
             case .initial:
                 contentView
+
             case .refreshing:
                 ProgressView()
             }
@@ -70,7 +74,6 @@ struct APIKeysView: View {
             viewModel.refresh()
         }
         .topBarTrailing {
-
             if viewModel.background.is(.updating) {
                 ProgressView()
             }

@@ -72,8 +72,6 @@
 		E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3C52716499E009D4DAF /* CoreStore */; };
 		E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3CC27164CA7009D4DAF /* CoreStore */; };
 		E13DD3D327168E65009D4DAF /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3D227168E65009D4DAF /* Defaults */; };
-		E144DBF930464F3A009B85B5 /* SwiftVLC in Frameworks */ = {isa = PBXBuildFile; productRef = E144DBF830464F3A009B85B5 /* SwiftVLC */; };
-		E144DBFA30464F3A009B85B5 /* SwiftVLC in Frameworks */ = {isa = PBXBuildFile; productRef = E144DBFB30464F3A009B85B5 /* SwiftVLC */; };
 		E145EB4B2BE16849003BF6F3 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E145EB4A2BE16849003BF6F3 /* KeychainSwift */; };
 		E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */ = {isa = PBXBuildFile; productRef = E14EA1642BF70A8E00DE757A /* Mantis */; };
 		E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E15210552946DF1B00375CC2 /* PulseLogHandler */; };
@@ -81,7 +79,6 @@
 		E1523F822B132C350062821A /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1523F812B132C350062821A /* CollectionHStack */; };
 		E1575E3C293C6B15001665B1 /* Files in Frameworks */ = {isa = PBXBuildFile; productRef = E1575E3B293C6B15001665B1 /* Files */; };
 		E1575E58293E7685001665B1 /* Files in Frameworks */ = {isa = PBXBuildFile; productRef = E1575E57293E7685001665B1 /* Files */; };
-		E15D4F052B1B0C3C00442DB8 /* PreferencesView in Frameworks */ = {isa = PBXBuildFile; productRef = E15D4F042B1B0C3C00442DB8 /* PreferencesView */; };
 		E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA832BA167350080E926 /* CollectionHStack */; };
 		E15EFA862BA1685F0080E926 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */; };
 		E164308C2E3AA9710028D4E8 /* Transmission in Frameworks */ = {isa = PBXBuildFile; productRef = E164308B2E3AA9710028D4E8 /* Transmission */; };
@@ -92,13 +89,14 @@
 		E176EBE02D0502A6009F4CF1 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBDF2D0502A6009F4CF1 /* CollectionHStack */; };
 		E176EBE32D0502C6009F4CF1 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBE22D0502C6009F4CF1 /* CollectionHStack */; };
 		E176EBE92D050925009F4CF1 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBE82D050925009F4CF1 /* CollectionVGrid */; };
+		E17E76BB30A0F24400DE148E /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E17E76BA30A0F24400DE148E /* MediaAccessibilityKit */; };
 		E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E18D6AA52BAA96F000A0D167 /* CollectionHStack */; };
+		E18F9AFC30A0F3F4005C2EA3 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E18F9AFB30A0F3F4005C2EA3 /* MediaAccessibilityKit */; };
 		E19005010000000000000001 /* MPVUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19005010000000000000003 /* MPVUI */; };
 		E19005010000000000000002 /* MPVUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19005010000000000000004 /* MPVUI */; };
-		E19005020000000000000001 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19005020000000000000003 /* MediaAccessibilityKit */; };
-		E19005020000000000000002 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19005020000000000000004 /* MediaAccessibilityKit */; };
 		E19009260000000000000001 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000003 /* SwiftfinMacros */; };
 		E19009260000000000000002 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000004 /* SwiftfinMacros */; };
+		E19010180000000000000001 /* GoogleCastDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = E19010180000000000000002 /* GoogleCastDynamic */; };
 		E19138CA2E7E7FA20061E464 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19138C92E7E7FA20061E464 /* StatefulMacros */; };
 		E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E19D41B12BF2BFA50082B8B2 /* KeychainSwift */; };
 		E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E19DDEC62948EF9900954E10 /* OrderedCollections */; };
@@ -107,7 +105,6 @@
 		E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0928A0BEFF005C10C8 /* BlurHashKit */; };
 		E19FA1A02E84F0A800F5A60D /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19FA19F2E84F0A800F5A60D /* StatefulMacros */; };
 		E1A76F1A2E8369A500A5F2C1 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1A76F192E8369A500A5F2C1 /* StatefulMacros */; };
-		E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */ = {isa = PBXBuildFile; productRef = E1A7B1642B9A9F7800152546 /* PreferencesView */; };
 		E1B354BB2FC4BB0600827DC1 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1B354BA2FC4BB0600827DC1 /* StatefulMacros */; };
 		E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A629577BCE004B26CF /* Pulse */; };
 		E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A829577BCE004B26CF /* PulseLogHandler */; };
@@ -124,9 +121,25 @@
 		E1FADDF12E84B63600FB310E /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1FADDF02E84B63600FB310E /* StatefulMacros */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A3E97409F5234DF78141CDE0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5358705F2669D21600D05A09;
+			remoteInfo = "Swiftfin tvOS";
+		};
+		B1A9CB1D0455425FAA523F53 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5377CBF0263B596A003A4E83;
+			remoteInfo = "Swiftfin iOS";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		535870602669D21600D05A09 /* Swiftfin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swiftfin.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5362E4A7267D4067000E2F71 /* GoogleCast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleCast.framework; path = "../../Downloads/GoogleCastSDK-ios-4.6.0_dynamic/GoogleCast.framework"; sourceTree = "<group>"; };
 		5362E4AA267D40AD000E2F71 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5362E4AC267D40B1000E2F71 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -145,6 +158,7 @@
 		5362E4C8267D40F7000E2F71 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5377CBF1263B596A003A4E83 /* Swiftfin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swiftfin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53ABFDDB267972BF00886593 /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/System/Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
+		5B3F7B422D9C4A08A81E760D /* Captions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Captions.json; sourceTree = "<group>"; };
 		62666E0027E5016900EC0ECD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		62666E0527E5017A00EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		62666E0727E5018D00EC0ECD /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
@@ -171,14 +185,36 @@
 		62666E2D27E5021400EC0ECD /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2F27E5021800EC0ECD /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/VideoToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		62666E3127E5021E00EC0ECD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCastSDK.xcframework; path = Frameworks/GoogleCastSDK.xcframework; sourceTree = "<group>"; };
 		628B95212670CABD0091AF3B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
-		E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCast.xcframework; path = Carthage/Build/GoogleCast.xcframework; sourceTree = "<group>"; };
+		6EC6FB560A2546B7AA4ECB12 /* ProcessScreenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessScreenshots.swift; sourceTree = "<group>"; };
+		7496CBB76D7A4B7E96A45862 /* CaptureDuo.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CaptureDuo.sh; sourceTree = "<group>"; };
+		82CD1975F58E4999B9DE8365 /* WriteGitBranch.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = WriteGitBranch.sh; sourceTree = "<group>"; };
+		966A9427F8964C70A70997AB /* Profiles.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Profiles.json; sourceTree = "<group>"; };
+		BF8A69DD4C0747F69061EC37 /* Swiftfin iOS Screenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swiftfin iOS Screenshots.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2CF090E1C194AED9C84DEBA /* Swiftfin tvOS Screenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swiftfin tvOS Screenshots.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		24EBA6499E0C420F8E5B2D33 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Extensions/UIDevice.swift,
+				Strings/ProperNouns.swift,
+				Strings/Strings.swift,
+			);
+			target = 0558DEDC63B5442F9F6D7D72 /* Swiftfin tvOS Screenshots */;
+		};
+		3002B5F683E649EFBCF37FED /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Extensions/UIDevice.swift,
+				Strings/ProperNouns.swift,
+				Strings/Strings.swift,
+			);
+			target = 6E22078F6D5C4A179202982B /* Swiftfin iOS Screenshots */;
+		};
 		E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -232,22 +268,31 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0E5C86560D5353A06E79ECD9 /* Translations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translations; sourceTree = "<group>"; };
+		3832EB9705E64B7AB6947127 /* Output */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Output; sourceTree = "<group>"; };
+		51949983A343481190C9A370 /* Fonts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Fonts; sourceTree = "<group>"; };
+		60CEF4B387DC4AC28A90EA68 /* Frames */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Frames; sourceTree = "<group>"; };
+		8FED35935A4B40F4AF02F229 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
-		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
-		E14565DD2DFCAE78008FF700 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
+		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 3002B5F683E649EFBCF37FED /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 24EBA6499E0C420F8E5B2D33 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14567272DFCAEFD008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Swiftfin tvOS"; sourceTree = "<group>"; };
 		E1456FC82DFCB323008FF700 /* Translations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translations; sourceTree = "<group>"; };
 		E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E1BE3EDA2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E1BE3EDB2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = XcodeConfig; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4E7E46CF53864DC38CC91D86 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5358705D2669D21600D05A09 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E144DBFA30464F3A009B85B5 /* SwiftVLC in Frameworks */,
 				E19005010000000000000002 /* MPVUI in Frameworks */,
-				E19005020000000000000002 /* MediaAccessibilityKit in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
 				62666E2A27E5020A00EC0ECD /* OpenGLES.framework in Frameworks */,
@@ -278,7 +323,6 @@
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				62666E1F27E501DF00EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
-				E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */,
 				E19009260000000000000002 /* SwiftfinMacros in Frameworks */,
 				E12CDBC12FFB593800828742 /* CollectionVGrid in Frameworks */,
 				E1153DD22BBB649C00424D36 /* SVGKit in Frameworks */,
@@ -286,6 +330,7 @@
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E1E2D7BF2E3FD936004E2E5F /* Transmission in Frameworks */,
+				E18F9AFC30A0F3F4005C2EA3 /* MediaAccessibilityKit in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 			);
@@ -326,7 +371,6 @@
 				E12CDBBC2FFB532800828742 /* CollectionVGrid in Frameworks */,
 				E1575E3C293C6B15001665B1 /* Files in Frameworks */,
 				E19005010000000000000001 /* MPVUI in Frameworks */,
-				E19005020000000000000001 /* MediaAccessibilityKit in Frameworks */,
 				E176EBE02D0502A6009F4CF1 /* CollectionHStack in Frameworks */,
 				E1FADDF12E84B63600FB310E /* StatefulMacros in Frameworks */,
 				E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */,
@@ -341,7 +385,7 @@
 				E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */,
 				E16C08F7305A385900895062 /* CollectionHStack in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
-				E144DBF930464F3A009B85B5 /* SwiftVLC in Frameworks */,
+				E17E76BB30A0F24400DE148E /* MediaAccessibilityKit in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
 				E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */,
 				E114DB332B1944FA00B75FB3 /* CollectionVGrid in Frameworks */,
@@ -360,13 +404,20 @@
 				E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */,
 				E1153DAC2BBA6AD200424D36 /* CollectionHStack in Frameworks */,
 				62666E0D27E501AA00EC0ECD /* QuartzCore.framework in Frameworks */,
-				E15D4F052B1B0C3C00442DB8 /* PreferencesView in Frameworks */,
+				E19010180000000000000001 /* GoogleCastDynamic in Frameworks */,
 				E19009260000000000000001 /* SwiftfinMacros in Frameworks */,
 				E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */,
 				E134DD2C2E7F4DC300AED027 /* StatefulMacros in Frameworks */,
 				E1A76F1A2E8369A500A5F2C1 /* StatefulMacros in Frameworks */,
 				62666E3F27E5040300EC0ECD /* SystemConfiguration.framework in Frameworks */,
 				E164308C2E3AA9710028D4E8 /* Transmission in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0FE9681F9F5400AA0C7DB37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,7 +433,7 @@
 				E1456FC82DFCB323008FF700 /* Translations */,
 				5377CBF2263B596A003A4E83 /* Products */,
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
-				E14565DD2DFCAE78008FF700 /* Scripts */,
+				E14565DD2DFCAE78008FF700 /* Tools */,
 				E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */,
 			);
 			sourceTree = "<group>";
@@ -392,6 +443,8 @@
 			children = (
 				5377CBF1263B596A003A4E83 /* Swiftfin.app */,
 				535870602669D21600D05A09 /* Swiftfin.app */,
+				BF8A69DD4C0747F69061EC37 /* Swiftfin iOS Screenshots.xctest */,
+				F2CF090E1C194AED9C84DEBA /* Swiftfin tvOS Screenshots.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -399,9 +452,7 @@
 		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */,
 				637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */,
-				62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */,
 				62666E3127E5021E00EC0ECD /* UIKit.framework */,
 				62666E2F27E5021800EC0ECD /* VideoToolbox.framework */,
 				62666E2D27E5021400EC0ECD /* Security.framework */,
@@ -444,7 +495,6 @@
 				5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */,
 				5362E4AC267D40B1000E2F71 /* Accelerate.framework */,
 				5362E4AA267D40AD000E2F71 /* AVFoundation.framework */,
-				5362E4A7267D4067000E2F71 /* GoogleCast.framework */,
 				53ABFDDB267972BF00886593 /* TVServices.framework */,
 				628B95212670CABD0091AF3B /* WidgetKit.framework */,
 				628B95232670CABD0091AF3B /* SwiftUI.framework */,
@@ -452,9 +502,58 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		588169D1DE9DA4B4AC9DA475 /* Screenshots */ = {
+			isa = PBXGroup;
+			children = (
+				8FED35935A4B40F4AF02F229 /* Tests */,
+				5B3F7B422D9C4A08A81E760D /* Captions.json */,
+				7496CBB76D7A4B7E96A45862 /* CaptureDuo.sh */,
+				51949983A343481190C9A370 /* Fonts */,
+				60CEF4B387DC4AC28A90EA68 /* Frames */,
+				3832EB9705E64B7AB6947127 /* Output */,
+				6EC6FB560A2546B7AA4ECB12 /* ProcessScreenshots.swift */,
+				966A9427F8964C70A70997AB /* Profiles.json */,
+			);
+			path = Screenshots;
+			sourceTree = "<group>";
+		};
+		E14565DD2DFCAE78008FF700 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				588169D1DE9DA4B4AC9DA475 /* Screenshots */,
+				0E5C86560D5353A06E79ECD9 /* Translations */,
+				82CD1975F58E4999B9DE8365 /* WriteGitBranch.sh */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0558DEDC63B5442F9F6D7D72 /* Swiftfin tvOS Screenshots */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 66AF863071CB4EB48FEC06CF /* Build configuration list for PBXNativeTarget "Swiftfin tvOS Screenshots" */;
+			buildPhases = (
+				80256475C72144CFB335414E /* Sources */,
+				B0FE9681F9F5400AA0C7DB37 /* Frameworks */,
+				67F76E9836064440A92E18B7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				521D8C87A8BF490C947EBA92 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8FED35935A4B40F4AF02F229 /* Tests */,
+				E1456FC82DFCB323008FF700 /* Translations */,
+			);
+			name = "Swiftfin tvOS Screenshots";
+			packageProductDependencies = (
+			);
+			productName = "Swiftfin tvOS Screenshots";
+			productReference = F2CF090E1C194AED9C84DEBA /* Swiftfin tvOS Screenshots.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		5358705F2669D21600D05A09 /* Swiftfin tvOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS" */;
@@ -491,7 +590,6 @@
 				E1B5F7A829577BCE004B26CF /* PulseLogHandler */,
 				E1B5F7AA29577BCE004B26CF /* PulseUI */,
 				E1B5F7AC29577BDD004B26CF /* OrderedCollections */,
-				E1A7B1642B9A9F7800152546 /* PreferencesView */,
 				E19009260000000000000004 /* SwiftfinMacros */,
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
 				E1153DD12BBB649C00424D36 /* SVGKit */,
@@ -499,14 +597,13 @@
 				E1155ACA2D0584A90021557A /* IdentifiedCollections */,
 				BD88CB412D77E6A0006BB5E3 /* TVOSPicker */,
 				E19005010000000000000004 /* MPVUI */,
-				E19005020000000000000004 /* MediaAccessibilityKit */,
 				E1E2D7BE2E3FD936004E2E5F /* Transmission */,
 				E1BD95B32FBE8E50001CDA57 /* JellyfinAPI */,
 				E1079FD92FC6FFCE004B5C54 /* StatefulMacros */,
 				E1BE3EBD2FE8DEAA00327990 /* FactoryKit */,
 				E12CDBC02FFB593800828742 /* CollectionVGrid */,
-				E144DBFB30464F3A009B85B5 /* SwiftVLC */,
 				E16C08F8305A386900895062 /* CollectionHStack */,
+				E18F9AFB30A0F3F4005C2EA3 /* MediaAccessibilityKit */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin.app */;
@@ -550,7 +647,7 @@
 				E1DC9813296DC06200982F06 /* PulseLogHandler */,
 				E1523F812B132C350062821A /* CollectionHStack */,
 				E114DB322B1944FA00B75FB3 /* CollectionVGrid */,
-				E15D4F042B1B0C3C00442DB8 /* PreferencesView */,
+				E19010180000000000000002 /* GoogleCastDynamic */,
 				E19009260000000000000003 /* SwiftfinMacros */,
 				E113A2A62B5A178D009CAAAA /* CollectionHStack */,
 				E113A2A92B5A179A009CAAAA /* CollectionVGrid */,
@@ -568,7 +665,6 @@
 				E176EBE22D0502C6009F4CF1 /* CollectionHStack */,
 				E176EBE82D050925009F4CF1 /* CollectionVGrid */,
 				E19005010000000000000003 /* MPVUI */,
-				E19005020000000000000003 /* MediaAccessibilityKit */,
 				E164308B2E3AA9710028D4E8 /* Transmission */,
 				E13CCE4B2E6C08710070965F /* LNPopupUI-Static */,
 				E11ADE832E7E73B6008074FC /* StatefulMacros */,
@@ -586,13 +682,37 @@
 				E1240A282FEA4F69004E6588 /* StatefulMacros */,
 				E12CDBBB2FFB532800828742 /* CollectionVGrid */,
 				E12CDBBE2FFB592A00828742 /* CollectionVGrid */,
-				E144DBF830464F3A009B85B5 /* SwiftVLC */,
 				E16C08F3305A350C00895062 /* CollectionHStack */,
 				E16C08F6305A385900895062 /* CollectionHStack */,
+				E17E76BA30A0F24400DE148E /* MediaAccessibilityKit */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin.app */;
 			productType = "com.apple.product-type.application";
+		};
+		6E22078F6D5C4A179202982B /* Swiftfin iOS Screenshots */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A121E9D699D347CEB0DE5BCE /* Build configuration list for PBXNativeTarget "Swiftfin iOS Screenshots" */;
+			buildPhases = (
+				3A505C17FE334BE08653ED72 /* Sources */,
+				4E7E46CF53864DC38CC91D86 /* Frameworks */,
+				FA089795C6024CAABFA3F5D0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				212FC831856C41CB849A8ED0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8FED35935A4B40F4AF02F229 /* Tests */,
+				E1456FC82DFCB323008FF700 /* Translations */,
+			);
+			name = "Swiftfin iOS Screenshots";
+			packageProductDependencies = (
+			);
+			productName = "Swiftfin iOS Screenshots";
+			productReference = BF8A69DD4C0747F69061EC37 /* Swiftfin iOS Screenshots.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -607,11 +727,19 @@
 				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
+					0558DEDC63B5442F9F6D7D72 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 5358705F2669D21600D05A09;
+					};
 					5358705F2669D21600D05A09 = {
 						CreatedOnToolsVersion = 12.5;
 					};
 					5377CBF0263B596A003A4E83 = {
 						CreatedOnToolsVersion = 12.5;
+					};
+					6E22078F6D5C4A179202982B = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 5377CBF0263B596A003A4E83;
 					};
 				};
 			};
@@ -675,6 +803,10 @@
 				enm,
 				gl,
 				ka,
+				ml,
+				af,
+				"yue-Hant",
+				"en-GB",
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
@@ -689,7 +821,7 @@
 				E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */,
 				E19DDEC52948EF9900954E10 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */,
-				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
+				E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */,
 				E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */,
 				E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
 				E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
@@ -697,14 +829,13 @@
 				E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
 				BD88CB402D77E6A0006BB5E3 /* XCRemoteSwiftPackageReference "TVOSPicker" */,
 				E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */,
-				E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */,
 				E164308A2E3AA9710028D4E8 /* XCRemoteSwiftPackageReference "Transmission" */,
 				E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */,
 				E1BD95B02FBE8E44001CDA57 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E1240A272FEA4F69004E6588 /* XCRemoteSwiftPackageReference "StatefulMacro" */,
 				E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
-				E144DBF730464F3A009B85B5 /* XCRemoteSwiftPackageReference "SwiftVLC" */,
 				E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
+				E17E76BC30A0F39F00DE148E /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -712,6 +843,8 @@
 			targets = (
 				5377CBF0263B596A003A4E83 /* Swiftfin iOS */,
 				5358705F2669D21600D05A09 /* Swiftfin tvOS */,
+				6E22078F6D5C4A179202982B /* Swiftfin iOS Screenshots */,
+				0558DEDC63B5442F9F6D7D72 /* Swiftfin tvOS Screenshots */,
 			);
 		};
 /* End PBXProject section */
@@ -731,6 +864,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		67F76E9836064440A92E18B7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FA089795C6024CAABFA3F5D0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -744,7 +891,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
-				"$(SRCROOT)/Scripts/Translations/GenerateStrings.swift",
+				"$(SRCROOT)/Tools/Translations/GenerateStrings.swift",
 			);
 			name = "Generate Strings";
 			outputFileListPaths = (
@@ -753,7 +900,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -eu\ncd \"${SRCROOT}\"\nxcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/GenerateStrings.swift\"\n";
+			shellScript = "set -eu\ncd \"${SRCROOT}\"\nxcrun --sdk macosx swift \"${SRCROOT}/Tools/Translations/GenerateStrings.swift\"\n";
 		};
 		6286F0A3271C0ABA00C40ED5 /* Generate Strings */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -765,7 +912,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
-				"$(SRCROOT)/Scripts/Translations/GenerateStrings.swift",
+				"$(SRCROOT)/Tools/Translations/GenerateStrings.swift",
 			);
 			name = "Generate Strings";
 			outputFileListPaths = (
@@ -774,7 +921,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -eu\ncd \"${SRCROOT}\"\nxcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/GenerateStrings.swift\"\n";
+			shellScript = "set -eu\ncd \"${SRCROOT}\"\nxcrun --sdk macosx swift \"${SRCROOT}/Tools/Translations/GenerateStrings.swift\"\n";
 		};
 		BD0BA2282AD64BB200306A8D /* Run SwiftFormat */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -821,7 +968,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Scripts/WriteGitBranch.sh",
+				"$(SRCROOT)/Tools/WriteGitBranch.sh",
 			);
 			name = "Write Git Branch";
 			outputPaths = (
@@ -829,7 +976,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"${SRCROOT}/Scripts/WriteGitBranch.sh\"\n";
+			shellScript = "/bin/sh \"${SRCROOT}/Tools/WriteGitBranch.sh\"\n";
 		};
 		E19009182F00000000000002 /* Write Git Branch */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -838,7 +985,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Scripts/WriteGitBranch.sh",
+				"$(SRCROOT)/Tools/WriteGitBranch.sh",
 			);
 			name = "Write Git Branch";
 			outputPaths = (
@@ -846,7 +993,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"${SRCROOT}/Scripts/WriteGitBranch.sh\"\n";
+			shellScript = "/bin/sh \"${SRCROOT}/Tools/WriteGitBranch.sh\"\n";
 		};
 		E1A1B5C42F00000000000001 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -889,6 +1036,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3A505C17FE334BE08653ED72 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5358705C2669D21600D05A09 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -903,18 +1057,55 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		80256475C72144CFB335414E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		212FC831856C41CB849A8ED0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
+			targetProxy = B1A9CB1D0455425FAA523F53 /* PBXContainerItemProxy */;
+		};
+		521D8C87A8BF490C947EBA92 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
+			targetProxy = A3E97409F5234DF78141CDE0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		25299085C89B410CA5446FCE /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
+			baseConfigurationReferenceRelativePath = Shared.xcconfig;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.screenshots;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = "Swiftfin tvOS";
+				TVOS_DEPLOYMENT_TARGET = 26.1;
+			};
+			name = Release;
+		};
 		535870722669D21700D05A09 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
 			baseConfigurationReferenceRelativePath = Shared.xcconfig;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -942,10 +1133,9 @@
 			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
 			baseConfigurationReferenceRelativePath = Shared.xcconfig;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -1177,6 +1367,62 @@
 			};
 			name = Release;
 		};
+		8B15529463764FCD87973DFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
+			baseConfigurationReferenceRelativePath = Shared.xcconfig;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.screenshots;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Swiftfin iOS";
+			};
+			name = Release;
+		};
+		A226934AD0D944289BDDD7AA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
+			baseConfigurationReferenceRelativePath = Shared.xcconfig;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.screenshots;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = "Swiftfin tvOS";
+				TVOS_DEPLOYMENT_TARGET = 26.1;
+			};
+			name = Debug;
+		};
+		A2525D94DF2C452889218492 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
+			baseConfigurationReferenceRelativePath = Shared.xcconfig;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.screenshots;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Swiftfin iOS";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1207,13 +1453,27 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		66AF863071CB4EB48FEC06CF /* Build configuration list for PBXNativeTarget "Swiftfin tvOS Screenshots" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A226934AD0D944289BDDD7AA /* Debug */,
+				25299085C89B410CA5446FCE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A121E9D699D347CEB0DE5BCE /* Build configuration list for PBXNativeTarget "Swiftfin iOS Screenshots" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2525D94DF2C452889218492 /* Debug */,
+				8B15529463764FCD87973DFF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = PreferencesView;
-		};
 		E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = SwiftfinMacros;
@@ -1266,12 +1526,12 @@
 			repositoryURL = "https://github.com/LePips/StatefulMacro";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.7;
+				minimumVersion = 0.2.0;
 			};
 		};
 		E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionVGrid";
+			repositoryURL = "https://github.com/LePips/CollectionVGrid.git";
 			requirement = {
 				branch = main;
 				kind = branch;
@@ -1299,14 +1559,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 9.0.0;
-			};
-		};
-		E144DBF730464F3A009B85B5 /* XCRemoteSwiftPackageReference "SwiftVLC" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/harflabs/SwiftVLC";
-			requirement = {
-				kind = exactVersion;
-				version = 1.0.0;
 			};
 		};
 		E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
@@ -1351,7 +1603,7 @@
 		};
 		E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionHStack";
+			repositoryURL = "https://github.com/LePips/CollectionHStack.git";
 			requirement = {
 				branch = main;
 				kind = branch;
@@ -1365,20 +1617,28 @@
 				minimumVersion = 1.1.0;
 			};
 		};
+		E17E76BC30A0F39F00DE148E /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
+			requirement = {
+				kind = exactVersion;
+				version = 0.4.0;
+			};
+		};
 		E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/MPVUI";
 			requirement = {
 				kind = exactVersion;
-				version = 0.5.0;
+				version = 0.10.0;
 			};
 		};
-		E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */ = {
+		E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
+			repositoryURL = "https://github.com/googlecast/google-cast-ios-sdk";
 			requirement = {
 				kind = exactVersion;
-				version = 0.2.0;
+				version = 4.8.6;
 			};
 		};
 		E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */ = {
@@ -1418,7 +1678,7 @@
 			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.1.0;
+				minimumVersion = 3.3.0;
 			};
 		};
 		E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */ = {
@@ -1468,22 +1728,27 @@
 		};
 		E113A2A62B5A178D009CAAAA /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
 		};
 		E113A2A92B5A179A009CAAAA /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
 		};
 		E114DB322B1944FA00B75FB3 /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
 		};
 		E1153DA32BBA614F00424D36 /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
 		};
 		E1153DAB2BBA6AD200424D36 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
 		};
 		E1153DCF2BBB634F00424D36 /* SVGKit */ = {
@@ -1517,6 +1782,7 @@
 		};
 		E12CDBBB2FFB532800828742 /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
 		};
 		E12CDBBE2FFB592A00828742 /* CollectionVGrid */ = {
@@ -1531,6 +1797,7 @@
 		};
 		E132D3C72BD200C10058A2DF /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
 		};
 		E134DD2B2E7F4DC300AED027 /* StatefulMacros */ = {
@@ -1586,16 +1853,6 @@
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
-		E144DBF830464F3A009B85B5 /* SwiftVLC */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E144DBF730464F3A009B85B5 /* XCRemoteSwiftPackageReference "SwiftVLC" */;
-			productName = SwiftVLC;
-		};
-		E144DBFB30464F3A009B85B5 /* SwiftVLC */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E144DBF730464F3A009B85B5 /* XCRemoteSwiftPackageReference "SwiftVLC" */;
-			productName = SwiftVLC;
-		};
 		E145EB4A2BE16849003BF6F3 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */;
@@ -1623,6 +1880,7 @@
 		};
 		E1523F812B132C350062821A /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
 		};
 		E1575E3B293C6B15001665B1 /* Files */ = {
@@ -1635,12 +1893,9 @@
 			package = E1575E3A293C6B15001665B1 /* XCRemoteSwiftPackageReference "Files" */;
 			productName = Files;
 		};
-		E15D4F042B1B0C3C00442DB8 /* PreferencesView */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PreferencesView;
-		};
 		E15EFA832BA167350080E926 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
 		};
 		E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */ = {
@@ -1655,6 +1910,7 @@
 		};
 		E16C08F3305A350C00895062 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
 		};
 		E16C08F6305A385900895062 /* CollectionHStack */ = {
@@ -1674,20 +1930,32 @@
 		};
 		E176EBDF2D0502A6009F4CF1 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
+			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
 		};
 		E176EBE22D0502C6009F4CF1 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
 		};
 		E176EBE82D050925009F4CF1 /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
+		};
+		E17E76BA30A0F24400DE148E /* MediaAccessibilityKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MediaAccessibilityKit;
 		};
 		E18D6AA52BAA96F000A0D167 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
+		};
+		E18F9AFB30A0F3F4005C2EA3 /* MediaAccessibilityKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E17E76BC30A0F39F00DE148E /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */;
+			productName = MediaAccessibilityKit;
 		};
 		E19005010000000000000003 /* MPVUI */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1699,16 +1967,6 @@
 			package = E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */;
 			productName = MPVUI;
 		};
-		E19005020000000000000003 /* MediaAccessibilityKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */;
-			productName = MediaAccessibilityKit;
-		};
-		E19005020000000000000004 /* MediaAccessibilityKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */;
-			productName = MediaAccessibilityKit;
-		};
 		E19009260000000000000003 /* SwiftfinMacros */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */;
@@ -1718,6 +1976,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */;
 			productName = SwiftfinMacros;
+		};
+		E19010180000000000000002 /* GoogleCastDynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */;
+			productName = GoogleCastDynamic;
 		};
 		E19138C92E7E7FA20061E464 /* StatefulMacros */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1755,11 +2018,6 @@
 		E1A76F192E8369A500A5F2C1 /* StatefulMacros */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StatefulMacros;
-		};
-		E1A7B1642B9A9F7800152546 /* PreferencesView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */;
-			productName = PreferencesView;
 		};
 		E1B354BA2FC4BB0600827DC1 /* StatefulMacros */ = {
 			isa = XCSwiftPackageProductDependency;

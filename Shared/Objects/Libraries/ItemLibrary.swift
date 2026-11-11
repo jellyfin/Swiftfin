@@ -12,9 +12,10 @@ import JellyfinAPI
 import SwiftUI
 
 @MainActor
-struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLibrary {
+struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibrary {
 
     struct Environment: WithDefaultValue {
+
         var grouping: BaseItemDto.Grouping?
         var filters: ItemFilterCollection
 
@@ -26,12 +27,14 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
 
     let environment: Environment?
     let filterViewModel: FilterViewModel
-    let parent: BaseItemDto
+    @SharedBaseItem
+    var parent: BaseItemDto
 
     init(
         parent: BaseItemDto,
         filters: ItemFilterCollection? = nil,
-        staticFilters: ItemFilterCollection = .default
+        staticFilters: ItemFilterCollection = .default,
+        grouping: BaseItemDto.Grouping? = nil
     ) {
         var filters = filters ?? .default
 
@@ -43,7 +46,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         }
 
         self.environment = .init(
-            grouping: parent.groupings?.defaultSelection,
+            grouping: grouping ?? parent.groupings?.defaultSelection,
             filters: staticFilters.union(filters)
         )
         self.filterViewModel = .init(
@@ -82,7 +85,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
 
     func makeLibraryBody(
         viewModel: PagingLibraryViewModel<Self>,
-        @ViewBuilder content: @escaping () -> some View
+        @ContentBuilder content: @escaping () -> some View
     ) -> AnyView {
         ItemLibraryBody(
             filterViewModel: filterViewModel,
@@ -103,7 +106,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     func retrievePage(
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
@@ -113,16 +116,13 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         )
         parameters.userID = pageState.userSession.user.id
 
-        let request = Paths.getItems(parameters: parameters)
-        let response = try await pageState.userSession.client.send(request)
-
-        return normalize(response.value.items ?? [])
+        return try await retrieveItems(parameters: parameters, environment: environment, pageState: pageState)
     }
 
     func retrieveRandomElement(
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> BaseItemDto? {
+    ) async throws -> ItemPatch? {
         var parameters = attachFilters(
             to: makeBaseItemParameters(environment: environment),
             using: environment.filters
@@ -131,17 +131,14 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         parameters.sortBy = [.random]
         parameters.userID = pageState.userSession.user.id
 
-        let request = Paths.getItems(parameters: parameters)
-        let response = try await pageState.userSession.client.send(request)
-
-        return response.value.items?.first
+        return try await retrieveItems(parameters: parameters, environment: environment, pageState: pageState).first
     }
 
     func retrieveSearchPage(
         query: String,
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
@@ -152,10 +149,42 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         parameters.searchTerm = filterViewModel.staticFilters.query ?? query
         parameters.userID = pageState.userSession.user.id
 
+        return try await retrieveItems(parameters: parameters, environment: environment, pageState: pageState)
+    }
+
+    private func retrieveItems(
+        parameters: Paths.GetItemsParameters,
+        environment: Environment,
+        pageState: LibraryPageState
+    ) async throws -> [ItemPatch] {
+        var parameters = parameters
+        let groupedFolders: [String]?
+
+        if environment.grouping == .folders,
+           parent.libraryType == .userView,
+           parent.collectionType == .movies || parent.collectionType == .tvshows {
+            groupedFolders = pageState.userSession.userData.configuration?.groupedFolders ?? []
+            guard let groupedFolders, groupedFolders.isNotEmpty else { return [] }
+
+            parameters.parentID = nil
+            parameters.ids = groupedFolders
+
+            if parameters.sortBy == [.random] {
+                parameters.limit = nil
+            }
+        } else {
+            groupedFolders = nil
+        }
+
         let request = Paths.getItems(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return normalize(response.value.items ?? [])
+        return try pageState.items(from: response).filter { patch in
+            guard let groupedFolders else { return true }
+
+            return groupedFolders.contains(patch.value.id ?? "") &&
+                (patch.value.collectionType == nil || patch.value.collectionType == parent.collectionType)
+        }
     }
 
     private func makeBaseItemParameters(environment: Environment) -> Paths.GetItemsParameters {
@@ -170,13 +199,12 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         guard let parentID = parent.id else { return parameters }
 
         switch parent.libraryType {
-        case .folder:
-            parameters.parentID = parentID
-            parameters.isRecursive = nil
         case .person:
             parameters.personIDs = [parentID]
+
         case .studio:
             parameters.studioIDs = [parentID]
+
         default:
             parameters.parentID = parentID
         }
@@ -184,22 +212,39 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         return parameters
     }
 
-    private func normalize(_ items: [BaseItemDto]) -> [BaseItemDto] {
-        items
-            .filter { item in
-                if let collectionType = item.collectionType {
-                    return CollectionType.supportedCases.contains(collectionType)
-                }
-
-                return true
+    func materialize(_ page: [ItemPatch], pageState: LibraryPageState) throws -> [ItemEntry] {
+        try page.compactMap { patch in
+            if let type = patch.value.collectionType, !CollectionType.supportedCases.contains(type) {
+                return nil
             }
-            .map { item in
-                if parent.libraryType == .folder, item.type == .collectionFolder {
-                    return item.mutating(\.type, with: .folder)
-                }
-
-                return item
+            guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else {
+                return nil
             }
+
+            return ItemEntry(
+                item: record,
+                occurrence: patch.value.playlistItemID,
+                grouping: patch.value.type == .collectionFolder ? .folders : nil
+            )
+        }
+    }
+
+    func includes(_ element: ItemEntry, environment: Environment) -> Bool {
+        element.item.confirmedUserData?.matches(environment.filters.traits) != false
+    }
+
+    func shouldRefreshForUserDataChange(environment: Environment) -> Bool {
+        environment.filters.traits.contains {
+            switch $0 {
+            case .isFavorite, .isPlayed, .isUnplayed, .isResumable, .likes, .dislikes, .isFavoriteOrLikes: true
+            default: false
+            }
+        } || environment.filters.sortBy.contains {
+            switch $0 {
+            case .datePlayed, .playCount, .isUnplayed, .isPlayed, .isFavoriteOrLiked, .seriesDatePlayed: true
+            default: false
+            }
+        }
     }
 
     private func attachFilters(
@@ -274,13 +319,14 @@ private struct ItemLibraryBody<Content: View>: View {
     init(
         filterViewModel: FilterViewModel,
         viewModel: PagingLibraryViewModel<ItemLibrary>,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.filterViewModel = filterViewModel
         self.viewModel = viewModel
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .onFirstAppear {
@@ -298,6 +344,7 @@ private struct ItemLibraryBody<Content: View>: View {
                     .debounce(for: 1, scheduler: RunLoop.main)
             ) { filters in
                 guard viewModel.environment.filters != filters else { return }
+
                 viewModel.environment.filters = filters
             }
             #if os(tvOS)

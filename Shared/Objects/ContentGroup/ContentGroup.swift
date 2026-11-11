@@ -22,17 +22,19 @@ protocol ContentGroup<ViewModel>: Identifiable {
     var viewModel: ViewModel { get }
     var _shouldBeResolved: Bool { get }
 
-    @ViewBuilder
+    @ContentBuilder
     func body(with viewModel: ViewModel) -> Body
 }
 
 extension ContentGroup {
+
     var _shouldBeResolved: Bool {
         true
     }
 }
 
 extension ContentGroup where ViewModel == Empty {
+
     var viewModel: Empty {
         .init()
     }

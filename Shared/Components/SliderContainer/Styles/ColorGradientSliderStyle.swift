@@ -13,6 +13,7 @@ struct ColorGradientSliderStyle: SliderContainerStyle {
     let color: Color
     let component: WritableKeyPath<Color.RGBA, CGFloat>
 
+    @ContentBuilder
     func makeBody(configuration: SliderContainerStyleConfiguration) -> some View {
         ColorGradientSliderStyleContent(
             configuration: configuration,
@@ -38,6 +39,7 @@ private struct ColorGradientSliderStyleContent: View {
     let color: Color
     let component: WritableKeyPath<Color.RGBA, CGFloat>
 
+    @ContentBuilder
     var body: some View {
         Capsule()
             .fill(

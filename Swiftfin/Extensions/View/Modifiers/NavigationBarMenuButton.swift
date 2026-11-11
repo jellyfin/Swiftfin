@@ -6,13 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @State
     private var collectedMenuGroups: [MenuContentGroup] = []
@@ -24,25 +23,24 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
     init(
         isLoading: Bool = false,
         isHidden: Bool = false,
-        @ViewBuilder menuContent: () -> MenuContent
+        @ContentBuilder menuContent: () -> MenuContent
     ) {
         self.isLoading = isLoading
         self.isHidden = isHidden
         self.menuContent = menuContent()
     }
 
+    @ContentBuilder
     func body(content: Self.Content) -> some View {
         content
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
-
                     if isLoading {
                         ProgressView()
                     }
 
 //                    if !isHidden, collectedMenuGroups.isNotEmpty {
                     if !isHidden {
-
                         let systemImage = if #available(iOS 26, *) {
                             "ellipsis"
                         } else {
@@ -58,7 +56,7 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
                         }
                         .labelStyle(.iconOnly)
                         .fontWeight(.semibold)
-                        .foregroundStyle(accentColor)
+                        .foregroundStyle(theme.accentColor)
                     }
                 }
             }

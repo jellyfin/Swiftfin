@@ -23,6 +23,7 @@ struct LabeledContentGroup: ContentGroup {
         self.value = value
     }
 
+    @ContentBuilder
     func body(with viewModel: Empty) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(displayTitle)

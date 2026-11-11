@@ -36,9 +36,10 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
         self.elements = viewModel.editor.elements(in: viewModel.item)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarSelectView: some View {
         let isAllSelected = selectedElements.count == (elements.count)
+
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
             selectedElements = isAllSelected ? [] : Set(elements)
         }
@@ -56,7 +57,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
         .enabled(isEditing)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         List {
             InsetGroupedListHeader(viewModel.editor.displayTitle, description: viewModel.editor.description)
@@ -76,7 +77,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                     )
                     .isEditing(isEditing)
                     .isSelected(selectedElements.contains(element))
-                    .listRowInsets(.edgeInsets)
+                    .listRowInsets(.zero)
                     .swipeActions {
                         Button(
                             L10n.delete,
@@ -90,10 +91,12 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                 }
                 .onMove { source, destination in
                     guard isReordering else { return }
+
                     elements.move(fromOffsets: source, toOffset: destination)
                 }
             } else {
                 Text(L10n.none)
+                    .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                     .listRowSeparator(.hidden)
                     .listRowInsets(.zero)
@@ -103,6 +106,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
         .environment(\.editMode, isReordering ? .constant(.active) : .constant(.inactive))
     }
 
+    @ContentBuilder
     var body: some View {
         contentView
             .navigationTitle(viewModel.editor.displayTitle)
@@ -145,34 +149,32 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                 }
 
                 ToolbarItem(placement: .bottomBar) {
-                    if isEditing {
-                        Button(L10n.delete, role: .destructive) {
-                            isPresentingDeletionConfirmation = true
-                        }
-                        .backport
-                        .buttonStyle(.glassProminent)
-                        .disabled(selectedElements.isEmpty)
-                    }
+                    Group {
+                        if isEditing {
+                            Button(L10n.delete, role: .destructive) {
+                                isPresentingDeletionConfirmation = true
+                            }
+                            .backport
+                            .buttonStyle(.glassProminent)
+                        } else if isReordering {
+                            let saveAction: () -> Void = {
+                                viewModel.reorder(elements)
+                                isReordering = false
+                            }
 
-                    if isReordering {
-                        let saveAction: () -> Void = {
-                            viewModel.reorder(elements)
-                            isReordering = false
-                        }
-
-                        Group {
                             if #available(iOS 26, *) {
                                 Button(L10n.save, role: .confirm, action: saveAction)
                             } else {
                                 Button(L10n.save, action: saveAction)
                                     .backport
                                     .buttonStyle(.glassProminent)
-                                    .controlSize(.small)
                             }
                         }
-                        .disabled(viewModel.editor.elements(in: viewModel.item) == elements)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
+                    .enabled(
+                        (isEditing && selectedElements.isNotEmpty) ||
+                            viewModel.editor.elements(in: viewModel.item) != elements
+                    )
                 }
             }
             .navigationBarMenuButton(
@@ -193,8 +195,8 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                     }
                 }
             }
-            .onNotification(.itemMetadataDidChange) { _ in
-                elements = viewModel.editor.elements(in: viewModel.item)
+            .onChange(of: viewModel.editor.elements(in: viewModel.item)) { _, updatedElements in
+                elements = updatedElements
             }
             .onReceive(viewModel.events) { event in
                 switch event {

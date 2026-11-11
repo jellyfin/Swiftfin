@@ -18,7 +18,7 @@ extension ServerActivityView {
 
         let action: () -> Void
 
-        @ViewBuilder
+        @ContentBuilder
         private var userImage: some View {
             if let user = viewModel.user, let userSession = viewModel.userSession {
                 UserProfileImage(
@@ -45,7 +45,7 @@ extension ServerActivityView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {
@@ -88,6 +88,7 @@ extension ServerActivityView {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             ListRow {
                 userImage

@@ -36,58 +36,53 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     ) -> [ImageSource]
 
     @MainActor
-    @ViewBuilder
+    @ContentBuilder
     func transform(image: Image, displayType: PosterDisplayType) -> ImageBody
 
     @MainActor
-    @ViewBuilder
+    @ContentBuilder
     var posterLabel: LabelBody { get }
 
     @MainActor
-    @ViewBuilder
+    @ContentBuilder
     var posterContextMenu: ContextMenuBody { get }
 
     @MainActor
-    @ViewBuilder
+    @ContentBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> OverlayBody
 }
 
+@MainActor
 extension Poster where ImageBody == Image {
 
-    @MainActor
     func transform(image: Image) -> Image {
         image
     }
 
-    @MainActor
-    @ViewBuilder
     func transform(image: Image, displayType: PosterDisplayType) -> ImageBody {
         image
     }
 }
 
+@MainActor
 extension Poster where LabelBody == EmptyView {
 
-    @MainActor
-    @ViewBuilder
     var posterLabel: LabelBody {
         EmptyView()
     }
 }
 
+@MainActor
 extension Poster where ContextMenuBody == EmptyView {
 
-    @MainActor
-    @ViewBuilder
     var posterContextMenu: ContextMenuBody {
         EmptyView()
     }
 }
 
+@MainActor
 extension Poster where OverlayBody == EmptyView {
 
-    @MainActor
-    @ViewBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> OverlayBody {
         EmptyView()
     }
@@ -133,13 +128,25 @@ extension Poster {
     }
 }
 
+@MainActor
 extension View {
 
-    @MainActor
-    @ViewBuilder
+    @ContentBuilder
     func posterContextMenu<Item: Poster>(
         for item: Item,
-        @ViewBuilder preview: @escaping () -> some View
+        @ContentBuilder preview: @escaping (CGSize) -> some View
+    ) -> some View {
+        if Item.ContextMenuBody.self == EmptyView.self {
+            self
+        } else {
+            modifier(SizedPosterContextMenuModifier(item: item, preview: preview))
+        }
+    }
+
+    @ContentBuilder
+    func posterContextMenu<Item: Poster>(
+        for item: Item,
+        @ContentBuilder preview: @escaping () -> some View
     ) -> some View {
         if Item.ContextMenuBody.self == EmptyView.self {
             self
@@ -150,5 +157,23 @@ extension View {
                 preview()
             }
         }
+    }
+}
+
+private struct SizedPosterContextMenuModifier<Item: Poster, Preview: View>: ViewModifier {
+
+    @State
+    private var size: CGSize = .zero
+
+    let item: Item
+    let preview: (CGSize) -> Preview
+
+    @ContentBuilder
+    func body(content: Content) -> some View {
+        content
+            .trackingSize($size)
+            .posterContextMenu(for: item) {
+                preview(size)
+            }
     }
 }

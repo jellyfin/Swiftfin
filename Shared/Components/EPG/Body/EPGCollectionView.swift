@@ -6,12 +6,16 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct EPGCollectionView: UIViewRepresentable {
+
+    @AppTheme
+    private var theme
+
+    @AdaptiveLayout
+    private var viewLayout
 
     @ObservedObject
     var viewModel: EPGViewModel
@@ -22,7 +26,9 @@ struct EPGCollectionView: UIViewRepresentable {
     let onSelect: (BaseItemDto) -> Void
     let onSelectGroup: (ProgramBlock) -> Void
 
-    private let layout = EPGLayout()
+    private var layout: EPGLayout {
+        EPGLayout(viewLayout: viewLayout)
+    }
 
     func makeUIView(context: Context) -> UICollectionView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: context.coordinator.gridLayout)
@@ -59,12 +65,14 @@ extension EPGCollectionView {
     final class Coordinator: NSObject, UICollectionViewDelegate {
 
         private struct ItemID: Hashable {
+
             let channelID: String
             let blockID: ProgramBlock.ID
             let duplicateIndex: Int
         }
 
         private struct RenderItem: Equatable {
+
             let id: ItemID
             let block: ProgramBlock
             let frame: CGRect
@@ -75,11 +83,13 @@ extension EPGCollectionView {
         }
 
         private struct RenderSection: Equatable {
+
             let id: String
             let items: [RenderItem]
         }
 
         private struct RenderContentSignature: Equatable {
+
             let channelIDs: [String]
             let programsRevision: Int
             let startDate: Date
@@ -87,6 +97,7 @@ extension EPGCollectionView {
         }
 
         private struct RenderState: Equatable {
+
             let sections: [RenderSection]
             let contentWidth: CGFloat
             let nowOffset: CGFloat?
@@ -101,8 +112,7 @@ extension EPGCollectionView {
 
         private weak var collectionView: UICollectionView?
 
-        private var accentColor = Defaults[.accentColor]
-        private var cancellables: Set<AnyCancellable> = []
+        private var accentColor: Color = .jellyfinPurple
         private var dataSource: UICollectionViewDiffableDataSource<String, ItemID>?
         private var didRequestNextPage = false
         private var lastPaginationVerticalOffset: CGFloat?
@@ -137,27 +147,18 @@ extension EPGCollectionView {
             dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView) { collectionView, indexPath, itemID in
                 collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: itemID)
             }
-
-            Defaults.publisher(.accentColor)
-                .receive(on: RunLoop.main)
-                .sink { [weak self] _ in
-                    guard let self else { return }
-
-                    self.accentColor = Defaults[.accentColor]
-                    self.gridLayout.nowColor = UIColor(self.accentColor)
-                    self.gridLayout.invalidateLayout()
-                    self.refreshVisibleCells()
-                }
-                .store(in: &cancellables)
         }
 
         func update(_ collectionView: UICollectionView) {
             guard let representable else { return }
 
+            let accentColorDidChange = accentColor != representable.theme.accentColor
+            accentColor = representable.theme.accentColor
+
             let viewModel = representable.viewModel
             let layout = representable.layout
             let contentSignature = RenderContentSignature(
-                channelIDs: viewModel.channels.compactMap(\.id),
+                channelIDs: viewModel.channels.map(\.itemID),
                 programsRevision: viewModel.programsRevision,
                 startDate: viewModel.startDate,
                 layout: layout
@@ -166,8 +167,7 @@ extension EPGCollectionView {
 
             if contentSignature != renderContentSignature {
                 if let renderContentSignature,
-                   renderContentSignature.startDate != contentSignature.startDate
-                {
+                   renderContentSignature.startDate != contentSignature.startDate {
                     representable.proxy.reset()
                 }
 
@@ -193,11 +193,11 @@ extension EPGCollectionView {
             )
 
             let sectionsDidChange = renderState?.sections != nextRenderState.sections
-            let layoutDidChange = sectionsDidChange ||
+            let layoutDidChange = accentColorDidChange || sectionsDidChange ||
                 renderState?.contentWidth != nextRenderState.contentWidth ||
                 renderState?.nowOffset != nextRenderState.nowOffset ||
                 renderState?.rowHeight != nextRenderState.rowHeight
-            let cellsDidChange = renderState?.now != nextRenderState.now ||
+            let cellsDidChange = accentColorDidChange || renderState?.now != nextRenderState.now ||
                 renderState?.programsRevision != nextRenderState.programsRevision
 
             gridLayout.rowHeight = nextRenderState.rowHeight
@@ -237,7 +237,7 @@ extension EPGCollectionView {
             layout: EPGLayout
         ) -> [RenderSection] {
             viewModel.channels.enumerated().compactMap { section, channel -> RenderSection? in
-                guard let channelID = channel.id else { return nil }
+                let channelID = channel.itemID
 
                 var occurrences: [ProgramBlock.ID: Int] = [:]
                 let items = (viewModel.programs[channelID] ?? []).map { block in
@@ -294,6 +294,7 @@ extension EPGCollectionView {
 
             let action = { [weak self] in
                 guard let self else { return }
+
                 select(itemID)
             }
 
@@ -354,6 +355,7 @@ extension EPGCollectionView {
             didSelectItemAt indexPath: IndexPath
         ) {
             guard let itemID = dataSource?.itemIdentifier(for: indexPath) else { return }
+
             select(itemID)
         }
 
@@ -376,7 +378,6 @@ extension EPGCollectionView {
                 didRequestNextPage = false
                 return
             }
-
             guard !didRequestNextPage,
                   !representable.viewModel.background.is(.gettingNextPage)
             else { return }

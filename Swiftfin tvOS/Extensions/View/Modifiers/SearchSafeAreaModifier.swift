@@ -13,16 +13,17 @@ import UIKit
 /// Native search has its own safe area, independent of the results' SwiftUI padding.
 struct SearchSafeAreaModifier: ViewModifier {
 
-    @Environment(\.tabSafeAreaInsets)
-    private var tabSafeAreaInsets
+    @Environment(\.frameForParentView)
+    private var frameForParentView
 
     @State
     private var adjustment = SearchSafeAreaAdjustment()
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .introspect(SearchContainerType(), on: .tvOS(.v26...)) { container in
-                adjustment.apply(to: container, topInset: tabSafeAreaInsets.top)
+                adjustment.apply(to: container, topInset: frameForParentView[.tabView]?.safeAreaInsets.top ?? 0)
             }
             .onDisappear {
                 adjustment.reset()
@@ -33,6 +34,7 @@ struct SearchSafeAreaModifier: ViewModifier {
 private struct SearchContainerType: IntrospectableViewType {}
 
 private extension tvOSViewVersion<SearchContainerType, UISearchContainerViewController> {
+
     static let v26 = Self(for: .v26)
 }
 

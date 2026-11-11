@@ -29,9 +29,7 @@ struct TagComponentEditor: ItemComponentEditor {
 
     func adding(_ tags: [String], to item: BaseItemDto) -> BaseItemDto {
         var item = item
-        if item.tags == nil {
-            item.tags = []
-        }
+        item.tags ?= []
         item.tags?.append(contentsOf: tags)
         return item
     }
@@ -56,7 +54,7 @@ struct TagComponentEditor: ItemComponentEditor {
         if trie.isEmpty {
             let parameters = Paths.GetQueryFiltersLegacyParameters(userID: userSession.user.id)
             let request = Paths.getQueryFiltersLegacy(parameters: parameters)
-            let response = try await userSession.client.send(request)
+            let response = try await userSession.send(request)
             trie.insert(contentsOf: (response.value.tags ?? []).keyed(using: \.localizedLowercase))
         }
 

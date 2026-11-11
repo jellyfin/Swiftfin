@@ -13,6 +13,9 @@ extension SelectUserView {
 
     struct ListView: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Binding
         private var isEditing: Bool
         @Binding
@@ -39,6 +42,7 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
+        @ContentBuilder
         var body: some View {
             List {
                 ForEach(users, id: \.user.id) { item in
@@ -49,7 +53,7 @@ extension SelectUserView {
                             action(item.user)
                         }
                     } label: {
-                        HStack(spacing: EdgeInsets.edgePadding) {
+                        HStack(spacing: viewLayout.edgePadding) {
                             UserProfileImage(
                                 userID: item.user.id,
                                 source: item.user.profileImageSource(
@@ -58,19 +62,21 @@ extension SelectUserView {
                                 pipeline: .Swiftfin.local
                             )
                             .subtleShadow()
-                            .frame(width: UIDevice.isTV ? 120 : UIDevice.isPad ? 80 : 50)
+                            .frame(width: viewLayout.value(standard: viewLayout.value(compact: 50, regular: 80), large: 120))
 
                             VStack(alignment: .leading) {
                                 Text(item.user.username)
                                     .font(.title3)
                                     .fontWeight(.semibold)
-                                    .lineLimit(1)
+                                    .lineLimit(viewLayout.isAccessibilitySize ? nil : 1)
+                                    .fixedSize(horizontal: false, vertical: true)
 
                                 if serverSelection == .all {
                                     Text(item.server.name)
-                                        .font(UIDevice.isTV ? .body : .footnote)
+                                        .font(viewLayout.value(standard: .footnote, large: .body))
                                         .foregroundStyle(.secondary)
-                                        .lineLimit(1)
+                                        .lineLimit(viewLayout.isAccessibilitySize ? nil : 1)
+                                        .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
                         }
@@ -83,7 +89,12 @@ extension SelectUserView {
                         }
                     }
                     .isSelected(selectedUsers.contains(item.user))
-                    #if os(iOS)
+                    #if os(tvOS)
+                    .if(item.user.id == users.first?.user.id) { view in
+                        view
+                            .coordinatedFocus(Focus.focusedUserButton.rawValue)
+                    }
+                    #elseif os(iOS)
                     .swipeActions {
                         if !isEditing {
                             Button(

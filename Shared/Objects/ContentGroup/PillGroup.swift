@@ -42,6 +42,9 @@ struct PillGroup<Element: Displayable>: ContentGroup {
 
     struct Body: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Router
         private var router
 
@@ -49,10 +52,11 @@ struct PillGroup<Element: Displayable>: ContentGroup {
         let displayTitle: String
         let elements: [Element]
 
+        @ContentBuilder
         var body: some View {
             ContentGroupSection {
                 ScrollView(.horizontal) {
-                    HStack(spacing: EdgeInsets.itemSpacing) {
+                    HStack(spacing: viewLayout.itemSpacing) {
                         ForEach(elements) { element in
                             Button {
                                 action(router, element)
@@ -68,7 +72,7 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                     }
                     .labelStyle(.leadingIcon)
                     .buttonStyle(.capsule)
-                    .controlSize(UIDevice.isTV ? .large : .regular)
+                    .controlSize(viewLayout.value(standard: .regular, large: .large))
                     .edgePadding(.horizontal)
                 }
                 .scrollIndicators(.hidden)

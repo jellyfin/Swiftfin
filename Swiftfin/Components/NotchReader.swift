@@ -14,9 +14,14 @@ import UIKit
 struct NotchMeasurement: Equatable, Sendable {
 
     let size: CGSize
-    /// Cutout bounds in the measured view's coordinates; nil when unavailable.
+
+    /// Physical screen radius, or zero when the view does not cover the display.
+    var displayCornerRadius: CGFloat = 0
+
+    /// Cutout bounds in the measured view's coordinates, or nil when unavailable.
     let cutout: CGRect?
     let systemInsets: EdgeInsets
+
     /// Private cutout insets, or systemInsets when the private API is unavailable.
     let insets: EdgeInsets
 }
@@ -26,9 +31,10 @@ struct NotchReader<Content: View>: View {
     @State
     private var measurement: NotchMeasurement?
 
-    @ViewBuilder
+    @ContentBuilder
     let content: (NotchMeasurement?) -> Content
 
+    @ContentBuilder
     var body: some View {
         content(measurement)
             .overlay {
@@ -55,29 +61,30 @@ enum NotchDeviceReader {
         else { return nil }
 
         let bounds = view.bounds
-        let safe = view.safeAreaLayoutGuide.layoutFrame.intersection(bounds)
+
+        let safe = view.safeAreaLayoutGuide
+            .layoutFrame
+            .intersection(bounds)
             .intersection(view.convert(window.safeAreaLayoutGuide.layoutFrame, from: window))
+
         let left = safe.isNull ? 0 : max(0, safe.minX - bounds.minX)
         let right = safe.isNull ? 0 : max(0, bounds.maxX - safe.maxX)
+
         let system = EdgeInsets(
             top: safe.isNull ? bounds.height : max(0, safe.minY - bounds.minY),
             leading: layoutDirection == .leftToRight ? left : right,
             bottom: safe.isNull ? 0 : max(0, bounds.maxY - safe.maxY),
             trailing: layoutDirection == .leftToRight ? right : left
         )
-        let fallback = NotchMeasurement(
+
+        var fallback = NotchMeasurement(
             size: bounds.size,
             cutout: nil,
             systemInsets: system,
             insets: system
         )
-        let screen = window.screen
 
-        // A display exclusion describes the full display, not a sheet or partial window.
-        guard screen === UIScreen.main,
-              let orientation = window.windowScene?.effectiveGeometry.interfaceOrientation,
-              orientation != .unknown
-        else { return fallback }
+        let screen = window.screen
 
         let displayFrame = view.convert(bounds, to: screen.coordinateSpace)
         guard abs(displayFrame.minX) < 1,
@@ -86,14 +93,22 @@ enum NotchDeviceReader {
               abs(displayFrame.height - screen.bounds.height) < 1
         else { return fallback }
 
-        guard let portrait = privateRect(screen) else { return fallback }
+        fallback.displayCornerRadius = privateCornerRadius(screen)
+
+        guard screen === UIScreen.main,
+              let orientation = window.windowScene?.effectiveGeometry.interfaceOrientation,
+              orientation != .unknown,
+              let portrait = privateRect(screen)
+        else { return fallback }
 
         let rect = view.convert(portrait, from: screen.fixedCoordinateSpace)
             .offsetBy(dx: -bounds.minX, dy: -bounds.minY)
+
         guard let insets = cutoutInsets(enclosing: rect, in: bounds.size, layoutDirection: layoutDirection) else { return fallback }
 
         return NotchMeasurement(
             size: bounds.size,
+            displayCornerRadius: fallback.displayCornerRadius,
             cutout: rect,
             systemInsets: system,
             insets: insets
@@ -138,23 +153,41 @@ enum NotchDeviceReader {
               let method = class_getInstanceMethod(type(of: screen), selector),
               method_getNumberOfArguments(method) == 2,
               returns(method, type: "@"),
-              let area = screen.perform(selector)?.takeUnretainedValue() as? NSObject
-        else { return nil }
-
-        guard let rectSelector = "cmVjdA==".base64Decoded?.asSelector(),
+              let area = screen.perform(selector)?.takeUnretainedValue() as? NSObject,
+              let rectSelector = "cmVjdA==".base64Decoded?.asSelector(),
               let rectMethod = class_getInstanceMethod(type(of: area), rectSelector),
               method_getNumberOfArguments(rectMethod) == 2,
               returns(rectMethod, type: String(cString: NSValue(cgRect: .zero).objCType))
         else { return nil }
 
-        typealias RectGetter = @convention(c) (AnyObject, Selector) -> CGRect
-        let getter = unsafeBitCast(method_getImplementation(rectMethod), to: RectGetter.self)
+        typealias Getter = @convention(c) (AnyObject, Selector) -> CGRect
+        let getter = unsafeBitCast(method_getImplementation(rectMethod), to: Getter.self)
+
         return getter(area, rectSelector)
+    }
+
+    private static func privateCornerRadius(_ screen: UIScreen) -> CGFloat {
+        guard let selector = "X2Rpc3BsYXlDb3JuZXJSYWRpdXM=".base64Decoded?.asSelector(),
+              let method = class_getInstanceMethod(type(of: screen), selector),
+              method_getNumberOfArguments(method) == 2,
+              returns(method, type: "d")
+        else { return 0 }
+
+        typealias Getter = @convention(c) (AnyObject, Selector) -> Double
+        let getter = unsafeBitCast(method_getImplementation(method), to: Getter.self)
+        let radius = getter(screen, selector)
+        guard radius.isFinite,
+              radius >= 0,
+              radius <= min(screen.bounds.width, screen.bounds.height) / 2
+        else { return 0 }
+
+        return CGFloat(radius)
     }
 
     private static func returns(_ method: Method, type: String) -> Bool {
         let encoding = method_copyReturnType(method)
         defer { free(encoding) }
+
         return String(cString: encoding) == type
     }
 }
@@ -184,6 +217,7 @@ private final class NotchProbe: UIView {
                 self?.onLayout?()
             }
         }
+
         onLayout?()
     }
 }
@@ -199,6 +233,7 @@ private struct NotchMeasurementReader: UIViewRepresentable {
     func makeUIView(context: Context) -> NotchProbe {
         let view = NotchProbe()
         view.isUserInteractionEnabled = false
+
         return view
     }
 

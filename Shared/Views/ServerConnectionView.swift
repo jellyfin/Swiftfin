@@ -27,10 +27,11 @@ struct ServerConnectionView: View {
         editMode.isEditing
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func serverConnectionRow(_ connection: ServerConnection) -> some View {
         Button {
             guard !isEditing else { return }
+
             router.route(to: .editServerConnection(viewModel: viewModel, connection: connection))
         } label: {
             HStack(spacing: 12) {
@@ -66,6 +67,7 @@ struct ServerConnectionView: View {
         .foregroundStyle(.primary, .secondary)
     }
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "network") {
             if isAutoSwitchFeatureEnabled {

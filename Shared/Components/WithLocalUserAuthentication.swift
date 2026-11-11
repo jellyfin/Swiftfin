@@ -33,6 +33,7 @@ extension EnvironmentValues {
 struct WithLocalUserAuthentication<Content: View>: View {
 
     private struct PinRequest: Identifiable {
+
         let id: UUID
         let reason: String?
         let continuation: CheckedContinuation<String, Error>
@@ -43,7 +44,7 @@ struct WithLocalUserAuthentication<Content: View>: View {
 
     private let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
+    init(@ContentBuilder content: () -> Content) {
         self.content = content()
     }
 
@@ -71,6 +72,7 @@ struct WithLocalUserAuthentication<Content: View>: View {
 
     private func completePinAuthentication(_ result: Result<String, Error>, requestID: UUID?) {
         guard let request = pinRequest, request.id == requestID else { return }
+
         pinRequest = nil
         request.continuation.resume(with: result)
     }
@@ -92,18 +94,22 @@ struct WithLocalUserAuthentication<Content: View>: View {
         switch policy {
         case .none:
             return Empty()
+
         case .requireDeviceAuthentication:
             try await handleDeviceAuthentication(reason: reason)
             return Empty()
+
         case .requirePin:
             let pin = try await handlePinAuthentication(reason: reason)
             guard (4 ... 30).contains(pin.count) else {
                 throw ErrorMessage(L10n.invalidPin)
             }
+
             return PinEvaluatedUserAccessPolicy(pin: pin, pinHint: nil)
         }
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .environment(

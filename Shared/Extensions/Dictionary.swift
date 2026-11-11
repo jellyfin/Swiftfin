@@ -24,6 +24,7 @@ extension Dictionary {
 
     subscript(key: Key?) -> Value? {
         guard let key else { return nil }
+
         return self[key]
     }
 }

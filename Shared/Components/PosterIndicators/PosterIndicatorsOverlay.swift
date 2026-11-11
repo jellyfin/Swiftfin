@@ -6,24 +6,28 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct PosterIndicatorsOverlay: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AdaptiveLayout
+    private var viewLayout
+
+    @AppTheme
+    private var theme
 
     @Environment(\.isSelected)
     private var isSelected
+
     @Environment(\.posterConfiguration)
     private var posterConfiguration
 
     @ViewContextContains(.isInResume)
     private var isInResume
 
-    let item: BaseItemDto
+    @SharedBaseItem
+    var item: BaseItemDto
     let posterDisplayType: PosterDisplayType
 
     private var indicators: PosterIndicator {
@@ -31,7 +35,7 @@ struct PosterIndicatorsOverlay: View {
     }
 
     private var indicatorSize: CGFloat {
-        UIDevice.isTV ? 45 : 25
+        viewLayout.indicatorSize
     }
 
     private var showsUnplayedIndicator: Bool {
@@ -77,7 +81,7 @@ struct PosterIndicatorsOverlay: View {
         }
 
         if showsPlayedIndicator {
-            QuadrantItem(color: accentColor) {
+            QuadrantItem(color: theme.accentColor) {
                 Text(Image(systemName: "checkmark"))
                     .fontWeight(.bold)
                     .accessibilityLabel(L10n.played)
@@ -85,6 +89,7 @@ struct PosterIndicatorsOverlay: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -122,16 +127,20 @@ struct PosterIndicatorsOverlay: View {
 
 struct PosterSelectionOverlay: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @AdaptiveLayout
+    private var viewLayout
+
+    @AppTheme
+    private var theme
 
     @Environment(\.isSelected)
     private var isSelected
 
+    @ContentBuilder
     var body: some View {
         if isSelected {
             ContainerRelativeShape()
-                .stroke(accentColor, lineWidth: UIDevice.isTV ? 12 : 8)
+                .stroke(theme.accentColor, lineWidth: viewLayout.selectionBorderWidth)
                 .clipped()
                 .accessibilityHidden(true)
         }

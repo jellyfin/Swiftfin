@@ -2,6 +2,7 @@ name: "TestFlight ✈️"
 
 on:
   schedule:
+    - cron: '0 0 * * *'
     # 1st of every month at 12pm EST / 1pm EDT (17:00 UTC)
     - cron: '0 17 1 * *'
   repository_dispatch:
@@ -28,6 +29,10 @@ on:
         description: "Xcode"
         required: false
         type: string
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   resolve_platform:
@@ -77,13 +82,16 @@ jobs:
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
   test_build:
-    name: Build and upload to TestFlight
+    name: Build for TestFlight
     needs: resolve_platform
-    runs-on: macos-26
+    runs-on: xcode-27
     strategy:
+      fail-fast: false
       matrix: ${{ fromJSON(needs.resolve_platform.outputs.matrix) }}
     env:
-      XCODE_VERSION: "26.6"
+      XCODE_VERSION: "27.1"
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "120"
+      FASTLANE_XCODEBUILD_SETTINGS_RETRIES: "2"
       PLATFORM: ${{ matrix.platform }}
       SCHEME: ${{ matrix.scheme }}
       BUILD_CERTIFICATE_BASE64: ${{ github.event.client_payload.BUILD_CERTIFICATE_BASE64 || secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -123,8 +131,9 @@ jobs:
           xcode_version="$(printf '%s' "$PAYLOAD_XCODE_VERSION" | tr -d '\r\n')"
           echo "version=${xcode_version:-$XCODE_VERSION}" >> "$GITHUB_OUTPUT"
 
-      - name: Cache Swift packages
-        uses: actions/cache@v6
+      - name: Restore Swift packages
+        id: swift-packages
+        uses: actions/cache/restore@v6
         with:
           path: |
             build/SourcePackages/checkouts
@@ -207,10 +216,11 @@ jobs:
             echo "CHANGELOG_EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Build and upload to TestFlight
+      - name: Build for TestFlight
         env:
           AUTO_CHANGELOG: ${{ steps.changelog.outputs.changelog }}
           RESOLVED_XCODE_VERSION: ${{ steps.xcode.outputs.version }}
+          SKIP_UPLOAD: ${{ github.event_name == 'schedule' && github.event.schedule != '0 17 1 * *' }}
         run: |
           set -euo pipefail
 
@@ -229,7 +239,6 @@ jobs:
 
           key_id="$(clean "$FL_KEY_ID")"
           issuer_id="$(clean "$FL_ISSUER_ID")"
-          key_contents="$(clean "$FL_KEY_CONTENTS")"
           code_sign_base64="$(clean "$FL_CODE_SIGN_BASE64")"
           profile_name_base64="$(clean "$FL_PROFILE_NAME_BASE64")"
           payload_build="$(clean "$PAYLOAD_BUILD")"
@@ -239,7 +248,7 @@ jobs:
 
           require_non_empty "$key_id" "FL_KEY_ID"
           require_non_empty "$issuer_id" "FL_ISSUER_ID"
-          require_non_empty "$key_contents" "FL_KEY_CONTENTS"
+          require_non_empty "$(clean "$FL_KEY_CONTENTS")" "FL_KEY_CONTENTS"
           require_non_empty "$code_sign_base64" "FL_CODE_SIGN_BASE64"
           require_non_empty "$profile_name_base64" "FL_PROFILE_NAME_BASE64"
           require_non_empty "$resolved_xcode_version" "XCODE_VERSION"
@@ -251,12 +260,12 @@ jobs:
           args=(
             "keyID:$key_id"
             "issuerID:$issuer_id"
-            "keyContents:$key_contents"
             "codeSign64:$code_sign_base64"
             "profileName64:$profile_name_base64"
             "xcodeVersion:$resolved_xcode_version"
             "changelogFile:$changelog_file"
-            "scheme:\"$SCHEME\""
+            "scheme:$SCHEME"
+            "skipUpload:$SKIP_UPLOAD"
           )
 
           if [ -n "$payload_build" ]; then
@@ -267,11 +276,11 @@ jobs:
             args+=("version:$payload_version")
           fi
 
-          echo "Building and uploading scheme '$SCHEME' for platform '$PLATFORM'"
+          echo "Building scheme '$SCHEME' for platform '$PLATFORM'"
           bundle exec fastlane testFlightLane "${args[@]}"
 
       # Preserve the IPA even if uploading it to TestFlight fails.
-      - name: Upload TestFlight IPA
+      - name: Upload TestFlight IPA artifact
         if: ${{ !cancelled() && hashFiles('fastlane/build/**/*.ipa') != '' }}
         uses: actions/upload-artifact@v7
         with:
@@ -279,3 +288,14 @@ jobs:
           path: fastlane/build/**/*.ipa
           if-no-files-found: error
           compression-level: 0
+
+      - name: Save Swift packages
+        if: ${{ !cancelled() && steps.swift-packages.outputs.cache-hit != 'true' && hashFiles('fastlane/build/**/*.ipa') != '' }}
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            build/SourcePackages/checkouts
+            build/SourcePackages/repositories
+            build/SourcePackages/artifacts
+            build/SourcePackages/workspace-state.json
+          key: ${{ steps.swift-packages.outputs.cache-primary-key }}

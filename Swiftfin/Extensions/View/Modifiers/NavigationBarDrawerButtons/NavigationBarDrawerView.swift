@@ -14,18 +14,20 @@ struct NavigationBarDrawerView<Content: View, Drawer: View>: PlatformViewControl
     private let content: Content
 
     init(
-        @ViewBuilder drawer: @escaping () -> Drawer,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder drawer: @escaping () -> Drawer,
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.drawer = drawer()
         self.content = content()
     }
 
     func makeUIViewController(context: Context) -> UINavigationBarDrawerHostingController<Content, Drawer> {
-        UINavigationBarDrawerHostingController<Content, Drawer>(drawer: drawer, content: content)
+        UINavigationBarDrawerHostingController<Content, Drawer>(drawer: drawer, content: content, environment: context.environment)
     }
 
-    func updateUIViewController(_ uiViewController: UINavigationBarDrawerHostingController<Content, Drawer>, context: Context) {}
+    func updateUIViewController(_ uiViewController: UINavigationBarDrawerHostingController<Content, Drawer>, context: Context) {
+        uiViewController.update(drawer: drawer, content: content, environment: context.environment)
+    }
 }
 
 class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIViewController {
@@ -36,21 +38,25 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
     // TODO: see if we can get the height instead from the view passed in
     private let drawerHeight: CGFloat = 36
 
+    private let initialEnvironment: EnvironmentValues
+
+    private var previousSafeAreaInsets: UIEdgeInsets?
+
     private lazy var blurView: UIVisualEffectView = {
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
         blurView.translatesAutoresizingMaskIntoConstraints = false
         return blurView
     }()
 
-    private lazy var contentView: UIHostingController<Content> = {
-        let contentView = UIHostingController(rootView: content)
+    private lazy var contentView: UIHostingController<HostingEnvironmentView<Content>> = {
+        let contentView = UIHostingController(rootView: HostingEnvironmentView(content: content, environment: initialEnvironment))
         contentView.view.translatesAutoresizingMaskIntoConstraints = false
         contentView.view.backgroundColor = nil
         return contentView
     }()
 
-    private lazy var drawerButtonsView: UIHostingController<Drawer> = {
-        let drawerButtonsView = UIHostingController(rootView: drawer)
+    private lazy var drawerButtonsView: UIHostingController<HostingEnvironmentView<Drawer>> = {
+        let drawerButtonsView = UIHostingController(rootView: HostingEnvironmentView(content: drawer, environment: initialEnvironment))
         drawerButtonsView.view.translatesAutoresizingMaskIntoConstraints = false
         drawerButtonsView.view.backgroundColor = nil
         return drawerButtonsView
@@ -58,12 +64,19 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
 
     init(
         drawer: Drawer,
-        content: Content
+        content: Content,
+        environment: EnvironmentValues
     ) {
         self.drawer = drawer
         self.content = content
+        self.initialEnvironment = environment
 
         super.init(nibName: nil, bundle: nil)
+    }
+
+    func update(drawer: Drawer, content: Content, environment: EnvironmentValues) {
+        contentView.rootView = HostingEnvironmentView(content: content, environment: environment)
+        drawerButtonsView.rootView = HostingEnvironmentView(content: drawer, environment: environment)
     }
 
     @available(*, unavailable)
@@ -89,15 +102,15 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         NSLayoutConstraint.activate([
             contentView.view.topAnchor.constraint(equalTo: view.topAnchor),
             contentView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            contentView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            contentView.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            contentView.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
         ])
 
         NSLayoutConstraint.activate([
             drawerButtonsView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -drawerHeight),
             drawerButtonsView.view.heightAnchor.constraint(equalToConstant: drawerHeight),
-            drawerButtonsView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            drawerButtonsView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            drawerButtonsView.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            drawerButtonsView.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -111,6 +124,36 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         // so by default VoiceOver reads it last.
         // Explicitly order the drawer before the content so it is announced near the navigation bar where users expect it.
         view.accessibilityElements = [drawerButtonsView.view as Any, contentView.view as Any]
+    }
+
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+
+        let insets = view.safeAreaInsets
+        let previousInsets = previousSafeAreaInsets
+        previousSafeAreaInsets = insets
+
+        guard let previousInsets,
+              view.window != nil,
+              drawerButtonsView.view.bounds.width > 0,
+              previousInsets.left != insets.left || previousInsets.right != insets.right
+        else { return }
+
+        // The tab sidebar updates the safe area without animating this layout.
+        if let coordinator = transitionCoordinator,
+           coordinator.animate(alongsideTransition: { [weak self] _ in
+               self?.view.layoutIfNeeded()
+           }) {
+            return
+        }
+
+        UIView.animate(
+            withDuration: 0.35,
+            delay: 0,
+            options: [.beginFromCurrentState, .allowUserInteraction, .curveEaseInOut]
+        ) {
+            self.view.layoutIfNeeded()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {

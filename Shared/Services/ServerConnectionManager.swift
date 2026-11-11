@@ -20,6 +20,7 @@ final class ServerConnectionManager: ObservableObject {
 
     @CasePathable
     enum Action {
+
         case resolveActiveConnection
         case scheduleConnectionResolution
         case start
@@ -44,6 +45,7 @@ final class ServerConnectionManager: ObservableObject {
     }
 
     enum State: Equatable {
+
         case initial
         case evaluating
         case connected(ServerConnection)
@@ -51,6 +53,7 @@ final class ServerConnectionManager: ObservableObject {
     }
 
     enum Resolution: Equatable {
+
         case connected(ServerConnection)
         case unreachable([ServerConnection])
     }
@@ -105,7 +108,6 @@ final class ServerConnectionManager: ObservableObject {
 
         let candidates = server.serverConnections.filter { $0.matches(context) }
         guard candidates.isNotEmpty else { return .unreachable([]) }
-
         guard let reachableConnection = await firstReachableConnection(
             in: candidates,
             accessToken: accessToken,
@@ -151,6 +153,7 @@ final class ServerConnectionManager: ObservableObject {
     @Function(\Action.Cases.start)
     private func _start() {
         guard !isStarted else { return }
+
         isStarted = true
 
         let monitor = NWPathMonitor()
@@ -197,6 +200,7 @@ final class ServerConnectionManager: ObservableObject {
         evaluationTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(1.5))
             guard !Task.isCancelled else { return }
+
             await self?.resolveActiveConnection()
         }
     }
@@ -218,8 +222,7 @@ final class ServerConnectionManager: ObservableObject {
         guard !Task.isCancelled else { return }
 
         if case let .connected(reachableConnection) = resolution,
-           currentConnection?.id != reachableConnection.id
-        {
+           currentConnection?.id != reachableConnection.id {
             Notifications[.didChangeServerConnection].post(reachableConnection)
         }
 
@@ -244,6 +247,7 @@ final class ServerConnectionManager: ObservableObject {
 
     private var isAutoSwitchEnabled: Bool {
         guard let userSession else { return false }
+
         return Defaults[.Experimental.serverConnectionAutoSwitch] && userSession.server.isAutoSwitchEnabled
     }
 }

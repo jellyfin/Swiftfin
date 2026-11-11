@@ -17,7 +17,7 @@ struct ServerBackupView: View {
     @StateObject
     private var viewModel = ServerBackupViewModel()
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -42,6 +42,7 @@ struct ServerBackupView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -49,8 +50,10 @@ struct ServerBackupView: View {
                 viewModel.error.map {
                     ErrorView(error: $0)
                 }
+
             case .initial:
                 contentView
+
             case .refreshing:
                 ProgressView()
             }
@@ -65,7 +68,6 @@ struct ServerBackupView: View {
             viewModel.refresh()
         }
         .topBarTrailing {
-
             if viewModel.background.is(.creating) {
                 ProgressView()
             }

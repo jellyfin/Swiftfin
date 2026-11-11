@@ -13,7 +13,7 @@ extension Section where Parent == Text, Footer == Text, Content: View {
     init(
         _ header: String,
         footer: String,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.init(content: content) {
             Text(header)
@@ -25,9 +25,10 @@ extension Section where Parent == Text, Footer == Text, Content: View {
 
 // MARK: - Section Overloads
 
+@ContentBuilder
 func Section(
     _ title: String,
-    @ViewBuilder content: @escaping () -> some View,
+    @ContentBuilder content: @escaping () -> some View,
     @LabeledContentBuilder learnMore: @escaping () -> AnyView
 ) -> some View {
     Section(
@@ -38,10 +39,11 @@ func Section(
     )
 }
 
+@ContentBuilder
 func Section(
     _ title: String,
     footer: String,
-    @ViewBuilder content: @escaping () -> some View,
+    @ContentBuilder content: @escaping () -> some View,
     @LabeledContentBuilder learnMore: @escaping () -> AnyView
 ) -> some View {
     Section(
@@ -52,13 +54,14 @@ func Section(
     )
 }
 
+@ContentBuilder
 func Section(
     _ title: String,
-    @ViewBuilder content: @escaping () -> some View,
-    @ViewBuilder footer: @escaping () -> some View,
+    @ContentBuilder content: @escaping () -> some View,
+    @ContentBuilder footer: @escaping () -> some View,
     @LabeledContentBuilder learnMore: @escaping () -> AnyView
 ) -> some View {
-    InlinePlatformView {
+    PresentationContent {
         Section {
             content()
         } header: {
@@ -73,7 +76,7 @@ func Section(
                 )
             }
         }
-    } tvOSView: {
+    } largeView: {
         Section {
             content()
                 .focusedValue(\.formLearnMore, learnMore())
@@ -103,6 +106,7 @@ private struct LearnMoreButton: View {
         self.title = title
     }
 
+    @ContentBuilder
     var body: some View {
         Button(L10n.learnMore + .ellipsis) {
             isPresented = true

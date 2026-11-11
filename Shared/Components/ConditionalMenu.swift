@@ -17,6 +17,7 @@ struct ConditionalMenu<Label: View, MenuContent: View>: View {
     private let label: () -> Label
     private let menuContent: () -> MenuContent
 
+    @ContentBuilder
     var body: some View {
         if isMenu {
             Menu(
@@ -40,11 +41,12 @@ extension ConditionalMenu {
     init<V>(
         tracking data: V?,
         action: @escaping (V) -> Void,
-        @ViewBuilder menuContent: @escaping () -> MenuContent,
-        @ViewBuilder label: @escaping () -> Label
+        @ContentBuilder menuContent: @escaping () -> MenuContent,
+        @ContentBuilder label: @escaping () -> Label
     ) where V: Identifiable {
         self.action = {
             guard let data else { return }
+
             action(data)
         }
         self.isMenu = data == nil
@@ -55,8 +57,8 @@ extension ConditionalMenu {
     init(
         isMenu: Bool,
         action: @escaping () -> Void,
-        @ViewBuilder menuContent: @escaping () -> MenuContent,
-        @ViewBuilder label: @escaping () -> Label
+        @ContentBuilder menuContent: @escaping () -> MenuContent,
+        @ContentBuilder label: @escaping () -> Label
     ) {
         self.action = action
         self.isMenu = isMenu

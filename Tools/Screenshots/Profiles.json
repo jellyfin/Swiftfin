@@ -1,0 +1,22 @@
+[
+    {
+        "platform": "iOS", "version": "27.2", "build": "24B8117",
+        "profiles": [
+            {"name": "iOS", "device": "iPhone-18-Pro", "sizes": [[1206, 2622]]},
+            {"name": "iPhoneLarge", "device": "iPhone-18-Pro-Max", "sizes": [[1320, 2868]]},
+            {"name": "iPadOS", "device": "iPad-Pro-13-inch-M5-12GB", "sizes": [[2064, 2752]]}
+        ]
+    },
+    {
+        "platform": "iOS", "version": "27.2", "build": "24B91016s",
+        "profiles": [
+            {"name": "iPhoneDuo", "device": "iPhone-Duo", "sizes": [[1398, 2034], [2007, 2853]]}
+        ]
+    },
+    {
+        "platform": "tvOS", "version": "27.2", "build": "24K150",
+        "profiles": [
+            {"name": "tvOS", "device": "Apple-TV-4K-3rd-generation-4K", "sizes": [[2160, 3840]]}
+        ]
+    }
+]

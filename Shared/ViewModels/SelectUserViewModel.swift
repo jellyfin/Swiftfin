@@ -17,6 +17,7 @@ final class SelectUserViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case deleteUsers(Set<UserState>)
         case error
         case getServers
@@ -27,8 +28,10 @@ final class SelectUserViewModel: ViewModel {
             case .getServers:
                 .to(.loading, then: .content)
                     .whenBackground(.refreshing)
+
             case .deleteUsers:
                 .background(.refreshing)
+
             case .error, .signIn:
                 .none
             }
@@ -36,15 +39,18 @@ final class SelectUserViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
     }
 
     enum Event {
+
         case error
         case signedIn(UserState)
     }
 
     enum State {
+
         case initial
         case loading
         case content

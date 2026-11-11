@@ -6,17 +6,19 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct ItemRefreshView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
-    @Default(.accentColor)
-    private var accentColor
+    @AppTheme
+    private var theme
 
     @ObservedObject
     var viewModel: ItemEditorViewModel
@@ -28,6 +30,7 @@ struct ItemRefreshView: View {
     @State
     private var regenerateTrickplay: Bool = false
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -63,9 +66,9 @@ struct ItemRefreshView: View {
         #endif
     }
 
+    @ContentBuilder
     private var contentView: some View {
         Form(systemImage: "arrow.clockwise") {
-
             Section {
                 #if os(iOS)
                 Picker(L10n.type, selection: $refreshType)
@@ -85,23 +88,20 @@ struct ItemRefreshView: View {
                 }
             }
 
-            #if os(tvOS)
-            Section {
-                Button(action: onRun) {
-                    Text(L10n.run)
-                        .frame(maxWidth: .infinity)
+            if viewLayout.isLarge {
+                Section {
+                    Button(action: onRun) {
+                        Text(L10n.run)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .tint(theme.accentColor)
                 }
-                .listRowInsets(.zero)
-                .listRowBackground(Color.clear)
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
-                #if os(iOS)
-                .controlSize(.large)
-                #endif
             }
-            #endif
         }
     }
 

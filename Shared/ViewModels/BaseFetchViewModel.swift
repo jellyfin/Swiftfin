@@ -15,6 +15,7 @@ class BaseFetchViewModel<Value: Codable>: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
 
         var transition: Transition {
@@ -23,6 +24,7 @@ class BaseFetchViewModel<Value: Codable>: ViewModel {
     }
 
     enum State {
+
         case initial
         case refreshing
     }

@@ -40,9 +40,7 @@ struct PeopleComponentEditor: ItemComponentEditor {
 
     func adding(_ people: [BaseItemPerson], to item: BaseItemDto) -> BaseItemDto {
         var item = item
-        if item.people == nil {
-            item.people = []
-        }
+        item.people ?= []
         item.people?.append(contentsOf: people)
         return item
     }
@@ -62,7 +60,7 @@ struct PeopleComponentEditor: ItemComponentEditor {
     func search(_ searchTerm: String, userSession: UserSession) async throws -> [BaseItemPerson] {
         let parameters = Paths.GetPersonsParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getPersons(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await userSession.send(request)
 
         return response.value.items?.map { person in
             BaseItemPerson(id: person.id, name: person.name)

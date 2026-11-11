@@ -32,7 +32,7 @@ extension ItemView {
                 provider.item.preferredPosterDisplayType == .portrait ? .landscape : provider.item.preferredPosterDisplayType
             }
 
-            @ViewBuilder
+            @ContentBuilder
             private var content: some View {
                 PosterImage(
                     item: provider.item,
@@ -57,7 +57,7 @@ extension ItemView {
                 }
             }
 
-            @ViewBuilder
+            @ContentBuilder
             private var peopleContent: some View {
                 HStack(alignment: .bottom, spacing: 12) {
                     PosterImage(
@@ -78,6 +78,7 @@ extension ItemView {
                 .frame(maxWidth: 300)
             }
 
+            @ContentBuilder
             var body: some View {
                 VStack(spacing: 10) {
                     switch provider.item.type {
@@ -97,7 +98,7 @@ extension ItemView {
                     ItemView.AttributesHStack(
                         attributes: attributes,
                         item: provider.item,
-                        selectedMediaSource: provider.mediaPlayerItemProvider?.mediaSource,
+                        selectedMediaSource: provider.playbackIntent?.mediaSource,
                         alignment: .leading
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)

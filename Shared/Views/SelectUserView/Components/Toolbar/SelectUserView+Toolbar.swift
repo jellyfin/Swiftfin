@@ -13,8 +13,11 @@ extension SelectUserView {
 
     struct Toolbar: View {
 
-        @Environment(\.horizontalSizeClass)
-        private var horizontalSizeClass
+        @AdaptiveLayout
+        private var viewLayout
+
+        @ScaledMetric(relativeTo: .body)
+        private var labelHeight = 20.0
 
         @Binding
         private var isEditing: Bool
@@ -36,7 +39,12 @@ extension SelectUserView {
             }
         }
 
-        private let buttonHeight: CGFloat = UIDevice.isTV ? 75 : 44
+        private var buttonHeight: CGFloat {
+            viewLayout.value(
+                standard: max(viewLayout.controlHeight, labelHeight + 24),
+                large: viewLayout.controlHeight
+            )
+        }
 
         init(
             servers: OrderedSet<ServerState>,
@@ -52,20 +60,21 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
+        @ContentBuilder
         var body: some View {
-            if horizontalSizeClass == .compact {
+            if viewLayout.isCompact {
                 compactView
             } else {
                 regularView
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var compactView: some View {
             if !isEditing {
                 HStack(spacing: 16) {
                     ServerMenu(servers: servers)
-                        .frame(height: buttonHeight)
+                        .frame(minHeight: buttonHeight)
                         .frame(maxWidth: 400)
 
                     AddUserMenu(servers: servers)
@@ -75,9 +84,9 @@ extension SelectUserView {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var regularView: some View {
-            HStack(alignment: .top, spacing: UIDevice.isTV ? 32 : nil) {
+            HStack(alignment: .top, spacing: viewLayout.value(standard: nil, large: 32)) {
                 if isEditing {
                     editView
                 } else {
@@ -85,7 +94,7 @@ extension SelectUserView {
                 }
             }
             .animation(.linear(duration: 0.1), value: selectedUsers.isNotEmpty)
-            .frame(height: buttonHeight)
+            .frame(minHeight: buttonHeight)
             .frame(maxWidth: .infinity)
             .focusSection()
             .edgePadding([.bottom, .horizontal])
@@ -96,11 +105,11 @@ extension SelectUserView {
             )
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var editView: some View {
             Button(action: toggleUsers) {
                 Text(selectedUsers.count == allUsers.count ? L10n.removeAll : L10n.selectAll)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, minHeight: buttonHeight)
             }
             .frame(minWidth: 100, maxWidth: 300)
 
@@ -108,20 +117,20 @@ extension SelectUserView {
                 isEditing = false
             } label: {
                 Text(L10n.cancel)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, minHeight: buttonHeight)
             }
             .frame(minWidth: 100, maxWidth: 300)
             .focused($isCenterButtonFocused)
 
             Button(role: .destructive, action: onDelete) {
                 Text(L10n.delete)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, minHeight: buttonHeight)
             }
             .frame(minWidth: 100, maxWidth: 300)
             .disabled(selectedUsers.isEmpty)
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var regularContentView: some View {
             Menu {
                 AdvancedMenuContent(
@@ -142,7 +151,7 @@ extension SelectUserView {
             .glassEffect(in: .circle)
 
             ServerMenu(servers: servers)
-                .frame(maxWidth: UIDevice.isTV ? 600 : 400)
+                .frame(maxWidth: viewLayout.value(standard: 400, large: 600))
                 .frame(height: buttonHeight)
                 .focused($isCenterButtonFocused)
 

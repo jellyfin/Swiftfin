@@ -30,11 +30,16 @@ extension UserDefaults {
     // MARK: User
 
     static var currentUserSuite: UserDefaults {
+        userSuite(id: currentUserSuiteName)
+    }
+
+    fileprivate static var currentUserSuiteName: String {
         switch Defaults[.lastSignedInUserID] {
         case .signedOut:
-            userSuite(id: "default")
+            "default"
+
         case let .signedIn(userID):
-            userSuite(id: userID)
+            userID
         }
     }
 
@@ -45,6 +50,8 @@ extension UserDefaults {
 
 private extension Defaults.Keys {
 
+    static let userKeys = DefaultsKeyCache()
+
     static func AppKey<Value: Defaults.Serializable>(_ name: String) -> Key<Value?> {
         Key(name, suite: .appSuite)
     }
@@ -54,7 +61,7 @@ private extension Defaults.Keys {
     }
 
     static func UserKey<Value: Defaults.Serializable>(_ name: String, default: Value) -> Key<Value> {
-        Key(name, default: `default`, suite: .currentUserSuite)
+        userKeys.key(name, default: `default`, suiteName: UserDefaults.currentUserSuiteName)
     }
 }
 
@@ -62,20 +69,7 @@ private extension Defaults.Keys {
 
 extension Defaults.Keys {
 
-    /// The _real_ accent color key to be used.
-    ///
-    /// This is set externally whenever the app or user accent colors change,
-    /// depending on the current app state.
-    static var accentColor: Key<Color> = AppKey("accentColor", default: .jellyfinPurple)
-
-    /// The _real_ appearance key to be used.
-    ///
-    /// This is set externally whenever the app or user appearances change,
-    /// depending on the current app state.
-    static let appearance: Key<AppAppearance> = AppKey("appearance", default: .system)
-
     /// The appearance default for non-user contexts.
-    /// /// Only use for `set`, use `appearance` for `get`.
     static let appAppearance: Key<AppAppearance> = AppKey("appAppearance", default: .system)
 
     static let backgroundSignOutInterval: Key<TimeInterval> = AppKey("backgroundSignOutInterval", default: 3600)
@@ -97,16 +91,14 @@ extension Defaults.Keys {
 
 extension Defaults.Keys {
 
-    /// The accent color default for user contexts.
-    /// Only use for `set`, use `accentColor` for `get`.
-    static var userAccentColor: Key<Color> {
-        UserKey("userAccentColor", default: .jellyfinPurple)
+    /// The saved accent color for a specific user.
+    static func userAccentColor(userID: String) -> Key<Color> {
+        userKeys.key("userAccentColor", default: .jellyfinPurple, suiteName: userID)
     }
 
-    /// The appearance default for user contexts.
-    /// /// Only use for `set`, use `appearance` for `get`.
-    static var userAppearance: Key<AppAppearance> {
-        UserKey("userAppearance", default: .system)
+    /// The saved appearance for a specific user.
+    static func userAppearance(userID: String) -> Key<AppAppearance> {
+        userKeys.key("userAppearance", default: .system, suiteName: userID)
     }
 
     enum Customization {
@@ -219,6 +211,7 @@ extension Defaults.Keys {
         }
 
         enum Home {
+
             static var showRecentlyAdded: Key<Bool> {
                 UserKey("showRecentlyAdded", default: true)
             }
@@ -252,14 +245,6 @@ extension Defaults.Keys {
 
     enum VideoPlayer {
 
-        static var appMaximumBitrate: Key<PlaybackBitrate> {
-            UserKey("appMaximumBitrate", default: .max)
-        }
-
-        static var appMaximumBitrateTest: Key<PlaybackBitrateTestSize> {
-            UserKey("appMaximumBitrateTest", default: .regular)
-        }
-
         static var autoPlayEnabled: Key<Bool> {
             UserKey("autoPlayEnabled", default: true)
         }
@@ -290,15 +275,15 @@ extension Defaults.Keys {
             UserKey("resumeOffset", default: 0)
         }
 
-        static var supplements: Key<[VideoPlayerSupplement]> {
+        static var supplements: Key<[VideoPlayerSupplementType]> {
             UserKey(
                 "videoPlayerSupplements",
-                default: VideoPlayerSupplement.supportedCases
+                default: VideoPlayerSupplementType.supportedCases
             )
         }
 
-        static var videoPlayerType: Key<VideoPlayerType> {
-            UserKey("videoPlayerType", default: .vlc)
+        static var mediaPlayerType: Key<MediaPlayerType> {
+            UserKey("videoPlayerType", default: .mpv)
         }
 
         enum Gesture {
@@ -349,13 +334,14 @@ extension Defaults.Keys {
                 UserKey("chapterSlider", default: true)
             }
 
-            // Timestamp
+            /// Timestamp
             static var trailingTimestampType: Key<TrailingTimestampType> {
                 UserKey("trailingTimestamp", default: .timeLeft)
             }
         }
 
         enum Playback {
+
             static var appMaximumResolution: Key<PlaybackResolution> {
                 UserKey("appMaximumResolution", default: .max)
             }
@@ -385,26 +371,20 @@ extension Defaults.Keys {
             }
         }
 
-        enum Subtitle {
-
-            static var configuration: Key<SubtitleConfiguration> {
-                UserKey("subtitleConfiguration", default: .default)
-            }
-        }
-
         enum Transition {
+
+            static var automaticPictureInPicture: Key<Bool> {
+                UserKey("automaticPictureInPicture", default: false)
+            }
+
             static var pauseOnBackground: Key<Bool> {
                 UserKey("playInBackground", default: true)
             }
         }
     }
 
-    // Experimental settings
+    /// Experimental settings
     enum Experimental {
-
-        static var mpvPlayer: Key<Bool> {
-            UserKey("experimentalMPVPlayer", default: false)
-        }
 
         // TODO: don't use L10n key as key, just used to not
         // lose translations
@@ -415,6 +395,12 @@ extension Defaults.Keys {
         static var serverConnectionAutoSwitch: Key<Bool> {
             UserKey("experimentalServerConnectionAutoSwitch", default: false)
         }
+
+        #if os(iOS)
+        static var chromecast: Key<Bool> {
+            UserKey("experimentalChromecast", default: false)
+        }
+        #endif
 
         static var videoPlayerEPG: Key<Bool> {
             UserKey("experimentalVideoPlayerEPG", default: false)

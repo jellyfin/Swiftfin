@@ -11,23 +11,18 @@ import SwiftUI
 
 struct EPGChannelButton: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Environment(\.isSelected)
     private var isSelected
 
     @FocusState
     private var isFocused: Bool
 
-    let channel: BaseItemDto
+    @SharedBaseItem
+    var channel: BaseItemDto
     let action: () -> Void
-
-    private let layout = EPGLayout()
-
-    private var posterSize: CGFloat {
-        min(
-            UIDevice.isTV && !isFocused ? layout.rowHeight - 8 : layout.rowHeight,
-            layout.channelColumnWidth
-        )
-    }
 
     private var borderWidth: CGFloat {
         if isFocused {
@@ -43,7 +38,7 @@ struct EPGChannelButton: View {
         channel.imageTags?[ImageType.primary.rawValue] != nil
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var channelContent: some View {
         if hasPrimaryImage {
             PosterImage(
@@ -77,7 +72,14 @@ struct EPGChannelButton: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
+        let layout = EPGLayout(viewLayout: viewLayout)
+        let posterSize = min(
+            viewLayout.isLarge && !isFocused ? layout.rowHeight - 8 : layout.rowHeight,
+            layout.channelColumnWidth
+        )
+
         Button(action: action) {
             channelContent
                 .frame(width: posterSize, height: posterSize)

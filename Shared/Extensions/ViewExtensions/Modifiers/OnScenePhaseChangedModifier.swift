@@ -16,6 +16,7 @@ struct OnScenePhaseChangedModifier: ViewModifier {
     let phase: ScenePhase
     let action: () -> Void
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content.onChange(of: scenePhase) {
             if scenePhase == phase {

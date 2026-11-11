@@ -42,11 +42,12 @@ extension Array {
         }
     }
 
-    // There are instances where `removeFirst()` is called on an empty
-    // collection even with a count check and causes a crash
+    /// There are instances where `removeFirst()` is called on an empty
+    /// collection even with a count check and causes a crash
     @discardableResult
     mutating func removeFirstSafe() -> Element? {
         guard count > 0 else { return nil }
+
         return removeFirst()
     }
 

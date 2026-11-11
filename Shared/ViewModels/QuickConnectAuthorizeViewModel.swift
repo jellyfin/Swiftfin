@@ -16,6 +16,7 @@ final class QuickConnectAuthorizeViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case authorize(code: String)
         case cancel
 
@@ -28,16 +29,19 @@ final class QuickConnectAuthorizeViewModel: ViewModel {
     }
 
     enum Event {
+
         case authorized
         case error
     }
 
     enum State {
+
         case authorizing
         case initial
     }
 
-    let user: UserDto
+    @SharedUser
+    var user: UserDto
 
     init(user: UserDto) {
         self.user = user
@@ -46,7 +50,6 @@ final class QuickConnectAuthorizeViewModel: ViewModel {
 
     @Function(\Action.Cases.authorize)
     private func _authorize(_ code: String) async throws {
-
         guard let userID = user.id else {
             logger.critical("User ID is nil")
             throw ErrorMessage(L10n.unknownError)
