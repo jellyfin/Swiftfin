@@ -8,6 +8,37 @@
 
 import SwiftUI
 
+private struct FilterTrackLabelStyle: LabelStyle {
+
+    @AdaptiveLayout
+    private var viewLayout
+
+    @Environment(\.isFocused)
+    private var isFocused
+
+    let showsTitle: Bool
+    let iconEdge: HorizontalEdge
+
+    @ContentBuilder
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: viewLayout.value(standard: 4, large: 12)) {
+            if iconEdge == .leading {
+                configuration.icon
+            }
+
+            configuration.title
+                .isVisible(showsTitle || isFocused)
+
+            if iconEdge == .trailing {
+                configuration.icon
+            }
+        }
+        .lineLimit(1)
+        .fixedSize()
+        .frame(width: showsTitle || isFocused ? nil : 32, alignment: iconEdge == .leading ? .leading : .trailing)
+    }
+}
+
 struct FilterTrack: View {
 
     @AdaptiveLayout
@@ -21,13 +52,13 @@ struct FilterTrack: View {
 
     enum FocusTarget: Hashable {
 
-        case reset
+        case options
         case filter(ItemFilterType)
 
         var title: String {
             switch self {
-            case .reset:
-                L10n.reset
+            case .options:
+                L10n.options
             case let .filter(type):
                 type.displayTitle
             }
@@ -35,7 +66,7 @@ struct FilterTrack: View {
 
         var systemImage: String {
             switch self {
-            case .reset:
+            case .options:
                 "line.3.horizontal.decrease"
             case let .filter(type):
                 type.systemImage
@@ -58,13 +89,13 @@ struct FilterTrack: View {
     var iconEdge: HorizontalEdge = .leading
 
     private var targets: [FocusTarget] {
-        (viewModel.hasActiveFilters ? [.reset] : []) + types.map(FocusTarget.filter)
+        (viewModel.hasFilterOptions ? [.options] : []) + types.map(FocusTarget.filter)
     }
 
     private func isSelected(_ target: FocusTarget) -> Bool {
         switch target {
-        case .reset:
-            true
+        case .options:
+            viewModel.hasActiveFilters
         case let .filter(type):
             viewModel.isFilterSelected(type: type)
         }
@@ -72,7 +103,9 @@ struct FilterTrack: View {
 
     private func reset() {
         #if os(tvOS)
-        focus.wrappedValue = types.first.map(FocusTarget.filter)
+        if viewModel.savedFilters.isEmpty {
+            focus.wrappedValue = types.first.map(FocusTarget.filter)
+        }
         #endif
 
         viewModel.reset(filterType: nil)
@@ -91,45 +124,81 @@ struct FilterTrack: View {
 
     @ContentBuilder
     private func buttonLabel(for target: FocusTarget) -> some View {
-        let showsTitle = style == .regular || focus.wrappedValue == target
-
-        HStack(spacing: viewLayout.value(standard: 4, large: 12)) {
-            if iconEdge == .leading {
-                buttonIcon(for: target)
-            }
-
+        Label {
             Text(target.title)
-                .isVisible(showsTitle)
-
-            if iconEdge == .trailing {
-                buttonIcon(for: target)
-            }
+        } icon: {
+            buttonIcon(for: target)
         }
-        .lineLimit(1)
-        .fixedSize()
-        .frame(width: showsTitle ? nil : 32, alignment: iconEdge == .leading ? .leading : .trailing)
     }
 
     @ContentBuilder
-    private var resetButton: some View {
-        #if os(iOS)
-        Menu(FocusTarget.reset.title, systemImage: FocusTarget.reset.systemImage) {
-            Button(L10n.reset, role: .destructive, action: reset)
+    private var menuActions: some View {
+        Button(
+            viewModel.selectedSavedFilter == nil ? L10n.save : L10n.edit,
+            systemImage: viewModel.selectedSavedFilter == nil ? "square.and.arrow.down" : "pencil"
+        ) {
+            router.route(
+                to: .editFilters(
+                    filters: viewModel.savableFilters,
+                    savedFilter: viewModel.selectedSavedFilter,
+                    onSave: { viewModel.selectedSavedFilter = $0 }
+                )
+            )
         }
-        .labelStyle(.iconOnly)
-        #else
-        Button(action: reset) {
-            buttonLabel(for: .reset)
-        }
-        #endif
+
+        Button(L10n.clear, systemImage: "text.badge.xmark", role: .destructive, action: reset)
+            .disabled(!viewModel.hasActiveFilters)
     }
 
     @ContentBuilder
     private func button(for target: FocusTarget) -> some View {
         Group {
             switch target {
-            case .reset:
-                resetButton
+            case .options:
+                Menu {
+                    if viewModel.hasActiveFilters || viewModel.selectedSavedFilter != nil {
+                        if UIDevice.isTV || viewModel.savedFilters.isEmpty {
+                            Section {
+                                menuActions
+                            }
+                        } else {
+                            ControlGroup {
+                                menuActions
+                            }
+                        }
+                    }
+
+                    if viewModel.savedFilters.isNotEmpty {
+                        Section(L10n.filters) {
+                            ForEach(viewModel.savedFilters) { savedFilter in
+                                Button {
+                                    viewModel.selectedSavedFilter = savedFilter
+                                } label: {
+                                    if viewModel.selectedSavedFilter?.id == savedFilter.id {
+                                        Label(savedFilter.name, systemImage: "checkmark")
+                                    } else {
+                                        Text(savedFilter.name)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    buttonLabel(for: target)
+                }
+                .menuStyle(.button)
+                #if os(tvOS)
+                .buttonStyle(
+                    .capsule(
+                        selectionTint: theme.accentColor,
+                        focusTint: .white,
+                        anchor: style == .compact ? iconEdge : nil
+                    )
+                )
+                #else
+                .labelStyle(.iconOnly)
+                #endif
+
             case let .filter(type):
                 Button {
                     router.route(to: .filter(type: type, viewModel: viewModel))
@@ -138,6 +207,12 @@ struct FilterTrack: View {
                 }
             }
         }
+        .labelStyle(
+            FilterTrackLabelStyle(
+                showsTitle: style == .regular || focus.wrappedValue == target,
+                iconEdge: iconEdge
+            )
+        )
         .focused(focus, equals: target)
         .isSelected(isSelected(target))
         .accessibilityLabel(target.title)
