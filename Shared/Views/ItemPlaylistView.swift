@@ -30,6 +30,17 @@ struct ItemPlaylistView: View {
     @ContentBuilder
     private var contentView: some View {
         Form(systemImage: "list.bullet") {
+            // TODO: Remove for 13.X.
+            // Position flag is ignored for pre-12.0 so this flag is hidden on 10.X
+            if viewModel.userSession?.server.isVersionCompatible == true {
+                Section {
+                    Toggle(L10n.addToBeginning, isOn: $addToBeginning)
+                } footer: {
+                    Text(L10n.addToBeginningDescription)
+                }
+                .foregroundStyle(.primary)
+            }
+
             Section {
                 StateAdapter(initialValue: (isPresented: false, name: "")) { alert in
                     Button(L10n.newPlaylist, systemImage: "plus") {
@@ -49,17 +60,6 @@ struct ItemPlaylistView: View {
 
                         Button(L10n.cancel, role: .cancel) {}
                     }
-                }
-                .foregroundStyle(.primary)
-            }
-
-            // TODO: Remove for 13.X.
-            // Position flag is ignored for pre-12.0 so this flag is hidden on 10.X to prevent confusion
-            if viewModel.userSession?.server.isVersionCompatible == true {
-                Section {
-                    Toggle(L10n.addToBeginning, isOn: $addToBeginning)
-                } footer: {
-                    Text(L10n.addToBeginningDescription)
                 }
                 .foregroundStyle(.primary)
             }

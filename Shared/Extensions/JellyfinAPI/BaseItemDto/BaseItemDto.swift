@@ -543,7 +543,7 @@ extension BaseItemDto {
         else { return false }
 
         switch type {
-        case .series, .season, .boxSet:
+        case .series, .season, .boxSet, .playlist:
             return true
 
         case .collectionFolder, .userView, .folder:
