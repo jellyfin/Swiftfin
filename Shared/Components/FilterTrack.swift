@@ -89,7 +89,9 @@ struct FilterTrack: View {
     var iconEdge: HorizontalEdge = .leading
 
     private var targets: [FocusTarget] {
-        (viewModel.hasFilterOptions ? [.options] : []) + types.map(FocusTarget.filter)
+        (viewModel.hasFilterOptions ? [.options] : []) + types
+            .filter(viewModel.hasFilters)
+            .map(FocusTarget.filter)
     }
 
     private func isSelected(_ target: FocusTarget) -> Bool {
@@ -104,7 +106,7 @@ struct FilterTrack: View {
     private func reset() {
         #if os(tvOS)
         if viewModel.savedFilters.isEmpty {
-            focus.wrappedValue = types.first.map(FocusTarget.filter)
+            focus.wrappedValue = types.first(where: viewModel.hasFilters).map(FocusTarget.filter)
         }
         #endif
 

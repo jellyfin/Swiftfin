@@ -50,7 +50,10 @@ struct FilterBarModifier: ViewModifier {
         .frame(width: 64)
         .coordinatedFocusScope(
             $focusedFilter,
-            values: types.map(FilterTrack.FocusTarget.filter) + (viewModel.hasFilterOptions ? [.options] : [])
+            values: types
+                .filter(viewModel.hasFilters)
+                .map(FilterTrack.FocusTarget.filter) +
+                (viewModel.hasFilterOptions ? [.options] : [])
         )
     }
 

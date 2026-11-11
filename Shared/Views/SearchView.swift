@@ -68,7 +68,9 @@ struct SearchView: View {
                     .frame(height: 64)
                     .coordinatedFocusScope(
                         $focusedFilter,
-                        values: enabledDrawerFilters.map(FilterTrack.FocusTarget.filter) +
+                        values: enabledDrawerFilters
+                            .filter(viewModel.filterViewModel.hasFilters)
+                            .map(FilterTrack.FocusTarget.filter) +
                             (viewModel.filterViewModel.hasFilterOptions ? [.options] : [])
                     )
                     .edgePadding(.horizontal)
