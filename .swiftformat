@@ -1,3 +1,4 @@
+--minversion 0.64.0
 --swiftversion 6.4
 
 --allman false
