@@ -1,17 +1,34 @@
+--minversion 0.64.0
 --swiftversion 6.4
 
+--allman false
+--allowpartialwrapping false
 --assetliterals visual-width
+--callsiteparen balanced
+--closingparen balanced
+--complexattributes prev-line
 --computedvarattrs prev-line
+--contentbuilder explicit
+--doccomments before-declarations
+--emptybraces no-space
 --funcattributes prev-line
---ifdef no-indent 
+--ifdef no-indent
+--importgrouping alpha
+--indent 4
+--lineaftermarks true
+--linebreaks lf
 --maxwidth 140
+--prefercontentbuilder true
+--scopeblanklines remove
 --semicolons never
 --shortoptionals "always"
 --storedvarattrs prev-line
 --stripunusedargs closure-only
 --tabwidth 4
 --trailingclosures
+--trimwhitespace always
 --typeattributes prev-line
+--typeblanklines start-only
 --wraparguments before-first
 --wrapcollections before-first
 --wrapconditions after-first
@@ -21,41 +38,44 @@
 --enable blankLineAfterSwitchCase,     \
     blankLinesAfterGuardStatements,    \
     blankLinesAroundMark,              \
-    isEmpty,                            \
-    leadingDelimiters,                  \
-    preferContains,                     \
-    preferCountWhere,                   \
-    preferFirstWhere,                   \
-    preferFlatMap,                      \
-    preferMinOverSorted,                \
-    preferSwiftStringAPI,               \
-    redundantInit,                      \
-    redundantLet,                       \
-    spaceInsideBraces,                  \
-    spaceInsideBrackets,                \
-    spaceInsideComments,                \
-    spaceInsideGenerics,                \
-    spaceInsideParens,                  \
-    trailingSpace,                      \
-    typeSugar,                          \
-    void,                               \
-    wrapEnumCases,                      \
+    blankLinesAtStartOfScope,          \
+    blockComments,                     \
+    contentBuilder,                    \
+    docComments,                       \
+    isEmpty,                           \
+    leadingDelimiters,                 \
+    preferContains,                    \
+    preferCountWhere,                  \
+    preferFirstWhere,                  \
+    preferFlatMap,                     \
+    preferMinOverSorted,               \
+    preferSwiftStringAPI,              \
+    redundantInit,                     \
+    redundantLet,                      \
+    singlePropertyPerLine,             \
+    spaceInsideBraces,                 \
+    spaceInsideBrackets,               \
+    spaceInsideComments,               \
+    spaceInsideGenerics,               \
+    spaceInsideParens,                 \
+    trailingSpace,                     \
+    typeSugar,                         \
+    void,                              \
+    wrapEnumCases,                     \
     wrapMultilineFunctionChains
 
---disable andOperator,       \
-    blankLinesAtStartOfScope,\
-    docComments,             \
-    redundantClosure,       \
-    redundantFileprivate,   \
-    redundantSelf,          \
-    redundantType,          \
-    redundantViewBuilder,   \
-    strongOutlets,          \
-    trailingCommas,         \
+--disable andOperator,                 \
+    redundantClosure,                  \
+    redundantFileprivate,              \
+    redundantSelf,                     \
+    redundantType,                     \
+    strongOutlets,                     \
+    trailingCommas,                    \
+    wrapMultilineStatementBraces,      \
     yodaConditions
 
---exclude Shared/Strings/Strings.swift, \
-    fastlane/,				\
-	build/
+--exclude Shared/Strings/Strings.swift,\
+    fastlane/,                         \
+    build/
 
 --header "\nSwiftfin is subject to the terms of the Mozilla Public\nLicense, v2.0. If a copy of the MPL was not distributed with this\nfile, you can obtain one at https://mozilla.org/MPL/2.0/.\n\nCopyright (c) {year} Jellyfin & Jellyfin Contributors\n"

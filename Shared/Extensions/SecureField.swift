@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-@ViewBuilder
+@ContentBuilder
 func SecureField(
     _ title: String,
     text: Binding<String>,
@@ -44,6 +44,7 @@ func SecureField(
 extension SecureField {
 
     enum MaskToggleBehavior {
+
         case disabled
         case enabled
     }

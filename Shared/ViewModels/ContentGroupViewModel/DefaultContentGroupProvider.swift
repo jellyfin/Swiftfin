@@ -49,7 +49,6 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
 
     @ContentGroupBuilder
     private func _makeGroups(userViews: [BaseItemDto]) -> [any ContentGroup] {
-
         #if os(tvOS)
         let cinematicSelectionContentGroup = CinematicSelectionContentGroup(
             resumeLibrary: ResumeItemsLibrary(mediaTypes: [.video]),

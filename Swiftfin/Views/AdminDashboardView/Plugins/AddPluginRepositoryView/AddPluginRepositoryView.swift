@@ -53,6 +53,7 @@ struct AddPluginRepositoryView: View {
         return url.normalizedServerConnectionURL
     }
 
+    @ContentBuilder
     var body: some View {
         Form {
             Section {

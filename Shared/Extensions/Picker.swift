@@ -12,6 +12,7 @@ struct _OptionalCaseIterablePickerContent<Element: CaseIterable & Displayable & 
 
     let noneStyle: NoneStyle
 
+    @ContentBuilder
     var body: some View {
         Text(noneStyle.displayTitle)
             .tag(nil as Element?)
@@ -25,6 +26,7 @@ struct _OptionalCaseIterablePickerContent<Element: CaseIterable & Displayable & 
 
 struct _CaseIterablePickerContent<Element: CaseIterable & Displayable & Hashable>: View {
 
+    @ContentBuilder
     var body: some View {
         ForEach(Element.allCases.asArray, id: \.hashValue) {
             Text($0.displayTitle)
@@ -41,6 +43,7 @@ struct _SupportedCaseIterablePickerContent<Element: SupportedCaseIterable & Disp
         onlySupported ? Element.supportedCases.asArray : Element.allCases.asArray
     }
 
+    @ContentBuilder
     var body: some View {
         ForEach(elements, id: \.hashValue) {
             Text($0.displayTitle)
@@ -55,6 +58,7 @@ where Data.Element == Element {
     let sources: Data
     let noneStyle: NoneStyle?
 
+    @ContentBuilder
     var body: some View {
         if let noneStyle {
             Text(noneStyle.displayTitle)

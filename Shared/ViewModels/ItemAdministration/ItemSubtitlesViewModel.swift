@@ -163,7 +163,6 @@ final class ItemSubtitlesViewModel: ViewModel {
 
     @Function(\Action.Cases.upload)
     private func _upload(_ file: URL, _ isForced: Bool, _ isHearingImpaired: Bool) async throws {
-
         guard let itemID = item.id, let language, language.isNotEmpty else {
             throw ErrorMessage(L10n.unknownError)
         }

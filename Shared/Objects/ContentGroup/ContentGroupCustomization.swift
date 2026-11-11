@@ -12,6 +12,7 @@ import SwiftUI
 struct ContentGroupParentOption {
 
     private enum Options: Int {
+
         case ignoreSafeAreaTop
     }
 }

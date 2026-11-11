@@ -30,7 +30,9 @@ final class MediaPlaybackTransitions {
     func sceneDidEnterBackground() {
         cancelBackgroundPause()
 
-        guard let mediaSession, !mediaSession.isRemotePlayback, mediaSession.item.mediaType != .audio,
+        guard let mediaSession,
+              !mediaSession.isRemotePlayback,
+              mediaSession.item.mediaType != .audio,
               Defaults[.VideoPlayer.Transition.pauseOnBackground] else { return }
 
         let provider = mediaSession.player as? MediaPlayerPictureInPictureProviding

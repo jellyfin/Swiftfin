@@ -33,6 +33,7 @@ struct ServerUserLiveTVAccessView: View {
         self.tempPolicy = policy
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             Section(L10n.access) {

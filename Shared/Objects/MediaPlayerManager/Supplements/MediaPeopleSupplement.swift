@@ -21,6 +21,7 @@ struct MediaPeopleSupplement {
 
 extension MediaPeopleSupplement: VideoPlayerSupplement {
 
+    @ContentBuilder
     var body: some View {
         PeopleOverlay(supplement: self)
     }
@@ -43,6 +44,7 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
             supplement.people
         }
 
+        @ContentBuilder
         var standardView: some View {
             CompactOrRegularView(
                 isCompact: viewState.isCompact
@@ -53,6 +55,7 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
             }
         }
 
+        @ContentBuilder
         private var compactView: some View {
             CollectionVGrid(
                 uniqueElements: people,
@@ -70,6 +73,7 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
             .padding(.trailing, viewState.supplementInsets.trailing)
         }
 
+        @ContentBuilder
         private func personView(for person: BaseItemPerson) -> some View {
             PosterButton(
                 item: person,
@@ -77,6 +81,7 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
             ) { _ in }
         }
 
+        @ContentBuilder
         private var regularView: some View {
             CollectionHStack(
                 uniqueElements: people,
@@ -98,6 +103,7 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
             .focusSection()
         }
 
+        @ContentBuilder
         var largeView: some View {
             standardView
         }
@@ -107,6 +113,7 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
 
         let person: BaseItemPerson
 
+        @ContentBuilder
         var body: some View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(person.displayTitle)
@@ -133,6 +140,7 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
 
         let person: BaseItemPerson
 
+        @ContentBuilder
         var body: some View {
             ListRow(insets: .init(horizontal: viewLayout.edgePadding)) {
                 PosterImage(

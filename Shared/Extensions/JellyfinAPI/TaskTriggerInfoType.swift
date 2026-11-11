@@ -10,6 +10,7 @@ import Foundation
 import JellyfinAPI
 
 extension TaskTriggerInfoType: Displayable, SystemImageable {
+
     var displayTitle: String {
         switch self {
         case .dailyTrigger:

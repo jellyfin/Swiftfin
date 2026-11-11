@@ -93,7 +93,9 @@ final class MediaPlayerItem {
     /// Secondary subtitles must play locally without changing the server's burn-in selection.
     var secondarySubtitleStreams: [MediaStream] {
         subtitleStreams.filter {
-            guard let index = $0.index, index >= 0, index != selectedSubtitleStreamIndex,
+            guard let index = $0.index,
+                  index >= 0,
+                  index != selectedSubtitleStreamIndex,
                   $0.deliveryMethod != .encode else { return false }
 
             return !isRebuildRequired(type: .subtitle, from: -1, to: index)
@@ -127,8 +129,10 @@ final class MediaPlayerItem {
         thumbnailProvider: ThumbnailProvider? = nil
     ) {
         guard let audioStreamIndex = configuration.audioStreamIndex,
-              configuration.subtitleStreamIndex != nil, configuration.secondarySubtitleStreamIndex != nil,
-              configuration.startSeconds != nil, configuration.automaticTrackDefaults != nil
+              configuration.subtitleStreamIndex != nil,
+              configuration.secondarySubtitleStreamIndex != nil,
+              configuration.startSeconds != nil,
+              configuration.automaticTrackDefaults != nil
         else { preconditionFailure("MediaPlayerItem requires a resolved playback configuration") }
 
         self.sharedItem = SharedBaseItem(wrappedValue: baseItem).entry
@@ -167,7 +171,7 @@ final class MediaPlayerItem {
         }
     }
 
-    // Observer cancellation must stay on the actor that owns playback.
+    /// Observer cancellation must stay on the actor that owns playback.
     isolated deinit {}
 
     /// Begin observations after the mediaSession has completed installation.
@@ -210,9 +214,9 @@ final class MediaPlayerItem {
         let isTranscoding = mediaSource.transcodingURL != nil
 
         // Removing a burned-in subtitle needs a new stream too.
-        if type == .subtitle, isTranscoding,
-           subtitleStreams.first(property: \.index, equalTo: oldIndex)?.deliveryMethod == .encode
-        {
+        if type == .subtitle,
+           isTranscoding,
+           subtitleStreams.first(property: \.index, equalTo: oldIndex)?.deliveryMethod == .encode {
             return true
         }
 
@@ -251,7 +255,6 @@ final class MediaPlayerItem {
             }
 
             if newStream.isExternal == true {
-
                 // External subtitles can only be loaded as sidecars when the profile allows external or HLS delivery for the format.
                 return !(deviceProfile.canPlay(subtitleFormat: newStream.codec, method: .external)
                     || deviceProfile.canPlay(subtitleFormat: newStream.codec, method: .hls))

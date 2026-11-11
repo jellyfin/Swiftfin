@@ -31,6 +31,7 @@ final class UserSignInViewModel: ObservableObject {
     typealias UserStateDataPair = (state: (state: UserState, accessToken: String), data: UserDto)
 
     struct EvaluatedPolicyMap {
+
         let action: (any EvaluatedLocalUserAccessPolicy) -> any EvaluatedLocalUserAccessPolicy
 
         func callAsFunction(evaluatedPolicy: any EvaluatedLocalUserAccessPolicy) -> any EvaluatedLocalUserAccessPolicy {
@@ -40,6 +41,7 @@ final class UserSignInViewModel: ObservableObject {
 
     @CasePathable
     enum Action {
+
         case cancel
         case error
         case getPublicData
@@ -73,16 +75,19 @@ final class UserSignInViewModel: ObservableObject {
     }
 
     enum BackgroundState {
+
         case gettingPublicData
     }
 
     enum Event {
+
         case connected(UserStateDataPair)
         case existingUser(UserStateDataPair)
         case saved(UserState)
     }
 
     enum State {
+
         case initial
         case signingIn
     }
@@ -190,7 +195,6 @@ final class UserSignInViewModel: ObservableObject {
         _ authenticationAction: (action: LocalUserAuthenticationAction, accessPolicy: LocalUserAccessPolicy, reason: String?),
         _ evaluatedPolicyMap: EvaluatedPolicyMap
     ) async throws {
-
         let accessPolicy = authenticationAction.accessPolicy
 
         let evaluatedPolicy = try await evaluatedPolicyMap(
@@ -246,7 +250,6 @@ final class UserSignInViewModel: ObservableObject {
         _ authenticationAction: (action: LocalUserAuthenticationAction, accessPolicy: LocalUserAccessPolicy, reason: String?),
         _ evaluatedPolicyMap: EvaluatedPolicyMap
     ) async throws {
-
         let accessPolicy = authenticationAction.accessPolicy
 
         let evaluatedPolicy = try await evaluatedPolicyMap(

@@ -54,6 +54,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             viewModel.elements.first { $0.id == selection }
         }
 
+        @ContentBuilder
         private var seasonSelectorView: some View {
             SeasonSelector(
                 selection: $selection,
@@ -64,8 +65,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
         private func preferredSeasonSelection() -> PagingLibraryViewModel<EpisodeLibrary>.ID? {
             if let playButtonSeasonID = playButtonItem?.seasonID,
-               viewModel.elements.contains(where: { $0.id == playButtonSeasonID })
-            {
+               viewModel.elements.contains(where: { $0.id == playButtonSeasonID }) {
                 return playButtonSeasonID
             }
 
@@ -84,6 +84,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             selectedSeasonViewModel.refresh()
         }
 
+        @ContentBuilder
         var body: some View {
             Group {
                 if let selectedSeasonViewModel {

@@ -17,12 +17,14 @@ extension PrimitiveButtonStyle where Self == SupplementActionButtonStyle {
 
 struct SupplementActionButtonStyle: PrimitiveButtonStyle {
 
+    @ContentBuilder
     private func baseLabel(_ configuration: Configuration) -> some View {
         configuration.label
             .foregroundStyle(configuration.role == .destructive ? .white : .black)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    @ContentBuilder
     private func legacyButton(_ configuration: Configuration) -> some View {
         Button {
             configuration.trigger()
@@ -37,6 +39,7 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
         .buttonStyle(.card)
     }
 
+    @ContentBuilder
     @available(iOS 26.0, tvOS 26.0, *)
     private func glassButton(_ configuration: Configuration) -> some View {
         Button {
@@ -56,7 +59,7 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
         #endif
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
             glassButton(configuration)

@@ -11,8 +11,10 @@ import UIKit
 extension CGSize {
 
     var aspectRatio: CGFloat? {
-        guard width > 0, height > 0,
-              width.isFinite, height.isFinite
+        guard width > 0,
+              height > 0,
+              width.isFinite,
+              height.isFinite
         else { return nil }
 
         let ratio = width / height

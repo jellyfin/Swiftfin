@@ -10,6 +10,7 @@ import Foundation
 import JellyfinAPI
 
 extension PersonKind: Displayable, SupportedCaseIterable {
+
     var displayTitle: String {
         switch self {
         case .unknown:

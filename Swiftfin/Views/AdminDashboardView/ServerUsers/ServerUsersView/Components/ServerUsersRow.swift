@@ -57,6 +57,7 @@ extension ServerUsersView {
 
         // MARK: - User Image View
 
+        @ContentBuilder
         private var userImage: some View {
             ZStack {
                 UserProfileImage(
@@ -75,10 +76,10 @@ extension ServerUsersView {
 
         // MARK: - Row Content
 
+        @ContentBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {
-
                     Text(user.name ?? L10n.unknown)
                         .font(.headline)
                         .lineLimit(2)
@@ -86,8 +87,7 @@ extension ServerUsersView {
 
                     LabeledContent(L10n.role) {
                         if let isAdministrator = user.policy?.isAdministrator,
-                           isAdministrator
-                        {
+                           isAdministrator {
                             Text(L10n.administrator)
                         } else {
                             Text(L10n.user)
@@ -112,6 +112,7 @@ extension ServerUsersView {
 
         // MARK: - Body
 
+        @ContentBuilder
         var body: some View {
             ListRow {
                 userImage

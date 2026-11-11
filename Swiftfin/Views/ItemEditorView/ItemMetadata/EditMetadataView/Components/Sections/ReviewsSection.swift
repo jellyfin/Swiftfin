@@ -19,9 +19,9 @@ extension EditMetadataView {
 
         // MARK: - Body
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.reviews) {
-
                 // MARK: - Critics Rating
 
                 StateAdapter(initialValue: false) { isPresented in

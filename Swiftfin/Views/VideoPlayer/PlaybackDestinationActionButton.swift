@@ -24,6 +24,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             (mediaSession.player as? ChromecastMediaPlayer)?.session.device.uniqueID
         }
 
+        @ContentBuilder
         var body: some View {
             Menu(L10n.cast, systemImage: VideoPlayerActionButton.playbackDestination.systemImage) {
                 Button(L10n.playOnThisDevice, systemImage: selectedDeviceID == nil ? "checkmark" : "iphone") {

@@ -14,6 +14,7 @@ struct AVVideoPlayerView: View {
     let player: AVMediaPlayer
     let layout: VideoPlayer.VideoLayout
 
+    @ContentBuilder
     var body: some View {
         PlayerSurface(player: player)
             .frame(width: layout.renderSize.width, height: layout.renderSize.height)

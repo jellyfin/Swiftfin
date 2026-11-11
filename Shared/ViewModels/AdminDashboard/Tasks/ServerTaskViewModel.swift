@@ -15,6 +15,7 @@ final class ServerTaskViewModel: ViewModel, @MainActor Identifiable {
 
     @CasePathable
     enum Action {
+
         case start
         case stop
         case addTrigger(TaskTriggerInfo)
@@ -26,10 +27,12 @@ final class ServerTaskViewModel: ViewModel, @MainActor Identifiable {
     }
 
     enum BackgroundState {
+
         case updating
     }
 
     enum State {
+
         case error
         case initial
     }

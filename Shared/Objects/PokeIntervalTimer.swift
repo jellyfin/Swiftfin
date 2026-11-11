@@ -27,7 +27,6 @@ class PokeIntervalTimer: ObservableObject, Publisher {
     }
 
     func poke(interval: TimeInterval? = nil) {
-
         let interval = interval ?? defaultInterval
 
         delayedWorkItem?.cancel()

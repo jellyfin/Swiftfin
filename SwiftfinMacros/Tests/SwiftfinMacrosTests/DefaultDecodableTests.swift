@@ -17,11 +17,13 @@ private struct EmptyConfiguration: Codable {}
 
 @DefaultDecodable
 private struct DecodingOnlyConfiguration: Decodable {
+
     var count: Int = 4
 }
 
 @DefaultDecodable
 private struct Configuration: ConfigurationStorage, Equatable {
+
     var isTitlePresented: Bool = true
     var count: Int = 3
     var names: [String] = ["default"]
@@ -38,18 +40,21 @@ private struct Configuration: ConfigurationStorage, Equatable {
 
 @DefaultDecodable
 private struct RequiredConfiguration: Codable {
+
     let name: String
     var count: Int = 2
 }
 
 @DefaultDecodable
 public struct GenericConfiguration<Value: Codable>: Codable {
+
     var value: Value
     var history: [Value] = []
 }
 
 @DefaultDecodable
 private struct ObservedConfiguration: Codable {
+
     var count: Int = 1 {
         didSet { precondition(count >= 0) }
     }
@@ -57,6 +62,7 @@ private struct ObservedConfiguration: Codable {
 
 @DefaultDecodable
 private struct ExpressionConfiguration: Codable {
+
     var identifier: UUID = .init()
     var limits: [Int] = [1, 2].map { $0 * 2 }
     var `default`: Bool = true

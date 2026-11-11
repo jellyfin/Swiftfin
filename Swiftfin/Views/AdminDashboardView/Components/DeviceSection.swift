@@ -17,6 +17,7 @@ extension AdminDashboardView {
         let device: String?
         let version: String?
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.device) {
                 LabeledContent(

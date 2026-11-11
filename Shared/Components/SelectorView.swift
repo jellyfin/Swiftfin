@@ -9,6 +9,7 @@
 import SwiftUI
 
 enum SelectorType {
+
     case single
     case multi
 }
@@ -59,6 +60,7 @@ struct SelectorView<Element: Hashable, Label: View>: View {
         self.type = .single
     }
 
+    @ContentBuilder
     var body: some View {
         List(sources, id: \.hashValue) { element in
             Button {

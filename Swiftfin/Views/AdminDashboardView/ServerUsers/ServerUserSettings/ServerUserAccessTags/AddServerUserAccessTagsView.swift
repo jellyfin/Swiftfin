@@ -63,6 +63,7 @@ struct AddServerUserAccessTagsView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         Form {
             Section(L10n.access) {
@@ -99,8 +100,7 @@ struct AddServerUserAccessTagsView: View {
         .topBarTrailing {
             if viewModel.background.is(.refreshing) ||
                 viewModel.background.is(.updating) ||
-                tagViewModel.background.states.contains(.searching)
-            {
+                tagViewModel.background.states.contains(.searching) {
                 ProgressView()
             }
 

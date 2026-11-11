@@ -26,10 +26,10 @@ extension ServerTasksView {
             viewModel.task.state == .running
         }
 
+        @ContentBuilder
         private var contentView: some View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-
                     Text(viewModel.task.name ?? L10n.unknown)
                         .fontWeight(.semibold)
 
@@ -81,6 +81,7 @@ extension ServerTasksView {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             ChevronButton {
                 router.route(to: .taskDetails(viewModel: viewModel))

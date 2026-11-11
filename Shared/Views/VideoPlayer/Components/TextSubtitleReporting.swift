@@ -13,7 +13,7 @@ import SwiftUI
 
 struct TextSubtitleReporting: ViewModifier {
 
-    // Class to prevent view evaluations
+    /// Class to prevent view evaluations
     @MainActor
     private final class CaptionReportState {
 
@@ -56,6 +56,7 @@ struct TextSubtitleReporting: ViewModifier {
         report.lastCaptions = captions
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .onAppear {

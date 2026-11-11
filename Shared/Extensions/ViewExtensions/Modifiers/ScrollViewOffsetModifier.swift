@@ -18,6 +18,7 @@ struct ScrollViewOffsetModifier: ViewModifier {
         self._scrollViewDelegate = StateObject(wrappedValue: ScrollViewDelegate(scrollViewOffset: scrollViewOffset))
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content.introspect(
             .scrollView,

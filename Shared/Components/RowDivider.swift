@@ -10,6 +10,7 @@ import SwiftUI
 
 struct RowDivider: View {
 
+    @ContentBuilder
     var body: some View {
         Color.secondarySystemFill
             .frame(height: 1)

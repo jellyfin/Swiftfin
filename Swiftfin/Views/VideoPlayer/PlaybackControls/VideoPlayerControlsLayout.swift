@@ -19,6 +19,7 @@ struct VideoPlayerControlsLayout<
 >: View {
 
     private enum Region: Hashable {
+
         case supplements
         case progress
     }
@@ -32,19 +33,19 @@ struct VideoPlayerControlsLayout<
     @State
     private var progressHeight: CGFloat = 0
 
-    @ViewBuilder
+    @ContentBuilder
     var toolbar: Toolbar
-    @ViewBuilder
+    @ContentBuilder
     var buttons: Buttons
-    @ViewBuilder
+    @ContentBuilder
     var progress: Progress
-    @ViewBuilder
+    @ContentBuilder
     var progressBackground: ProgressBackground
-    @ViewBuilder
+    @ContentBuilder
     var actions: Actions
-    @ViewBuilder
+    @ContentBuilder
     var supplements: Supplements
-    @ViewBuilder
+    @ContentBuilder
     var toast: Toast
 
     private var contentInsets: EdgeInsets {
@@ -66,6 +67,7 @@ struct VideoPlayerControlsLayout<
         }
     }
 
+    @ContentBuilder
     var body: some View {
         SafeRegion(Region.self, systemInsets: .forwarded(contentInsets)) {
             SafeRegionItem(Region.self, alignment: .bottom, clipsContent: false) {

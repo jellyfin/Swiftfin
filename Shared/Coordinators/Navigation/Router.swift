@@ -34,6 +34,7 @@ struct Router: DynamicProperty {
 
     @MainActor
     struct Wrapper {
+
         let router: NavigationCoordinator.Router
         let dismiss: DismissAction
 
@@ -77,7 +78,7 @@ struct Router: DynamicProperty {
         }
     }
 
-    // `.dismiss` causes changes on disappear
+    /// `.dismiss` causes changes on disappear
     @Environment(\.self)
     private var environment
 

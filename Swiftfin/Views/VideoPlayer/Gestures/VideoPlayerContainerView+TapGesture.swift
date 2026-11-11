@@ -72,7 +72,6 @@ extension VideoPlayer.UIContainerViewController {
             ()
         case .jump:
             if canMultiTap, let lastTapLocation = viewState.lastTapLocation {
-
                 let (isSameSide, isLeftSide) = pointsAreSameSide(
                     lastTapLocation,
                     location,

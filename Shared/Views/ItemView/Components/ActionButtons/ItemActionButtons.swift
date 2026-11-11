@@ -39,6 +39,7 @@ private struct ItemActionButtonLabelStyle: LabelStyle {
         return activeColor.overlayColor
     }
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         Label(configuration)
             .labelStyle(.iconOnly)
@@ -150,6 +151,7 @@ struct ItemActionButtons: View {
         )
     }
 
+    @ContentBuilder
     static func view(for button: ItemActionButton) -> some View {
         Group {
             switch button {
@@ -183,6 +185,7 @@ struct ItemActionButtons: View {
         .foregroundStyle(.primary, .secondary)
     }
 
+    @ContentBuilder
     var body: some View {
         let hasBarMenu = viewLayout.isLarge && (overflowButtons.isNotEmpty || menuButtons.isNotEmpty)
 
@@ -253,6 +256,7 @@ extension ItemActionButtons {
         let buttons: [ItemActionButton]
         let menuButtons: [ItemActionButton]
 
+        @ContentBuilder
         var body: some View {
             Group {
                 ForEach(

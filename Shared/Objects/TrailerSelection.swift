@@ -12,6 +12,7 @@ import SwiftUI
 struct TrailerSelection: CaseIterable, Displayable, Hashable, Storable {
 
     private enum Options: Int {
+
         case local
         case external
         case none

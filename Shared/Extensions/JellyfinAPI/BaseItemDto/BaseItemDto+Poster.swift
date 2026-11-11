@@ -77,14 +77,17 @@ extension BaseItemDto: Poster {
         }
     }
 
+    @ContentBuilder
     var posterLabel: some View {
         BaseItemDtoPosterLabel(item: self)
     }
 
+    @ContentBuilder
     var posterContextMenu: some View {
         BaseItemDtoPosterContextMenu(item: self)
     }
 
+    @ContentBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         ZStack {
             PosterIndicatorsOverlay(
@@ -185,7 +188,7 @@ extension BaseItemDto: Poster {
         return Array(sources.uniqued())
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func transform(image: Image, displayType: PosterDisplayType) -> some View {
         switch type {
         case .channel, .tvChannel:
@@ -232,6 +235,7 @@ private struct BaseItemDtoPosterContextMenu: View {
         item.userData?.isPlayed == true
     }
 
+    @ContentBuilder
     var body: some View {
         if let itemID = item.id {
             Button(L10n.goToItem, systemImage: "info.circle") {

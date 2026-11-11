@@ -69,6 +69,7 @@ struct LocalUserSecurityView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "lock.fill") {
             securitySection
@@ -139,6 +140,7 @@ struct LocalUserSecurityView: View {
         .errorMessage($error)
     }
 
+    @ContentBuilder
     private var securitySection: some View {
         Section(L10n.security) {
             #if os(iOS)

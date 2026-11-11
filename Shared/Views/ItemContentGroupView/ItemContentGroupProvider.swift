@@ -52,8 +52,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 let changedItem = store?[update.itemID]?.value
 
                 if update.itemID == self.id || changedItem?.seriesID == self.id || changedItem?.seasonID == self.id ||
-                    changedItem?.type == nil
-                {
+                    changedItem?.type == nil {
                     return ContentGroupRefreshRequest()
                 }
 
@@ -102,7 +101,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     @ContentGroupBuilder
     private func _makeGroups(item: BaseItemDto, itemID: String) async throws -> [any ContentGroup] {
-
         if let birthday = item.birthday?.formatted(date: .long, time: .omitted) {
             LabeledContentGroup(
                 L10n.born,

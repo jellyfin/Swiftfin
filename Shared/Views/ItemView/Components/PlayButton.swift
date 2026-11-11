@@ -40,6 +40,7 @@ struct PlayButton: View {
         playMedia(intent: playbackIntent)
     }
 
+    @ContentBuilder
     var body: some View {
         Button {
             play()

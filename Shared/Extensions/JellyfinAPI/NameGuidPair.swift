@@ -27,6 +27,7 @@ extension NameIDPair: LibraryParent {
 
 extension NameIDPair: LibraryElement {
 
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
@@ -48,6 +49,7 @@ private struct NameIDPairLibraryListElement: View {
     let element: NameIDPair
     var action: (() -> Void)?
 
+    @ContentBuilder
     var body: some View {
         Button {
             action?()

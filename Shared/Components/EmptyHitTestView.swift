@@ -10,6 +10,7 @@ import SwiftUI
 
 /// An empty view for hit testing
 struct EmptyHitTestView: PlatformViewRepresentable {
+
     func makeUIView(context: Context) -> UIView {
         UIView()
     }

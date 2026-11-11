@@ -43,6 +43,7 @@ struct ItemImagesView: View {
         viewModel.images[selectedType] ?? []
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -103,6 +104,7 @@ struct ItemImagesView: View {
         .errorMessage($uploadError)
     }
 
+    @ContentBuilder
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -130,7 +132,7 @@ struct ItemImagesView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var imagesView: some View {
         if selectedImages.isNotEmpty {
             CollectionHStack(
@@ -161,6 +163,7 @@ struct ItemImagesView: View {
         }
     }
 
+    @ContentBuilder
     private var typePicker: some View {
         Menu {
             ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
@@ -185,7 +188,7 @@ struct ItemImagesView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var addImageMenu: some View {
         Button(L10n.search, systemImage: "magnifyingglass") {
             router.route(to: .remoteImageSearch(viewModel: viewModel, imageType: selectedType))
@@ -202,7 +205,7 @@ struct ItemImagesView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func imageButton(imageInfo: ImageInfo) -> some View {
         if let userSession = viewModel.userSession {
             Button {
@@ -232,6 +235,7 @@ struct ItemImagesView: View {
         }
     }
 
+    @ContentBuilder
     private var addImageButton: some View {
         Menu {
             addImageMenu

@@ -28,6 +28,7 @@ extension VideoPlayer {
             viewState.visibleElements.contains(.overlayActions) ? viewState.overlayActions : []
         }
 
+        @ContentBuilder
         var body: some View {
             ViewThatFits(in: .horizontal) {
                 buttons(axis: .horizontal)
@@ -47,8 +48,7 @@ extension VideoPlayer {
             .focusSection()
             .onMoveCommand { direction in
                 if direction == .left || direction == .right,
-                   let action = actions.first(where: { $0.id.focusID == focusedAction })
-                {
+                   let action = actions.first(where: { $0.id.focusID == focusedAction }) {
                     dismissOverlayAction(action, towards: direction == .left ? .left : .right)
                 } else if viewState.presentation == .hidden, direction == .up || direction == .down {
                     viewState.showControls()
@@ -68,12 +68,13 @@ extension VideoPlayer {
             #endif
         }
 
+        @ContentBuilder
         private func buttons(axis: Axis) -> some View {
             let layout = axis == .horizontal
                 ? AnyLayout(HStackLayout(spacing: viewLayout.isLarge ? 24 : 12))
                 : AnyLayout(VStackLayout(alignment: .trailing, spacing: 12))
 
-            return layout {
+            layout {
                 ForEach(actions) { action in
                     Button {
                         viewState.performOverlayAction(action.id)
@@ -131,6 +132,7 @@ extension VideoPlayer {
         @Environment(\.accessibilityReduceMotion)
         private var reduceMotion
 
+        @ContentBuilder
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .font(.headline)

@@ -22,7 +22,6 @@ extension DataCache {
 extension DataCache.Swiftfin {
 
     static let posters: DataCache? = {
-
         let dataCache = try? DataCache(name: "org.jellyfin.swiftfin/Posters") { name in
             guard let url = name.url else { return nil }
 
@@ -44,12 +43,10 @@ extension DataCache.Swiftfin {
         let path = root.appendingPathComponent("Caches/org.jellyfin.swiftfin.local", isDirectory: true)
 
         return try? DataCache(path: path) { name in
-
             guard let url = name.url else { return nil }
 
             // Since multi-url servers are supported, key splashscreens with the server ID.
             if url.path.contains("Splashscreen") {
-
                 // Account for hosting at a path
                 guard let prefixURL = url.absoluteString.trimmingSuffix("/Branding/Splashscreen?").url,
                       let server = StoredValues[.Server.servers].first(

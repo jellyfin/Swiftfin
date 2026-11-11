@@ -16,10 +16,10 @@ extension ServerBackupView {
         let backup: BackupManifestDto
         let action: () -> Void
 
+        @ContentBuilder
         var body: some View {
             ChevronButton(action: action) {
                 VStack(alignment: .leading, spacing: 4) {
-
                     Text(URL(fileURLWithPath: backup.path).lastPathComponent)
                         .foregroundStyle(.primary)
                         .fontWeight(.semibold)

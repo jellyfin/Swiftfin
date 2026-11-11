@@ -21,6 +21,7 @@ struct TextSubtitleOverlay: View {
     let videoLayout: VideoPlayer.VideoLayout
     var reportCaptions: (@MainActor ([String]) -> Void)? = TextSubtitleReporting.reportToSystem
 
+    @ContentBuilder
     var body: some View {
         TextSubtitleOverlayContent(snapshot: snapshot, videoLayout: videoLayout)
             .modifier(
@@ -64,6 +65,7 @@ private struct TextSubtitleOverlayContent: View {
         captionStyle = Self.currentSystemStyle
     }
 
+    @ContentBuilder
     var body: some View {
         let pointSize = basePointSize * captionStyle.text.sizeScale.resolved(contentValue: nil)
 

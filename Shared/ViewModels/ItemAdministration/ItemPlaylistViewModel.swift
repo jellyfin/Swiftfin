@@ -16,6 +16,7 @@ final class ItemPlaylistViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         /// The playlists the item should belong to on update.
         case update(playlistIDs: Set<String>, index: Int?)
         case create(name: String)
@@ -32,14 +33,17 @@ final class ItemPlaylistViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case updating
     }
 
     enum Event {
+
         case updated
     }
 
     enum State {
+
         case initial
         case content
         case error

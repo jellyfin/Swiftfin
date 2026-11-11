@@ -48,6 +48,7 @@ private struct PosterAccessibilityModifier<Item: Poster>: ViewModifier {
 
     let item: Item
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         let description = item.posterAccessibility(configuration: posterConfiguration)
 
@@ -62,6 +63,7 @@ private struct PosterAccessibilityModifier<Item: Poster>: ViewModifier {
 extension View {
 
     /// For buttons, apply to the label to preserve native button actions and traits.
+    @ContentBuilder
     func posterAccessibility(for item: some Poster) -> some View {
         modifier(PosterAccessibilityModifier(item: item))
     }

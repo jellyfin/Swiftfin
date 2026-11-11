@@ -37,6 +37,7 @@ struct PosterHStack<
         #endif
     }
 
+    @ContentBuilder
     var body: some View {
         CollectionHStack(
             uniqueElements: elements,

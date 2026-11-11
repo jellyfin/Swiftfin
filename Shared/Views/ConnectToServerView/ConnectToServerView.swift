@@ -48,7 +48,7 @@ struct ConnectToServerView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var connectSection: some View {
         Section(L10n.connectToServer) {
             TextField(L10n.url, text: $url)
@@ -104,6 +104,7 @@ struct ConnectToServerView: View {
 
     // MARK: - Local Servers Section
 
+    @ContentBuilder
     private var localServersSection: some View {
         Section(L10n.localServers) {
             if viewModel.localServers.isEmpty {
@@ -122,6 +123,7 @@ struct ConnectToServerView: View {
         }
     }
 
+    @ContentBuilder
     private var contentView: some View {
         #if os(iOS)
         List {
@@ -146,6 +148,7 @@ struct ConnectToServerView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         contentView
             .navigationTitle(L10n.connect)

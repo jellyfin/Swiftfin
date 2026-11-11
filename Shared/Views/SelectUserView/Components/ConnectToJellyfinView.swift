@@ -21,6 +21,7 @@ extension SelectUserView {
         @Router
         private var router
 
+        @ContentBuilder
         var body: some View {
             #if os(iOS)
             ScrollView {
@@ -36,6 +37,7 @@ extension SelectUserView {
             #endif
         }
 
+        @ContentBuilder
         private var content: some View {
             VStack {
                 Text(L10n.connectToJellyfinServerStart)

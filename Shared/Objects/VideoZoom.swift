@@ -121,8 +121,10 @@ struct VideoZoom {
     }
 
     static func isInFillSnapRange(_ scale: CGFloat, fillScale: CGFloat) -> Bool {
-        guard fillScale > 1.0001, fillScale <= maximumScale,
-              scale > 1, scale <= maximumScale
+        guard fillScale > 1.0001,
+              fillScale <= maximumScale,
+              scale > 1,
+              scale <= maximumScale
         else { return false }
 
         var radius = min(fillScale * 0.05, (fillScale - 1) / 2)
@@ -135,12 +137,14 @@ struct VideoZoom {
     }
 
     struct Transform: Equatable {
+
         let scale: CGFloat
         var offset: CGSize = .zero
     }
 
     /// Require leaving a stop before ticking again
     struct StopFeedback {
+
         private var lastStop: CGFloat?
 
         init(stop: CGFloat? = nil) {

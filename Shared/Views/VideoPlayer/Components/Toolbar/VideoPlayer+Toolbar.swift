@@ -26,6 +26,7 @@ extension VideoPlayer.PlaybackControls {
         @Router
         private var router
 
+        @ContentBuilder
         private var closeButton: some View {
             Button {
                 if viewState.isPresentingSupplement {
@@ -45,9 +46,9 @@ extension VideoPlayer.PlaybackControls {
             .frame(width: viewLayout.toolbarButtonSize, height: viewLayout.toolbarButtonSize)
         }
 
+        @ContentBuilder
         private var content: some View {
             HStack(alignment: viewLayout.value(standard: .center, large: .bottom)) {
-
                 if !viewLayout.isLarge {
                     closeButton
                         .modifier(OverlayBarButtonStyleModifier())
@@ -62,6 +63,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             content
                 .font(.system(size: viewLayout.isLarge ? 30 : 24, weight: .semibold))
@@ -96,6 +98,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             return (title: item.displayTitle, subtitle: nil)
         }
 
+        @ContentBuilder
         private func _subtitle(_ subtitle: String) -> some View {
             Text(subtitle)
                 .font(viewLayout.value(standard: .subheadline, large: .caption))
@@ -104,6 +107,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 .trackingSize($subtitleContentSize)
         }
 
+        @ContentBuilder
         var standardView: some View {
             Text(_titleSubtitle.title)
                 .fontWeight(.semibold)
@@ -116,8 +120,10 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                             .offset(y: subtitleContentSize.height)
                     }
                 }
+                .accessibilityElement(children: .combine)
         }
 
+        @ContentBuilder
         var largeView: some View {
             VStack(alignment: .leading) {
                 if let subtitle = _titleSubtitle.subtitle {

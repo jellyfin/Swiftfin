@@ -11,6 +11,7 @@ import Foundation
 import JellyfinAPI
 
 enum PlaybackBitrateTestSize: Int, CaseIterable, Defaults.Serializable, Displayable {
+
     case largest = 10_000_000
     case larger = 7_500_000
     case regular = 5_000_000

@@ -26,7 +26,7 @@ protocol LibraryElement: Displayable, Hashable, Identifiable {
         in namespace: Namespace.ID
     )
 
-    @ViewBuilder
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?

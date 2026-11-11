@@ -28,6 +28,7 @@ struct ExperimentalSettingsView: View {
     @Injected(\.userSessionManager)
     private var userSessionManager: UserSessionManager
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "flask") {
             // swiftlint:disable hard_coded_display_string
@@ -39,8 +40,7 @@ struct ExperimentalSettingsView: View {
                 .onChange(of: isChromecastEnabled) {
                     if isChromecastEnabled,
                        !Defaults[.VideoPlayer.barActionButtons].contains(.playbackDestination),
-                       !Defaults[.VideoPlayer.menuActionButtons].contains(.playbackDestination)
-                    {
+                       !Defaults[.VideoPlayer.menuActionButtons].contains(.playbackDestination) {
                         Defaults[.VideoPlayer.barActionButtons].append(.playbackDestination)
                     }
                     ChromecastController.updateAvailability()

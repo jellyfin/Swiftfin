@@ -19,7 +19,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
     init(
         data: [any VideoPlayerSupplement],
         selection: Binding<String?>,
-        @ViewBuilder content: @escaping (any VideoPlayerSupplement) -> Content
+        @ContentBuilder content: @escaping (any VideoPlayerSupplement) -> Content
     ) {
         self.data = data
         self.selection = selection
@@ -87,9 +87,9 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             // inside a supplement must remain under the focus engine's control.
             if !context.focusHeading.intersection(focusExitHeading).isEmpty,
                context.previouslyFocusedView?.isDescendant(of: view) == true,
-               let nextView = context.nextFocusedView, !nextView.isDescendant(of: view),
-               let focusExit
-            {
+               let nextView = context.nextFocusedView,
+               !nextView.isDescendant(of: view),
+               let focusExit {
                 DispatchQueue.main.async(execute: focusExit)
                 return false
             }
@@ -114,7 +114,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             selection: String?,
             selectionPresented: @escaping (String) -> Void,
             environment: EnvironmentValues,
-            @ViewBuilder content: (any VideoPlayerSupplement) -> Content
+            @ContentBuilder content: (any VideoPlayerSupplement) -> Content
         ) {
             guard let container else { return }
 

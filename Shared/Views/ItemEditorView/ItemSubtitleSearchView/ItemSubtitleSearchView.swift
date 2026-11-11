@@ -28,6 +28,7 @@ struct ItemSubtitleSearchView: View {
     @State
     private var selectedSubtitles: Set<String> = []
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -77,9 +78,9 @@ struct ItemSubtitleSearchView: View {
         }
     }
 
+    @ContentBuilder
     private var contentView: some View {
         Form(systemImage: "textformat") {
-
             Section(L10n.options) {
                 CulturePicker(L10n.language, threeLetterISOLanguageName: $viewModel.language)
 
@@ -103,7 +104,6 @@ struct ItemSubtitleSearchView: View {
             }
 
             Section(L10n.search) {
-
                 if viewModel.results.isEmpty {
                     if viewModel.background.is(.searching) {
                         ProgressView()

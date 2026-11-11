@@ -16,9 +16,10 @@ extension FocusedValues {
 
 // MARK: - Form Overloads
 
+@ContentBuilder
 func Form(
     systemImage: String,
-    @ViewBuilder content: @escaping () -> some View
+    @ContentBuilder content: @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content) {
         Image(systemName: systemImage)
@@ -28,9 +29,10 @@ func Form(
     }
 }
 
+@ContentBuilder
 func Form(
     image: ImageResource,
-    @ViewBuilder content: @escaping () -> some View
+    @ContentBuilder content: @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content) {
         Image(image)
@@ -40,15 +42,17 @@ func Form(
     }
 }
 
+@ContentBuilder
 func Form(
-    @ViewBuilder content: @escaping () -> some View,
-    @ViewBuilder image: @escaping () -> some View
+    @ContentBuilder content: @escaping () -> some View,
+    @ContentBuilder image: @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content, image: image)
 }
 
 private struct PrimaryToggleStyle: ToggleStyle {
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         Toggle(isOn: configuration.$isOn) {
             configuration.label
@@ -68,13 +72,14 @@ private struct PlatformForm<Image: View, Content: View>: PresentationView {
     private let image: Image
 
     init(
-        @ViewBuilder content: @escaping () -> Content,
-        @ViewBuilder image: @escaping () -> Image
+        @ContentBuilder content: @escaping () -> Content,
+        @ContentBuilder image: @escaping () -> Image
     ) {
         self.content = content()
         self.image = image()
     }
 
+    @ContentBuilder
     var standardView: some View {
         Form {
             content
@@ -82,6 +87,7 @@ private struct PlatformForm<Image: View, Content: View>: PresentationView {
         .toolbarTitleDisplayMode(.inline)
     }
 
+    @ContentBuilder
     var largeView: some View {
         HStack {
             descriptionView
@@ -114,6 +120,7 @@ private struct PlatformForm<Image: View, Content: View>: PresentationView {
         }
     }
 
+    @ContentBuilder
     private var descriptionView: some View {
         ZStack {
             image
@@ -125,6 +132,7 @@ private struct PlatformForm<Image: View, Content: View>: PresentationView {
         .animation(.linear(duration: 0.2), value: focusedLearnMore == nil)
     }
 
+    @ContentBuilder
     private func learnMoreModal(_ content: AnyView) -> some View {
         Marquee(axis: .vertical, resetType: .bounce, speed: 30, fade: 20) {
             VStack(alignment: .leading, spacing: 16) {

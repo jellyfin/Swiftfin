@@ -28,6 +28,7 @@ struct ServerTaskTriggerView: View {
         viewModel.task.triggers?.contains(where: { $0 == taskTriggerInfo }) == true
     }
 
+    @ContentBuilder
     private var dayPicker: some View {
         Picker(
             L10n.dayOfWeek,
@@ -35,6 +36,7 @@ struct ServerTaskTriggerView: View {
         )
     }
 
+    @ContentBuilder
     private var timePicker: some View {
         DatePicker(
             L10n.time,
@@ -53,6 +55,7 @@ struct ServerTaskTriggerView: View {
         )
     }
 
+    @ContentBuilder
     private var intervalPicker: some View {
         HourMinutePicker(
             title: L10n.every,
@@ -65,10 +68,10 @@ struct ServerTaskTriggerView: View {
         )
     }
 
+    @ContentBuilder
     private var contentView: some View {
         Form {
             Section {
-
                 Picker(
                     L10n.type,
                     selection: $taskTriggerInfo.type.coalesce(.startupTrigger)
@@ -114,6 +117,7 @@ struct ServerTaskTriggerView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         contentView
             .animation(.linear(duration: 0.2), value: isDuplicate)

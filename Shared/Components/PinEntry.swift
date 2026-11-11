@@ -10,6 +10,7 @@ import SwiftUI
 
 extension View {
 
+    @ContentBuilder
     func pinEntry(
         isPresented: Binding<Bool>,
         requestID: UUID? = nil,
@@ -45,6 +46,7 @@ private struct PinEntryModifier: ViewModifier {
         completion(result)
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             #if os(tvOS)
@@ -151,8 +153,7 @@ private struct PinTextField: UIViewRepresentable {
                     if let transition = controller?.transitionCoordinator,
                        transition.animate(alongsideTransition: nil, completion: { [weak self] _ in
                            self?.presentIfNeeded()
-                       })
-                    {
+                       }) {
                         return
                     }
                     becomeFirstResponder()

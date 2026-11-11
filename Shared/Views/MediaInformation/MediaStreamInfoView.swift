@@ -13,6 +13,7 @@ struct MediaStreamInfoView: View {
 
     let mediaStream: MediaStream
 
+    @ContentBuilder
     var body: some View {
         Form {
             Section(L10n.details) {

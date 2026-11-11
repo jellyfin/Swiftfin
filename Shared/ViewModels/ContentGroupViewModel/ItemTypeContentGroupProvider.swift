@@ -48,7 +48,6 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
     }
 
     func makeGroups(environment: Environment) async throws -> [any ContentGroup] {
-
         guard environment.filters.isNotEmpty || parent != nil else { return [] }
 
         return itemTypes.map { itemType in

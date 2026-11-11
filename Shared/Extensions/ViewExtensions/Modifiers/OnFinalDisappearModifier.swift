@@ -17,6 +17,7 @@ struct OnFinalDisappearModifier: ViewModifier {
         _observer = StateObject(wrappedValue: Observer(action: action))
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .background {

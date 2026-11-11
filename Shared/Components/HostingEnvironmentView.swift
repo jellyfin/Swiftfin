@@ -17,6 +17,7 @@ struct HostingEnvironmentView<Content: View>: View {
     let content: Content
     var environment: EnvironmentValues
 
+    @ContentBuilder
     var body: some View {
         content
             .environment(\.theme, environment.theme)

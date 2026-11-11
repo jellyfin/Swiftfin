@@ -125,6 +125,7 @@ private struct ColorAccumulator {
 }
 
 private struct ColorSample {
+
     var red: CGFloat
     var green: CGFloat
     var blue: CGFloat
@@ -150,6 +151,7 @@ private struct ColorSample {
 }
 
 private struct ColorBox {
+
     var samples: [ColorSample]
 
     var canSplit: Bool {

@@ -15,6 +15,7 @@ final class PluginRepositoriesViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
         case add(RepositoryInfo)
         case remove(RepositoryInfo)
@@ -32,15 +33,18 @@ final class PluginRepositoriesViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
         case updating
     }
 
     enum Event {
+
         case updated
     }
 
     enum State {
+
         case content
         case error
         case initial

@@ -49,6 +49,7 @@ struct ResetUserPasswordView: View {
         newPassword == confirmNewPassword
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             if requiresCurrentPassword {

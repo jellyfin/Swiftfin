@@ -35,6 +35,7 @@ struct LocalUserAccessPolicyView: View {
         self._updateSignInPolicy = State(initialValue: accessPolicy.wrappedValue)
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             Section {
@@ -47,7 +48,6 @@ struct LocalUserAccessPolicyView: View {
 
                     // frame necessary with bug within BulletedList
                     BulletedList {
-
                         VStack(alignment: .leading, spacing: 5) {
                             Text(LocalUserAccessPolicy.requireDeviceAuthentication.displayTitle)
                                 .fontWeight(.semibold)

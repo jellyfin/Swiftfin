@@ -13,8 +13,7 @@ import SwiftUI
 extension VideoPlayer {
 
     struct PosterCollectionView<Data: RandomAccessCollection, Content: View>: PresentationView
-        where Data.Element: Poster, Data.Index == Int
-    {
+    where Data.Element: Poster, Data.Index == Int {
 
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
@@ -40,7 +39,7 @@ extension VideoPlayer {
             displayType: PosterDisplayType = .landscape,
             size: PosterDisplayType.Size = .small,
             action: @escaping (Data.Element) -> Void,
-            @ViewBuilder content: @escaping (Data.Element) -> Content
+            @ContentBuilder content: @escaping (Data.Element) -> Content
         ) {
             self.data = data
             self.currentElementID = currentElementID
@@ -58,6 +57,7 @@ extension VideoPlayer {
             return element.id == currentElementID
         }
 
+        @ContentBuilder
         private func elementRow(_ element: Data.Element) -> some View {
             ListRow(insets: .init(horizontal: viewLayout.edgePadding)) {
                 PosterImage(item: element, type: displayType, size: size)
@@ -77,6 +77,7 @@ extension VideoPlayer {
             .accessibilityAddTraits(isCurrent(element) ? .isSelected : [])
         }
 
+        @ContentBuilder
         private func elementButton(_ element: Data.Element) -> some View {
             PosterButton(item: element, displayType: displayType, size: size) { _ in
                 action(element)
@@ -85,6 +86,7 @@ extension VideoPlayer {
             .accessibilityAddTraits(isCurrent(element) ? .isSelected : [])
         }
 
+        @ContentBuilder
         var standardView: some View {
             CompactOrRegularView(isCompact: isCompact) {
                 CollectionVGrid(
@@ -125,6 +127,7 @@ extension VideoPlayer {
             }
         }
 
+        @ContentBuilder
         var largeView: some View {
             standardView
         }

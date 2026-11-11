@@ -15,6 +15,7 @@ final class ServerBackupViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
         case createBackup(options: BackupOptionsDto)
         case restore(backup: BackupManifestDto)
@@ -32,16 +33,19 @@ final class ServerBackupViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case creating
         case restoring
     }
 
     enum Event {
+
         case created
         case restored
     }
 
     enum State {
+
         case initial
         case error
         case refreshing

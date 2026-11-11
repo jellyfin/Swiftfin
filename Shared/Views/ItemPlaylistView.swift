@@ -27,9 +27,9 @@ struct ItemPlaylistView: View {
         _viewModel = StateObject(wrappedValue: ItemPlaylistViewModel(item: item))
     }
 
+    @ContentBuilder
     private var contentView: some View {
         Form(systemImage: "list.bullet") {
-
             Section {
                 StateAdapter(initialValue: (isPresented: false, name: "")) { alert in
                     Button(L10n.newPlaylist, systemImage: "plus") {
@@ -93,6 +93,7 @@ struct ItemPlaylistView: View {
         .disabled(viewModel.background.is(.updating))
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {

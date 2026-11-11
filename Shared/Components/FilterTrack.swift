@@ -78,6 +78,7 @@ struct FilterTrack: View {
         viewModel.reset(filterType: nil)
     }
 
+    @ContentBuilder
     private func buttonIcon(for target: FocusTarget) -> some View {
         Image(systemName: target.systemImage)
             #if os(tvOS)
@@ -88,7 +89,7 @@ struct FilterTrack: View {
             #endif
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func buttonLabel(for target: FocusTarget) -> some View {
         let showsTitle = style == .regular || focus.wrappedValue == target
 
@@ -109,6 +110,7 @@ struct FilterTrack: View {
         .frame(width: showsTitle ? nil : 32, alignment: iconEdge == .leading ? .leading : .trailing)
     }
 
+    @ContentBuilder
     private var resetButton: some View {
         #if os(iOS)
         Menu(FocusTarget.reset.title, systemImage: FocusTarget.reset.systemImage) {
@@ -122,6 +124,7 @@ struct FilterTrack: View {
         #endif
     }
 
+    @ContentBuilder
     private func button(for target: FocusTarget) -> some View {
         Group {
             switch target {
@@ -140,6 +143,7 @@ struct FilterTrack: View {
         .accessibilityLabel(target.title)
     }
 
+    @ContentBuilder
     var body: some View {
         ForEach(targets, id: \.self) { target in
             button(for: target)

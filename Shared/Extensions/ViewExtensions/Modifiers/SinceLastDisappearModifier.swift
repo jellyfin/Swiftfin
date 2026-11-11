@@ -15,6 +15,7 @@ struct SinceLastDisappearModifier: ViewModifier {
 
     let action: (TimeInterval) -> Void
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .onAppear {

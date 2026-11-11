@@ -156,8 +156,7 @@ extension VideoPlayer {
                           focusCoordinator.focusedIDs.contains($0.focusID) ||
                               focusCoordinator.lastFocusedIDs.contains($0.focusID)
                       }),
-                      !isOverlayActionFocused
-            {
+                      !isOverlayActionFocused {
                 focusPlaybackControls()
             }
         }
@@ -272,11 +271,12 @@ extension VideoPlayer {
             pendingSupplementFocusID != nil
         }
 
-        // The host fade and container slide can finish in either order. Keep the request
-        // pending until the preferred control receives focus after these transitions.
+        /// The host fade and container slide can finish in either order. Keep the request
+        /// pending until the preferred control receives focus after these transitions.
         func focusSupplementIfNeeded(_ id: String) {
             guard pendingSupplementFocusID == id,
-                  let selectedSupplement, selectedSupplement.id == id
+                  let selectedSupplement,
+                  selectedSupplement.id == id
             else { return }
 
             containerView?.focusSupplementContent()
@@ -414,6 +414,10 @@ extension VideoPlayer {
         var didSwipe: Bool = false
         var lastTapLocation: CGPoint?
 
+        var isAccessibilityFocusOnVideo: Bool = false {
+            didSet { refreshAutoDismiss() }
+        }
+
         func cancelTapGesture() {
             lastTapLocation = nil
             jumpProgressObserver.timer.stop()
@@ -487,8 +491,7 @@ extension VideoPlayer {
                     #if os(tvOS)
                     if let supplement = self.selectedSupplement,
                        self.pendingSupplementFocusID == supplement.id,
-                       focusedIDs.contains(supplement.preferredFocusID)
-                    {
+                       focusedIDs.contains(supplement.preferredFocusID) {
                         self.pendingSupplementFocusID = nil
                     }
                     #endif
@@ -680,6 +683,14 @@ extension VideoPlayer {
                   interactions.isEmpty,
                   mediaSession?.activity == nil,
                   mediaSession?.playbackRequestStatus != .paused else { return false }
+
+            #if os(iOS)
+            // With an assistive technology, the controls are dismissed by
+            // resting focus on the video, so they must not fade while being read.
+            let isAssistiveTechnologyRunning = UIAccessibility.isVoiceOverRunning || UIAccessibility.isSwitchControlRunning
+            guard !isAssistiveTechnologyRunning || isAccessibilityFocusOnVideo else { return false }
+
+            #endif
 
             #if os(tvOS)
             // Menus take focus out of the player, including nested system menus.

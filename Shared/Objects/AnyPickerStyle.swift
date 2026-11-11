@@ -18,6 +18,7 @@ struct AnyPickerStyle {
 }
 
 extension View {
+
     func pickerStyle(_ style: AnyPickerStyle) -> some View {
         func project(_ style: some PickerStyle) -> AnyView {
             AnyView(self.pickerStyle(style))

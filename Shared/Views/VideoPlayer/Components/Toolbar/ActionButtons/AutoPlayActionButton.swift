@@ -49,6 +49,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
         }
 
+        @ContentBuilder
         var body: some View {
             Button {
                 let newValue = !isAutoPlayEnabled

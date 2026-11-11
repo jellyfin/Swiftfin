@@ -29,8 +29,10 @@ extension BaseItemDto {
             imageTags?[type.rawValue]
         }
 
-        guard let itemID, itemID.isNotEmpty,
-              let tag = tag ?? (itemID == id ? imageTag : nil), tag.isNotEmpty,
+        guard let itemID,
+              itemID.isNotEmpty,
+              let tag = tag ?? (itemID == id ? imageTag : nil),
+              tag.isNotEmpty,
               let client = Container.shared.currentUserSession()?.client
         else { return nil }
 

@@ -35,6 +35,7 @@ struct EditMetadataView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         contentView
             .navigationTitle(L10n.metadata)
@@ -78,6 +79,7 @@ struct EditMetadataView: View {
 
     // MARK: - Content View
 
+    @ContentBuilder
     private var contentView: some View {
         Form {
             TitleSection(item: $tempItem)

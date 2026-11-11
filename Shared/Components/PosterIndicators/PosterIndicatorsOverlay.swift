@@ -89,6 +89,7 @@ struct PosterIndicatorsOverlay: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -135,6 +136,7 @@ struct PosterSelectionOverlay: View {
     @Environment(\.isSelected)
     private var isSelected
 
+    @ContentBuilder
     var body: some View {
         if isSelected {
             ContainerRelativeShape()

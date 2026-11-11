@@ -22,6 +22,7 @@ extension ItemSubtitleSearchView {
         let subtitle: RemoteSubtitleInfo
         let action: () -> Void
 
+        @ContentBuilder
         var body: some View {
             Button(action: action) {
                 HStack {

@@ -119,7 +119,7 @@ struct UserSignInView: View {
 
     // MARK: - Sign In Section
 
-    @ViewBuilder
+    @ContentBuilder
     private var signInSection: some View {
         Section {
             TextField(L10n.username, text: $username)
@@ -248,6 +248,7 @@ struct UserSignInView: View {
 
     // MARK: - Public Users Section
 
+    @ContentBuilder
     private var publicUsersSection: some View {
         Section(L10n.publicUsers) {
             if viewModel.publicUsers.isEmpty {
@@ -302,6 +303,7 @@ struct UserSignInView: View {
         .disabled(viewModel.state == .signingIn)
     }
 
+    @ContentBuilder
     private var contentView: some View {
         #if os(iOS)
         List {
@@ -340,6 +342,7 @@ struct UserSignInView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         contentView
             .navigationTitle(L10n.signIn.localizedCapitalized)
@@ -354,7 +357,6 @@ struct UserSignInView: View {
                 isPresented: $isPresentingExistingUser,
                 presenting: existingUser
             ) { existingUser in
-
                 let userState = existingUser.state.state
                 let existingUserAccessPolicy = userState.accessPolicy
 

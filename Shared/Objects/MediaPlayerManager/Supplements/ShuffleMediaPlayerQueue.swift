@@ -21,6 +21,7 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
     private static let refillThreshold = 10
 
     private struct CollectionSource {
+
         var items: [ItemEntry] = []
         var excludedIDs: Set<String> = []
         var isExhausted = false

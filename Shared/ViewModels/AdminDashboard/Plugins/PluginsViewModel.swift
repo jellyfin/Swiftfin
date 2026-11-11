@@ -30,6 +30,7 @@ final class PluginsViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
 
         var transition: Transition {
@@ -42,10 +43,12 @@ final class PluginsViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
     }
 
     enum State {
+
         case content
         case error
         case initial

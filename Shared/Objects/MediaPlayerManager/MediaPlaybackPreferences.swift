@@ -42,7 +42,9 @@ struct MediaPlaybackPreferences {
         return Selection(
             audio: audioIndex,
             subtitle: explicitSubtitle ?? preferredSubtitle(
-                in: subtitles, defaultIndex: source.defaultSubtitleStreamIndex, audioLanguage: audioLanguage
+                in: subtitles,
+                defaultIndex: source.defaultSubtitleStreamIndex,
+                audioLanguage: audioLanguage
             )
         )
     }
@@ -78,7 +80,8 @@ struct MediaPlaybackPreferences {
 
         let forcedIndex = best(
             in: forced.filter { languageRank($0.language, in: forcedLanguages) != nil },
-            languages: forcedLanguages, defaultIndex: defaultIndex
+            languages: forcedLanguages,
+            defaultIndex: defaultIndex
         )?.index ?? -1
 
         switch captions.displayType {
@@ -95,8 +98,10 @@ struct MediaPlaybackPreferences {
                 return defaultIndex
             }
 
-            guard let audioLanguage, let primaryLanguage = preferredLanguages.first,
-                  let audioCode = languageCode(audioLanguage), let preferredCode = languageCode(primaryLanguage)
+            guard let audioLanguage,
+                  let primaryLanguage = preferredLanguages.first,
+                  let audioCode = languageCode(audioLanguage),
+                  let preferredCode = languageCode(primaryLanguage)
             else { return defaultIndex }
             guard audioCode != preferredCode else { return forcedIndex }
 

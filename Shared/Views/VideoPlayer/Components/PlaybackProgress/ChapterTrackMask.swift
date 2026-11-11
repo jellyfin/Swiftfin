@@ -36,6 +36,7 @@ extension VideoPlayer.PlaybackControls.PlaybackProgress {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             GeometryReader { proxy in
                 ZStack(alignment: .leading) {
