@@ -37,38 +37,38 @@ struct CapsuleButtonStyle: ButtonStyle {
             switch controlSize {
             case .mini:
                 self.font = .caption2
-                self.horizontalPadding = 6
-                self.verticalPadding = 2
-                self.minimumHeight = 20
-                self.labelSpacing = 2
+                self.horizontalPadding = UIDevice.isTV ? 12 : 6
+                self.verticalPadding = UIDevice.isTV ? 4 : 2
+                self.minimumHeight = UIDevice.isTV ? 40 : 20
+                self.labelSpacing = UIDevice.isTV ? 4 : 2
 
             case .small:
                 self.font = .footnote
-                self.horizontalPadding = 8
-                self.verticalPadding = 4
-                self.minimumHeight = 26
-                self.labelSpacing = 2
+                self.horizontalPadding = UIDevice.isTV ? 16 : 8
+                self.verticalPadding = UIDevice.isTV ? 8 : 4
+                self.minimumHeight = UIDevice.isTV ? 52 : 26
+                self.labelSpacing = UIDevice.isTV ? 4 : 2
 
             case .regular:
                 self.font = .callout
-                self.horizontalPadding = 10
-                self.verticalPadding = 5
-                self.minimumHeight = 30
-                self.labelSpacing = 4
+                self.horizontalPadding = UIDevice.isTV ? 20 : 10
+                self.verticalPadding = UIDevice.isTV ? 10 : 5
+                self.minimumHeight = UIDevice.isTV ? 60 : 30
+                self.labelSpacing = UIDevice.isTV ? 8 : 4
 
             case .large:
                 self.font = .headline
-                self.horizontalPadding = 12
-                self.verticalPadding = 6
-                self.minimumHeight = 36
-                self.labelSpacing = 5
+                self.horizontalPadding = UIDevice.isTV ? 24 : 12
+                self.verticalPadding = UIDevice.isTV ? 12 : 6
+                self.minimumHeight = UIDevice.isTV ? 72 : 36
+                self.labelSpacing = UIDevice.isTV ? 10 : 5
 
             case .extraLarge:
                 self.font = .title3
-                self.horizontalPadding = 16
-                self.verticalPadding = 8
-                self.minimumHeight = 44
-                self.labelSpacing = 6
+                self.horizontalPadding = UIDevice.isTV ? 32 : 16
+                self.verticalPadding = UIDevice.isTV ? 16 : 8
+                self.minimumHeight = UIDevice.isTV ? 88 : 44
+                self.labelSpacing = UIDevice.isTV ? 12 : 6
 
             @unknown default:
                 self = CapsuleControlMetrics(.regular)
