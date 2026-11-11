@@ -128,6 +128,22 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        private var trailingAccessibilityLabel: String {
+            switch trailingTimestampType {
+            case .timeLeft: L10n.timeLeft
+            case .totalTime: L10n.totalTime
+            }
+        }
+
+        private var trailingAccessibilityValue: String {
+            guard let runtime = mediaSession.item.runtime else { return L10n.unknown }
+
+            return switch trailingTimestampType {
+            case .timeLeft: (runtime - scrubbedSeconds).formatted(.spokenRuntime)
+            case .totalTime: runtime.formatted(.spokenRuntime)
+            }
+        }
+
         @ContentBuilder
         var standardView: some View {
             HStack {
@@ -142,6 +158,9 @@ extension VideoPlayer.PlaybackControls {
                     leadingTimestamp
                 }
                 .foregroundStyle(.primary, .secondary)
+                .accessibilityLabel(L10n.timeElapsed)
+                .accessibilityValue(scrubbedSeconds.formatted(.spokenRuntime))
+                .accessibilityHint(L10n.trailingTimestampAccessibilityHint)
 
                 Spacer()
 
@@ -156,6 +175,9 @@ extension VideoPlayer.PlaybackControls {
                     trailingTimestamp
                 }
                 .foregroundStyle(.primary, .secondary)
+                .accessibilityLabel(trailingAccessibilityLabel)
+                .accessibilityValue(trailingAccessibilityValue)
+                .accessibilityHint(L10n.trailingTimestampAccessibilityHint)
             }
             .font(.caption2)
             .monospacedDigit()

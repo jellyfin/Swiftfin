@@ -49,7 +49,10 @@ struct VideoPlayer: View {
             videoSize: { (mediaSession.player as? any VideoMediaPlayer)?.videoState.videoSize ?? .zero }
         ) { videoLayout in
             if let player = mediaSession.player as? any VideoMediaPlayer {
-                return player.videoPlayerBody(layout: videoLayout).eraseToAnyView()
+                return player.videoPlayerBody(layout: videoLayout)
+                    .eraseToAnyView()
+                    .accessibilityHidden(true)
+                    .eraseToAnyView()
             }
 
             #if os(iOS)
