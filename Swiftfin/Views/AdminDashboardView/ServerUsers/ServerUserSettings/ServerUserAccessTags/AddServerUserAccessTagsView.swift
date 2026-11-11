@@ -63,6 +63,7 @@ struct AddServerUserAccessTagsView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         Form {
             Section(L10n.access) {

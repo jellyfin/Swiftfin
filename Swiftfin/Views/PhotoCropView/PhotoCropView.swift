@@ -33,6 +33,7 @@ struct PhotoCropView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         _PhotoCropView(
             initialImage: image,

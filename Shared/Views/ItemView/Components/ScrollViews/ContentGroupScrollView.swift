@@ -43,6 +43,7 @@ extension ItemView {
             }
         }
 
+        @ContentBuilder
         private var background: some View {
             AlternateLayoutView {
                 Color.clear
@@ -73,6 +74,7 @@ extension ItemView {
             .animation(.linear(duration: 0.2), value: isHeaderFocused)
         }
 
+        @ContentBuilder
         var body: some View {
             ZStack {
                 if viewLayout.isLarge, isEnhanced {

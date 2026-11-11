@@ -17,6 +17,7 @@ struct PluginRepositoriesView: View {
     @Router
     private var router
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -69,6 +70,7 @@ struct PluginRepositoriesView: View {
         .disabled(viewModel.background.is(.updating) || viewModel.background.is(.refreshing))
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {

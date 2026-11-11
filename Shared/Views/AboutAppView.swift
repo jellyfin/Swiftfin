@@ -17,6 +17,7 @@ struct AboutAppView: View {
     @Router
     private var router
 
+    @ContentBuilder
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
             if !viewLayout.isLarge {

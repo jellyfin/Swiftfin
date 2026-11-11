@@ -598,6 +598,7 @@ extension AVMediaPlayer: AVPictureInPictureControllerDelegate {
 
 extension AVMediaPlayer: VideoMediaPlayer {
 
+    @ContentBuilder
     func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
         AVVideoPlayerView(player: self, layout: layout)
     }

@@ -21,6 +21,7 @@ struct EPGTimeRuler: View {
         max(0, Int(viewModel.startDate.distance(to: viewModel.endDate) / (Double(30) * 60)))
     }
 
+    @ContentBuilder
     var body: some View {
         let layout = EPGLayout(viewLayout: viewLayout)
 
@@ -43,7 +44,7 @@ struct EPGTimeRuler: View {
         .frame(height: layout.rulerHeight)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func timestamp(for date: Date) -> some View {
         let components = Calendar.current.dateComponents([.hour, .minute], from: date)
         let isDayStart = components.hour == 0 && components.minute == 0

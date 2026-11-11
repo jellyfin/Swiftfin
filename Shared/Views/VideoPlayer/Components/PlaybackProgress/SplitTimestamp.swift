@@ -60,7 +60,7 @@ extension VideoPlayer.PlaybackControls {
             viewState.scrubbedSeconds
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var playbackStatusIndicator: some View {
             if mediaSession.activity == .loading || mediaSession.playbackState.isBuffering {
                 ProgressView()
@@ -80,6 +80,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        @ContentBuilder
         private var leadingTimestamp: some View {
             HStack(spacing: 2) {
                 Text(scrubbedSeconds, format: .runtime)
@@ -96,6 +97,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        @ContentBuilder
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
                 Group {
@@ -126,6 +128,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        @ContentBuilder
         var standardView: some View {
             HStack {
                 Button {
@@ -160,6 +163,7 @@ extension VideoPlayer.PlaybackControls {
             .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
         }
 
+        @ContentBuilder
         var largeView: some View {
             ZStack {
                 if let runtime = mediaSession.item.runtime {

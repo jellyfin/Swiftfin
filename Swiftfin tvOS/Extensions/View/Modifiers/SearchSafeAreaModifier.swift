@@ -19,6 +19,7 @@ struct SearchSafeAreaModifier: ViewModifier {
     @State
     private var adjustment = SearchSafeAreaAdjustment()
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .introspect(SearchContainerType(), on: .tvOS(.v26...)) { container in

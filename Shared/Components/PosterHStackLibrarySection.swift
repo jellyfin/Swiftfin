@@ -22,6 +22,7 @@ where Library.Element: LibraryElement, Library.Element: Poster {
 
     private struct HeaderButtonStyle: ButtonStyle {
 
+        @ContentBuilder
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .scaleEffect(configuration.isPressed ? 0.97 : 1)
@@ -49,6 +50,7 @@ where Library.Element: LibraryElement, Library.Element: Poster {
         focusedSection == .header
     }
 
+    @ContentBuilder
     private var headerTitle: some View {
         Text(group.displayTitle)
             .font(.title3)
@@ -56,7 +58,7 @@ where Library.Element: LibraryElement, Library.Element: Poster {
             .lineLimit(1)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var header: some View {
         if group.environment.isHeaderButtonEnabled {
             Button(action: routeToLibrary) {
@@ -99,7 +101,7 @@ where Library.Element: LibraryElement, Library.Element: Poster {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var sectionHeader: some View {
         if group.environment.isHeaderButtonEnabled {
             header
@@ -112,6 +114,7 @@ where Library.Element: LibraryElement, Library.Element: Poster {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         if viewModel.elements.isNotEmpty {
             ContentGroupSection {

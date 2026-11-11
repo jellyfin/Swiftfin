@@ -85,6 +85,7 @@ extension ItemActionButtons {
             #endif
         }
 
+        @ContentBuilder
         var body: some View {
             Menu(
                 ItemActionButton.trailers.displayTitle,

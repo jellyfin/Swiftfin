@@ -40,6 +40,7 @@ struct SettingsView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
             serverSection
@@ -56,7 +57,7 @@ struct SettingsView: View {
 
     // MARK: - Server Section
 
-    @ViewBuilder
+    @ContentBuilder
     private var serverSection: some View {
         if let userSession = userSessionManager.currentSession {
             Section {
@@ -123,6 +124,7 @@ struct SettingsView: View {
 
     // MARK: - Customization Section
 
+    @ContentBuilder
     private var customizeSection: some View {
         Section {
             #if os(iOS)
@@ -143,6 +145,7 @@ struct SettingsView: View {
 
     // MARK: - Diagnostics Section
 
+    @ContentBuilder
     private var diagnosticsSection: some View {
         Section {
             if ExperimentalSettingsView.isEnabled {

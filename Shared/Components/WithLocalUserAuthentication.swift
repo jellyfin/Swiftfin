@@ -44,7 +44,7 @@ struct WithLocalUserAuthentication<Content: View>: View {
 
     private let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
+    init(@ContentBuilder content: () -> Content) {
         self.content = content()
     }
 
@@ -109,6 +109,7 @@ struct WithLocalUserAuthentication<Content: View>: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .environment(

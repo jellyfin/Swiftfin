@@ -13,7 +13,7 @@ import SwiftUI
 
 class UIPreferencesHostingController: UIHostingController<AnyView> {
 
-    init(@ViewBuilder content: () -> some View) {
+    init(@ContentBuilder content: () -> some View) {
         #if os(iOS)
         _ = UIViewController.forwardOrientationPreferences
         #endif
@@ -23,7 +23,7 @@ class UIPreferencesHostingController: UIHostingController<AnyView> {
         setContent(content: content)
     }
 
-    func setContent(@ViewBuilder content: () -> some View) {
+    func setContent(@ContentBuilder content: () -> some View) {
         let box = WeakBox(value: self)
 
         rootView = AnyView(

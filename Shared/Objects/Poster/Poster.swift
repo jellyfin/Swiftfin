@@ -36,19 +36,19 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     ) -> [ImageSource]
 
     @MainActor
-    @ViewBuilder
+    @ContentBuilder
     func transform(image: Image, displayType: PosterDisplayType) -> ImageBody
 
     @MainActor
-    @ViewBuilder
+    @ContentBuilder
     var posterLabel: LabelBody { get }
 
     @MainActor
-    @ViewBuilder
+    @ContentBuilder
     var posterContextMenu: ContextMenuBody { get }
 
     @MainActor
-    @ViewBuilder
+    @ContentBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> OverlayBody
 }
 
@@ -131,10 +131,10 @@ extension Poster {
 @MainActor
 extension View {
 
-    @ViewBuilder
+    @ContentBuilder
     func posterContextMenu<Item: Poster>(
         for item: Item,
-        @ViewBuilder preview: @escaping (CGSize) -> some View
+        @ContentBuilder preview: @escaping (CGSize) -> some View
     ) -> some View {
         if Item.ContextMenuBody.self == EmptyView.self {
             self
@@ -143,10 +143,10 @@ extension View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func posterContextMenu<Item: Poster>(
         for item: Item,
-        @ViewBuilder preview: @escaping () -> some View
+        @ContentBuilder preview: @escaping () -> some View
     ) -> some View {
         if Item.ContextMenuBody.self == EmptyView.self {
             self
@@ -168,6 +168,7 @@ private struct SizedPosterContextMenuModifier<Item: Poster, Preview: View>: View
     let item: Item
     let preview: (CGSize) -> Preview
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .trackingSize($size)

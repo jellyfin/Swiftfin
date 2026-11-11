@@ -34,6 +34,7 @@ struct HourMinutePicker: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ChevronButton(
             title,

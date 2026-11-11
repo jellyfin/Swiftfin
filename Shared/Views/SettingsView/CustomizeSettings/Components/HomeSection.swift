@@ -23,6 +23,7 @@ extension CustomizeSettingsView {
         @Default(.Customization.Home.resumeNextUp)
         private var resumeNextUp
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.home) {
                 Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)

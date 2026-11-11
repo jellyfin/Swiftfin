@@ -57,6 +57,7 @@ extension ServerUsersView {
 
         // MARK: - User Image View
 
+        @ContentBuilder
         private var userImage: some View {
             ZStack {
                 UserProfileImage(
@@ -75,6 +76,7 @@ extension ServerUsersView {
 
         // MARK: - Row Content
 
+        @ContentBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {
@@ -110,6 +112,7 @@ extension ServerUsersView {
 
         // MARK: - Body
 
+        @ContentBuilder
         var body: some View {
             ListRow {
                 userImage

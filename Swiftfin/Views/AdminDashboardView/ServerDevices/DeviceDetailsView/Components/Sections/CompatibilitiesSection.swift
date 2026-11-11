@@ -15,6 +15,7 @@ extension DeviceDetailsView {
 
         var device: DeviceInfoDto
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.capabilities) {
                 if let supportsMediaControl = device.capabilities?.isSupportsMediaControl {

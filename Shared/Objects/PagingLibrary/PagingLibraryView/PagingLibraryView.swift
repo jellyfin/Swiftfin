@@ -103,6 +103,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         #endif
     }
 
+    @ContentBuilder
     private var elementsView: some View {
         GeometryReader { geometry in
             CollectionVGrid(
@@ -166,7 +167,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var menuContent: some View {
         if isLibraryStyleSectionVisible {
             LibraryStyleSection(
@@ -187,6 +188,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         }
     }
 
+    @ContentBuilder
     private var libraryContent: some View {
         viewModel.library.makeLibraryBody(viewModel: viewModel) {
             ZStack {
@@ -224,6 +226,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Group {
             #if os(tvOS)

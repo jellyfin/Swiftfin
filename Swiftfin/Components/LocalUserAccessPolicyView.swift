@@ -35,6 +35,7 @@ struct LocalUserAccessPolicyView: View {
         self._updateSignInPolicy = State(initialValue: accessPolicy.wrappedValue)
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             Section {

@@ -28,6 +28,7 @@ struct EditAccessScheduleView: View {
         self.viewModel = viewModel
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             ListTitleSection(
@@ -131,7 +132,7 @@ struct EditAccessScheduleView: View {
         .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var navigationBarSelectView: some View {
         let isAllSelected: Bool = selectedSchedules.count == viewModel.user.policy?.accessSchedules?.count
 
@@ -156,7 +157,7 @@ struct EditAccessScheduleView: View {
         .enabled(isEditing)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var deleteConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 

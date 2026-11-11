@@ -36,6 +36,7 @@ struct SearchView: View {
     @TabItemSelected
     private var tabItemSelected
 
+    @ContentBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions) { item in
@@ -51,6 +52,7 @@ struct SearchView: View {
         .multilineTextAlignment(.center)
     }
 
+    @ContentBuilder
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {

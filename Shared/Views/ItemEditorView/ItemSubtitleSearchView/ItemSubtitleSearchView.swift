@@ -28,6 +28,7 @@ struct ItemSubtitleSearchView: View {
     @State
     private var selectedSubtitles: Set<String> = []
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -77,6 +78,7 @@ struct ItemSubtitleSearchView: View {
         }
     }
 
+    @ContentBuilder
     private var contentView: some View {
         Form(systemImage: "textformat") {
             Section(L10n.options) {

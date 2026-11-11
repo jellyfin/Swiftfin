@@ -75,6 +75,7 @@ struct AddAccessScheduleView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form {
             Section(L10n.dayOfWeek) {

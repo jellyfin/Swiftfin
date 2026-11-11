@@ -30,8 +30,8 @@ struct ListRow<Leading: View, Content: View>: View {
 
     init(
         insets: EdgeInsets = .zero,
-        @ViewBuilder leading: @escaping () -> Leading,
-        @ViewBuilder content: @escaping () -> Content,
+        @ContentBuilder leading: @escaping () -> Leading,
+        @ContentBuilder content: @escaping () -> Content,
         action: @escaping () -> Void = {}
     ) {
         self.action = action
@@ -40,6 +40,7 @@ struct ListRow<Leading: View, Content: View>: View {
         self.leading = leading()
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Button(action: action) {

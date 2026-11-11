@@ -14,6 +14,7 @@ struct FormItemSection<Item: Poster>: PresentationView {
     @SharedPoster
     var item: Item
 
+    @ContentBuilder
     var standardView: some View {
         Section {
             HStack(alignment: .bottom, spacing: 12) {
@@ -58,6 +59,7 @@ struct FormItemSection<Item: Poster>: PresentationView {
         #endif
     }
 
+    @ContentBuilder
     var largeView: some View {
         Section(L10n.media) {
             if let baseItem = item as? BaseItemDto,

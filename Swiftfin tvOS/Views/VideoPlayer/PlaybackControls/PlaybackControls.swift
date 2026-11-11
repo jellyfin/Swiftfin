@@ -38,6 +38,7 @@ extension VideoPlayer {
         @Toaster
         var toaster: ToastProxy
 
+        @ContentBuilder
         var body: some View {
             @Bindable
             var viewState = viewState

@@ -119,6 +119,7 @@ struct _UnmaskSecureField: PlatformViewRepresentable {
 
 extension _UnmaskSecureField {
 
+    @ContentBuilder
     func onSubmit(_ action: @escaping () -> Void) -> some View {
         copy(modifying: \.submitAction, with: action)
     }

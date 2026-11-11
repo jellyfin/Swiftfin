@@ -17,8 +17,8 @@ struct ContentGroupSection<Header: View, Content: View>: View {
     private let header: Header
 
     init(
-        @ViewBuilder content: () -> Content,
-        @ViewBuilder header: () -> Header
+        @ContentBuilder content: () -> Content,
+        @ContentBuilder header: () -> Header
     ) {
         self.content = content()
         self.header = header()
@@ -28,6 +28,7 @@ struct ContentGroupSection<Header: View, Content: View>: View {
         viewLayout.value(standard: 15, large: 30)
     }
 
+    @ContentBuilder
     var body: some View {
         VStack(alignment: .leading, spacing: spacing) {
             Section {

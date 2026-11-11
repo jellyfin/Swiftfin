@@ -28,6 +28,7 @@ struct ExperimentalSettingsView: View {
     @Injected(\.userSessionManager)
     private var userSessionManager: UserSessionManager
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "flask") {
             // swiftlint:disable hard_coded_display_string

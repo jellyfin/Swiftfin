@@ -30,6 +30,7 @@ struct CreateServerBackupView: View {
             .contains(true)
     }
 
+    @ContentBuilder
     var body: some View {
         Form {
             Section {

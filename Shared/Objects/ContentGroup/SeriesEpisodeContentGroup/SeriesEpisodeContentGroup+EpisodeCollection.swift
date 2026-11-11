@@ -41,10 +41,11 @@ extension SeriesEpisodeContentGroup {
 
         let header: Header
 
-        init(@ViewBuilder header: () -> Header) {
+        init(@ContentBuilder header: () -> Header) {
             self.header = header()
         }
 
+        @ContentBuilder
         var body: some View {
             EpisodeCollectionLayout(
                 elements: EpisodeElement.loadingElements,
@@ -70,7 +71,7 @@ extension SeriesEpisodeContentGroup {
         init(
             seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>,
             playButtonItem: BaseItemDto?,
-            @ViewBuilder header: () -> Header
+            @ContentBuilder header: () -> Header
         ) {
             self.seasonViewModel = seasonViewModel
             self.playButtonItem = playButtonItem
@@ -103,6 +104,7 @@ extension SeriesEpisodeContentGroup {
             return elements.first?.id
         }
 
+        @ContentBuilder
         var body: some View {
             EpisodeCollectionLayout(
                 elements: elements,
@@ -140,8 +142,8 @@ extension SeriesEpisodeContentGroup {
         init(
             elements: [EpisodeElement],
             preferredElementID: EpisodeElement.ID?,
-            @ViewBuilder header: () -> Header,
-            @ViewBuilder content: @escaping (EpisodeElement) -> Content
+            @ContentBuilder header: () -> Header,
+            @ContentBuilder content: @escaping (EpisodeElement) -> Content
         ) {
             self.elements = elements
             self.preferredElementID = preferredElementID
@@ -157,6 +159,7 @@ extension SeriesEpisodeContentGroup {
             )
         }
 
+        @ContentBuilder
         var body: some View {
             ContentGroupSection {
                 CollectionHStack(
@@ -200,6 +203,7 @@ extension SeriesEpisodeContentGroup {
         let element: EpisodeElement
         let refresh: () -> Void
 
+        @ContentBuilder
         var body: some View {
             switch element {
             case .empty:

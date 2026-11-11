@@ -15,6 +15,7 @@ extension EditMetadataView {
 
         let item: Binding<BaseItemDto>
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.parentalRating) {
                 ParentalRatingPicker(L10n.officialRating, name: item.officialRating)

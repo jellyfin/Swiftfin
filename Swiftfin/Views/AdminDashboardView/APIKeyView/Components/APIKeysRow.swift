@@ -22,6 +22,7 @@ extension APIKeysView {
         let deleteAction: () -> Void
         let replaceAction: () -> Void
 
+        @ContentBuilder
         private var rowContent: some View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(apiKey.appName ?? L10n.unknown)
@@ -44,6 +45,7 @@ extension APIKeysView {
             .multilineTextAlignment(.leading)
         }
 
+        @ContentBuilder
         var body: some View {
             apiKey.shareLink {
                 rowContent

@@ -22,6 +22,7 @@ struct QuickConnectView: View {
     let client: JellyfinClient
     let action: (String) async -> Void
 
+    @ContentBuilder
     private func pollingView(code: String) -> some View {
         VStack(spacing: 20) {
             BulletedList(spacing: 16) {
@@ -46,6 +47,7 @@ struct QuickConnectView: View {
         .edgePadding()
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             if let error {

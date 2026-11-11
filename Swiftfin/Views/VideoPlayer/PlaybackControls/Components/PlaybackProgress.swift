@@ -23,6 +23,7 @@ extension VideoPlayer.PlaybackControls {
 
         private struct GlassSliderStyle: SliderContainerStyle {
 
+            @ContentBuilder
             func makeBody(configuration: SliderContainerStyleConfiguration) -> some View {
                 CapsuleSliderStyle()
                     .makeBody(configuration: configuration)
@@ -107,6 +108,7 @@ extension VideoPlayer.PlaybackControls {
             return total
         }
 
+        @ContentBuilder
         private var liveIndicator: some View {
             Text(L10n.live)
                 .font(.subheadline)
@@ -120,6 +122,7 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
+        @ContentBuilder
         private var slowScrubbingIndicator: some View {
             HStack {
                 Image(systemName: "backward.fill")
@@ -129,6 +132,7 @@ extension VideoPlayer.PlaybackControls {
             .font(.caption)
         }
 
+        @ContentBuilder
         private var capsuleSlider: some View {
             AlternateLayoutView {
                 EmptyHitTestView()
@@ -178,6 +182,7 @@ extension VideoPlayer.PlaybackControls {
             .disabled(!mediaSession.canSeek)
         }
 
+        @ContentBuilder
         var body: some View {
             VStack(spacing: 5) {
                 if mediaSession.item.isLiveStream {

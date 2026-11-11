@@ -26,6 +26,7 @@ struct ServerActivityView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -76,7 +77,7 @@ struct ServerActivityView: View {
 
     // MARK: - Content View
 
-    @ViewBuilder
+    @ContentBuilder
     private var contentView: some View {
         if viewModel.elements.isEmpty {
             Text(L10n.none)
@@ -116,6 +117,7 @@ struct ServerActivityView: View {
 
     // MARK: - User Filter Button
 
+    @ContentBuilder
     private var userFilterButton: some View {
         Picker(selection: $viewModel.environment.hasUserID) {
             Label(
@@ -152,6 +154,7 @@ struct ServerActivityView: View {
 
     // MARK: - Start Date Button
 
+    @ContentBuilder
     private var startDateButton: some View {
         Button {
             router.route(to: .activityFilters(environment: $viewModel.environment))

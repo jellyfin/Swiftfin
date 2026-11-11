@@ -25,7 +25,7 @@ struct CapsuleProgressViewStyle: ProgressViewStyle {
     var showsProgress = true
     var neutralProgress: Double?
 
-    @ViewBuilder
+    @ContentBuilder
     private func buildCapsule(for progress: Double) -> some View {
         let width = contentSize.width.isFinite ? max(0, contentSize.width) : 0
         let height = contentSize.height.isFinite ? max(0, contentSize.height) : 0
@@ -48,6 +48,7 @@ struct CapsuleProgressViewStyle: ProgressViewStyle {
         }
     }
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         Capsule()
             .foregroundStyle(.secondary)

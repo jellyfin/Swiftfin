@@ -33,6 +33,7 @@ struct ServerActivityFilterView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         List {
             Section {

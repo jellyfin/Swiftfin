@@ -24,6 +24,7 @@ struct GaugeProgressViewStyle: ProgressViewStyle {
         self.systemImage = systemImage
     }
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             if let systemImage {

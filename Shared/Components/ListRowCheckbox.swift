@@ -27,6 +27,7 @@ struct ListRowCheckbox: View {
         viewLayout.value(standard: 24, large: 36)
     }
 
+    @ContentBuilder
     var body: some View {
         if isEditing {
             if isSelected {

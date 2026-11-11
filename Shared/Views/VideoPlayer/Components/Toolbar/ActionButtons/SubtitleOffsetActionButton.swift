@@ -20,6 +20,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @Environment(MediaSession.self)
         private var mediaSession
 
+        @ContentBuilder
         private var primaryOffsetButton: some View {
             Button {
                 viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.subtitleOffset)
@@ -37,6 +38,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             if mediaSession.playbackItem?.supportsSecondarySubtitles == true {
                 Menu(L10n.subtitleOffset, systemImage: VideoPlayerActionButton.subtitleOffset.systemImage) {

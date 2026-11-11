@@ -29,6 +29,7 @@ struct CinematicSelectionContentGroup: ContentGroup {
         )
     }
 
+    @ContentBuilder
     func body(with viewModel: CinematicSelectionContentGroupViewModel) -> some View {
         SelectionView(viewModel: viewModel)
     }
@@ -71,6 +72,7 @@ struct CinematicSelectionContentGroup: ContentGroup {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             let items = viewModel.hasResumeItems ? viewModel.resumeViewModel.elements.elements : viewModel.recentlyAddedViewModel.elements
                 .elements
@@ -111,6 +113,7 @@ struct CinematicRecentlyAddedContentGroup: ContentGroup {
         viewModel.hasResumeItems && viewModel.recentlyAddedViewModel.elements.isNotEmpty
     }
 
+    @ContentBuilder
     func body(with viewModel: CinematicSelectionContentGroupViewModel) -> some View {
         PosterHStackLibrarySection(
             viewModel: viewModel.recentlyAddedViewModel,

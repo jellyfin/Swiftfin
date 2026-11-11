@@ -23,6 +23,7 @@ struct SectionFooterWithImageLabelStyle<ImageStyle: ShapeStyle>: LabelStyle {
 
     let imageStyle: ImageStyle
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 8) {
             configuration.icon

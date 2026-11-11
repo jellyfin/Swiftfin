@@ -25,6 +25,7 @@ struct ImageView<_Image: View, Placeholder: View, Failure: View>: View {
     private var placeholder: (ImageSource) -> Placeholder
     private var failure: Failure
 
+    @ContentBuilder
     var body: some View {
         if let currentSource = sources.first {
             LazyImage(url: currentSource.url, transaction: .init(animation: .linear)) { state in
@@ -85,7 +86,7 @@ extension ImageView where _Image == Image, Placeholder == DefaultPlaceholderView
 extension ImageView {
 
     func image<NewImage: View>(
-        @ViewBuilder _ content: @escaping (UIImage) -> NewImage
+        @ContentBuilder _ content: @escaping (UIImage) -> NewImage
     ) -> ImageView<NewImage, Placeholder, Failure> {
         ImageView<NewImage, Placeholder, Failure>(
             sources: sources,
@@ -97,7 +98,7 @@ extension ImageView {
     }
 
     func image<NewImage: View>(
-        @ViewBuilder _ content: @escaping (Image) -> NewImage
+        @ContentBuilder _ content: @escaping (Image) -> NewImage
     ) -> ImageView<NewImage, Placeholder, Failure> {
         ImageView<NewImage, Placeholder, Failure>(
             sources: sources,
@@ -113,7 +114,7 @@ extension ImageView {
     }
 
     func placeholder<NewPlaceholder: View>(
-        @ViewBuilder _ content: @escaping (ImageSource) -> NewPlaceholder
+        @ContentBuilder _ content: @escaping (ImageSource) -> NewPlaceholder
     ) -> ImageView<_Image, NewPlaceholder, Failure> {
         ImageView<_Image, NewPlaceholder, Failure>(
             sources: sources,
@@ -125,7 +126,7 @@ extension ImageView {
     }
 
     func failure<NewFailure: View>(
-        @ViewBuilder _ content: @escaping () -> NewFailure
+        @ContentBuilder _ content: @escaping () -> NewFailure
     ) -> ImageView<_Image, Placeholder, NewFailure> {
         ImageView<_Image, Placeholder, NewFailure>(
             sources: sources,
@@ -143,6 +144,7 @@ struct DefaultPlaceholderView: View {
 
     let blurHash: String?
 
+    @ContentBuilder
     var body: some View {
         if let blurHash {
             Image(

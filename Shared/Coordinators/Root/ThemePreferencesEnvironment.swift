@@ -17,10 +17,11 @@ struct ThemePreferencesEnvironment<Content: View>: View {
 
     private let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
+    init(@ContentBuilder content: () -> Content) {
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .modifier(StoredThemePreferencesModifier(userID: userSessionManager.currentSession?.user.id))
@@ -63,6 +64,7 @@ private struct StoredThemePreferencesModifier: ViewModifier {
         #endif
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .background {

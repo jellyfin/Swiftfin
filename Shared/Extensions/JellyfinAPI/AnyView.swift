@@ -10,10 +10,12 @@ import SwiftUI
 
 extension AnyView: PresentationView {
 
+    @ContentBuilder
     var standardView: some View {
         self
     }
 
+    @ContentBuilder
     var largeView: some View {
         self
     }

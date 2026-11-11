@@ -31,9 +31,10 @@ struct NotchReader<Content: View>: View {
     @State
     private var measurement: NotchMeasurement?
 
-    @ViewBuilder
+    @ContentBuilder
     let content: (NotchMeasurement?) -> Content
 
+    @ContentBuilder
     var body: some View {
         content(measurement)
             .overlay {

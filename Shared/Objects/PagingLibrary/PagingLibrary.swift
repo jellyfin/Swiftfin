@@ -82,10 +82,10 @@ protocol PagingLibrary<Element> {
     /// Reloads when user data can change this library's membership or ordering
     func shouldRefreshForUserDataChange(environment: Environment) -> Bool
 
-    @ViewBuilder
+    @ContentBuilder
     func makeLibraryBody(
         viewModel: PagingLibraryViewModel<Self>,
-        @ViewBuilder content: @escaping () -> some View
+        @ContentBuilder content: @escaping () -> some View
     ) -> AnyView
 
     func libraryStyleOptions(environment: Environment) -> LibraryStyleOptions
@@ -130,7 +130,7 @@ extension PagingLibrary {
 
     func makeLibraryBody(
         viewModel: PagingLibraryViewModel<Self>,
-        @ViewBuilder content: @escaping () -> some View
+        @ContentBuilder content: @escaping () -> some View
     ) -> AnyView {
         content()
             .eraseToAnyView()

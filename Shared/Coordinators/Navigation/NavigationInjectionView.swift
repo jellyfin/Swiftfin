@@ -33,12 +33,13 @@ struct NavigationInjectionView: View {
 
     init(
         coordinator: @autoclosure @escaping () -> NavigationCoordinator,
-        @ViewBuilder content: @escaping () -> some View
+        @ContentBuilder content: @escaping () -> some View
     ) {
         _coordinator = StateObject(wrappedValue: coordinator())
         self.content = AnyView(content())
     }
 
+    @ContentBuilder
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             content

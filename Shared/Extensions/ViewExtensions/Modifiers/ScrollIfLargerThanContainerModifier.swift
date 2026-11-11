@@ -19,6 +19,7 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
     let padding: CGFloat
     let alignment: Alignment
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         AlternateLayoutView(alignment: alignment) {
             Color.clear

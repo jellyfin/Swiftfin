@@ -133,6 +133,7 @@ struct EasedGradient: View, ShapeStyle {
         )
     }
 
+    @ContentBuilder
     var body: some View {
         linearGradient
     }

@@ -30,6 +30,7 @@ struct ItemRefreshView: View {
     @State
     private var regenerateTrickplay: Bool = false
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -65,6 +66,7 @@ struct ItemRefreshView: View {
         #endif
     }
 
+    @ContentBuilder
     private var contentView: some View {
         Form(systemImage: "arrow.clockwise") {
             Section {

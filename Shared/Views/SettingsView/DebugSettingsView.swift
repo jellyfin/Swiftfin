@@ -20,6 +20,7 @@ struct DebugSettingsView: View {
     @Default(.sendProgressReports)
     private var sendProgressReports
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "ladybug") {
             Section(L10n.settings) {

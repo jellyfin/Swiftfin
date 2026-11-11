@@ -15,6 +15,7 @@ struct AdminDashboardView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         List {
             ListTitleSection(

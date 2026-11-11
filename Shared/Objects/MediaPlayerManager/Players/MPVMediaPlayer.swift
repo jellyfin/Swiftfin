@@ -212,6 +212,7 @@ extension MPVMediaPlayer: VideoMediaPlayer {
         }
     }
 
+    @ContentBuilder
     func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
         MPVVideoPlayerView(player: player, textSubtitles: textSubtitles, layout: layout, isPictureInPictureActive: isPiPActive)
     }

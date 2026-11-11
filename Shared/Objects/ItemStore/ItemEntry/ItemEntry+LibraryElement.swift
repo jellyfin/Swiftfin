@@ -21,7 +21,7 @@ extension ItemEntry: @MainActor LibraryElement {
         value.libraryDidSelectElement(router: router, in: namespace, grouping: grouping)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func makeBody(libraryStyle: LibraryStyle, action: (() -> Void)?) -> some View {
         if let value {
             value.makeBody(libraryStyle: libraryStyle, action: action, grouping: grouping)

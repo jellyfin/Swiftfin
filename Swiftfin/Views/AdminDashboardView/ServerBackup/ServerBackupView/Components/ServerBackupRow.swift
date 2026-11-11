@@ -16,6 +16,7 @@ extension ServerBackupView {
         let backup: BackupManifestDto
         let action: () -> Void
 
+        @ContentBuilder
         var body: some View {
             ChevronButton(action: action) {
                 VStack(alignment: .leading, spacing: 4) {

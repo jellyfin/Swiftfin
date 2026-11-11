@@ -41,12 +41,13 @@ struct SafeRegion<ID: Hashable, Content: View>: View {
     init(
         _ idType: ID.Type = Never.self,
         systemInsets: SafeRegionSystemInsets = .automatic,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.systemInsets = systemInsets
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         GeometryReader { geometry in
             RegionLayout<ID>(systemInsets: resolvedInsets(geometry)) {
@@ -81,7 +82,7 @@ struct SafeRegionItem<ID: Hashable, Content: View>: View {
         _ idType: ID.Type = Never.self,
         alignment: Alignment = .center,
         clipsContent: Bool = true,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.alignment = alignment
         self.clipsContent = clipsContent
@@ -106,6 +107,7 @@ struct SafeRegionItem<ID: Hashable, Content: View>: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         BoundedContentLayout(fillsProposal: true, anchor: regionAnchor(alignment)) {
             ZStack(alignment: alignment) { content }
@@ -132,7 +134,7 @@ struct SafeRegionInset<ID: Hashable, Content: View>: View {
         id: ID? = Never?.none,
         isActive: Bool = true,
         clipsContent: Bool = true,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.edge = edge
         self.spacing = spacing
@@ -148,6 +150,7 @@ struct SafeRegionInset<ID: Hashable, Content: View>: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         BoundedContentLayout(fillsProposal: false, anchor: regionAnchor(edge.alignment)) {
             content
@@ -187,6 +190,7 @@ private struct RegionClipping: ViewModifier {
 
     let isEnabled: Bool
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         if isEnabled {
             content.clipped()

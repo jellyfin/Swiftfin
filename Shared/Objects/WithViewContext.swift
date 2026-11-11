@@ -54,10 +54,12 @@ struct ViewContextContains: DynamicProperty {
 
 extension View {
 
+    @ContentBuilder
     func withViewContext(_ context: ViewContext) -> some View {
         modifier(InsertingViewContextModifier(insertingContext: context))
     }
 
+    @ContentBuilder
     func removingViewContext(_ context: ViewContext) -> some View {
         modifier(RemovingViewContextModifier(removingContext: context))
     }
@@ -70,6 +72,7 @@ private struct InsertingViewContextModifier: ViewModifier {
 
     let insertingContext: ViewContext
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content.environment(\.viewContext, environmentContext.inserting(insertingContext))
     }
@@ -82,6 +85,7 @@ private struct RemovingViewContextModifier: ViewModifier {
 
     let removingContext: ViewContext
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content.environment(\.viewContext, environmentContext.removing(removingContext))
     }

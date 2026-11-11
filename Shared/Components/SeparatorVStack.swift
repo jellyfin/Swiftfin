@@ -20,6 +20,7 @@ struct SeparatorVStack<Content: View, Separator: View>: View {
     private let content: Content
     private let separator: Separator
 
+    @ContentBuilder
     var body: some View {
         _VariadicView.Tree(
             SeparatorVStackLayout(
@@ -36,8 +37,8 @@ extension SeparatorVStack {
 
     init(
         alignment: HorizontalAlignment = .center,
-        @ViewBuilder separator: @escaping () -> Separator,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder separator: @escaping () -> Separator,
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.init(
             alignment: alignment,
@@ -54,7 +55,7 @@ extension SeparatorVStack {
         let alignment: HorizontalAlignment
         let separator: Separator
 
-        @ViewBuilder
+        @ContentBuilder
         func body(children: _VariadicView.Children) -> some View {
             let last = children.last?.id
 

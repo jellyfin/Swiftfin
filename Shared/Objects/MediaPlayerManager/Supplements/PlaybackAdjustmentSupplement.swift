@@ -27,6 +27,7 @@ struct PlaybackAdjustmentSupplement {
 
 extension PlaybackAdjustmentSupplement: VideoPlayerSupplement {
 
+    @ContentBuilder
     var body: some View {
         AdjustmentView(supplement: self)
     }
@@ -44,6 +45,7 @@ extension PlaybackAdjustmentSupplement: VideoPlayerSupplement {
 
         let supplement: PlaybackAdjustmentSupplement
 
+        @ContentBuilder
         private var content: some View {
             PlaybackAdjustmentSlider(
                 value: supplement.value(mediaSession),
@@ -65,10 +67,12 @@ extension PlaybackAdjustmentSupplement: VideoPlayerSupplement {
             .padding(.bottom, viewState.supplementInsets.bottom)
         }
 
+        @ContentBuilder
         var standardView: some View {
             content
         }
 
+        @ContentBuilder
         var largeView: some View {
             content
                 .focusSection()

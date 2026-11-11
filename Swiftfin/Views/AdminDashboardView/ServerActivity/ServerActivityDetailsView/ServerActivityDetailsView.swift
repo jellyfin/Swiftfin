@@ -23,6 +23,7 @@ struct ServerActivityDetailsView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         List {
             // Item (If Available)

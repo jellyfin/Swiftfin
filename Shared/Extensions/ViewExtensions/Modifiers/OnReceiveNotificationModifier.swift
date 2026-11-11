@@ -13,6 +13,7 @@ struct OnReceiveNotificationModifier<P, K: Notifications.Key<P>>: ViewModifier {
     let key: K
     let onReceive: (P) -> Void
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .onReceive(key.publisher, perform: onReceive)

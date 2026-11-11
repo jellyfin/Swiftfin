@@ -26,6 +26,7 @@ struct EditLocalServerView: View {
         self.isDeletePresented = isDeletePresented
     }
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "server.rack") {
             Section(L10n.server) {

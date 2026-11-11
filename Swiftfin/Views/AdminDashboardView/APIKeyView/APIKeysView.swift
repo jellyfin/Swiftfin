@@ -22,6 +22,7 @@ struct APIKeysView: View {
     @StateObject
     private var viewModel = APIKeysViewModel()
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -47,6 +48,7 @@ struct APIKeysView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {

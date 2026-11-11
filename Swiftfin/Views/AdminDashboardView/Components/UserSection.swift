@@ -22,6 +22,7 @@ extension AdminDashboardView {
         let lastActivityDate: Date?
         let action: (() -> Void)?
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.user) {
                 if let action {

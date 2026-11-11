@@ -24,6 +24,7 @@ struct ServerTaskDetailsView: View {
         viewModel.task.state == .running || viewModel.task.state == .cancelling
     }
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -97,6 +98,7 @@ struct ServerTaskDetailsView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         contentView
             .animation(.linear(duration: 0.1), value: viewModel.task.state)

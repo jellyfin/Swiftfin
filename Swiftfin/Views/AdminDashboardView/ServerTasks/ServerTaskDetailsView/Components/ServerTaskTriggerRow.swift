@@ -61,6 +61,7 @@ extension ServerTaskDetailsView {
             return L10n.unknown
         }
 
+        @ContentBuilder
         private var contentView: some View {
             HStack {
                 VStack(alignment: .leading) {
@@ -89,6 +90,7 @@ extension ServerTaskDetailsView {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             contentView
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {

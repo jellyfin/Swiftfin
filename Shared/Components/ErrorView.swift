@@ -42,6 +42,7 @@ struct ErrorView<ErrorType: Error>: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         VStack {
             Image(systemName: systemImage)

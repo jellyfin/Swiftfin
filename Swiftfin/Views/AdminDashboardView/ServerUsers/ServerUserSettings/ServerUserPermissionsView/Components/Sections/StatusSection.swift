@@ -16,6 +16,7 @@ extension ServerUserPermissionsView {
         @Binding
         var policy: UserPolicy
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.status) {
                 Toggle(L10n.active, isOn: Binding(

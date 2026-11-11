@@ -24,6 +24,7 @@ extension SettingsView {
 
         var action: (() -> Void)?
 
+        @ContentBuilder
         var body: some View {
             Button {
                 action?()

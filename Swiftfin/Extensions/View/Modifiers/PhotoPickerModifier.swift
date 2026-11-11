@@ -25,6 +25,7 @@ struct PhotoPickerModifier: ViewModifier {
     let presetRatio: Mantis.PresetFixedRatioType
     let onSave: (UIImage) -> Void
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .photosPicker(

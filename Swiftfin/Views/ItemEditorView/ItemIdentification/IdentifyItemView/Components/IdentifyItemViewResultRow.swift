@@ -21,6 +21,7 @@ extension IdentifyItemView {
                 .appending(" (\(result.premiereDate!.formatted(.dateTime.year())))", if: result.premiereDate != nil)
         }
 
+        @ContentBuilder
         var body: some View {
             Button(action: action) {
                 HStack {

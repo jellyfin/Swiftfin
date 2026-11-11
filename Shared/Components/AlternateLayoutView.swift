@@ -22,8 +22,8 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
 
     init(
         alignment: Alignment = .center,
-        @ViewBuilder layout: @escaping () -> Layout,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder layout: @escaping () -> Layout,
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.alignment = alignment
         self.content = { _ in content() }
@@ -34,8 +34,8 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
 
     init(
         alignment: Alignment = .center,
-        @ViewBuilder layout: @escaping () -> Layout,
-        @ViewBuilder content: @escaping (CGSize) -> Content
+        @ContentBuilder layout: @escaping () -> Layout,
+        @ContentBuilder content: @escaping (CGSize) -> Content
     ) {
         self.alignment = alignment
         self.content = { frame in content(frame.frame.size) }
@@ -46,8 +46,8 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
 
     init(
         alignment: Alignment = .center,
-        @ViewBuilder layout: @escaping () -> Layout,
-        @ViewBuilder content: @escaping (FrameAndSafeAreaInsets) -> Content
+        @ContentBuilder layout: @escaping () -> Layout,
+        @ContentBuilder content: @escaping (FrameAndSafeAreaInsets) -> Content
     ) {
         self.alignment = alignment
         self.content = content
@@ -56,6 +56,7 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
         self.passLayoutSize = true
     }
 
+    @ContentBuilder
     var body: some View {
         layout
             .hidden()

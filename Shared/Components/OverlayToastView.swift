@@ -34,7 +34,7 @@ struct OverlayToastView<Content: View>: View {
     }
 
     init(
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self._toastProxy = StateObject(wrappedValue: .init())
         self.content = content()
@@ -42,12 +42,13 @@ struct OverlayToastView<Content: View>: View {
 
     init(
         proxy: ToastProxy,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self._toastProxy = StateObject(wrappedValue: proxy)
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack(alignment: .top) {
             content
@@ -76,6 +77,7 @@ struct OverlayToastContent: View {
     @EnvironmentObject
     private var proxy: ToastProxy
 
+    @ContentBuilder
     var body: some View {
         #if os(tvOS)
         content
@@ -89,6 +91,7 @@ struct OverlayToastContent: View {
         #endif
     }
 
+    @ContentBuilder
     private var content: some View {
         HStack {
             if let systemName = proxy.systemName {
@@ -131,6 +134,7 @@ struct OverlayToastContent: View {
 
     private struct ToastButtonStyle: ButtonStyle {
 
+        @ContentBuilder
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .scaleEffect(configuration.isPressed ? 0.92 : 1)

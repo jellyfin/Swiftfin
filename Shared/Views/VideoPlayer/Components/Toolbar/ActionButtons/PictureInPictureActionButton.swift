@@ -27,6 +27,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             if mediaSession.player is any MediaPlayerPictureInPictureProviding {
                 Button(L10n.pictureInPicture, systemImage: systemImage) {

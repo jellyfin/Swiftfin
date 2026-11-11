@@ -29,8 +29,8 @@ extension VideoPlayer {
             viewState: ViewState,
             mediaSession: MediaSession,
             videoSize: @escaping () -> CGSize,
-            @ViewBuilder player: @escaping (VideoLayout) -> Player,
-            @ViewBuilder playbackControls: @escaping () -> PlaybackControls
+            @ContentBuilder player: @escaping (VideoLayout) -> Player,
+            @ContentBuilder playbackControls: @escaping () -> PlaybackControls
         ) {
             self.viewState = viewState
             self.mediaSession = mediaSession
@@ -118,6 +118,7 @@ extension VideoPlayer {
             @Environment(ViewState.self)
             private var viewState
 
+            @ContentBuilder
             func body(content: Content) -> some View {
                 content
                     .layoutContainer(size: viewState.layoutSize)
@@ -138,6 +139,7 @@ extension VideoPlayer {
                 !viewState.isTabletop && viewState.visibleElements.contains(.dimming)
             }
 
+            @ContentBuilder
             var body: some View {
                 VideoViewport(videoSize: videoSize) { videoLayout in
                     player(videoLayout)
@@ -195,6 +197,7 @@ extension VideoPlayer {
                 }
             }
 
+            @ContentBuilder
             var body: some View {
                 Group {
                     #if os(iOS)

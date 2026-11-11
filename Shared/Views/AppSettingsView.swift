@@ -44,6 +44,7 @@ struct AppSettingsView: View {
     }
     #endif
 
+    @ContentBuilder
     private var serverPicker: some View {
         Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
             Label(L10n.random, systemImage: "dice.fill")
@@ -56,6 +57,7 @@ struct AppSettingsView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
             Section(L10n.swiftfin) {

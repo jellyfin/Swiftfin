@@ -50,7 +50,7 @@ struct ActiveSessionDetailsView: View {
         viewModel.session.supportedCommands?.contains(.displayMessage) == true
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func transcodeComparison(_ title: String, source: String?, destination: String?) -> some View {
         if let source {
             LabeledContent(title) {
@@ -68,6 +68,7 @@ struct ActiveSessionDetailsView: View {
         }
     }
 
+    @ContentBuilder
     private func idleContent(session: SessionInfoDto) -> some View {
         List {
             if let userID = session.userID {
@@ -89,7 +90,7 @@ struct ActiveSessionDetailsView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func sessionContent(
         session: SessionInfoDto,
         nowPlayingItem: BaseItemDto,
@@ -191,6 +192,7 @@ struct ActiveSessionDetailsView: View {
         .symbolRenderingMode(.monochrome)
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             let session = viewModel.session

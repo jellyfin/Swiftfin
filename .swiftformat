@@ -7,6 +7,7 @@
 --closingparen balanced
 --complexattributes prev-line
 --computedvarattrs prev-line
+--contentbuilder explicit
 --doccomments before-declarations
 --emptybraces no-space
 --funcattributes prev-line
@@ -16,6 +17,7 @@
 --lineaftermarks true
 --linebreaks lf
 --maxwidth 140
+--prefercontentbuilder true
 --scopeblanklines remove
 --semicolons never
 --shortoptionals "always"
@@ -37,6 +39,7 @@
     blankLinesAroundMark,              \
     blankLinesAtStartOfScope,          \
     blockComments,                     \
+    contentBuilder,                    \
     docComments,                       \
     isEmpty,                           \
     leadingDelimiters,                 \
@@ -65,7 +68,6 @@
     redundantFileprivate,              \
     redundantSelf,                     \
     redundantType,                     \
-    redundantViewBuilder,              \
     strongOutlets,                     \
     trailingCommas,                    \
     wrapMultilineStatementBraces,      \

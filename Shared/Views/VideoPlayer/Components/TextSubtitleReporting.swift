@@ -56,6 +56,7 @@ struct TextSubtitleReporting: ViewModifier {
         report.lastCaptions = captions
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .onAppear {

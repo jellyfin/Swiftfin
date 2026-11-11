@@ -35,6 +35,7 @@ struct GestureSettingsView: View {
     @Default(.VideoPlayer.Gesture.verticalPanRightAction)
     private var verticalPanRightAction
 
+    @ContentBuilder
     var body: some View {
         Form {
             Section {

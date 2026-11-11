@@ -17,18 +17,21 @@ extension View {
         Backport(content: self)
     }
 
+    @ContentBuilder
     func assign<P: Publisher>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P.Failure == Never {
         onReceive(publisher) { output in
             binding.wrappedValue = output
         }
     }
 
+    @ContentBuilder
     func blurred(style: UIBlurEffect.Style = .regular) -> some View {
         overlay {
             BlurView(style: style)
         }
     }
 
+    @ContentBuilder
     func bottomEdgeGradient(bottomColor: Color) -> some View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
@@ -40,7 +43,7 @@ extension View {
         return copy
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func cornerRadius(
         _ radius: CGFloat,
         corners: RectangleCorner = .all,
@@ -69,6 +72,7 @@ extension View {
     }
 
     /// Apply a corner radius as a ratio of a view's side
+    @ContentBuilder
     func cornerRadius(
         ratio: CGFloat,
         of side: KeyPath<CGSize, CGFloat>,
@@ -83,10 +87,12 @@ extension View {
         )
     }
 
+    @ContentBuilder
     func edgePadding(_ edges: Edge.Set = .all) -> some View {
         modifier(EdgePaddingModifier(edges: edges))
     }
 
+    @ContentBuilder
     @inlinable
     func enabled(_ enabled: Bool) -> some View {
         disabled(!enabled)
@@ -100,6 +106,7 @@ extension View {
     // TODO: rename `errorAlert`
 
     /// Error Message Alert
+    @ContentBuilder
     func errorMessage(
         _ error: Binding<Error?>,
         dismissAction: @escaping () -> Void = {}
@@ -123,7 +130,7 @@ extension View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     @inlinable
     func hidden(_ isHidden: Bool) -> some View {
         if isHidden {
@@ -135,9 +142,9 @@ extension View {
 
     /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
     ///              Instead, use a native `if` statement.
-    @ViewBuilder
+    @ContentBuilder
     @inlinable
-    func `if`(_ condition: Bool, @ViewBuilder transform: (Self) -> some View) -> some View {
+    func `if`(_ condition: Bool, @ContentBuilder transform: (Self) -> some View) -> some View {
         if condition {
             transform(self)
         } else {
@@ -147,12 +154,12 @@ extension View {
 
     /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
     ///              Instead, use a native `if/else` statement.
-    @ViewBuilder
+    @ContentBuilder
     @inlinable
     func `if`<Content: View>(
         _ condition: Bool,
-        @ViewBuilder transformIf: (Self) -> Content,
-        @ViewBuilder transformElse: (Self) -> Content
+        @ContentBuilder transformIf: (Self) -> Content,
+        @ContentBuilder transformElse: (Self) -> Content
     ) -> some View {
         if condition {
             transformIf(self)
@@ -163,11 +170,11 @@ extension View {
 
     /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
     ///              Instead, use a native `if let` statement.
-    @ViewBuilder
+    @ContentBuilder
     @inlinable
     func ifLet<Value>(
         _ value: Value?,
-        @ViewBuilder transform: (Self, Value) -> some View
+        @ContentBuilder transform: (Self, Value) -> some View
     ) -> some View {
         if let value {
             transform(self, value)
@@ -178,12 +185,12 @@ extension View {
 
     /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
     ///              Instead, use a native `if let/else` statement.
-    @ViewBuilder
+    @ContentBuilder
     @inlinable
     func ifLet<Value, Content: View>(
         _ value: Value?,
-        @ViewBuilder transformIf: (Self, Value) -> Content,
-        @ViewBuilder transformElse: (Self) -> Content
+        @ContentBuilder transformIf: (Self, Value) -> Content,
+        @ContentBuilder transformElse: (Self) -> Content
     ) -> some View {
         if let value {
             transformIf(self, value)
@@ -193,7 +200,8 @@ extension View {
     }
 
     // TODO: rename `invertedMask`?
-    func inverseMask(alignment: Alignment = .center, @ViewBuilder _ content: @escaping () -> some View) -> some View {
+    @ContentBuilder
+    func inverseMask(alignment: Alignment = .center, @ContentBuilder _ content: @escaping () -> some View) -> some View {
         mask(alignment: alignment) {
             content()
                 .foregroundStyle(.black)
@@ -203,31 +211,37 @@ extension View {
         }
     }
 
+    @ContentBuilder
     func isEditing(_ isEditing: Bool) -> some View {
         environment(\.isEditing, isEditing)
     }
 
+    @ContentBuilder
     func isHighlighted(_ isHighlighted: Bool) -> some View {
         environment(\.isHighlighted, isHighlighted)
     }
 
+    @ContentBuilder
     func isSelected(_ isSelected: Bool) -> some View {
         environment(\.isSelected, isSelected)
     }
 
     /// - Important: Do not use this to add or remove a view from the view heirarchy.
     ///              Use a conditional statement instead.
+    @ContentBuilder
     @inlinable
     func isVisible(_ isVisible: Bool) -> some View {
         opacity(isVisible ? 1 : 0)
     }
 
+    @ContentBuilder
     func letterPickerBar(filterViewModel: FilterViewModel?) -> some View {
         modifier(
             LetterPickerBarModifier(viewModel: filterViewModel)
         )
     }
 
+    @ContentBuilder
     func mask(
         gradient: MaskGradientModifier.Style,
         @ArrayBuilder<MaskGradientModifier.Stop> stops: () -> [MaskGradientModifier.Stop]
@@ -235,32 +249,39 @@ extension View {
         modifier(MaskGradientModifier(style: gradient, stops: stops()))
     }
 
+    @ContentBuilder
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
         onNotification(.applicationDidEnterBackground, perform: action)
     }
 
+    @ContentBuilder
     func onAppWillEnterForeground(_ action: @escaping () -> Void) -> some View {
         onNotification(.applicationWillEnterForeground, perform: action)
     }
 
+    @ContentBuilder
     func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
         onNotification(.applicationWillResignActive, perform: action)
     }
 
+    @ContentBuilder
     func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
         onNotification(.applicationWillTerminate, perform: action)
     }
 
     /// Perform an action on the final disappearance of a `View`.
+    @ContentBuilder
     func onFinalDisappear(perform action: @escaping () -> Void) -> some View {
         modifier(OnFinalDisappearModifier(action: action))
     }
 
     /// Perform an action on the first appearance of a `View`.
+    @ContentBuilder
     func onFirstAppear(perform action: @escaping () -> Void) -> some View {
         modifier(OnFirstAppearModifier(action: action))
     }
 
+    @ContentBuilder
     func onNotification<P>(_ key: Notifications.Key<P>, perform action: @escaping (P) -> Void) -> some View {
         modifier(
             OnReceiveNotificationModifier(
@@ -270,19 +291,22 @@ extension View {
         )
     }
 
+    @ContentBuilder
     func onSceneDidEnterBackground(_ action: @escaping () -> Void) -> some View {
         onNotification(.sceneDidEnterBackground, perform: action)
     }
 
+    @ContentBuilder
     func onScenePhase(_ phase: ScenePhase, _ action: @escaping () -> Void) -> some View {
         modifier(OnScenePhaseChangedModifier(phase: phase, action: action))
     }
 
+    @ContentBuilder
     func onSceneWillEnterForeground(_ action: @escaping () -> Void) -> some View {
         onNotification(.sceneWillEnterForeground, perform: action)
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func posterAspectRatio(
         _ type: PosterDisplayType,
         contentMode: ContentMode = .fill
@@ -297,6 +321,7 @@ extension View {
         }
     }
 
+    @ContentBuilder
     func posterBorder() -> some View {
         overlay {
             ContainerRelativeShape()
@@ -308,7 +333,7 @@ extension View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     func posterCornerRadius(
         _ type: PosterDisplayType
     ) -> some View {
@@ -320,6 +345,7 @@ extension View {
         }
     }
 
+    @ContentBuilder
     func subtleShadow() -> some View {
         shadow(radius: 4, y: 2)
     }
@@ -327,6 +353,7 @@ extension View {
     /// Applies the aspect ratio, corner radius, and border for the given `PosterType`
     ///
     /// Note: will not apply `subtleShadow`
+    @ContentBuilder
     func posterStyle(
         _ type: PosterDisplayType,
         contentMode: ContentMode = .fill
@@ -334,6 +361,7 @@ extension View {
         modifier(PosterStyleModifier(type: type, contentMode: contentMode))
     }
 
+    @ContentBuilder
     func preference<Key: PreferenceKey, V>(
         key: Key.Type,
         @ArrayBuilder<V> value: () -> [V]
@@ -341,21 +369,25 @@ extension View {
         preference(key: Key.self, value: value())
     }
 
+    @ContentBuilder
     func scrollIfLargerThanContainer(axes: Axis.Set = .vertical, padding: CGFloat = 0, alignment: Alignment = .center) -> some View {
         modifier(ScrollIfLargerThanContainerModifier(axes: axes, padding: padding, alignment: alignment))
     }
 
+    @ContentBuilder
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
         modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
     }
 
     /// Perform an action as the view appears given the time interval
     /// since the view last disappeared.
+    @ContentBuilder
     func sinceLastDisappear(perform action: @escaping (TimeInterval) -> Void) -> some View {
         modifier(SinceLastDisappearModifier(action: action))
     }
 
-    func topBarTrailing(@ViewBuilder content: @escaping () -> some View) -> some View {
+    @ContentBuilder
+    func topBarTrailing(@ContentBuilder content: @escaping () -> some View) -> some View {
         toolbar {
             ToolbarItemGroup(
                 placement: .topBarTrailing,
@@ -369,6 +401,7 @@ extension View {
     // Useful modifiers during development for layout
 
     #if DEBUG
+    @ContentBuilder
     func debugBackground(_ fill: some ShapeStyle = .red.opacity(0.5)) -> some View {
         background {
             Rectangle()
@@ -376,11 +409,13 @@ extension View {
         }
     }
 
+    @ContentBuilder
     func debugCross(_ fill: some ShapeStyle = .red) -> some View {
         debugVLine(fill)
             .debugHLine(fill)
     }
 
+    @ContentBuilder
     func debugHLine(_ fill: some ShapeStyle) -> some View {
         overlay {
             Rectangle()
@@ -389,6 +424,7 @@ extension View {
         }
     }
 
+    @ContentBuilder
     func debugOverlay(_ fill: some ShapeStyle = .red.opacity(0.5)) -> some View {
         overlay {
             Rectangle()
@@ -397,6 +433,7 @@ extension View {
         }
     }
 
+    @ContentBuilder
     func debugVLine(_ fill: some ShapeStyle) -> some View {
         overlay {
             Rectangle()

@@ -83,6 +83,7 @@ extension ItemView {
                 return layoutDirection == .leftToRight ? offset : -offset
             }
 
+            @ContentBuilder
             private var logo: some View {
                 ImageView(
                     provider.item.imageSource(
@@ -113,6 +114,7 @@ extension ItemView {
                 .accessibilityRemoveTraits(.isImage)
             }
 
+            @ContentBuilder
             private var title: some View {
                 VStack(alignment: .leading) {
                     if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
@@ -124,6 +126,7 @@ extension ItemView {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
 
+            @ContentBuilder
             private var overlay: some View {
                 VStack(alignment: .leading, spacing: viewLayout.value(standard: 5, large: 30)) {
                     title
@@ -133,6 +136,7 @@ extension ItemView {
                 .focusSection()
             }
 
+            @ContentBuilder
             private var detailsRow: some View {
                 detailsLayout {
                     ItemView.ActionBar(provider: provider)
@@ -183,6 +187,7 @@ extension ItemView {
                 }
             }
 
+            @ContentBuilder
             var body: some View {
                 if viewLayout.isLarge {
                     CinematicContentGroupContainer {

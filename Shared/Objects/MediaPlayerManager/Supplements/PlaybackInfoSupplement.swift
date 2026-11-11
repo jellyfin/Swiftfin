@@ -27,6 +27,7 @@ struct PlaybackInfoSupplement {
 
 extension PlaybackInfoSupplement: VideoPlayerSupplement {
 
+    @ContentBuilder
     var body: some View {
         OverlayView(itemID: itemID)
     }
@@ -61,7 +62,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             return playbackItem.audioStreams.first
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var playbackInfoSection: some View {
             Text(L10n.mediaPlayback)
                 .font(.subheadline)
@@ -94,7 +95,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var videoInfoSection: some View {
             if let width = videoStream?.width, let height = videoStream?.height {
                 Text(L10n.video)
@@ -106,7 +107,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var streamingInfoSection: some View {
             if let transcodingInfo = viewModel.currentSession?.transcodingInfo {
                 Text(viewModel.currentSession?.playMethodDisplayTitle.map { L10n.streamInfoWithMethod($0) } ?? L10n.streamInfo)
@@ -142,7 +143,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var originalMediaInfoSection: some View {
             if mediaSource != nil || videoStream != nil || audioStream != nil {
                 Text(L10n.originalMediaInfo)
@@ -193,7 +194,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private var transcodeReasonsSection: some View {
             if let transcodeReasons = viewModel.currentSession?.transcodingInfo?.transcodeReasons, transcodeReasons.isNotEmpty {
                 Text(L10n.transcodeReasons)
@@ -209,6 +210,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             }
         }
 
+        @ContentBuilder
         var standardView: some View {
             CompactOrRegularView(
                 isCompact: viewState.isCompact
@@ -224,6 +226,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             .padding(.bottom, viewState.systemInsets.bottom)
         }
 
+        @ContentBuilder
         private var compactView: some View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 4) {
@@ -239,6 +242,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             .edgePadding()
         }
 
+        @ContentBuilder
         private var regularView: some View {
             ScrollView {
                 HStack(alignment: .top, spacing: 24) {
@@ -260,6 +264,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             .edgePadding()
         }
 
+        @ContentBuilder
         var largeView: some View {
             regularView
                 .onFirstAppear { viewModel.observe(itemID: itemID) }

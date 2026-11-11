@@ -18,6 +18,7 @@ struct UserSessionRootView: View {
     @InjectedObject(\.userSessionManager)
     private var userSessionManager
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch userSessionManager.state {
@@ -60,10 +61,11 @@ private struct PosterPreferencesEnvironment<Content: View>: View {
 
     let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
+    init(@ContentBuilder content: () -> Content) {
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .environment(\.posterConfiguration, posterConfiguration)

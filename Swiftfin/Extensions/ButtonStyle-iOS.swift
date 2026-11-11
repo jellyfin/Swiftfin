@@ -28,6 +28,7 @@ struct IsPressedButtonStyle: ButtonStyle {
 
     let isPressed: (Bool) -> Void
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .onChange(of: configuration.isPressed) {

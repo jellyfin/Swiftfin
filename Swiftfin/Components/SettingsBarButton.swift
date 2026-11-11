@@ -13,6 +13,7 @@ struct SettingsBarButton: View {
     let userSession: UserSession
     let action: () -> Void
 
+    @ContentBuilder
     var body: some View {
         Button(action: action) {
             AlternateLayoutView {

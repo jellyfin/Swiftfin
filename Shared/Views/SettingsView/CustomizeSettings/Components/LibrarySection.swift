@@ -41,6 +41,7 @@ extension CustomizeSettingsView {
         @Router
         private var router
 
+        @ContentBuilder
         var body: some View {
             Form(systemImage: "gear") {
                 Section {

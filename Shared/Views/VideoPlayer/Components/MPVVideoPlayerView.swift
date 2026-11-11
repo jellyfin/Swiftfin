@@ -39,6 +39,7 @@ struct MPVVideoPlayerView: View {
         return scenePhase == .active
     }
 
+    @ContentBuilder
     var body: some View {
         videoSurface
             .frame(width: layout.renderSize.width, height: layout.renderSize.height)

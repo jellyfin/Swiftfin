@@ -23,13 +23,14 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
     init(
         isLoading: Bool = false,
         isHidden: Bool = false,
-        @ViewBuilder menuContent: () -> MenuContent
+        @ContentBuilder menuContent: () -> MenuContent
     ) {
         self.isLoading = isLoading
         self.isHidden = isHidden
         self.menuContent = menuContent()
     }
 
+    @ContentBuilder
     func body(content: Self.Content) -> some View {
         content
             .toolbar {

@@ -28,6 +28,7 @@ extension VideoPlayer {
             viewState.visibleElements.contains(.overlayActions) ? viewState.overlayActions : []
         }
 
+        @ContentBuilder
         var body: some View {
             ViewThatFits(in: .horizontal) {
                 buttons(axis: .horizontal)
@@ -67,12 +68,13 @@ extension VideoPlayer {
             #endif
         }
 
+        @ContentBuilder
         private func buttons(axis: Axis) -> some View {
             let layout = axis == .horizontal
                 ? AnyLayout(HStackLayout(spacing: viewLayout.isLarge ? 24 : 12))
                 : AnyLayout(VStackLayout(alignment: .trailing, spacing: 12))
 
-            return layout {
+            layout {
                 ForEach(actions) { action in
                     Button {
                         viewState.performOverlayAction(action.id)
@@ -130,6 +132,7 @@ extension VideoPlayer {
         @Environment(\.accessibilityReduceMotion)
         private var reduceMotion
 
+        @ContentBuilder
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .font(.headline)

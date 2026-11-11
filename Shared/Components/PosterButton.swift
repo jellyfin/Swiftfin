@@ -40,6 +40,7 @@ struct PosterButton<Item: Poster>: View {
         self.action = action
     }
 
+    @ContentBuilder
     private func contextMenuPreview(width: CGFloat) -> some View {
         buttonLabel()
             .posterAccessibility(for: item)
@@ -49,6 +50,7 @@ struct PosterButton<Item: Poster>: View {
             .glassEffect(in: .rect(cornerRadius: 10))
     }
 
+    @ContentBuilder
     private func posterImage(overlay: some View) -> some View {
         PosterImage(
             item: item,
@@ -63,6 +65,7 @@ struct PosterButton<Item: Poster>: View {
         .hoverEffect(.highlight)
     }
 
+    @ContentBuilder
     private func buttonLabel(overlay: some View = EmptyView()) -> some View {
         VStack(alignment: .leading) {
             posterImage(overlay: overlay)
@@ -72,6 +75,7 @@ struct PosterButton<Item: Poster>: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Button {
             action(namespace)

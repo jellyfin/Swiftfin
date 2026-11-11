@@ -16,6 +16,7 @@ struct SystemSettingsButton: View {
     let title: String
     let destination: SystemSettings
 
+    @ContentBuilder
     var body: some View {
         ChevronButton(title, external: true) {
             Task {

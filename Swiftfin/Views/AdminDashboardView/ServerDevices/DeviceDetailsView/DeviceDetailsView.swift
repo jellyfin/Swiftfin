@@ -31,6 +31,7 @@ struct DeviceDetailsView: View {
         self.viewModel = viewModel
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             if let userID = device.lastUserID,

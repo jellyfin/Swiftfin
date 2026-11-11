@@ -18,6 +18,7 @@ extension ServerUserPermissionsView {
 
         // MARK: - Body
 
+        @ContentBuilder
         var body: some View {
             Section(L10n.remoteConnections) {
                 Toggle(
@@ -53,7 +54,7 @@ extension ServerUserPermissionsView {
 
         // MARK: - Create Bitrate Input
 
-        @ViewBuilder
+        @ContentBuilder
         private func MaxBitrateInput() -> some View {
             let bitrateBinding = $policy.remoteClientBitrateLimit
                 .coalesce(0)

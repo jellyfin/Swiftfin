@@ -85,6 +85,7 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "tv") {
             playbackSettings
@@ -121,6 +122,7 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Playback Settings
 
+    @ContentBuilder
     private var playbackSettings: some View {
         Section(L10n.playback) {
             PlatformPicker(L10n.player, selection: $mediaPlayerType)
@@ -138,6 +140,7 @@ struct VideoPlayerSettingsView: View {
     // MARK: - Gesture Settings
 
     #if os(iOS)
+    @ContentBuilder
     private var gestureSettings: some View {
         Section(L10n.gestures) {
             ChevronButton(L10n.gestures) {
@@ -149,6 +152,7 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Button Settings
 
+    @ContentBuilder
     private func jumpIntervalPicker(title: String, selection: Binding<MediaJumpInterval>) -> some View {
         CustomAlertPicker(
             title: title,
@@ -170,6 +174,7 @@ struct VideoPlayerSettingsView: View {
         }
     }
 
+    @ContentBuilder
     private var buttonSettings: some View {
         Section(L10n.buttons) {
             jumpIntervalPicker(
@@ -206,6 +211,7 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Resume Settings
 
+    @ContentBuilder
     private var resumeSettings: some View {
         Section {
             Stepper(L10n.resumeOffset, value: $resumeOffset, in: 0 ... 30, step: 1) {
@@ -230,6 +236,7 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Slider Settings
 
+    @ContentBuilder
     private var sliderSettings: some View {
         Section(L10n.slider) {
             Toggle(L10n.chapterSlider, isOn: $chapterSlider)
@@ -257,6 +264,7 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Supplement Settings
 
+    @ContentBuilder
     private var supplementSettings: some View {
         Section(L10n.supplements) {
             ChevronButton(L10n.supplements) {
@@ -269,6 +277,7 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Timestamp Settings
 
+    @ContentBuilder
     private var timestampSettings: some View {
         Section(L10n.timestamp) {
             PlatformPicker(L10n.trailingValue, selection: $trailingTimestampType)
@@ -277,6 +286,7 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Audio Settings
 
+    @ContentBuilder
     private var audioSettings: some View {
         Section(L10n.audio) {
             CulturePicker(L10n.preferredLanguage, threeLetterISOLanguageName: Binding(
@@ -314,7 +324,7 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Subtitle Settings
 
-    @ViewBuilder
+    @ContentBuilder
     private var subtitleSettings: some View {
         Section(L10n.subtitles) {
             CulturePicker(L10n.preferredLanguage, threeLetterISOLanguageName: Binding(

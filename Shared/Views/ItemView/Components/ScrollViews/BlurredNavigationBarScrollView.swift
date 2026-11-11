@@ -14,6 +14,7 @@ extension ItemView {
 
         let groups: [any ContentGroup]
 
+        @ContentBuilder
         var body: some View {
             _Body(groups: groups)
                 .trackingFrame(for: .scrollView)
@@ -27,6 +28,7 @@ extension ItemView {
 
         let groups: [any ContentGroup]
 
+        @ContentBuilder
         var body: some View {
             ScrollView {
                 ContentGroupVStack(groups: groups)

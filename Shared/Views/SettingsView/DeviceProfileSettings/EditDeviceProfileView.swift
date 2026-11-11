@@ -47,6 +47,7 @@ extension CustomDeviceProfilesView {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             contentView
                 .interactiveDismissDisabled(true)
@@ -96,6 +97,7 @@ extension CustomDeviceProfilesView {
                 #endif
         }
 
+        @ContentBuilder
         private var contentView: some View {
             Form(systemImage: "doc") {
                 Section(L10n.behavior) {
@@ -131,6 +133,7 @@ extension CustomDeviceProfilesView {
             }
         }
 
+        @ContentBuilder
         private func componentLabel(_ title: String, value: String) -> some View {
             LabeledContent {
                 if value.isEmpty {

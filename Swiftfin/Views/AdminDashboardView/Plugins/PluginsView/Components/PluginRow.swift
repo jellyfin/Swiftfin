@@ -18,6 +18,7 @@ extension PluginsView {
         @Router
         private var router
 
+        @ContentBuilder
         var body: some View {
             ListRow {
                 PosterImage(

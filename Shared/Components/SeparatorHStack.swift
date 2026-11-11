@@ -19,6 +19,7 @@ struct SeparatorHStack<Content: View, Separator: View>: View {
     private var content: Content
     private var separator: Separator
 
+    @ContentBuilder
     var body: some View {
         _VariadicView.Tree(
             SeparatorHStackLayout(
@@ -33,7 +34,7 @@ struct SeparatorHStack<Content: View, Separator: View>: View {
 extension SeparatorHStack where Separator == RowDivider {
 
     init(
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.init(
             content: content(),
@@ -45,8 +46,8 @@ extension SeparatorHStack where Separator == RowDivider {
 extension SeparatorHStack {
 
     init(
-        @ViewBuilder separator: @escaping () -> Separator,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder separator: @escaping () -> Separator,
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.init(
             content: content(),
@@ -61,7 +62,7 @@ extension SeparatorHStack {
 
         var separator: Separator
 
-        @ViewBuilder
+        @ContentBuilder
         func body(children: _VariadicView.Children) -> some View {
             let last = children.last?.id
 
@@ -76,7 +77,8 @@ extension SeparatorHStack {
             }
         }
 
-        private func localHStack(@ViewBuilder content: @escaping () -> some View) -> some View {
+        @ContentBuilder
+        private func localHStack(@ContentBuilder content: @escaping () -> some View) -> some View {
             HStack(spacing: 0) {
                 content()
             }

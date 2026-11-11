@@ -18,6 +18,7 @@ struct ItemEditorView: View {
     @Router
     private var router
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -50,6 +51,7 @@ struct ItemEditorView: View {
         .errorMessage($viewModel.error)
     }
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(

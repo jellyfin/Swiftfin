@@ -38,6 +38,7 @@ struct JellyfinWebView: View {
         return components.url
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             if let userSession, let url {

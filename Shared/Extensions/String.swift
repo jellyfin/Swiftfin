@@ -27,6 +27,7 @@ extension String: @retroactive Identifiable {
 
 extension String: LibraryElement {
 
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
@@ -48,6 +49,7 @@ private struct StringLibraryListElement: View {
     let value: String
     var action: (() -> Void)?
 
+    @ContentBuilder
     var body: some View {
         Button {
             action?()

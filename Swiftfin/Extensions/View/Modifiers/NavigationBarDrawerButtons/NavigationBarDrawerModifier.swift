@@ -18,6 +18,7 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
 
     let types: [ItemFilterType]
 
+    @ContentBuilder
     private var drawer: some View {
         ScrollView(.horizontal) {
             HStack {
@@ -30,6 +31,7 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
         .scrollClipDisabled()
     }
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         if types.isEmpty {
             content

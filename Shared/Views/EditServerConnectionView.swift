@@ -108,7 +108,7 @@ struct EditServerConnectionView: View {
     }
 
     #if os(iOS)
-    @ViewBuilder
+    @ContentBuilder
     private var locationPermissionWarning: some View {
         if draft.interface == .wifi,
            locationPermissionStatus != .authorized,
@@ -175,6 +175,7 @@ struct EditServerConnectionView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "network") {
             Section {

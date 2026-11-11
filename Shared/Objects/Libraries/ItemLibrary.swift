@@ -85,7 +85,7 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
 
     func makeLibraryBody(
         viewModel: PagingLibraryViewModel<Self>,
-        @ViewBuilder content: @escaping () -> some View
+        @ContentBuilder content: @escaping () -> some View
     ) -> AnyView {
         ItemLibraryBody(
             filterViewModel: filterViewModel,
@@ -319,13 +319,14 @@ private struct ItemLibraryBody<Content: View>: View {
     init(
         filterViewModel: FilterViewModel,
         viewModel: PagingLibraryViewModel<ItemLibrary>,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.filterViewModel = filterViewModel
         self.viewModel = viewModel
         self.content = content()
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .onFirstAppear {

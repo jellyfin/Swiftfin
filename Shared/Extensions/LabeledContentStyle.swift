@@ -17,6 +17,7 @@ extension LabeledContentStyle where Self == LearnMoreLabeledContentStyle {
 
 struct LearnMoreLabeledContentStyle: LabeledContentStyle {
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             configuration.label
@@ -39,6 +40,7 @@ extension LabeledContentStyle where Self == DeviceProfileLabeledContentStyle {
 
 struct DeviceProfileLabeledContentStyle: LabeledContentStyle {
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             configuration.label
@@ -68,6 +70,7 @@ struct PlaybackInfoLabeledContentStyle: LabeledContentStyle {
     @FocusState
     private var isFocused: Bool
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 0) {
             configuration.label
@@ -108,6 +111,7 @@ extension LabeledContentStyle where Self == FocusableLabeledContentStyle {
 
 struct FocusableLabeledContentStyle: LabeledContentStyle {
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         #if os(tvOS)
         Button {} label: {

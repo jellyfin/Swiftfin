@@ -29,6 +29,7 @@ extension ActiveSessionsView {
             return clamp(c / 100.0, min: 0, max: 1)
         }
 
+        @ContentBuilder
         private var playbackInformation: some View {
             HStack(alignment: .top) {
                 FlowLayout(
@@ -82,6 +83,7 @@ extension ActiveSessionsView {
             .font(.subheadline)
         }
 
+        @ContentBuilder
         var body: some View {
             VStack {
                 ProgressView(value: playbackPercentage)

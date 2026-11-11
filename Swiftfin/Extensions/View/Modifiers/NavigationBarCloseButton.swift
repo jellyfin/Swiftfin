@@ -16,6 +16,7 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
     let disabled: Bool
     let action: () -> Void
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content.toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {

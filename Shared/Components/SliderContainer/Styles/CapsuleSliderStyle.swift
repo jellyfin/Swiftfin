@@ -13,6 +13,7 @@ struct CapsuleSliderStyle: SliderContainerStyle {
     var showsProgressWhenUnfocused = true
     var neutralProgress: Double?
 
+    @ContentBuilder
     func makeBody(configuration: SliderContainerStyleConfiguration) -> some View {
         let progress = configuration.progress
         let origin = neutralProgress == nil ? configuration.originProgress : nil

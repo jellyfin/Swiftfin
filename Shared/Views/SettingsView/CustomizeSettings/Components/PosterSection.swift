@@ -86,6 +86,7 @@ extension CustomizeSettingsView {
             return item
         }
 
+        @ContentBuilder
         private func posterPreview(type: PosterDisplayType) -> some View {
             VStack(alignment: .leading) {
                 PosterImage(
@@ -110,6 +111,7 @@ extension CustomizeSettingsView {
             .animation(.linear(duration: 0.1), value: previewItemState)
         }
 
+        @ContentBuilder
         var body: some View {
             Form {
                 Section(L10n.preview) {

@@ -45,6 +45,7 @@ extension LetterPickerBar {
             isFocused ? .primary : theme.accentColor
         }
 
+        @ContentBuilder
         var body: some View {
             Button(action: action) {
                 Text(letter.value)

@@ -155,7 +155,7 @@ struct SelectUserView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var splashScreenBackground: some View {
         let sources = splashScreenImageSources
 
@@ -178,6 +178,7 @@ struct SelectUserView: View {
         }
     }
 
+    @ContentBuilder
     private var contentView: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -270,6 +271,7 @@ struct SelectUserView: View {
         #endif
     }
 
+    @ContentBuilder
     private var userToolbar: some View {
         Toolbar(
             servers: viewModel.servers.keys,
@@ -286,6 +288,7 @@ struct SelectUserView: View {
         #endif
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {

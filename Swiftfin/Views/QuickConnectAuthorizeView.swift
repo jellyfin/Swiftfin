@@ -33,6 +33,7 @@ struct QuickConnectAuthorizeView: View {
         self._viewModel = StateObject(wrappedValue: QuickConnectAuthorizeViewModel(user: user))
     }
 
+    @ContentBuilder
     private var loginUserRow: some View {
         HStack {
             if let userSession = viewModel.userSession {
@@ -53,6 +54,7 @@ struct QuickConnectAuthorizeView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form {
             Section {

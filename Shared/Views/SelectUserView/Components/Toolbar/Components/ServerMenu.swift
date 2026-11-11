@@ -25,6 +25,7 @@ extension SelectUserView {
 
         let servers: OrderedSet<ServerState>
 
+        @ContentBuilder
         var body: some View {
             Menu {
                 Section {

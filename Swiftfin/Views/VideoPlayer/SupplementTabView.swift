@@ -15,7 +15,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
     let data: [any VideoPlayerSupplement]
     let selection: Binding<String?>
 
-    @ViewBuilder
+    @ContentBuilder
     let content: (any VideoPlayerSupplement) -> Content
 
     func makeUIViewController(context: Context) -> UIViewController {
@@ -58,7 +58,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             data: [any VideoPlayerSupplement],
             selection: Binding<String?>,
             environment: EnvironmentValues,
-            @ViewBuilder content: (any VideoPlayerSupplement) -> Content
+            @ContentBuilder content: (any VideoPlayerSupplement) -> Content
         ) {
             guard container != nil else { return }
 

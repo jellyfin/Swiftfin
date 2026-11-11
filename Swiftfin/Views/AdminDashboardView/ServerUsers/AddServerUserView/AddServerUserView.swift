@@ -39,6 +39,7 @@ struct AddServerUserView: View {
 
     // MARK: - Body
 
+    @ContentBuilder
     var body: some View {
         List {
             Section {

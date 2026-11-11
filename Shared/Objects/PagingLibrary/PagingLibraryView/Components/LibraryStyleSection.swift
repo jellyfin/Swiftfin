@@ -28,6 +28,7 @@ extension PagingLibraryView {
             self.canAdjustListColumns = canAdjustListColumns
         }
 
+        @ContentBuilder
         var body: some View {
             if options.displayTypes.count > 1 {
                 Picker(selection: $libraryStyle.displayType) {

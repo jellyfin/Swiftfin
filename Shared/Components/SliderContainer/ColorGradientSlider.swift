@@ -13,6 +13,7 @@ struct ColorGradientSlider: View {
     let color: Binding<Color>
     let component: WritableKeyPath<Color.RGBA, CGFloat>
 
+    @ContentBuilder
     var body: some View {
         SliderContainer(
             value: color.rgbaComponents.map(
