@@ -13,6 +13,7 @@ import SwiftUI
 
 struct GestureView: View {
 
+    @ContentBuilder
     var body: some View {
         GestureViewRepresentable()
             .accessibilityHidden(true)

@@ -205,18 +205,13 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private func accessibilityAdjust(_ direction: AccessibilityAdjustmentDirection) {
-
             let interval: Duration = switch direction {
             case .increment: jumpForwardInterval.rawValue
             case .decrement: .zero - jumpBackwardInterval.rawValue
             @unknown default: .zero
             }
 
-            guard interval != .zero, let runtime = mediaSession.item.runtime, runtime > .zero else { return }
-
-            let newSeconds = clamp(scrubbedSeconds + interval, min: .zero, max: runtime)
-
-            guard mediaSession.seek(to: newSeconds) else { return }
+            guard interval != .zero, mediaSession.seek(by: interval) else { return }
 
             announcedSeconds = mediaSession.seconds
         }
@@ -269,6 +264,10 @@ extension VideoPlayer.PlaybackControls {
             }
             .onChange(of: scrubbedSeconds) {
                 guard !isAccessibilityFocused else { return }
+
+                announcedSeconds = scrubbedSeconds
+            }
+            .onChange(of: isAccessibilityFocused, initial: true) {
                 announcedSeconds = scrubbedSeconds
             }
         }

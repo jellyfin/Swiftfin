@@ -132,6 +132,17 @@ extension VideoPlayer {
             @Environment(ViewState.self)
             private var viewState
 
+            #if os(iOS)
+            @Environment(MediaSession.self)
+            private var mediaSession
+
+            @AccessibilityFocusState
+            private var isAccessibilityFocused: Bool
+
+            @State
+            private var announcedSeconds: Duration = .zero
+            #endif
+
             let player: (VideoLayout) -> AnyView
             let videoSize: () -> CGSize
 
@@ -139,15 +150,36 @@ extension VideoPlayer {
                 !viewState.isTabletop && viewState.visibleElements.contains(.dimming)
             }
 
+            #if os(iOS)
+            private var isPresentingOverlay: Bool {
+                viewState.presentation != .hidden
+            }
+
+            private var accessibilityValue: String {
+                guard let runtime = mediaSession.item.runtime, runtime > .zero else {
+                    return announcedSeconds.formatted(.spokenRuntime)
+                }
+
+                return L10n.playbackPositionOfTotal(
+                    announcedSeconds.formatted(.spokenRuntime),
+                    runtime.formatted(.spokenRuntime)
+                )
+            }
+            #endif
+
             @ContentBuilder
             var body: some View {
                 VideoViewport(videoSize: videoSize) { videoLayout in
                     player(videoLayout)
                 }
                 #if os(iOS)
-                .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
-                #endif
                 .overlay {
+                        Color.black
+                            .opacity(shouldPresentDimOverlay ? 0.5 : 0.0)
+                            .accessibilityHidden(true)
+                    }
+                #endif
+                    .overlay {
                     Group {
                         if viewState.isPresentingFullScreenSupplement {
                             Color.black.opacity(0.8)
@@ -160,14 +192,51 @@ extension VideoPlayer {
                         }
                     }
                     .isVisible(shouldPresentDimOverlay)
+                    .accessibilityHidden(true)
                 }
                 .allowsHitTesting(false)
                 #if os(iOS)
                 .overlay {
                     VideoZoomBorder(isVisible: viewState.zoom.isFillBorderPresented)
+                        .accessibilityHidden(true)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(L10n.video, isEnabled: !mediaSession.isRemotePlayback)
+                .accessibilityLabel(L10n.unlockPlaybackControls, isEnabled: viewState.isGestureLocked)
+                .accessibilityValue(accessibilityValue)
+                .accessibilityHint(viewState.isGestureLocked ? .empty : L10n.playbackControlsAccessibilityHint)
+                .accessibilityAddTraits(.isButton)
+                .accessibilityIdentifier("videoSurfaceControlsToggle")
+                .accessibilityAction {
+                    if viewState.isGestureLocked {
+                        viewState.isGestureLocked = false
+                        viewState.showControls()
+                    } else {
+                        viewState.toggleControls()
+                    }
+                }
+                .accessibilityFocused($isAccessibilityFocused)
+                .accessibilitySortPriority(-1)
+                .onChange(of: isAccessibilityFocused) {
+                    viewState.isAccessibilityFocusOnVideo = isAccessibilityFocused
+                    announcedSeconds = mediaSession.seconds
+                }
+                .onDisappear {
+                    viewState.isAccessibilityFocusOnVideo = false
+                }
+                .onChange(of: isPresentingOverlay) {
+                    UIAccessibility.post(notification: .layoutChanged, argument: nil)
+
+                    guard !isPresentingOverlay, UIAccessibility.isVoiceOverRunning else { return }
+
+                    isAccessibilityFocused = true
+                }
+                .onChange(of: mediaSession.seconds, initial: true) {
+                    guard !isAccessibilityFocused else { return }
+
+                    announcedSeconds = mediaSession.seconds
                 }
                 #endif
-                .accessibilityHidden(true)
             }
         }
 
@@ -208,9 +277,6 @@ extension VideoPlayer {
                                 .environment(\.panGestureDirection, panGestureDirection)
                         }
                         .ignoresSafeRegion(.all)
-
-                        SafeRegionItem { VideoSurfaceAccessibilityView() }
-                            .ignoresSafeRegion(.all)
 
                         SafeRegionItem { playbackControls }
                             .ignoresSafeRegion(.all)

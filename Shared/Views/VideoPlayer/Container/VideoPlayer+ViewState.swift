@@ -689,6 +689,7 @@ extension VideoPlayer {
             // resting focus on the video, so they must not fade while being read.
             let isAssistiveTechnologyRunning = UIAccessibility.isVoiceOverRunning || UIAccessibility.isSwitchControlRunning
             guard !isAssistiveTechnologyRunning || isAccessibilityFocusOnVideo else { return false }
+
             #endif
 
             #if os(tvOS)

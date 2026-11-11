@@ -2000,6 +2000,8 @@ internal enum L10n {
   internal static let unlimitedConnectionsDescription = L10n.tr("Localizable", "unlimitedConnectionsDescription", fallback: "The user can connect to the server without any limits.")
   /// Allows unlimited failed login attempts without locking the user.
   internal static let unlimitedFailedLoginDescription = L10n.tr("Localizable", "unlimitedFailedLoginDescription", fallback: "Allows unlimited failed login attempts without locking the user.")
+  /// Unlock playback controls
+  internal static let unlockPlaybackControls = L10n.tr("Localizable", "unlockPlaybackControls", fallback: "Unlock playback controls")
   /// Unplayed
   internal static let unplayed = L10n.tr("Localizable", "unplayed", fallback: "Unplayed")
   /// Unreleased
