@@ -47,6 +47,16 @@ func Form(
     PlatformForm(content: content, image: image)
 }
 
+private struct PrimaryToggleStyle: ToggleStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        Toggle(isOn: configuration.$isOn) {
+            configuration.label
+                .foregroundStyle(Color.primary)
+        }
+    }
+}
+
 // MARK: - Platform Form
 
 private struct PlatformForm<Image: View, Content: View>: PresentationView {
@@ -81,6 +91,7 @@ private struct PlatformForm<Image: View, Content: View>: PresentationView {
                 content
             }
             .scrollClipDisabled()
+            .toggleStyle(PrimaryToggleStyle())
             .mask(extendedBy: .init(vertical: 20, horizontal: 100)) {
                 VStack(spacing: 0) {
                     LinearGradient(
