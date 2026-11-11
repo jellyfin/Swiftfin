@@ -44,18 +44,20 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
             filters = filters.union(StoredValues[.User.libraryFilters(parentID: id)])
         }
 
-        var grouping = parent.groupings?.defaultSelection
+        var resolvedGrouping = grouping
 
-        if let groupings = parent.groupings, Defaults[.Customization.Library.rememberLayout] {
+        if resolvedGrouping == nil,
+           let groupings = parent.groupings,
+           Defaults[.Customization.Library.rememberLayout] {
             let storedGrouping = StoredValues[
                 .User.libraryGrouping(id: parent.pagingLibraryID, default: groupings.defaultSelection)
             ]
 
-            grouping = groupings.elements.first { $0.id == storedGrouping.id } ?? grouping
+            resolvedGrouping = groupings.elements.first { $0.id == storedGrouping.id }
         }
 
         self.environment = .init(
-            grouping: grouping ?? parent.groupings?.defaultSelection,
+            grouping: resolvedGrouping ?? parent.groupings?.defaultSelection,
             filters: staticFilters.union(filters)
         )
         self.filterViewModel = .init(
