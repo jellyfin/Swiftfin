@@ -181,7 +181,6 @@ extension String {
     }
 
     func trimmingSuffix(_ suffix: String) -> String {
-
         guard suffix.count <= count else { return self }
 
         var s = self
@@ -247,7 +246,7 @@ extension String? {
 
 extension CharacterSet {
 
-    // Character that appears on tvOS with voice input
+    /// Character that appears on tvOS with voice input
     static var objectReplacement: CharacterSet = .init(charactersIn: "\u{fffc}")
 }
 

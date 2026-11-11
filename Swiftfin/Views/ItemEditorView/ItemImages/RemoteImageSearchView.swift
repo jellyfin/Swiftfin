@@ -139,7 +139,8 @@ extension RemoteImageSearchView {
                     to: .remoteImageDetail(
                         viewModel: itemImageViewModel,
                         remoteImageInfo: image
-                    ), in: namespace
+                    ),
+                    in: namespace
                 )
             }
         }

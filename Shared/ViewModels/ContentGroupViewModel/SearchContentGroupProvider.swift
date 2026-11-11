@@ -13,6 +13,7 @@ import JellyfinAPI
 struct SearchContentGroupProvider: ContentGroupProvider {
 
     struct Environment: WithDefaultValue {
+
         var filters: ItemFilterCollection
 
         static var `default`: Self {

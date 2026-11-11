@@ -68,7 +68,6 @@ struct ServerTaskTriggerView: View {
     private var contentView: some View {
         Form {
             Section {
-
                 Picker(
                     L10n.type,
                     selection: $taskTriggerInfo.type.coalesce(.startupTrigger)

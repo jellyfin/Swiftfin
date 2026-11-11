@@ -63,7 +63,6 @@ extension SeparatorHStack {
 
         @ViewBuilder
         func body(children: _VariadicView.Children) -> some View {
-
             let last = children.last?.id
 
             localHStack {

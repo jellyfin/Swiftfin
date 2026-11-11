@@ -21,7 +21,6 @@ extension EditMetadataView {
 
         var body: some View {
             Section(L10n.season) {
-
                 // MARK: - Season Number
 
                 StateAdapter(initialValue: false) { isPresented in

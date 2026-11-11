@@ -81,8 +81,7 @@ struct ErrorView<ErrorType: Error>: View {
             }
 
             if let localizedError = error as? LocalizedError,
-               let recoverySuggestion = localizedError.recoverySuggestion
-            {
+               let recoverySuggestion = localizedError.recoverySuggestion {
                 Text(recoverySuggestion)
                     .font(.caption)
                     .foregroundStyle(.secondary)

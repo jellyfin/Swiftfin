@@ -44,6 +44,7 @@ func SecureField(
 extension SecureField {
 
     enum MaskToggleBehavior {
+
         case disabled
         case enabled
     }

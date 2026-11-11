@@ -67,7 +67,6 @@ struct ItemRefreshView: View {
 
     private var contentView: some View {
         Form(systemImage: "arrow.clockwise") {
-
             Section {
                 #if os(iOS)
                 Picker(L10n.type, selection: $refreshType)

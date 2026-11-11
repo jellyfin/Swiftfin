@@ -38,6 +38,7 @@ private extension TranscodingProfile {
 private enum LegacyCodecList {
 
     enum LimitError: Error {
+
         case essentialCodecsTooLong
     }
 

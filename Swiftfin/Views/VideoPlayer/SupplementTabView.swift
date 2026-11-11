@@ -170,7 +170,8 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
                 return
             }
             guard swipeSelection == nil,
-                  let page = makePageController(), page.viewControllers?.first !== target else { return }
+                  let page = makePageController(),
+                  page.viewControllers?.first !== target else { return }
 
             let direction = direction(from: page.viewControllers?.first, to: targetID)
 
@@ -244,8 +245,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
                swipeSelection.revision == selectionRevision,
                selection.wrappedValue == swipeSelection.id,
                let visible = controller.viewControllers?.first,
-               let newID = hostID(for: visible)
-            {
+               let newID = hostID(for: visible) {
                 requestedID = newID
                 selectionRevision += 1
                 selection.wrappedValue = newID

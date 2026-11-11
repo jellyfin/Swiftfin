@@ -32,6 +32,7 @@ struct LetterPickerBar: PresentationView {
     private let letters = ItemLetter.allCases
 
     private enum Row: Hashable {
+
         case letter(ItemLetter)
         case dot
     }

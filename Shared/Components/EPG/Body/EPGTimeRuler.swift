@@ -16,7 +16,7 @@ struct EPGTimeRuler: View {
     @ObservedObject
     var viewModel: EPGViewModel
 
-    // Count of timestamps needed for the period (30m increments)
+    /// Count of timestamps needed for the period (30m increments)
     private var labelCount: Int {
         max(0, Int(viewModel.startDate.distance(to: viewModel.endDate) / (Double(30) * 60)))
     }

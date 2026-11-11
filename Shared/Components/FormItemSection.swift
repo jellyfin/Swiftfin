@@ -62,8 +62,7 @@ struct FormItemSection<Item: Poster>: PresentationView {
         Section(L10n.media) {
             if let baseItem = item as? BaseItemDto,
                let parentLabel = baseItem.parentLabel,
-               let parentValue = baseItem.parentTitle
-            {
+               let parentValue = baseItem.parentTitle {
                 LabeledContent(
                     parentLabel,
                     value: parentValue
@@ -77,15 +76,13 @@ struct FormItemSection<Item: Poster>: PresentationView {
 
             if let baseItem = item as? BaseItemDto,
                let subtitleLabel = baseItem.type?.displayTitle,
-               let subtitleValue = baseItem.subtitle
-            {
+               let subtitleValue = baseItem.subtitle {
                 LabeledContent(
                     subtitleLabel,
                     value: subtitleValue
                 )
             } else if let baseItem = item as? BaseItemDto,
-                      let year = baseItem.productionYear
-            {
+                      let year = baseItem.productionYear {
                 LabeledContent(
                     L10n.year,
                     value: year.description

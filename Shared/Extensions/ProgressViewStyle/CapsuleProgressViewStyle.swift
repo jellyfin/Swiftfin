@@ -11,6 +11,7 @@ import SwiftUI
 struct CapsuleProgressViewStyle: ProgressViewStyle {
 
     enum CornerStyle {
+
         case round
         case square
     }
@@ -53,7 +54,6 @@ struct CapsuleProgressViewStyle: ProgressViewStyle {
             .opacity(0.2)
             .overlay(alignment: .leading) {
                 ZStack(alignment: .leading) {
-
                     if showsProgress {
                         if let secondaryProgress, secondaryProgress > (configuration.fractionCompleted ?? 0) {
                             buildCapsule(for: secondaryProgress)

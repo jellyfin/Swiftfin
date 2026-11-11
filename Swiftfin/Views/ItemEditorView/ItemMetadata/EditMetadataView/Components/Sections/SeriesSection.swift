@@ -30,7 +30,6 @@ extension EditMetadataView {
         // MARK: - Body
 
         var body: some View {
-
             Section(L10n.series) {
                 seriesStatusView
             }

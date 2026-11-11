@@ -9,6 +9,7 @@
 import SwiftUI
 
 enum SelectorType {
+
     case single
     case multi
 }

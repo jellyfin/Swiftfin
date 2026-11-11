@@ -96,8 +96,7 @@ extension SeriesEpisodeContentGroup {
 
         private var preferredElementID: EpisodeElement.ID? {
             if let playButtonItemID = playButtonItem?.id,
-               elements.contains(where: { $0.id == playButtonItemID })
-            {
+               elements.contains(where: { $0.id == playButtonItemID }) {
                 return playButtonItemID
             }
 

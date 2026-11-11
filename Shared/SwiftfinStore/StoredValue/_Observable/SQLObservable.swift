@@ -59,7 +59,6 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
     }
 
     private func makeObjectPublisher() -> ObjectPublisher<AnyStoredData>? {
-
         guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return nil }
 
         let field = key.field ?? key.name

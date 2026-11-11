@@ -122,8 +122,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 Text(title)
 
                 if let stream = streams(secondary: secondary)
-                    .first(property: \.index, equalTo: playbackItem.subtitleTrackIndex(secondary: secondary))
-                {
+                    .first(property: \.index, equalTo: playbackItem.subtitleTrackIndex(secondary: secondary)) {
                     Text(stream.displayTitle ?? L10n.unknown)
                 } else {
                     Text(L10n.none)

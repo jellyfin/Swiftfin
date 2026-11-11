@@ -14,16 +14,19 @@ import JellyfinAPI
 final class UserStore {
 
     struct RequestToken {
+
         fileprivate let storeID: UUID
         fileprivate let revision: UInt64
     }
 
     enum Change {
+
         case updated(UserDto)
         case deleted(String)
     }
 
     enum StoreError: Error {
+
         case invalidSession
         case invalidUserID
         case userUnavailable
@@ -99,7 +102,8 @@ final class UserStore {
     }
 
     func delete(id: String) {
-        guard isActive, !id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+        guard isActive,
+              !id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               deletedIDs.insert(id).inserted else { return }
 
         records[id]?.invalidate()

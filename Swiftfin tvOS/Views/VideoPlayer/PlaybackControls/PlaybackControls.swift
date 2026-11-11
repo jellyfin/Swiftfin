@@ -43,7 +43,6 @@ extension VideoPlayer {
             var viewState = viewState
 
             VStack(spacing: 0) {
-
                 Toolbar()
                     .isVisible(viewState.visibleElements.contains(.toolbar))
                     .enabled(viewState.visibleElements.contains(.toolbar))

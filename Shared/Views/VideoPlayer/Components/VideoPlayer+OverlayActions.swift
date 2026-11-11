@@ -47,8 +47,7 @@ extension VideoPlayer {
             .focusSection()
             .onMoveCommand { direction in
                 if direction == .left || direction == .right,
-                   let action = actions.first(where: { $0.id.focusID == focusedAction })
-                {
+                   let action = actions.first(where: { $0.id.focusID == focusedAction }) {
                     dismissOverlayAction(action, towards: direction == .left ? .left : .right)
                 } else if viewState.presentation == .hidden, direction == .up || direction == .down {
                     viewState.showControls()

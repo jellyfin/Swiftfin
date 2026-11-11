@@ -763,8 +763,8 @@ extension VideoPlayer {
             #endif
         }
 
-        // Setup player view separately after view appears to hopefully
-        // prevent player playing before the view is done presenting
+        /// Setup player view separately after view appears to hopefully
+        /// prevent player playing before the view is done presenting
         private func setupPlayerView() {
             addChild(playerViewController)
             view.addSubview(playerView)
@@ -817,7 +817,6 @@ extension VideoPlayer {
         }
 
         private func setupOnLoadConstraints() {
-
             supplementHeight = supplementContainerOffset(isCompact: viewLayout.usesCompactPlayer)
             supplementOffset = -dismissedSupplementContainerOffset
 
@@ -1064,8 +1063,7 @@ extension VideoPlayer {
             // A late animation completion must not undo navigation within the player
             // or into another focus environment, such as a menu.
             if let nextFocusedView = context.nextFocusedView,
-               !nextFocusedView.isDescendant(of: supplementContainerView)
-            {
+               !nextFocusedView.isDescendant(of: supplementContainerView) {
                 pendingPlaybackFocusRequest = nil
             }
         }
@@ -1079,8 +1077,7 @@ extension VideoPlayer {
                viewState.visibleElements.contains(.supplements),
                let supplement = viewState.singleSupplement,
                context.focusHeading.contains(.down),
-               context.nextFocusedView?.isDescendant(of: supplementContainerView) == true
-            {
+               context.nextFocusedView?.isDescendant(of: supplementContainerView) == true {
                 DispatchQueue.main.async { [weak self] in
                     guard let self,
                           !viewState.isPresentingSupplement,

@@ -62,7 +62,6 @@ struct ServerTaskDetailsView: View {
             if let lastExecutionResult = viewModel.task.lastExecutionResult {
                 if let status = lastExecutionResult.status, let endTime = lastExecutionResult.endTimeUtc {
                     Section(L10n.lastRun) {
-
                         LabeledContent(
                             L10n.status,
                             value: status.displayTitle

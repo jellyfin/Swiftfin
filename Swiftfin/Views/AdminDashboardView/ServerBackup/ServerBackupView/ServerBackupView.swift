@@ -66,7 +66,6 @@ struct ServerBackupView: View {
             viewModel.refresh()
         }
         .topBarTrailing {
-
             if viewModel.background.is(.creating) {
                 ProgressView()
             }

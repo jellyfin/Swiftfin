@@ -36,6 +36,7 @@ protocol MediaPlayer: AnyObject, Observable {
 }
 
 enum MediaPlaybackLocation {
+
     case local
     case remote
 }

@@ -50,11 +50,11 @@ struct AddAccessScheduleView: View {
             return nil
         }
 
-        /// AccessSchedule Hours are formatted as 23.5 == 11:30pm or 8.25 == 8:15am
+        // AccessSchedule Hours are formatted as 23.5 == 11:30pm or 8.25 == 8:15am
         let startDouble = Double(startHour) + Double(startMinute) / 60.0
         let endDouble = Double(endHour) + Double(endMinute) / 60.0
 
-        /// AccessSchedule should have valid Start & End Hours
+        // AccessSchedule should have valid Start & End Hours
         return AccessSchedule(
             dayOfWeek: selectedDay,
             endHour: endDouble,
@@ -80,7 +80,6 @@ struct AddAccessScheduleView: View {
             Section(L10n.dayOfWeek) {
                 Picker(L10n.dayOfWeek, selection: $selectedDay) {
                     ForEach(DynamicDayOfWeek.allCases, id: \.self) { day in
-
                         if day == .everyday {
                             Divider()
                         }
@@ -119,7 +118,6 @@ struct AddAccessScheduleView: View {
             viewModel.refresh()
         }
         .topBarTrailing {
-
             if viewModel.background.is(.refreshing) {
                 ProgressView()
             }

@@ -20,7 +20,6 @@ struct ListTitleSection: View {
     var body: some View {
         Section {
             VStack(alignment: .center, spacing: 10) {
-
                 title
                     .font(.title3)
                     .fontWeight(.semibold)
@@ -87,7 +86,6 @@ struct InsetGroupedListHeader<Content: View>: View {
             learnMoreAction?()
         } label: {
             VStack(alignment: .center, spacing: 10) {
-
                 if let title {
                     title
                         .font(.title3)

@@ -59,7 +59,8 @@ extension ItemActionButtons {
         private func playExternalTrailer(_ trailer: NamedURL) {
             #if os(tvOS)
             guard let urlString = trailer.url,
-                  let externalURL = ExternalTrailerURL(string: urlString), externalURL.canBeOpened
+                  let externalURL = ExternalTrailerURL(string: urlString),
+                  externalURL.canBeOpened
             else {
                 error = ErrorMessage(L10n.unableToOpenTrailer)
                 return

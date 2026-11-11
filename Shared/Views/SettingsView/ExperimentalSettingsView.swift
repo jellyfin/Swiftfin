@@ -39,8 +39,7 @@ struct ExperimentalSettingsView: View {
                 .onChange(of: isChromecastEnabled) {
                     if isChromecastEnabled,
                        !Defaults[.VideoPlayer.barActionButtons].contains(.playbackDestination),
-                       !Defaults[.VideoPlayer.menuActionButtons].contains(.playbackDestination)
-                    {
+                       !Defaults[.VideoPlayer.menuActionButtons].contains(.playbackDestination) {
                         Defaults[.VideoPlayer.barActionButtons].append(.playbackDestination)
                     }
                     ChromecastController.updateAvailability()

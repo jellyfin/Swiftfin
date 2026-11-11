@@ -96,22 +96,19 @@ enum MediaPlayerItemResolver {
                 guard let mediaSources = response.value.mediaSources else { return nil }
 
                 if let tag = initialMediaSource.eTag,
-                   let matchingTag = mediaSources.first(property: \.eTag, equalTo: tag)
-                {
+                   let matchingTag = mediaSources.first(property: \.eTag, equalTo: tag) {
                     return matchingTag
                 }
 
                 if let initialID = initialMediaSource.id,
-                   let matchingMediaSource = mediaSources.first(property: \.id, equalTo: initialID)
-                {
+                   let matchingMediaSource = mediaSources.first(property: \.id, equalTo: initialID) {
                     return matchingMediaSource
                 }
 
                 for source in mediaSources {
                     if let openToken = source.openToken,
                        let id = source.id,
-                       openToken.contains(id)
-                    {
+                       openToken.contains(id) {
                         return source
                     }
                 }
@@ -221,7 +218,6 @@ enum MediaPlayerItemResolver {
         userSession: UserSession,
         logger: Logger
     ) throws -> URL {
-
         guard let itemID = item.id else {
             throw ErrorMessage("No item ID while building online media player item!")
         }
@@ -237,7 +233,6 @@ enum MediaPlayerItemResolver {
         }
 
         if item.mediaType == .video {
-
             logger.trace("Making video stream URL for item \(itemID)")
 
             let videoStreamParameters = Paths.GetVideoStreamParameters(

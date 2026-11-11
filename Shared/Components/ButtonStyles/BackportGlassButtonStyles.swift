@@ -63,6 +63,7 @@ struct BackportGlassProminentButtonStyle: BackportButtonStyle {
 private struct BackportGlassButtonStyleBody: View {
 
     enum Prominence {
+
         case standard
         case prominent
     }

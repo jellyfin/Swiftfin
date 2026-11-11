@@ -47,7 +47,6 @@ struct LocalUserAccessPolicyView: View {
 
                     // frame necessary with bug within BulletedList
                     BulletedList {
-
                         VStack(alignment: .leading, spacing: 5) {
                             Text(LocalUserAccessPolicy.requireDeviceAuthentication.displayTitle)
                                 .fontWeight(.semibold)

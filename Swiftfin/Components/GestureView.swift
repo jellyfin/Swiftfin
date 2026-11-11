@@ -28,7 +28,6 @@ struct GestureView: PlatformViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {
-
         context.coordinator.longPressAction = context.environment.longPressAction
         context.coordinator.panAction = context.environment.panAction
         context.coordinator.pinchAction = context.environment.pinchAction

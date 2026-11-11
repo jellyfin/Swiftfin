@@ -46,7 +46,7 @@ struct ServerActivityFilterView: View {
                 .labelsHidden()
             }
 
-            /// Reset button to remove the filter
+            // Reset button to remove the filter
             if environment.wrappedValue.minDate != nil {
                 Section {
                     Button(role: .destructive) {

@@ -9,6 +9,7 @@
 import Foundation
 
 enum BoxSetDisplayOrder: String, CaseIterable, Identifiable {
+
     case dateModified = "DateModified"
     case sortName = "SortName"
     case premiereDate = "PremiereDate"

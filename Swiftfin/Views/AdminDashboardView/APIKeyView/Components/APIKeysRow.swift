@@ -86,7 +86,6 @@ extension APIKeysView {
                 Text(L10n.replaceItemConfirmation)
             }
             .swipeActions {
-
                 Button(
                     L10n.delete,
                     systemImage: "trash"

@@ -22,7 +22,6 @@ struct ChevronButton<Label: View>: View {
     var body: some View {
         Button(action: action) {
             HStack {
-
                 label
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -213,7 +212,6 @@ struct ChevronButtonValueContent<Label: View, Value: View>: View {
 
     var body: some View {
         HStack {
-
             label
                 .labelStyle(BoldIconLabelStyle())
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -240,6 +238,7 @@ struct ChevronButtonLabelContent<Label: View>: View {
 }
 
 private struct BoldIconLabelStyle: LabelStyle {
+
     func makeBody(configuration: Configuration) -> some View {
         Label {
             configuration.title

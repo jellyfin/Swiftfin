@@ -41,7 +41,6 @@ struct AddServerUserView: View {
 
     var body: some View {
         List {
-
             Section {
                 TextField(L10n.username, text: $username) {
                     focusedfield = .password

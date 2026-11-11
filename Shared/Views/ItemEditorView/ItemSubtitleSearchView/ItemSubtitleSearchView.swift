@@ -79,7 +79,6 @@ struct ItemSubtitleSearchView: View {
 
     private var contentView: some View {
         Form(systemImage: "textformat") {
-
             Section(L10n.options) {
                 CulturePicker(L10n.language, threeLetterISOLanguageName: $viewModel.language)
 
@@ -103,7 +102,6 @@ struct ItemSubtitleSearchView: View {
             }
 
             Section(L10n.search) {
-
                 if viewModel.results.isEmpty {
                     if viewModel.background.is(.searching) {
                         ProgressView()

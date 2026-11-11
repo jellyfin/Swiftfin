@@ -81,7 +81,6 @@ extension ActiveSessionsView {
 
         private var idleSessionDetails: some View {
             VStack(alignment: .leading, spacing: 4) {
-
                 Text(session.userName ?? L10n.unknown)
                     .font(.headline)
 

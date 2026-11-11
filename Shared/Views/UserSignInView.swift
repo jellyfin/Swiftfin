@@ -354,7 +354,6 @@ struct UserSignInView: View {
                 isPresented: $isPresentingExistingUser,
                 presenting: existingUser
             ) { existingUser in
-
                 let userState = existingUser.state.state
                 let existingUserAccessPolicy = userState.accessPolicy
 

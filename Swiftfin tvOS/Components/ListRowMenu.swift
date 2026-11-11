@@ -132,8 +132,7 @@ extension ListRowMenu where Subtitle == Text, Content == AnyView {
         _ title: some WithText,
         selection: Binding<SelectionValue>
     ) where SelectionValue: CaseIterable & Displayable & Hashable,
-        SelectionValue.AllCases: RandomAccessCollection
-    {
+        SelectionValue.AllCases: RandomAccessCollection {
         self.title = title.textBody
         self.subtitle = Text(selection.wrappedValue.displayTitle)
 

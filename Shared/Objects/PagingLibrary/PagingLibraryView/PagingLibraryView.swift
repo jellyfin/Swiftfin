@@ -105,7 +105,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     private var elementsView: some View {
         GeometryReader { geometry in
-
             CollectionVGrid(
                 uniqueElements: viewModel.displayedElements,
                 layout: Element.layout(

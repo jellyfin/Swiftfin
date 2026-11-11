@@ -143,8 +143,7 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         if let coordinator = transitionCoordinator,
            coordinator.animate(alongsideTransition: { [weak self] _ in
                self?.view.layoutIfNeeded()
-           })
-        {
+           }) {
             return
         }
 

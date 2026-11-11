@@ -56,7 +56,6 @@ extension SeparatorVStack {
 
         @ViewBuilder
         func body(children: _VariadicView.Children) -> some View {
-
             let last = children.last?.id
 
             VStack(alignment: alignment, spacing: 0) {

@@ -160,9 +160,9 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
         var parameters = parameters
         let groupedFolders: [String]?
 
-        if environment.grouping == .folders, parent.libraryType == .userView,
-           parent.collectionType == .movies || parent.collectionType == .tvshows
-        {
+        if environment.grouping == .folders,
+           parent.libraryType == .userView,
+           parent.collectionType == .movies || parent.collectionType == .tvshows {
             groupedFolders = pageState.userSession.userData.configuration?.groupedFolders ?? []
             guard let groupedFolders, groupedFolders.isNotEmpty else { return [] }
 

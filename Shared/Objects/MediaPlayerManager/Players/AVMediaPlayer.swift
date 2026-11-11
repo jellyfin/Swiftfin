@@ -458,8 +458,7 @@ extension AVMediaPlayer {
         from streams: [MediaStream]
     ) -> AVMediaSelectionOption? {
         if streams.count == group.options.count,
-           let position = streams.firstIndex(where: { $0.index == index })
-        {
+           let position = streams.firstIndex(where: { $0.index == index }) {
             return group.options[position]
         }
 

@@ -123,8 +123,7 @@ extension ItemView {
         @ViewBuilder
         private func Subtitles() -> some View {
             if let mediaStreams = selectedMediaSource?.mediaStreams,
-               mediaStreams.hasSubtitles
-            {
+               mediaStreams.hasSubtitles {
                 EmptyLabel("CC")
                     .labelStyle(.attributeBadgeOutline)
             }

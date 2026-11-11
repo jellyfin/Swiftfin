@@ -82,7 +82,6 @@ extension VideoPlayer.PlaybackControls {
 
         private var leadingTimestamp: some View {
             HStack(spacing: 2) {
-
                 Text(scrubbedSeconds, format: .runtime)
                     .accessibilityIdentifier("playbackElapsedTime")
 

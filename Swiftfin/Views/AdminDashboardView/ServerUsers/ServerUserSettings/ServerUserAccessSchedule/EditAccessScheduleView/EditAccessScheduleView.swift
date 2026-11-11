@@ -60,7 +60,6 @@ struct EditAccessScheduleView: View {
         .navigationTitle(L10n.accessSchedules.localizedCapitalized)
         .navigationBarBackButtonHidden(isEditing)
         .toolbar {
-
             ToolbarItem(placement: .topBarLeading) {
                 if isEditing {
                     navigationBarSelectView
@@ -134,7 +133,6 @@ struct EditAccessScheduleView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-
         let isAllSelected: Bool = selectedSchedules.count == viewModel.user.policy?.accessSchedules?.count
 
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {

@@ -19,6 +19,7 @@ struct VideoPlayerControlsLayout<
 >: View {
 
     private enum Region: Hashable {
+
         case supplements
         case progress
     }

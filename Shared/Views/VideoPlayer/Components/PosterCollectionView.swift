@@ -13,8 +13,7 @@ import SwiftUI
 extension VideoPlayer {
 
     struct PosterCollectionView<Data: RandomAccessCollection, Content: View>: PresentationView
-        where Data.Element: Poster, Data.Index == Int
-    {
+    where Data.Element: Poster, Data.Index == Int {
 
         @Environment(VideoPlayer.ViewState.self)
         private var viewState

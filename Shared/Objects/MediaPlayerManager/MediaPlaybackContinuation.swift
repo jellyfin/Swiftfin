@@ -27,8 +27,10 @@ struct MediaPlaybackContinuation {
         configuration: UserConfiguration?
     ) {
         guard item.type == .episode,
-              let itemID = item.id, !itemID.isEmpty,
-              let seriesID = item.seriesID, !seriesID.isEmpty else { return nil }
+              let itemID = item.id,
+              !itemID.isEmpty,
+              let seriesID = item.seriesID,
+              !seriesID.isEmpty else { return nil }
 
         self.itemID = itemID
         self.seriesID = seriesID
@@ -57,7 +59,10 @@ struct MediaPlaybackContinuation {
     private func match(_ previous: MediaStream, in source: MediaSourceInfo, defaultIndex: Int?) -> Int? {
         let language = languageCode(previous.language)
         let candidates = (source.mediaStreams ?? []).filter { stream in
-            guard stream.type == previous.type, let index = stream.index, index >= 0, stream.type != .audio || stream.isExternal != true,
+            guard stream.type == previous.type,
+                  let index = stream.index,
+                  index >= 0,
+                  stream.type != .audio || stream.isExternal != true,
                   stream.type != .subtitle || stream.deliveryMethod != .drop,
                   (stream.isForced == true) == (previous.isForced == true) else { return false }
 
@@ -92,8 +97,10 @@ struct MediaPlaybackContinuation {
     }
 
     private func sameLabel(_ lhs: String?, _ rhs: String?) -> Bool {
-        guard let lhs = lhs?.trimmingCharacters(in: .whitespacesAndNewlines), !lhs.isEmpty,
-              let rhs = rhs?.trimmingCharacters(in: .whitespacesAndNewlines), !rhs.isEmpty else { return false }
+        guard let lhs = lhs?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !lhs.isEmpty,
+              let rhs = rhs?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !rhs.isEmpty else { return false }
 
         return lhs.caseInsensitiveCompare(rhs) == .orderedSame
     }
@@ -104,7 +111,8 @@ struct MediaPlaybackContinuation {
         // Canonicalize ISO 639-2 bibliographic aliases (such as dut/nld) before asking for an alpha-2 code.
         let canonical = Locale.canonicalLanguageIdentifier(from: identifier)
         guard let code = Locale.Language(identifier: canonical).languageCode,
-              code.identifier != "und", code.identifier != "zxx" else { return nil }
+              code.identifier != "und",
+              code.identifier != "zxx" else { return nil }
 
         return code.identifier(.alpha2) ?? code.identifier(.alpha3)
     }

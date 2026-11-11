@@ -9,6 +9,7 @@
 import SwiftUI
 
 extension AnyView: PresentationView {
+
     var standardView: some View {
         self
     }

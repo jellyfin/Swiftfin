@@ -18,7 +18,6 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.remoteControl) {
-
                 Toggle(
                     L10n.controlOtherUsers,
                     isOn: $policy.enableRemoteControlOfOtherUsers.coalesce(false)

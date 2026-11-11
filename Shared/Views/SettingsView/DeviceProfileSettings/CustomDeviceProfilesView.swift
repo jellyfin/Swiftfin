@@ -88,7 +88,6 @@ struct CustomDeviceProfilesView: View {
 
     private var customProfileView: some View {
         Section(customDeviceProfileAction == .add ? L10n.custom : L10n.profiles) {
-
             if customProfiles.isEmpty {
                 addButton
             }

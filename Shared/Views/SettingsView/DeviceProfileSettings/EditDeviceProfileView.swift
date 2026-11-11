@@ -36,7 +36,6 @@ extension CustomDeviceProfilesView {
         }
 
         init(profile: Binding<CustomDeviceProfile>?) {
-
             createProfile = profile == nil
 
             if let profile {

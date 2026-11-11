@@ -22,7 +22,6 @@ extension ServerTaskDetailsView {
 
         // TODO: make FormatStyle
         private var buttonLabel: String {
-
             guard let triggerType = taskTriggerInfo.type else { return L10n.unknown }
 
             switch triggerType {
@@ -38,8 +37,7 @@ extension ServerTaskDetailsView {
 
             case .weeklyTrigger:
                 if let dayOfWeek = taskTriggerInfo.dayOfWeek,
-                   let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks
-                {
+                   let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
                     return L10n.itemAtItem(
                         dayOfWeek.rawValue.capitalized,
                         Duration.ticks(timeOfDayTicks)
@@ -66,7 +64,6 @@ extension ServerTaskDetailsView {
         private var contentView: some View {
             HStack {
                 VStack(alignment: .leading) {
-
                     Text(buttonLabel)
                         .fontWeight(.semibold)
 

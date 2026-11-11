@@ -14,7 +14,6 @@ import SwiftUI
 class UIPreferencesHostingController: UIHostingController<AnyView> {
 
     init(@ViewBuilder content: () -> some View) {
-
         #if os(iOS)
         _ = UIViewController.forwardOrientationPreferences
         #endif
@@ -148,8 +147,9 @@ class UIPreferencesHostingController: UIHostingController<AnyView> {
     private var _pressCommandActions: [PressCommandAction] = []
 
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-        guard let buttonPress = presses.first?.type, let action = _pressCommandActions
-            .first(where: { $0.press == buttonPress }) else { return }
+        guard let buttonPress = presses.first?.type,
+              let action = _pressCommandActions
+                .first(where: { $0.press == buttonPress }) else { return }
 
         action.action()
     }

@@ -34,14 +34,12 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
         content
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
-
                     if isLoading {
                         ProgressView()
                     }
 
 //                    if !isHidden, collectedMenuGroups.isNotEmpty {
                     if !isHidden {
-
                         let systemImage = if #available(iOS 26, *) {
                             "ellipsis"
                         } else {

@@ -170,7 +170,6 @@ struct ItemSubtitlesView: View {
                 }
                 .foregroundStyle(.primary, .secondary)
             } else {
-
                 if viewModel.internalSubtitles.isNotEmpty {
                     Section {
                         ForEach(viewModel.internalSubtitles, id: \.index) { subtitle in

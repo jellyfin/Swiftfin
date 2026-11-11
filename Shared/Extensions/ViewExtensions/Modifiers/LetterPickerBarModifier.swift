@@ -22,8 +22,7 @@ struct LetterPickerBarModifier: ViewModifier {
     func body(content: Content) -> some View {
         if let edge = letterPickerOrientation.edge,
            let viewModel,
-           !viewModel.staticFilters.containsFilters(ofType: .letter)
-        {
+           !viewModel.staticFilters.containsFilters(ofType: .letter) {
             content
                 .focusSection()
                 #if os(tvOS)

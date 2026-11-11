@@ -110,11 +110,9 @@ struct EditServerConnectionView: View {
     #if os(iOS)
     @ViewBuilder
     private var locationPermissionWarning: some View {
-
         if draft.interface == .wifi,
            locationPermissionStatus != .authorized,
-           AppPermission.location.privacyDescription.isNotEmpty
-        {
+           AppPermission.location.privacyDescription.isNotEmpty {
             VStack(alignment: .leading, spacing: 8) {
                 Label(
                     AppPermission.location.privacyDescription,
@@ -365,8 +363,7 @@ private struct ServerConnectionDraft: Equatable {
 
         if interface == .wifi,
            useWifiName,
-           normalizedSSIDs.isEmpty
-        {
+           normalizedSSIDs.isEmpty {
             throw ErrorMessage(L10n.invalidWifiName)
         }
 

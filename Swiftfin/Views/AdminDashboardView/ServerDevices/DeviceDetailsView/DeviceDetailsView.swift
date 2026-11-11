@@ -34,9 +34,7 @@ struct DeviceDetailsView: View {
     var body: some View {
         List {
             if let userID = device.lastUserID,
-               let userName = device.lastUserName
-            {
-
+               let userName = device.lastUserName {
                 let user = UserDto(id: userID, name: userName)
 
                 AdminDashboardView.UserSection(

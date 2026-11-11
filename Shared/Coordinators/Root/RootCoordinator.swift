@@ -20,6 +20,7 @@ final class RootCoordinator: ObservableObject {
 
     @CasePathable
     enum Action {
+
         case start
 
         var transition: Transition {
@@ -31,6 +32,7 @@ final class RootCoordinator: ObservableObject {
     }
 
     enum State {
+
         case initial
         case error
         case ready

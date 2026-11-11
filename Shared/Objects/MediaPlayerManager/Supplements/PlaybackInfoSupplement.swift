@@ -76,8 +76,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
                 }
 
                 if let stream = playbackItem.subtitleStreams
-                    .first(property: \.index, equalTo: playbackItem.selectedSecondarySubtitleStreamIndex)
-                {
+                    .first(property: \.index, equalTo: playbackItem.selectedSecondarySubtitleStreamIndex) {
                     LabeledContent(L10n.secondarySubtitles, value: stream.displayTitle ?? L10n.unknown)
                 }
             }

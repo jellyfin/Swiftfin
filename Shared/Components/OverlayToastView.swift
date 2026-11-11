@@ -130,6 +130,7 @@ struct OverlayToastContent: View {
     }
 
     private struct ToastButtonStyle: ButtonStyle {
+
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .scaleEffect(configuration.isPressed ? 0.92 : 1)

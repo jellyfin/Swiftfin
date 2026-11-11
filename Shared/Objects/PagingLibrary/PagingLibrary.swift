@@ -45,7 +45,7 @@ final class LibraryPageState {
         return try response.patches()
     }
 
-    // Server offsets count rows that may be filtered out before they reach the collection
+    /// Server offsets count rows that may be filtered out before they reach the collection
     func progress(returnedCount: Int) -> (nextOffset: Int, hasNextPage: Bool) {
         let serverItemCount = serverItemCount ?? returnedCount
         let nextOffset = pageOffset + serverItemCount

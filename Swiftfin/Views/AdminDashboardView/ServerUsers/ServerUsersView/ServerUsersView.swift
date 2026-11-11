@@ -213,7 +213,6 @@ struct ServerUsersView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-
         let isAllSelected: Bool = selectedUsers.count == viewModel.users.count
 
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {

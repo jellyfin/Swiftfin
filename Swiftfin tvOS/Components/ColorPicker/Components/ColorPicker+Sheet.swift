@@ -52,7 +52,6 @@ extension ColorPicker {
                         .frame(width: 200)
 
                     VStack {
-
                         gradientSection(for: \.red, title: L10n.red)
 
                         gradientSection(for: \.green, title: L10n.green)

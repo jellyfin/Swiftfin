@@ -229,8 +229,7 @@ extension BaseItemKind {
         let preferredPosterDisplayTypes = itemTypes.map(\.preferredPosterDisplayType)
         let fallbackPosterDisplayType = if let firstPreferredPosterDisplayType = preferredPosterDisplayTypes.first,
                                            preferredPosterDisplayTypes.allSatisfy({ $0 == firstPreferredPosterDisplayType }),
-                                           posterDisplayTypes.contains(firstPreferredPosterDisplayType)
-        {
+                                           posterDisplayTypes.contains(firstPreferredPosterDisplayType) {
             firstPreferredPosterDisplayType
         } else if posterDisplayTypes.contains(LibraryStyle.default.posterDisplayType) {
             LibraryStyle.default.posterDisplayType
@@ -250,7 +249,6 @@ extension BaseItemKind {
     /// The `ItemSortBy` cases applicable to this `BaseItemKind`.
     @ArrayBuilder<ItemSortBy>
     var supportedItemSortBy: [ItemSortBy] {
-
         // Universal
         ItemSortBy.name
         ItemSortBy.random

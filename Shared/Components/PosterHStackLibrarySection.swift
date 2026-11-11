@@ -9,13 +9,13 @@
 import SwiftUI
 
 struct PosterHStackLibrarySection<Library: PagingLibrary>: View
-    where Library.Element: LibraryElement, Library.Element: Poster
-{
+where Library.Element: LibraryElement, Library.Element: Poster {
 
     @AdaptiveLayout
     private var viewLayout
 
     private enum FocusSection {
+
         case header
         case content
     }

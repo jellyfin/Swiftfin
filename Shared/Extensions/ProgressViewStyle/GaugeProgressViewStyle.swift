@@ -26,7 +26,6 @@ struct GaugeProgressViewStyle: ProgressViewStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
-
             if let systemImage {
                 Image(systemName: systemImage)
                     .resizable()

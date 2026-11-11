@@ -57,8 +57,7 @@ extension ItemView {
 
             private var headerImageItem: BaseItemDto {
                 if provider.item.type == .person || provider.item.type == .musicArtist,
-                   let randomItem = provider.randomBackdropItem
-                {
+                   let randomItem = provider.randomBackdropItem {
                     randomItem
                 } else {
                     provider.item

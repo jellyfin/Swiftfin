@@ -21,6 +21,7 @@ final class ConnectToServerViewModel: ObservableObject {
 
     @CasePathable
     enum Action {
+
         case addConnection(serverState: ServerState)
         case cancel
         case connect(url: String)
@@ -36,17 +37,19 @@ final class ConnectToServerViewModel: ObservableObject {
     }
 
     enum Event {
+
         case connected(ServerState)
         case duplicateServer(ServerState)
         case error
     }
 
     enum State {
+
         case connecting
         case initial
     }
 
-    // no longer-found servers are not cleared, but not an issue
+    /// no longer-found servers are not cleared, but not an issue
     @Published
     var localServers: OrderedSet<ServerState> = []
 
@@ -55,7 +58,6 @@ final class ConnectToServerViewModel: ObservableObject {
 
     @Function(\Action.Cases.connect)
     private func connectToServer(_ url: String) async throws {
-
         let formattedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
             .trimmingCharacters(in: ["/"])
@@ -112,16 +114,14 @@ final class ConnectToServerViewModel: ObservableObject {
         events.send(.connected(newServerState))
     }
 
-    // In the event of redirects, get the new host URL from response
+    /// In the event of redirects, get the new host URL from response
     private func processConnectionURL(initial url: URL, response: URL?) -> URL {
-
         let normalizedURL = url.normalizedServerConnectionURL ?? url
 
         guard let response else { return normalizedURL }
 
         if url.scheme != response.scheme ||
-            url.host != response.host
-        {
+            url.host != response.host {
             let newURL = response.absoluteString.trimmingSuffix(
                 Paths.getPublicSystemInfo.url?.absoluteString ?? ""
             )
@@ -132,7 +132,6 @@ final class ConnectToServerViewModel: ObservableObject {
     }
 
     private func save(server: ServerState) async throws {
-
         let publicInfo = try await server.getPublicSystemInfo()
 
         let newServers = StoredValues[.Server.servers]
@@ -142,7 +141,7 @@ final class ConnectToServerViewModel: ObservableObject {
         StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
     }
 
-    // server has same id, but (possible) new connection URL
+    /// server has same id, but (possible) new connection URL
     @Function(\Action.Cases.addConnection)
     private func _addConnection(_ server: ServerState) throws {
         guard let existingServer = StoredValues[.Server.servers].first(where: { $0.id == server.id }) else {

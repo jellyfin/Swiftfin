@@ -245,8 +245,7 @@ struct VideoPlayerSettingsView: View {
                 },
                 setter: { option in
                     if case .trickplay = option,
-                       case .trickplay = previewImageScrubbing
-                    {
+                       case .trickplay = previewImageScrubbing {
                         return previewImageScrubbing
                     }
 

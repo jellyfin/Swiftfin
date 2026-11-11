@@ -42,10 +42,8 @@ struct ListRow<Leading: View, Content: View>: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-
             Button(action: action) {
                 HStack(alignment: .center, spacing: viewLayout.edgePadding) {
-
                     leading
 
                     content

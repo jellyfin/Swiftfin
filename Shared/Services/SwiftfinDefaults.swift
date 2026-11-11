@@ -334,7 +334,7 @@ extension Defaults.Keys {
                 UserKey("chapterSlider", default: true)
             }
 
-            // Timestamp
+            /// Timestamp
             static var trailingTimestampType: Key<TrailingTimestampType> {
                 UserKey("trailingTimestamp", default: .timeLeft)
             }
@@ -383,7 +383,7 @@ extension Defaults.Keys {
         }
     }
 
-    // Experimental settings
+    /// Experimental settings
     enum Experimental {
 
         // TODO: don't use L10n key as key, just used to not

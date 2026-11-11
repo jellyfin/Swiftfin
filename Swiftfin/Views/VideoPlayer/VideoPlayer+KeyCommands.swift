@@ -32,7 +32,6 @@ extension VideoPlayer {
         func body(content: Content) -> some View {
             content
                 .keyCommands {
-
                     // MARK: Aspect Fill
 
                     KeyCommandAction(

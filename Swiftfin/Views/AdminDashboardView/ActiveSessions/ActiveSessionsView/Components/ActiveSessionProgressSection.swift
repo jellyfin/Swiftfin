@@ -50,8 +50,7 @@ extension ActiveSessionsView {
 
                     if let playMethod = playState.playMethod,
                        let transcodeReasons = transcodingInfo?.transcodeReasons,
-                       playMethod == .transcode
-                    {
+                       playMethod == .transcode {
                         if showTranscodeReason {
                             let transcodeIcons = Set(transcodeReasons.map(\.systemImage)).sorted()
 

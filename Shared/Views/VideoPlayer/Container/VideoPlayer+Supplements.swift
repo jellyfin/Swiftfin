@@ -140,7 +140,6 @@ extension VideoPlayer.UIContainerViewController {
                 #endif
 
                 VStack(alignment: .leading, spacing: 0) {
-
                     tabButtons
 
                     SupplementTabView(
@@ -177,7 +176,8 @@ extension VideoPlayer.UIContainerViewController {
             .task(id: focusedSupplementID) {
                 let previousSelection = viewState.selectedSupplementID
                 guard !viewState.isSupplementFocusPending,
-                      let id = focusedSupplementID, id != previousSelection
+                      let id = focusedSupplementID,
+                      id != previousSelection
                 else { return }
 
                 if previousSelection != nil {

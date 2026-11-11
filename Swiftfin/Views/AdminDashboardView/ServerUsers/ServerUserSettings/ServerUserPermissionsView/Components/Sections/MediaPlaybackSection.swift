@@ -18,7 +18,6 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.mediaPlayback) {
-
                 Toggle(
                     L10n.mediaPlayback,
                     isOn: $policy.enableMediaPlayback.coalesce(false)

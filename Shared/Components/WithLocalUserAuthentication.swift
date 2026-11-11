@@ -33,6 +33,7 @@ extension EnvironmentValues {
 struct WithLocalUserAuthentication<Content: View>: View {
 
     private struct PinRequest: Identifiable {
+
         let id: UUID
         let reason: String?
         let continuation: CheckedContinuation<String, Error>

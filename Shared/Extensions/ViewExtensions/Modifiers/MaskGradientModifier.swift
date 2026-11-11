@@ -11,6 +11,7 @@ import SwiftUI
 struct MaskGradientModifier: ViewModifier {
 
     enum Style {
+
         case linear
         case eased(EasedGradient.Curve)
     }

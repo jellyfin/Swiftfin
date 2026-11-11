@@ -102,7 +102,6 @@ struct ActiveSessionDetailsView: View {
         let subtitleStream = mediaStreams.first { $0.type == .subtitle && $0.index == playState.subtitleStreamIndex }
 
         List {
-
             FormItemSection(item: nowPlayingItem)
 
             ActiveSessionsView.ProgressSection(
@@ -209,7 +208,6 @@ struct ActiveSessionDetailsView: View {
         .animation(.linear(duration: 0.2), value: viewModel.session)
         .navigationTitle(L10n.session)
         .navigationBarMenuButton(isHidden: !hasPlaybackControls && !hasMessageControl) {
-
             if hasMessageControl {
                 Button(L10n.message, systemImage: "message.fill") {
                     // swiftlint:disable:next nested_l10n

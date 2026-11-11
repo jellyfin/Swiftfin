@@ -17,6 +17,7 @@ final class UserImageViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case delete
         case upload(UIImage)
 
@@ -31,16 +32,19 @@ final class UserImageViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case deleting
         case updating
     }
 
     enum Event {
+
         case deleted
         case updated
     }
 
     enum State {
+
         case initial
         case error
     }

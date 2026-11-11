@@ -17,7 +17,6 @@ extension DeviceProfile {
         maxBitrate: Int? = nil,
         mediaSource: MediaSourceInfo? = nil
     ) -> DeviceProfile {
-
         var deviceProfile: DeviceProfile = .init()
 
         // MARK: - Media Player Specific Logic
@@ -37,8 +36,7 @@ extension DeviceProfile {
         if playerType == .mpv,
            mediaSource?.mediaStreams?.contains(where: {
                $0.type == .video && ($0.dvProfile != nil || $0.videoRangeType?.isDolbyVision == true)
-           }) == true
-        {
+           }) == true {
             deviceProfile.subtitleProfiles = deviceProfile.subtitleProfiles?.filter {
                 $0.method == .encode || ($0.method == .external && ["subrip", "vtt"].contains($0.format ?? ""))
             }
@@ -96,8 +94,7 @@ extension DeviceProfile {
         }
 
         if configuration.compatibilityMode != .directPlay,
-           deviceProfile.transcodingProfiles?.contains(where: { $0.type == .audio }) != true
-        {
+           deviceProfile.transcodingProfiles?.contains(where: { $0.type == .audio }) != true {
             deviceProfile.transcodingProfiles = (deviceProfile.transcodingProfiles ?? [])
                 + playerType.transcodingProfiles.filter { $0.type == .audio }
         }

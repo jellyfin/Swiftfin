@@ -136,7 +136,6 @@ struct SelectUserView: View {
 
     private func select(user: UserState) {
         Task { @MainActor in
-
             do {
                 guard let authenticationAction else { return }
 
@@ -414,8 +413,7 @@ struct SelectUserView: View {
             let newValue = viewModel.servers.keys
 
             if case let SelectUserServerSelection.server(id: id) = serverSelection,
-               !newValue.contains(where: { $0.id == id })
-            {
+               !newValue.contains(where: { $0.id == id }) {
                 if newValue.count == 1, let firstServer = newValue.first {
                     let newSelection = SelectUserServerSelection.server(id: firstServer.id)
                     serverSelection = newSelection

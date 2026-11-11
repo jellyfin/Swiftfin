@@ -18,7 +18,6 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.status) {
-
                 Toggle(L10n.active, isOn: Binding(
                     get: { !(policy.isDisabled ?? false) },
                     set: { policy.isDisabled = !$0 }

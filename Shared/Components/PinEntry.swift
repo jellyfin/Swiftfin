@@ -151,8 +151,7 @@ private struct PinTextField: UIViewRepresentable {
                     if let transition = controller?.transitionCoordinator,
                        transition.animate(alongsideTransition: nil, completion: { [weak self] _ in
                            self?.presentIfNeeded()
-                       })
-                    {
+                       }) {
                         return
                     }
                     becomeFirstResponder()

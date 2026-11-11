@@ -24,7 +24,6 @@ extension AdminDashboardView {
 
         var body: some View {
             Section(L10n.user) {
-
                 if let action {
                     SettingsView.UserProfileRow(
                         user: user,

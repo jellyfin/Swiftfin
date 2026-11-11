@@ -50,8 +50,7 @@ extension PagingLibraryView {
 
             if libraryStyle.displayType == .list,
                options.displayTypes.contains(.list),
-               canAdjustListColumns
-            {
+               canAdjustListColumns {
                 Stepper(
                     L10n.columnsWithCount(libraryStyle.listColumnCount),
                     value: $libraryStyle.listColumnCount,

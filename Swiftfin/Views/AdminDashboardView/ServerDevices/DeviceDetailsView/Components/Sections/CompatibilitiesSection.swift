@@ -10,7 +10,9 @@ import JellyfinAPI
 import SwiftUI
 
 extension DeviceDetailsView {
+
     struct CapabilitiesSection: View {
+
         var device: DeviceInfoDto
 
         var body: some View {

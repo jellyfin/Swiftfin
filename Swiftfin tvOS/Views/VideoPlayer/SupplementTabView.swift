@@ -87,9 +87,9 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             // inside a supplement must remain under the focus engine's control.
             if !context.focusHeading.intersection(focusExitHeading).isEmpty,
                context.previouslyFocusedView?.isDescendant(of: view) == true,
-               let nextView = context.nextFocusedView, !nextView.isDescendant(of: view),
-               let focusExit
-            {
+               let nextView = context.nextFocusedView,
+               !nextView.isDescendant(of: view),
+               let focusExit {
                 DispatchQueue.main.async(execute: focusExit)
                 return false
             }

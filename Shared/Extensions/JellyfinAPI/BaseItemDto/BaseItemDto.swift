@@ -46,7 +46,6 @@ extension BaseItemDto {
     }
 
     func nowPlayableStaticMetadata(_ image: UIImage? = nil) -> NowPlayableStaticMetadata {
-
         let content = currentProgram ?? self
         let isAudio = mediaType == .audio || (mediaType == nil && (type == .audio || type == .audioBook || channelType == .radio))
 
@@ -341,8 +340,7 @@ extension BaseItemDto {
         if let playbackPositionTicks = userData?.playbackPositionTicks,
            let totalTicks = runTimeTicks,
            playbackPositionTicks != 0,
-           totalTicks != 0
-        {
+           totalTicks != 0 {
             interval = TimeInterval((totalTicks - playbackPositionTicks) / 10_000_000)
         } else if isAiring, let startDate {
             interval = Date.now.timeIntervalSince(startDate)
@@ -493,7 +491,6 @@ extension BaseItemDto {
             .compacted(using: \.element.startPositionTicks)
             .sorted(using: \.element.startPositionTicks)
             .map { i, chapter in
-
                 guard let imageTag = chapter.imageTag, imageTag.isNotEmpty else {
                     return .init(chapterInfo: chapter)
                 }
@@ -540,7 +537,8 @@ extension BaseItemDto {
 
     @MainActor
     var canShuffle: Bool {
-        guard id?.nilIfBlank != nil, !isMissing,
+        guard id?.nilIfBlank != nil,
+              !isMissing,
               Container.shared.currentUserSession()?.userData.policy?.enableMediaPlayback == true
         else { return false }
 
@@ -599,7 +597,6 @@ extension BaseItemDto {
     }
 
     var playButtonLabel: String {
-
         if isUnaired {
             return L10n.unaired
         }

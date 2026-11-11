@@ -12,6 +12,7 @@ import SwiftUI
 struct SafeRegionAreas: OptionSet {
 
     private enum Options: Int {
+
         case custom
         case system
     }
@@ -158,21 +159,25 @@ struct SafeRegionInset<ID: Hashable, Content: View>: View {
 }
 
 private enum RegionRole {
+
     case item(Edge.Set, Edge.Set)
     case inset(Edge, CGFloat, Bool, Edge.Set)
 }
 
 private struct RegionRoleKey: LayoutValueKey {
+
     static let defaultValue = RegionRole.item([], [])
 }
 
 private struct RegionIDKey<ID: Hashable>: LayoutValueKey {
+
     static var defaultValue: ID? {
         nil
     }
 }
 
 private struct ObservedRegionIDsKey<ID: Hashable>: LayoutValueKey {
+
     static var defaultValue: Set<ID>? {
         nil
     }
@@ -200,7 +205,6 @@ private struct RegionLayout<ID: Hashable>: Layout {
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-
         // SwiftUI mirrors these logical coordinates in RTL.
         var geometry = RegionGeometry<ID>(size: bounds.size, systemInsets: systemInsets)
 
@@ -221,8 +225,11 @@ private struct RegionLayout<ID: Hashable>: Layout {
             var candidate = geometry
 
             let frame = candidate.reserve(
-                edge: edge, thickness: vertical ? size.height : size.width,
-                spacing: spacing, id: child[RegionIDKey<ID>.self], ignoringSystem: ignoredSystem
+                edge: edge,
+                thickness: vertical ? size.height : size.width,
+                spacing: spacing,
+                id: child[RegionIDKey<ID>.self],
+                ignoringSystem: ignoredSystem
             )
 
             // Inactive controls stay mounted but reserve no space.
@@ -241,7 +248,8 @@ private struct RegionLayout<ID: Hashable>: Layout {
             guard case let .item(custom, system) = child[RegionRoleKey.self] else { continue }
 
             let frame = geometry.region(
-                ignoringCustom: custom, ignoringSystem: system,
+                ignoringCustom: custom,
+                ignoringSystem: system,
                 observing: child[ObservedRegionIDsKey<ID>.self]
             )
 

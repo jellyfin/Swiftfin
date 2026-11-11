@@ -16,6 +16,7 @@ final class ResetUserPasswordViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case cancel
         case reset(current: String, new: String)
 
@@ -30,11 +31,13 @@ final class ResetUserPasswordViewModel: ViewModel {
     }
 
     enum Event {
+
         case error
         case success
     }
 
     enum State {
+
         case initial
         case resetting
     }

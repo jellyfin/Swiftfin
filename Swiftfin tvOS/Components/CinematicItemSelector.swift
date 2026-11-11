@@ -58,7 +58,6 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
     var body: some View {
         CinematicContentGroupContainer {
             VStack(alignment: .leading, spacing: 10) {
-
                 if let selectedItem {
                     topContent(selectedItem)
                         .id(selectedItem.hashValue)

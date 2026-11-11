@@ -47,7 +47,6 @@ extension VideoPlayer.PlaybackControls {
 
         private var content: some View {
             HStack(alignment: viewLayout.value(standard: .center, large: .bottom)) {
-
                 if !viewLayout.isLarge {
                     closeButton
                         .modifier(OverlayBarButtonStyleModifier())

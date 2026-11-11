@@ -56,6 +56,7 @@ enum StoredValues {
 
     // swiftformat:disable enumnamespaces
     class _AnyKey {
+
         typealias Key = StoredValues.Key
     }
 
@@ -66,6 +67,7 @@ enum StoredValues {
     final class Key<Value: Storable>: _AnyKey {
 
         enum StorageDestination {
+
             case defaults
             case sql
         }
@@ -77,7 +79,6 @@ enum StoredValues {
         let storage: StorageDestination
 
         var _defaultKey: Defaults.Key<Value> {
-
             let resolvedName: String = if field == name || field == nil {
                 name
             } else {

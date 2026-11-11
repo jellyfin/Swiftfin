@@ -15,6 +15,7 @@ final class AddServerUserViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case cancel
         case add(username: String, password: String)
 
@@ -29,11 +30,13 @@ final class AddServerUserViewModel: ViewModel {
     }
 
     enum Event {
+
         case created(user: UserDto)
         case error
     }
 
     enum State: Hashable {
+
         case addingUser
         case initial
     }

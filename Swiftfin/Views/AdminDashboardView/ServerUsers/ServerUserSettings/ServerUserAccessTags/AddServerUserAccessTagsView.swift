@@ -99,8 +99,7 @@ struct AddServerUserAccessTagsView: View {
         .topBarTrailing {
             if viewModel.background.is(.refreshing) ||
                 viewModel.background.is(.updating) ||
-                tagViewModel.background.states.contains(.searching)
-            {
+                tagViewModel.background.states.contains(.searching) {
                 ProgressView()
             }
 

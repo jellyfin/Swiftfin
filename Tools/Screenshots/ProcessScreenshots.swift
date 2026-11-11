@@ -15,7 +15,8 @@ let repository = toolsDirectory.deletingLastPathComponent().deletingLastPathComp
 
 struct Profile: Decodable {
 
-    let name, device: String
+    let name: String
+    let device: String
     let sizes: Set<[Int]>
 
     var platformName: String {
@@ -57,14 +58,19 @@ func languages(in directory: URL) throws -> [URL] {
     return languages
 }
 
-// The demo scene is lit. Sample the picture on either side of the transport controls.
+/// The demo scene is lit. Sample the picture on either side of the transport controls.
 func hasPlaybackPicture(_ image: CGImage) -> Bool {
     let width = 16
     let height = 10
 
     guard let context = CGContext(
-        data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width,
-        space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue
+        data: nil,
+        width: width,
+        height: height,
+        bitsPerComponent: 8,
+        bytesPerRow: width,
+        space: CGColorSpaceCreateDeviceGray(),
+        bitmapInfo: CGImageAlphaInfo.none.rawValue
     ), let data = context.data else { return false }
 
     context.interpolationQuality = .medium
@@ -86,7 +92,8 @@ func validatedSizes(_ profile: Profile, in folder: URL, isRaw: Bool) throws -> [
     var sceneSizes: [String: [Int]] = [:]
 
     for file in files {
-        guard file.pathExtension == "png", let source = CGImageSourceCreateWithURL(file as CFURL, nil),
+        guard file.pathExtension == "png",
+              let source = CGImageSourceCreateWithURL(file as CFURL, nil),
               CGImageSourceGetType(source) as String? == UTType.png.identifier,
               let image = CGImageSourceCreateImageAtIndex(source, 0, nil),
               [.none, .noneSkipFirst, .noneSkipLast].contains(image.alphaInfo)
@@ -139,7 +146,8 @@ func validate(_ profile: Profile, raw: URL, gallery: URL?) throws {
             }
 
             for file in images {
-                guard let size = rawSizes[file.lastPathComponent], let frame = frames[size.sorted()],
+                guard let size = rawSizes[file.lastPathComponent],
+                      let frame = frames[size.sorted()],
                       let source = CGImageSourceCreateWithURL(file as CFURL, nil),
                       CGImageSourceGetType(source) as String? == UTType.png.identifier,
                       let image = CGImageSourceCreateImageAtIndex(source, 0, nil),
@@ -187,8 +195,10 @@ func rotated(_ image: CGImage, by angle: CGFloat) -> CGImage? {
     context.translateBy(x: CGFloat(image.height) / 2, y: CGFloat(image.width) / 2)
     context.rotate(by: angle)
     context.draw(image, in: CGRect(
-        x: -CGFloat(image.width) / 2, y: -CGFloat(image.height) / 2,
-        width: CGFloat(image.width), height: CGFloat(image.height)
+        x: -CGFloat(image.width) / 2,
+        y: -CGFloat(image.height) / 2,
+        width: CGFloat(image.width),
+        height: CGFloat(image.height)
     ))
 
     return context.makeImage()
@@ -198,7 +208,10 @@ struct DeviceFrame {
 
     private struct Screen: Decodable {
 
-        let x, y, width, height: Int
+        let x: Int
+        let y: Int
+        let width: Int
+        let height: Int
     }
 
     let frame: CGImage
@@ -218,7 +231,8 @@ struct DeviceFrame {
 
         guard [layout.width, layout.height].sorted() == size.sorted(),
               CGRect(x: 0, y: 0, width: image.width, height: image.height).contains(rect),
-              image.width > layout.width, image.height > layout.height
+              image.width > layout.width,
+              image.height > layout.height
         else { throw ScreenshotError(message: "Invalid screen bounds in \(directory.path)") }
 
         let maskURL = directory.appendingPathComponent("Mask.png")
@@ -240,7 +254,8 @@ struct DeviceFrame {
         let isRotated = (screen.height > screen.width) != (screenshot.height > screenshot.width)
 
         guard let screenshot = isRotated ? rotated(screenshot, by: -.pi / 2) : screenshot,
-              screenshot.width == Int(screen.width), screenshot.height == Int(screen.height)
+              screenshot.width == Int(screen.width),
+              screenshot.height == Int(screen.height)
         else { throw ScreenshotError(message: "Screenshot dimensions do not match the device frame") }
 
         let context = makeContext(width: frame.width, height: frame.height)
@@ -298,9 +313,14 @@ struct Captions {
 
 struct Layout {
 
-    let textWidth, textTop, textHeight: CGFloat
-    let headlineSize, subtitleSize: CGFloat
-    let deviceWidth, deviceTop, deviceHeight: CGFloat
+    let textWidth: CGFloat
+    let textTop: CGFloat
+    let textHeight: CGFloat
+    let headlineSize: CGFloat
+    let subtitleSize: CGFloat
+    let deviceWidth: CGFloat
+    let deviceTop: CGFloat
+    let deviceHeight: CGFloat
 
     init(size: CGSize) {
         let portrait = size.height > size.width
@@ -368,8 +388,7 @@ func fittingScale(for caption: Caption, size: CGSize) throws -> CGFloat {
     var scale: CGFloat = 1
 
     while scale > 0.4,
-          try height(of: captionText(caption, layout: layout, scale: scale), width: layout.textWidth) > layout.textHeight
-    {
+          try height(of: captionText(caption, layout: layout, scale: scale), width: layout.textWidth) > layout.textHeight {
         scale *= 0.95
     }
 
@@ -456,7 +475,7 @@ func card(caption: Caption, raw: CGImage, framed: CGImage, textScale: CGFloat) t
 
 // MARK: - Process
 
-// App Store Connect requires opaque screenshots. PNGs without alpha can be copied byte for byte.
+/// App Store Connect requires opaque screenshots. PNGs without alpha can be copied byte for byte.
 func storeRaw(_ source: URL, at target: URL) throws {
     guard !files.fileExists(atPath: target.path) else { throw ScreenshotError(message: "Duplicate capture \(target.lastPathComponent)") }
     guard let image = loadImage(at: source) else { throw ScreenshotError(message: "Unreadable capture \(source.path)") }
@@ -543,8 +562,7 @@ func publish(_ profile: Profile, from capture: URL, to destination: URL, rawOnly
     let outputPath = resolvedPath(destination)
     let documentation = repository.appendingPathComponent("Documentation").standardizedFileURL
     if destination.standardizedFileURL.pathComponents.starts(with: documentation.pathComponents)
-        || outputPath.starts(with: resolvedPath(documentation))
-    {
+        || outputPath.starts(with: resolvedPath(documentation)) {
         throw ScreenshotError(message: "Store screenshots outside Documentation, under Tools/Screenshots.")
     }
 
@@ -617,7 +635,10 @@ func run() throws {
         }
     } else if arguments.count == 3, let profile = profiles.first(where: { $0.name == arguments[0] }) {
         try publish(
-            profile, from: URL(fileURLWithPath: arguments[1]), to: URL(fileURLWithPath: arguments[2]), rawOnly: rawOnly
+            profile,
+            from: URL(fileURLWithPath: arguments[1]),
+            to: URL(fileURLWithPath: arguments[2]),
+            rawOnly: rawOnly
         )
 
         return

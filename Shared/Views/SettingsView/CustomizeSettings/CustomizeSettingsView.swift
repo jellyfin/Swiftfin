@@ -24,7 +24,6 @@ struct CustomizeSettingsView: View {
 
     var body: some View {
         Form(systemImage: "gear") {
-
             #if os(tvOS)
             Section(L10n.tabBar) {
                 ListRowMenu(L10n.layout, selection: $tabBarPlacement)

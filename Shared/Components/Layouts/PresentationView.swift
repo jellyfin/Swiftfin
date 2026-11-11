@@ -23,6 +23,7 @@ protocol PresentationView: View {
 
 @MainActor
 extension PresentationView {
+
     var body: some View {
         PresentationContent { self.standardView } largeView: { self.largeView }
     }
@@ -31,6 +32,7 @@ extension PresentationView {
 /// Standard and large presentations share the same layout policy.
 /// Size changes within either presentation are handled by AdaptiveLayout.
 struct PresentationContent<StandardBody: View, LargeBody: View>: View {
+
     private let standardView: () -> StandardBody
     private let largeView: () -> LargeBody
 

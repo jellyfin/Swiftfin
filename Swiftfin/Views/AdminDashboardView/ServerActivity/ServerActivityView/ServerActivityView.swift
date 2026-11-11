@@ -92,7 +92,6 @@ struct ServerActivityView: View {
                     lineSpacing: viewLayout.itemSpacing
                 )
             ) { log in
-
                 let user = usersViewModel.elements.first(
                     property: \.id,
                     equalTo: log.userID

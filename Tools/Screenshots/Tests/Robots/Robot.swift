@@ -33,7 +33,7 @@ final class Robot {
         buttons(matching: NSPredicate(format: "label == %@", label))
     }
 
-    // Buttons with a context menu are exposed as pop up buttons.
+    /// Buttons with a context menu are exposed as pop up buttons.
     private func buttons(matching predicate: NSPredicate) -> XCUIElementQuery {
         app.descendants(matching: .any)
             .matching(NSPredicate(
@@ -161,7 +161,7 @@ extension Robot {
             .firstMatch
     }
 
-    // Containers of the focused element also report focus, so take the innermost one.
+    /// Containers of the focused element also report focus, so take the innermost one.
     var focusedLabel: String? {
         snapshotElements().last(where: \.hasFocus)?.label
     }

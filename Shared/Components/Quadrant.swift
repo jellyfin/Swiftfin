@@ -70,6 +70,7 @@ struct Quadrant: View {
 }
 
 enum QuadrantCorner: CaseIterable {
+
     case topLeading
     case topTrailing
     case bottomLeading

@@ -64,8 +64,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
         private func preferredSeasonSelection() -> PagingLibraryViewModel<EpisodeLibrary>.ID? {
             if let playButtonSeasonID = playButtonItem?.seasonID,
-               viewModel.elements.contains(where: { $0.id == playButtonSeasonID })
-            {
+               viewModel.elements.contains(where: { $0.id == playButtonSeasonID }) {
                 return playButtonSeasonID
             }
 

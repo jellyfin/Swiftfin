@@ -43,7 +43,6 @@ extension CustomizeSettingsView {
 
         var body: some View {
             Form(systemImage: "gear") {
-
                 Section {
                     Toggle(L10n.favorites, isOn: $showFavorites)
 

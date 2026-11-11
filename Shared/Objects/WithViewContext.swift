@@ -9,6 +9,7 @@
 import SwiftUI
 
 protocol WithViewContext {
+
     var viewContext: ViewContext { get set }
 }
 
@@ -16,6 +17,7 @@ protocol WithViewContext {
 struct ViewContext {
 
     private enum Options: Int {
+
         case isListRowSeparatorVisible
         case isInMenu
         case isThumb

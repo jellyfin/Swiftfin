@@ -13,6 +13,7 @@ import SwiftUI
 struct Marquee<Content: View>: View {
 
     enum ResetType {
+
         case bounce
         case loop
     }
@@ -354,12 +355,14 @@ extension Marquee {
 // Reference:  https://swiftui-lab.com/swiftui-animations-part2/
 
 private extension View {
+
     func marqueeOffset(x: CGFloat, y: CGFloat) -> some View {
         modifier(_OffsetEffect(offset: CGSize(width: x, height: y)))
     }
 }
 
 private struct _OffsetEffect: GeometryEffect {
+
     var offset: CGSize
 
     var animatableData: CGSize.AnimatableData {

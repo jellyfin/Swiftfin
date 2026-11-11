@@ -89,7 +89,6 @@ struct PluginRepositoriesView: View {
         .navigationTitle(L10n.repositories)
         .toolbarTitleDisplayMode(.inline)
         .topBarTrailing {
-
             if viewModel.background.is(.updating) || viewModel.background.is(.refreshing) {
                 ProgressView()
             }

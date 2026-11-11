@@ -37,9 +37,7 @@ struct GestureSettingsView: View {
 
     var body: some View {
         Form {
-
             Section {
-
                 // TODO: make toggle sections
 
                 Picker(L10n.horizontalPan, selection: $horizontalPanAction)

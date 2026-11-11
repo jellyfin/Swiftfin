@@ -9,8 +9,7 @@
 import Defaults
 
 enum VideoPlayerSupplementType: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable,
-    SupportedCaseIterable
-{
+                                SupportedCaseIterable {
 
     case info
     case chapters

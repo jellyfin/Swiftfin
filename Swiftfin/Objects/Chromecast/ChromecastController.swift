@@ -87,7 +87,8 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
     }
 
     func select(_ device: GCKDevice, for mediaSession: MediaSession) {
-        guard Defaults[.Experimental.chromecast], mediaSession.canControlPlayback,
+        guard Defaults[.Experimental.chromecast],
+              mediaSession.canControlPlayback,
               mediaSession.item.mediaType == .video else { return }
 
         self.mediaSession = mediaSession
@@ -101,7 +102,8 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
             }
 
             await mediaSession.returnToLocalPlayback()?.value
-            guard Defaults[.Experimental.chromecast], self.mediaSession === mediaSession,
+            guard Defaults[.Experimental.chromecast],
+                  self.mediaSession === mediaSession,
                   mediaSession.canControlPlayback else { return }
 
             if !sessions.startSession(with: device) {
@@ -111,7 +113,9 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
     }
 
     private func startPlayback(in session: GCKCastSession) {
-        guard Defaults[.Experimental.chromecast], let mediaSession, mediaSession.canControlPlayback,
+        guard Defaults[.Experimental.chromecast],
+              let mediaSession,
+              mediaSession.canControlPlayback,
               mediaSession.item.mediaType == .video,
               (mediaSession.player as? ChromecastMediaPlayer)?.session !== session else { return }
 
@@ -123,7 +127,8 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
     }
 
     func sessionManager(_ sessionManager: GCKSessionManager, didResume session: GCKCastSession) {
-        guard Defaults[.Experimental.chromecast], let player = mediaSession?.player as? ChromecastMediaPlayer,
+        guard Defaults[.Experimental.chromecast],
+              let player = mediaSession?.player as? ChromecastMediaPlayer,
               player.session === session else { return }
 
         player.connectionResumed()

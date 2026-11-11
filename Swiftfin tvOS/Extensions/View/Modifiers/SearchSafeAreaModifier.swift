@@ -33,6 +33,7 @@ struct SearchSafeAreaModifier: ViewModifier {
 private struct SearchContainerType: IntrospectableViewType {}
 
 private extension tvOSViewVersion<SearchContainerType, UISearchContainerViewController> {
+
     static let v26 = Self(for: .v26)
 }
 

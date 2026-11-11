@@ -22,6 +22,7 @@ final class ServerTasksViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case restartApplication
         case shutdownApplication
         case refresh
@@ -38,10 +39,12 @@ final class ServerTasksViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
     }
 
     enum State {
+
         case content
         case error
         case initial
@@ -109,8 +112,7 @@ final class ServerTasksViewModel: ViewModel {
             if let taskViewModel = tasks.values
                 .flattened()
                 .first(where: { $0.task.id == id }),
-               let updatedTask = allTasks.first(where: { $0.id == id })
-            {
+               let updatedTask = allTasks.first(where: { $0.id == id }) {
                 taskViewModel.task = updatedTask
             }
         }
