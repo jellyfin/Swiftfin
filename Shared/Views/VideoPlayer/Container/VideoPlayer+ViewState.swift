@@ -111,7 +111,10 @@ extension VideoPlayer {
                     OverlayAction(id: .init(providerID: provider.id, actionID: $0.id), button: $0)
                 }
             }
+            .filter { !dismissedOverlayActions.contains($0.id) }
         }
+
+        private var dismissedOverlayActions: Set<OverlayAction.ID> = []
 
         var isPresentingOverlayActions: Bool {
             visibleElements.contains(.overlayActions)
@@ -128,6 +131,10 @@ extension VideoPlayer {
 
             action.button.action()
             refreshAutoDismiss()
+        }
+
+        func dismissOverlayAction(_ id: OverlayAction.ID) {
+            dismissedOverlayActions.insert(id)
         }
 
         #if os(tvOS)
@@ -513,6 +520,8 @@ extension VideoPlayer {
                     mediaSession?.playbackItem
                 } onChange: { [weak self] _ in
                     guard let self else { return }
+
+                    dismissedOverlayActions.removeAll()
 
                     if let selectedSupplementID {
                         if supplements.contains(where: { $0.id == selectedSupplementID }) {
