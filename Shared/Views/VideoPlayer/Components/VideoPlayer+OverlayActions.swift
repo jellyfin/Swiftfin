@@ -92,7 +92,7 @@ extension VideoPlayer {
                     .highPriorityGesture(
                         DragGesture(minimumDistance: 10)
                             .onChanged { value in
-                                offsets[action.id] = value.translation.width / 4
+                                offsets[action.id] = value.translation.width
                             }
                             .onEnded { value in
                                 if abs(value.predictedEndTranslation.width) > 120 {
