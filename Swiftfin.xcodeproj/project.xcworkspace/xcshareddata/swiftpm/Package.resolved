@@ -168,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/MediaAccessibilityKit",
       "state" : {
-        "revision" : "6c2b50d3f2b6ccfa0105cf5fc6315f1d431ca92a",
-        "version" : "0.3.0"
+        "revision" : "afb0f472fa98b5abf5861bed243c5cda7909b927",
+        "version" : "0.4.0"
       }
     },
     {

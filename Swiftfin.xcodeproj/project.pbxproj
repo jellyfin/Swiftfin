@@ -89,11 +89,11 @@
 		E176EBE02D0502A6009F4CF1 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBDF2D0502A6009F4CF1 /* CollectionHStack */; };
 		E176EBE32D0502C6009F4CF1 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBE22D0502C6009F4CF1 /* CollectionHStack */; };
 		E176EBE92D050925009F4CF1 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBE82D050925009F4CF1 /* CollectionVGrid */; };
+		E17E76BB30A0F24400DE148E /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E17E76BA30A0F24400DE148E /* MediaAccessibilityKit */; };
 		E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E18D6AA52BAA96F000A0D167 /* CollectionHStack */; };
+		E18F9AFC30A0F3F4005C2EA3 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E18F9AFB30A0F3F4005C2EA3 /* MediaAccessibilityKit */; };
 		E19005010000000000000001 /* MPVUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19005010000000000000003 /* MPVUI */; };
 		E19005010000000000000002 /* MPVUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19005010000000000000004 /* MPVUI */; };
-		E19005020000000000000001 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19005020000000000000003 /* MediaAccessibilityKit */; };
-		E19005020000000000000002 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19005020000000000000004 /* MediaAccessibilityKit */; };
 		E19009260000000000000001 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000003 /* SwiftfinMacros */; };
 		E19009260000000000000002 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000004 /* SwiftfinMacros */; };
 		E19010180000000000000001 /* GoogleCastDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = E19010180000000000000002 /* GoogleCastDynamic */; };
@@ -293,7 +293,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E19005010000000000000002 /* MPVUI in Frameworks */,
-				E19005020000000000000002 /* MediaAccessibilityKit in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
 				62666E2A27E5020A00EC0ECD /* OpenGLES.framework in Frameworks */,
@@ -331,6 +330,7 @@
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E1E2D7BF2E3FD936004E2E5F /* Transmission in Frameworks */,
+				E18F9AFC30A0F3F4005C2EA3 /* MediaAccessibilityKit in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 			);
@@ -371,7 +371,6 @@
 				E12CDBBC2FFB532800828742 /* CollectionVGrid in Frameworks */,
 				E1575E3C293C6B15001665B1 /* Files in Frameworks */,
 				E19005010000000000000001 /* MPVUI in Frameworks */,
-				E19005020000000000000001 /* MediaAccessibilityKit in Frameworks */,
 				E176EBE02D0502A6009F4CF1 /* CollectionHStack in Frameworks */,
 				E1FADDF12E84B63600FB310E /* StatefulMacros in Frameworks */,
 				E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */,
@@ -386,6 +385,7 @@
 				E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */,
 				E16C08F7305A385900895062 /* CollectionHStack in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
+				E17E76BB30A0F24400DE148E /* MediaAccessibilityKit in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
 				E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */,
 				E114DB332B1944FA00B75FB3 /* CollectionVGrid in Frameworks */,
@@ -597,13 +597,13 @@
 				E1155ACA2D0584A90021557A /* IdentifiedCollections */,
 				BD88CB412D77E6A0006BB5E3 /* TVOSPicker */,
 				E19005010000000000000004 /* MPVUI */,
-				E19005020000000000000004 /* MediaAccessibilityKit */,
 				E1E2D7BE2E3FD936004E2E5F /* Transmission */,
 				E1BD95B32FBE8E50001CDA57 /* JellyfinAPI */,
 				E1079FD92FC6FFCE004B5C54 /* StatefulMacros */,
 				E1BE3EBD2FE8DEAA00327990 /* FactoryKit */,
 				E12CDBC02FFB593800828742 /* CollectionVGrid */,
 				E16C08F8305A386900895062 /* CollectionHStack */,
+				E18F9AFB30A0F3F4005C2EA3 /* MediaAccessibilityKit */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin.app */;
@@ -665,7 +665,6 @@
 				E176EBE22D0502C6009F4CF1 /* CollectionHStack */,
 				E176EBE82D050925009F4CF1 /* CollectionVGrid */,
 				E19005010000000000000003 /* MPVUI */,
-				E19005020000000000000003 /* MediaAccessibilityKit */,
 				E164308B2E3AA9710028D4E8 /* Transmission */,
 				E13CCE4B2E6C08710070965F /* LNPopupUI-Static */,
 				E11ADE832E7E73B6008074FC /* StatefulMacros */,
@@ -685,6 +684,7 @@
 				E12CDBBE2FFB592A00828742 /* CollectionVGrid */,
 				E16C08F3305A350C00895062 /* CollectionHStack */,
 				E16C08F6305A385900895062 /* CollectionHStack */,
+				E17E76BA30A0F24400DE148E /* MediaAccessibilityKit */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin.app */;
@@ -828,13 +828,13 @@
 				E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
 				BD88CB402D77E6A0006BB5E3 /* XCRemoteSwiftPackageReference "TVOSPicker" */,
 				E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */,
-				E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */,
 				E164308A2E3AA9710028D4E8 /* XCRemoteSwiftPackageReference "Transmission" */,
 				E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */,
 				E1BD95B02FBE8E44001CDA57 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E1240A272FEA4F69004E6588 /* XCRemoteSwiftPackageReference "StatefulMacro" */,
 				E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
 				E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
+				E17E76BC30A0F39F00DE148E /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -1600,20 +1600,20 @@
 				minimumVersion = 1.1.0;
 			};
 		};
+		E17E76BC30A0F39F00DE148E /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
+			requirement = {
+				kind = exactVersion;
+				version = 0.4.0;
+			};
+		};
 		E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/MPVUI";
 			requirement = {
 				kind = exactVersion;
 				version = 0.10.0;
-			};
-		};
-		E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
-			requirement = {
-				kind = exactVersion;
-				version = 0.3.0;
 			};
 		};
 		E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */ = {
@@ -1942,10 +1942,19 @@
 			package = E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
 		};
+		E17E76BA30A0F24400DE148E /* MediaAccessibilityKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MediaAccessibilityKit;
+		};
 		E18D6AA52BAA96F000A0D167 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
+		};
+		E18F9AFB30A0F3F4005C2EA3 /* MediaAccessibilityKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E17E76BC30A0F39F00DE148E /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */;
+			productName = MediaAccessibilityKit;
 		};
 		E19005010000000000000003 /* MPVUI */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1956,16 +1965,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */;
 			productName = MPVUI;
-		};
-		E19005020000000000000003 /* MediaAccessibilityKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */;
-			productName = MediaAccessibilityKit;
-		};
-		E19005020000000000000004 /* MediaAccessibilityKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */;
-			productName = MediaAccessibilityKit;
 		};
 		E19009260000000000000003 /* SwiftfinMacros */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -52,7 +52,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
     private var glassBody: some View {
         labelView
             .glassEffect(
-                .regular.tint(isFocused ? .white : nil),
+                isFocused ? .regular.tint(.white) : .identity,
                 in: .capsule
             )
             .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)

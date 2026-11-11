@@ -40,6 +40,7 @@ final class UserSessionManager: ObservableObject {
 
         case backgroundTimeout
         case explicit
+        case authenticationExpired
         case accountUnavailable
     }
 
@@ -56,6 +57,14 @@ final class UserSessionManager: ObservableObject {
 
     @Published
     private(set) var currentSession: UserSession?
+
+    struct ReauthenticationRequest {
+        let server: ServerState
+        let user: UserState
+    }
+
+    @Published
+    private(set) var reauthenticationRequest: ReauthenticationRequest?
 
     @Published
     private(set) var pendingDeepLink: DeepLink?
@@ -106,6 +115,7 @@ final class UserSessionManager: ObservableObject {
 
     @MainActor
     func signIn(userID: String) async throws {
+        reauthenticationRequest = nil
         Defaults[.lastSignedInUserID] = .signedIn(userID: userID)
         try await updateCurrentSession(with: resolveStoredSession())
 
@@ -118,13 +128,23 @@ final class UserSessionManager: ObservableObject {
     func signOut(reason: SignOutReason) async {
         guard currentSession != nil || sessionTransition != nil else { return }
 
+        let expiredSession = reason == .authenticationExpired ? currentSession : nil
         Defaults[.lastSignedInUserID] = .signedOut
         await updateCurrentSession(with: nil)
+        if let expiredSession, currentSession == nil, Defaults[.lastSignedInUserID] == .signedOut {
+            reauthenticationRequest = .init(server: expiredSession.server, user: expiredSession.user)
+        }
 
         logger.info(
             "Signed out current user",
             metadata: ["reason": .string(String(describing: reason))]
         )
+    }
+
+    @MainActor
+    func consumeReauthenticationRequest() -> ReauthenticationRequest? {
+        defer { reauthenticationRequest = nil }
+        return reauthenticationRequest
     }
 
     @MainActor

@@ -6,6 +6,8 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import FactoryKit
+import Get
 import SwiftUI
 
 struct ErrorView<ErrorType: Error>: View {
@@ -19,7 +21,18 @@ struct ErrorView<ErrorType: Error>: View {
     @Environment(\.refresh)
     private var refresh
 
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
+
     let error: ErrorType
+
+    private var canSignIn: Bool {
+        guard let apiError = error as? APIError,
+              case .unacceptableStatusCode(401) = apiError
+        else { return false }
+
+        return userSessionManager.currentSession != nil
+    }
 
     private var systemImage: String {
         if let error = error as? SystemImageable {
@@ -43,13 +56,17 @@ struct ErrorView<ErrorType: Error>: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
 
-            if let refresh {
+            if canSignIn || refresh != nil {
                 Button {
-                    Task {
-                        await refresh()
+                    Task { @MainActor in
+                        if canSignIn {
+                            await userSessionManager.signOut(reason: .authenticationExpired)
+                        } else if let refresh {
+                            await refresh()
+                        }
                     }
                 } label: {
-                    Text(L10n.retry)
+                    Text(canSignIn ? L10n.signIn : L10n.retry)
                         .frame(maxWidth: .infinity)
                 }
                 .fontWeight(.semibold)

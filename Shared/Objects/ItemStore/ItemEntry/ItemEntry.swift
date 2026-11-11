@@ -22,10 +22,12 @@ struct ItemEntry: Identifiable, Hashable {
 
     nonisolated let id: ID
     let item: ItemRecord
+    let grouping: BaseItemDto.Grouping?
 
-    init(item: ItemRecord, occurrence: String? = nil) {
+    init(item: ItemRecord, occurrence: String? = nil, grouping: BaseItemDto.Grouping? = nil) {
         self.id = ID(itemID: item.id, occurrence: occurrence)
         self.item = item
+        self.grouping = grouping
     }
 
     var value: BaseItemDto? {

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import MediaAccessibilityKit
 import SwiftUI
@@ -17,9 +16,9 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @Environment(MediaSession.self)
         private var mediaSession
-        @Environment(\.scenePhase)
-        private var scenePhase
 
+        @State
+        private var activeProfileID = ""
         @State
         private var profiles = CaptionProfile.availableForCurrentPlatform
 
@@ -34,7 +33,11 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         var body: some View {
             if let playbackItem = mediaSession.playbackItem {
                 Menu {
-                    SubtitleOptions(playbackItem: playbackItem, profiles: profiles)
+                    SubtitleOptions(
+                        activeProfileID: $activeProfileID,
+                        playbackItem: playbackItem,
+                        profiles: profiles
+                    )
                 } label: {
                     Label(L10n.subtitles, systemImage: systemImage)
 
@@ -44,11 +47,18 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 }
                 .menuOrder(.fixed)
                 .disabled(!mediaSession.canControlPlayback)
-                .task(id: scenePhase) {
+                .task {
                     if #available(iOS 26, tvOS 26, *) {
                         for await profiles in CaptionProfile.updates {
                             self.profiles = profiles
+                            activeProfileID = CaptionProfile.active?.id ?? ""
                         }
+                    }
+                }
+                .onNotification(.applicationDidBecomeActive) {
+                    profiles = CaptionProfile.availableForCurrentPlatform
+                    if #available(iOS 26, tvOS 26, *) {
+                        activeProfileID = CaptionProfile.active?.id ?? ""
                     }
                 }
             }
@@ -57,11 +67,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     private struct SubtitleOptions: View {
 
-        @Default(.VideoPlayer.Subtitle.captionProfileID)
-        private var selectedProfileID
-
-        @Environment(MediaSession.self)
-        private var mediaSession
+        @Binding
+        var activeProfileID: String
 
         let playbackItem: MediaPlayerItem
         let profiles: [CaptionProfile]
@@ -88,12 +95,17 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         private var profileID: Binding<String> {
             Binding(
-                get: {
-                    let id = selectedProfileID
+                get: { activeProfileID },
+                set: { id in
+                    if #available(iOS 26, tvOS 26, *) {
+                        guard let profile = profiles.first(property: \.id, equalTo: id) else { return }
 
-                    return profiles.contains(where: { $0.id == id }) ? id : ""
-                },
-                set: { selectedProfileID = $0 }
+                        do {
+                            try profile.activate()
+                            activeProfileID = CaptionProfile.active?.id ?? ""
+                        } catch {}
+                    }
+                }
             )
         }
 
@@ -149,28 +161,29 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     trackPicker(L10n.secondarySubtitles, secondary: true)
                 }
 
-                Menu {
-                    Picker(L10n.textStyle, selection: profileID) {
-                        Text(L10n.system).tag("")
-
-                        ForEach(profiles) { profile in
-                            Text(profile.name)
-                                .tag(profile.id)
+                if SystemSettings.captionStyles.canOpen {
+                    Menu {
+                        if #available(iOS 26, tvOS 26, *) {
+                            Picker(L10n.textStyle, selection: profileID) {
+                                ForEach(profiles) { profile in
+                                    Text(profile.name)
+                                        .tag(profile.id)
+                                }
+                            }
+                            .pickerStyle(.inline)
+                            .labelsHidden()
                         }
-                    }
-                    .pickerStyle(.inline)
-                    .labelsHidden()
-//                    .disabled(profiles.isEmpty || mediaSession.player?.mediaPlayerType != .mpv)
 
-                    Section {
-                        SystemSettingsButton(title: L10n.captionStyleSettings, destination: .captionStyles)
-                    }
-                } label: {
-                    Text(L10n.textStyle)
+                        Section {
+                            SystemSettingsButton(title: L10n.captionStyleSettings, destination: .captionStyles)
+                        }
+                    } label: {
+                        Text(L10n.textStyle)
 
-                    Text(profiles.first(property: \.id, equalTo: profileID.wrappedValue)?.name ?? L10n.system)
+                        Text(profiles.first(property: \.id, equalTo: profileID.wrappedValue)?.name ?? L10n.system)
+                    }
+                    .menuOrder(.fixed)
                 }
-                .menuOrder(.fixed)
             }
         }
     }

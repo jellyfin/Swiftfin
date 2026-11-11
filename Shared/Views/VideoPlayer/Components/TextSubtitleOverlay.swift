@@ -6,10 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import MediaAccessibilityKit
 import MPVUI
 import SwiftUI
+
+// TODO: Look at adjusting size based on available size (PiP, portrait)
 
 struct TextSubtitleOverlay: View {
 
@@ -38,19 +39,11 @@ struct TextSubtitleOverlay: View {
 
 private struct TextSubtitleOverlayContent: View {
 
-    @Default(.VideoPlayer.Subtitle.captionProfileID)
-    private var profileID
-
-    @Environment(\.scenePhase)
-    private var scenePhase
-
     @AdaptiveLayout
     private var viewLayout
 
     @State
-    private var captionStyle = CaptionStyle.current
-    @State
-    private var profiles = CaptionProfile.availableForCurrentPlatform
+    private var captionStyle = Self.currentSystemStyle
 
     let snapshot: TextSubtitleSnapshot
     let videoLayout: VideoPlayer.VideoLayout
@@ -59,13 +52,20 @@ private struct TextSubtitleOverlayContent: View {
         viewLayout.value(standard: 21, large: 36)
     }
 
-    private var selectedCaptionStyle: CaptionStyle {
-        profiles.first(property: \.id, equalTo: profileID)?.style ?? captionStyle
+    private static var currentSystemStyle: CaptionStyle {
+        if #available(iOS 26, tvOS 26, *), let profile = CaptionProfile.active {
+            return profile.style
+        }
+
+        return .current
+    }
+
+    private func refreshCaptionStyle() {
+        captionStyle = Self.currentSystemStyle
     }
 
     var body: some View {
-        let style = selectedCaptionStyle
-        let pointSize = basePointSize * style.text.sizeScale.resolved(contentValue: nil)
+        let pointSize = basePointSize * captionStyle.text.sizeScale.resolved(contentValue: nil)
 
         MPVTextSubtitleOverlay(
             snapshot: snapshot,
@@ -74,18 +74,18 @@ private struct TextSubtitleOverlayContent: View {
             automaticPlacement: .container,
             spacing: pointSize * 0.25
         ) { region in
-            CaptionText(region.text, baseSize: basePointSize, style: style)
-                .lineSpacing(pointSize * 0.12)
+            CaptionText(
+                region.text,
+                baseSize: basePointSize,
+                style: captionStyle
+            )
+            .lineSpacing(pointSize * 0.12)
         }
-        .task(id: scenePhase) {
-            guard scenePhase == .active else {
-                return
-            }
-
+        .task {
             for await _ in CaptionPreferences.updates {
-                captionStyle = .current
-                profiles = CaptionProfile.availableForCurrentPlatform
+                refreshCaptionStyle()
             }
         }
+        .onNotification(.applicationDidBecomeActive, perform: refreshCaptionStyle)
     }
 }

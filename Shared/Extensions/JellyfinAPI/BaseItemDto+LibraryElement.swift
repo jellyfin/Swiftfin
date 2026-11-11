@@ -17,9 +17,13 @@ private let baseItemListPortraitWidth: CGFloat = 60
 extension BaseItemDto: LibraryElement {
 
     var supportedLibraryStyleOptions: LibraryStyleOptions {
+        supportedLibraryStyleOptions(grouping: nil)
+    }
+
+    func supportedLibraryStyleOptions(grouping: Grouping?) -> LibraryStyleOptions {
         switch type {
         case .collectionFolder, .folder, .userView:
-            return BaseItemKind.libraryStyleOptions(for: supportedItemTypes)
+            return BaseItemKind.libraryStyleOptions(for: supportedItemTypes(for: grouping))
         default:
             break
         }
@@ -31,10 +35,19 @@ extension BaseItemDto: LibraryElement {
         router: Router.Wrapper,
         in namespace: Namespace.ID
     ) {
+        libraryDidSelectElement(router: router, in: namespace, grouping: nil)
+    }
+
+    @MainActor
+    func libraryDidSelectElement(
+        router: Router.Wrapper,
+        in namespace: Namespace.ID,
+        grouping: Grouping?
+    ) {
         switch type {
         case .collectionFolder, .folder, .userView:
             router.route(
-                to: .library(library: ItemLibrary(parent: self, filters: .default)),
+                to: .library(library: ItemLibrary(parent: self, filters: .default, grouping: grouping)),
                 in: namespace
             )
 
@@ -47,11 +60,21 @@ extension BaseItemDto: LibraryElement {
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
     ) -> some View {
+        makeBody(libraryStyle: libraryStyle, action: action, grouping: nil)
+    }
+
+    @MainActor
+    @ViewBuilder
+    func makeBody(
+        libraryStyle: LibraryStyle,
+        action: (() -> Void)?,
+        grouping: Grouping?
+    ) -> some View {
         switch libraryStyle.displayType {
         case .grid:
-            BaseItemDtoLibraryGridElement(item: self, libraryStyle: libraryStyle, action: action)
+            BaseItemDtoLibraryGridElement(item: self, libraryStyle: libraryStyle, action: action, grouping: grouping)
         case .list:
-            BaseItemDtoLibraryListElement(item: self, libraryStyle: libraryStyle, action: action)
+            BaseItemDtoLibraryListElement(item: self, libraryStyle: libraryStyle, action: action, grouping: grouping)
         }
     }
 }
@@ -66,9 +89,10 @@ private struct BaseItemDtoLibraryGridElement: View {
 
     let libraryStyle: LibraryStyle
     let action: (() -> Void)?
+    let grouping: BaseItemDto.Grouping?
 
     private var resolvedLibraryStyle: LibraryStyle {
-        item.resolvedLibraryStyle(libraryStyle)
+        item.supportedLibraryStyleOptions(grouping: grouping).normalized(libraryStyle)
     }
 
     var body: some View {
@@ -79,7 +103,7 @@ private struct BaseItemDtoLibraryGridElement: View {
             if let action {
                 action()
             } else {
-                item.libraryDidSelectElement(router: router, in: namespace)
+                item.libraryDidSelectElement(router: router, in: namespace, grouping: grouping)
             }
         }
     }
@@ -106,9 +130,10 @@ private struct BaseItemDtoLibraryListElement: View {
 
     let libraryStyle: LibraryStyle
     let action: (() -> Void)?
+    let grouping: BaseItemDto.Grouping?
 
     private var resolvedLibraryStyle: LibraryStyle {
-        item.resolvedLibraryStyle(libraryStyle)
+        item.supportedLibraryStyleOptions(grouping: grouping).normalized(libraryStyle)
     }
 
     private func currentProgramView(_ program: BaseItemDto) -> some View {
@@ -209,7 +234,7 @@ private struct BaseItemDtoLibraryListElement: View {
             if let action {
                 action()
             } else {
-                item.libraryDidSelectElement(router: router, in: namespace)
+                item.libraryDidSelectElement(router: router, in: namespace, grouping: grouping)
             }
         }
         #if os(tvOS)
