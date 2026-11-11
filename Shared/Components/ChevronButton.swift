@@ -19,10 +19,10 @@ struct ChevronButton<Label: View>: View {
     private let isExternal: Bool
     private let label: Label
 
+    @ContentBuilder
     var body: some View {
         Button(action: action) {
             HStack {
-
                 label
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -45,7 +45,7 @@ extension ChevronButton {
     init(
         external: Bool = false,
         action: @escaping () -> Void,
-        @ViewBuilder label: () -> Label
+        @ContentBuilder label: () -> Label
     ) {
         self.action = action
         self.isExternal = external
@@ -110,7 +110,7 @@ extension ChevronButton {
         _ title: String,
         external: Bool = false,
         action: @escaping () -> Void,
-        @ViewBuilder content: @escaping () -> Value
+        @ContentBuilder content: @escaping () -> Value
     ) where Label == ChevronButtonValueContent<Text, Value> {
         self.init(
             external: external,
@@ -204,16 +204,16 @@ struct ChevronButtonValueContent<Label: View, Value: View>: View {
     private let value: Value
 
     init(
-        @ViewBuilder label: @escaping () -> Label,
-        @ViewBuilder value: @escaping () -> Value
+        @ContentBuilder label: @escaping () -> Label,
+        @ContentBuilder value: @escaping () -> Value
     ) {
         self.label = label()
         self.value = value()
     }
 
+    @ContentBuilder
     var body: some View {
         HStack {
-
             label
                 .labelStyle(BoldIconLabelStyle())
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -229,10 +229,11 @@ struct ChevronButtonLabelContent<Label: View>: View {
 
     private let label: Label
 
-    init(@ViewBuilder label: @escaping () -> Label) {
+    init(@ContentBuilder label: @escaping () -> Label) {
         self.label = label()
     }
 
+    @ContentBuilder
     var body: some View {
         label
             .labelStyle(BoldIconLabelStyle())
@@ -240,6 +241,8 @@ struct ChevronButtonLabelContent<Label: View>: View {
 }
 
 private struct BoldIconLabelStyle: LabelStyle {
+
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         Label {
             configuration.title

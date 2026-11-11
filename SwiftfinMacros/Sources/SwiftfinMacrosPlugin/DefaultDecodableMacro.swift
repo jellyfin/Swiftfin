@@ -35,8 +35,7 @@ struct DefaultDecodableMacro: ExtensionMacro {
             }
             if let initializer = member.decl.as(InitializerDeclSyntax.self),
                initializer.signature.parameterClause.parameters.count == 1,
-               initializer.signature.parameterClause.parameters.first?.firstName.text == "from"
-            {
+               initializer.signature.parameterClause.parameters.first?.firstName.text == "from" {
                 throw MacroExpansionErrorMessage("@DefaultDecodable generates init(from:); remove the custom initializer")
             }
             guard let variable = member.decl.as(VariableDeclSyntax.self),
@@ -114,15 +113,17 @@ struct DefaultDecodableMacro: ExtensionMacro {
         if let optional = type.as(OptionalTypeSyntax.self) {
             return optional.wrappedType
         }
-        if let optional = type.as(IdentifierTypeSyntax.self), optional.name.text == "Optional",
-           let arguments = optional.genericArgumentClause?.arguments, arguments.count == 1
-        {
+        if let optional = type.as(IdentifierTypeSyntax.self),
+           optional.name.text == "Optional",
+           let arguments = optional.genericArgumentClause?.arguments,
+           arguments.count == 1 {
             return arguments.first?.argument
         }
-        if let optional = type.as(MemberTypeSyntax.self), optional.baseType.trimmedDescription == "Swift",
-           optional.name.text == "Optional", let arguments = optional.genericArgumentClause?.arguments,
-           arguments.count == 1
-        {
+        if let optional = type.as(MemberTypeSyntax.self),
+           optional.baseType.trimmedDescription == "Swift",
+           optional.name.text == "Optional",
+           let arguments = optional.genericArgumentClause?.arguments,
+           arguments.count == 1 {
             return arguments.first?.argument
         }
         return nil

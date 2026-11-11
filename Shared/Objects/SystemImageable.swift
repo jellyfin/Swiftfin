@@ -14,6 +14,7 @@ protocol SystemImageable {
 }
 
 extension SystemImageable {
+
     var secondarySystemImage: String {
         systemImage
     }

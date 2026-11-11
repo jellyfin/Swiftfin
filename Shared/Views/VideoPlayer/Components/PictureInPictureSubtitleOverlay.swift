@@ -12,6 +12,7 @@ struct PictureInPictureSubtitleOverlay: View {
 
     let presentation: TextSubtitlePresentation
 
+    @ContentBuilder
     var body: some View {
         GeometryReader { geometry in
             if let snapshot = presentation.snapshot {

@@ -25,6 +25,7 @@ extension SelectUserView {
 
         let servers: OrderedSet<ServerState>
 
+        @ContentBuilder
         var body: some View {
             Menu {
                 Section {
@@ -43,7 +44,6 @@ extension SelectUserView {
                 }
 
                 Picker(L10n.servers, selection: $serverSelection) {
-
                     if servers.count > 1 {
                         Label(L10n.allServers, systemImage: "person.2.fill")
                             .tag(SelectUserServerSelection.all)

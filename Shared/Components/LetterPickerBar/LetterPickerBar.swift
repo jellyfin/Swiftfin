@@ -32,6 +32,7 @@ struct LetterPickerBar: PresentationView {
     private let letters = ItemLetter.allCases
 
     private enum Row: Hashable {
+
         case letter(ItemLetter)
         case dot
     }
@@ -94,6 +95,7 @@ struct LetterPickerBar: PresentationView {
         }
     }
 
+    @ContentBuilder
     private var letterBar: some View {
         VStack(spacing: viewLayout.value(standard: 0, large: dimension * 0.1)) {
             ForEach(rows) { row in
@@ -129,6 +131,7 @@ struct LetterPickerBar: PresentationView {
         .font(viewLayout.value(standard: .footnote, large: .system(size: 22, weight: .semibold)))
     }
 
+    @ContentBuilder
     var standardView: some View {
         letterBar
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -175,6 +178,7 @@ struct LetterPickerBar: PresentationView {
             .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)
     }
 
+    @ContentBuilder
     var largeView: some View {
         letterBar
             .scrollIfLargerThanContainer()

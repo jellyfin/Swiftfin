@@ -27,6 +27,7 @@ extension VideoPlayer {
             viewState.isScrubbing
         }
 
+        @ContentBuilder
         private var supplementContent: some View {
             VideoPlayer.UIContainerViewController.SupplementContainerView()
                 .frame(height: viewState.supplementHeight)
@@ -39,6 +40,7 @@ extension VideoPlayer {
 
         // MARK: body
 
+        @ContentBuilder
         var body: some View {
             VideoPlayerControlsLayout(
                 systemInsets: viewState.systemInsets,

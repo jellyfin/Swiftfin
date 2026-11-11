@@ -10,6 +10,7 @@
 struct Direction {
 
     private enum Options: Int {
+
         case up
         case down
         case left

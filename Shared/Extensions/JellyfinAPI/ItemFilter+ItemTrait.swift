@@ -26,6 +26,7 @@ extension ItemTrait: ItemFilter {
 }
 
 extension ItemTrait: Displayable {
+
     var displayTitle: String {
         switch self {
         case .isUnplayed:

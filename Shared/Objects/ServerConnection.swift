@@ -11,6 +11,7 @@ import Foundation
 struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
 
     enum Interface: String, CaseIterable, Displayable, Storable {
+
         case any
         case wifi
         case cellular
@@ -28,6 +29,7 @@ struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
     }
 
     enum TestState {
+
         case idle
         case testing
         case success

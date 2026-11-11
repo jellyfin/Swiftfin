@@ -18,6 +18,7 @@ struct FocusedPosterCinematicBackgroundView: View {
     @FocusedValue(\.focusedPoster)
     private var focusedPoster
 
+    @ContentBuilder
     var body: some View {
         if isCinematicBackgroundEnabled {
             FadeContentTransitionView(

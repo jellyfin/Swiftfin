@@ -15,6 +15,7 @@ struct OnFirstAppearModifier: ViewModifier {
 
     let action: () -> Void
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .onAppear {

@@ -16,8 +16,8 @@ struct CompactOrRegularView<Compact: View, Regular: View>: View {
 
     init(
         isCompact: Bool,
-        @ViewBuilder compactView: @escaping () -> Compact,
-        @ViewBuilder regularView: @escaping () -> Regular
+        @ContentBuilder compactView: @escaping () -> Compact,
+        @ContentBuilder regularView: @escaping () -> Regular
     ) {
         self.isCompact = { _ in isCompact }
         self.compactView = compactView()
@@ -26,14 +26,15 @@ struct CompactOrRegularView<Compact: View, Regular: View>: View {
 
     init(
         isCompact: @escaping (CGSize) -> Bool,
-        @ViewBuilder compactView: @escaping () -> Compact,
-        @ViewBuilder regularView: @escaping () -> Regular
+        @ContentBuilder compactView: @escaping () -> Compact,
+        @ContentBuilder regularView: @escaping () -> Regular
     ) {
         self.isCompact = isCompact
         self.compactView = compactView()
         self.regularView = regularView()
     }
 
+    @ContentBuilder
     var body: some View {
         GeometryReader { proxy in
             if isCompact(proxy.size) {

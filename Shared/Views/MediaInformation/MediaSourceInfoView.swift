@@ -22,6 +22,7 @@ struct MediaSourceInfoView: PresentationView {
 
     let source: MediaSourceInfo
 
+    @ContentBuilder
     private func streamRow(_ stream: MediaStream) -> some View {
         ChevronButton(stream.displayTitle ?? .emptyDash) {
             router.route(to: .mediaStreamInfo(mediaStream: stream))
@@ -34,11 +35,11 @@ struct MediaSourceInfoView: PresentationView {
         }
     }
 
+    @ContentBuilder
     private var contentView: some View {
         Form {
             if let videoStreams = source.videoStreams,
-               videoStreams.isNotEmpty
-            {
+               videoStreams.isNotEmpty {
                 Section(L10n.video) {
                     ForEach(videoStreams, id: \.self) { stream in
                         streamRow(stream)
@@ -47,8 +48,7 @@ struct MediaSourceInfoView: PresentationView {
             }
 
             if let audioStreams = source.audioStreams,
-               audioStreams.isNotEmpty
-            {
+               audioStreams.isNotEmpty {
                 Section(L10n.audio) {
                     ForEach(audioStreams, id: \.self) { stream in
                         streamRow(stream)
@@ -57,8 +57,7 @@ struct MediaSourceInfoView: PresentationView {
             }
 
             if let subtitleStreams = source.subtitleStreams,
-               subtitleStreams.isNotEmpty
-            {
+               subtitleStreams.isNotEmpty {
                 Section(L10n.subtitle) {
                     ForEach(subtitleStreams, id: \.self) { stream in
                         streamRow(stream)
@@ -68,6 +67,7 @@ struct MediaSourceInfoView: PresentationView {
         }
     }
 
+    @ContentBuilder
     var standardView: some View {
         contentView
             .navigationTitle(source.displayTitle)
@@ -82,6 +82,7 @@ struct MediaSourceInfoView: PresentationView {
             #endif
     }
 
+    @ContentBuilder
     var largeView: some View {
         HStack {
             contentView

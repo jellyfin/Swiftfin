@@ -14,8 +14,8 @@ struct NavigationBarDrawerView<Content: View, Drawer: View>: PlatformViewControl
     private let content: Content
 
     init(
-        @ViewBuilder drawer: @escaping () -> Drawer,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder drawer: @escaping () -> Drawer,
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.drawer = drawer()
         self.content = content()
@@ -143,8 +143,7 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         if let coordinator = transitionCoordinator,
            coordinator.animate(alongsideTransition: { [weak self] _ in
                self?.view.layoutIfNeeded()
-           })
-        {
+           }) {
             return
         }
 

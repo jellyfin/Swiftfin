@@ -24,6 +24,7 @@ extension ItemView {
                 item.overview?.isNotEmpty == true
         }
 
+        @ContentBuilder
         var body: some View {
             if isPresented {
                 VStack(alignment: .leading, spacing: 5) {

@@ -13,6 +13,7 @@ import SwiftUI
 struct Marquee<Content: View>: View {
 
     enum ResetType {
+
         case bounce
         case loop
     }
@@ -37,6 +38,7 @@ struct Marquee<Content: View>: View {
 
     private let content: Content
 
+    @ContentBuilder
     var body: some View {
         switch axis {
         case .horizontal:
@@ -48,6 +50,7 @@ struct Marquee<Content: View>: View {
 
     // MARK: - Horizontal
 
+    @ContentBuilder
     private var horizontalBody: some View {
         ViewThatFits(in: .horizontal) {
             content
@@ -135,6 +138,7 @@ struct Marquee<Content: View>: View {
 
     // MARK: - Vertical
 
+    @ContentBuilder
     private var verticalBody: some View {
         ViewThatFits(in: .vertical) {
             content
@@ -338,7 +342,7 @@ extension Marquee {
         gap: CGFloat = 50.0,
         animateWhenFocused: Bool = false,
         fade: CGFloat = 10.0,
-        @ViewBuilder content: () -> Content
+        @ContentBuilder content: () -> Content
     ) {
         self.axis = axis
         self.resetType = resetType
@@ -354,12 +358,15 @@ extension Marquee {
 // Reference:  https://swiftui-lab.com/swiftui-animations-part2/
 
 private extension View {
+
+    @ContentBuilder
     func marqueeOffset(x: CGFloat, y: CGFloat) -> some View {
         modifier(_OffsetEffect(offset: CGSize(width: x, height: y)))
     }
 }
 
 private struct _OffsetEffect: GeometryEffect {
+
     var offset: CGSize
 
     var animatableData: CGSize.AnimatableData {

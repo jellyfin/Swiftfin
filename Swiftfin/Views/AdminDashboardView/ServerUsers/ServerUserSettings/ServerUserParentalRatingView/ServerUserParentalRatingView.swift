@@ -33,6 +33,7 @@ struct ServerUserParentalRatingView: View {
         self.tempPolicy = policy
     }
 
+    @ContentBuilder
     var body: some View {
         List {
             maxParentalRatingsView
@@ -84,6 +85,7 @@ struct ServerUserParentalRatingView: View {
         .errorMessage($viewModel.error)
     }
 
+    @ContentBuilder
     private var maxParentalRatingsView: some View {
         Section(
             L10n.maxParentalRating,
@@ -103,6 +105,7 @@ struct ServerUserParentalRatingView: View {
         )
     }
 
+    @ContentBuilder
     private var blockUnratedItemsView: some View {
         Section {
             ForEach(UnratedItem.allCases.sorted(using: \.displayTitle), id: \.self) { item in

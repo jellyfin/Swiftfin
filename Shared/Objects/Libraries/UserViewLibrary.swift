@@ -141,6 +141,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         }
     }
 
+    @ContentBuilder
     func makeBody(
         libraryStyle: LibraryStyle,
         action: (() -> Void)?
@@ -186,6 +187,7 @@ private struct UserViewLibraryGridElement: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Button {
             element.libraryDidSelectElement(router: router, in: namespace)
@@ -223,6 +225,7 @@ private struct UserViewLibraryGridElement: View {
         .accessibilityLabel(element.displayTitle)
     }
 
+    @ContentBuilder
     private var titleLabel: some View {
         Text(element.displayTitle)
             .font(.title2)
@@ -232,6 +235,7 @@ private struct UserViewLibraryGridElement: View {
             .frame(alignment: .center)
     }
 
+    @ContentBuilder
     private func titleLabelOverlay(with content: some View) -> some View {
         ZStack {
             content
@@ -270,6 +274,7 @@ private struct UserViewLibraryListElement: View {
 
     let element: UserViewLibraryElement
 
+    @ContentBuilder
     var body: some View {
         ListRow(insets: .init(vertical: 8, horizontal: viewLayout.edgePadding)) {
             imageView
@@ -293,6 +298,7 @@ private struct UserViewLibraryListElement: View {
         }
     }
 
+    @ContentBuilder
     private var imageView: some View {
         ZStack {
             Color.secondarySystemFill

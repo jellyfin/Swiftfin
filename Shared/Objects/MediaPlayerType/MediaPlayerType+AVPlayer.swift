@@ -16,7 +16,6 @@ extension MediaPlayerType {
 
     @ArrayBuilder<DirectPlayProfile>
     static var _avPlayerDirectPlayProfiles: [DirectPlayProfile] {
-
         DirectPlayProfile(
             audioCodec: "aac,alac,ac3,eac3",
             container: "m4a,m4b,mp4,mov,aac,ac3,eac3",
@@ -39,7 +38,6 @@ extension MediaPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-
             VideoCodec.h264
             VideoCodec.mpeg4
 
@@ -71,7 +69,6 @@ extension MediaPlayerType {
             AudioCodec.pcm_s24be
             AudioCodec.pcm_s24le
         } videoCodecs: {
-
             VideoCodec.h264
             VideoCodec.mjpeg
             VideoCodec.mpeg4
@@ -109,7 +106,6 @@ extension MediaPlayerType {
 
     @ArrayBuilder<TranscodingProfile>
     static var _avPlayerTranscodingProfiles: [TranscodingProfile] {
-
         TranscodingProfile(
             protocol: .http,
             audioCodec: AudioCodec.mp3.rawValue,
@@ -133,8 +129,7 @@ extension MediaPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-
-            /// - Note: Transcode Profiles prioritizes codecs by order
+            // - Note: Transcode Profiles prioritizes codecs by order
             if UIDevice.PlaybackCapabilities.supportsAV1 {
                 VideoCodec.av1
             }
@@ -155,7 +150,6 @@ extension MediaPlayerType {
 
     @ArrayBuilder<SubtitleProfile>
     static var _avPlayerSubtitleProfiles: [SubtitleProfile] {
-
         SubtitleProfile.build(method: .embed) {
             SubtitleFormat.cc_dec
             SubtitleFormat.ttml
@@ -178,7 +172,6 @@ extension MediaPlayerType {
     @MainActor
     @ArrayBuilder<CodecProfile>
     static func _avPlayerCodecProfiles(configuration: MediaPlaybackConfiguration) -> [CodecProfile] {
-
         CodecProfile(
             codec: VideoCodec.h264.rawValue,
             type: .video,
@@ -267,7 +260,6 @@ extension MediaPlayerType {
     @MainActor
     @ArrayBuilder<VideoRangeType>
     private static func avPlayerHDRProfiles(configuration: MediaPlaybackConfiguration) -> [VideoRangeType] {
-
         let supportsHDR = UIDevice.PlaybackCapabilities.supportsHEVC && !configuration.forceHDRTranscode
         let supportsDolbyVision = UIDevice.PlaybackCapabilities.supportsDolbyVisionDecoding && !configuration.forceDVTranscode
 

@@ -47,7 +47,7 @@ struct ItemEntry: Identifiable, Hashable {
         value ?? BaseItemDto(id: itemID)
     }
 
-    // Metadata changes do not change the identity of an entry
+    /// Metadata changes do not change the identity of an entry
     nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
     }

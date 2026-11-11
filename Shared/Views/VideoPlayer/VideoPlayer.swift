@@ -20,6 +20,7 @@ struct VideoPlayer: View {
     let mediaSession: MediaSession
 
     #if os(iOS)
+    @ContentBuilder
     private var remotePlaybackBody: some View {
         VStack(spacing: 16) {
             Image(systemName: "tv")
@@ -40,6 +41,7 @@ struct VideoPlayer: View {
     }
     #endif
 
+    @ContentBuilder
     var body: some View {
         Container(
             viewState: viewState,

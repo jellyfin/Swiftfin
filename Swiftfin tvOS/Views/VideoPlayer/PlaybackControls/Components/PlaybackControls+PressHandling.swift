@@ -35,8 +35,7 @@ extension VideoPlayer.PlaybackControls {
            isSeekPress,
            mediaSession.canSeek,
            !viewState.isPresentingSupplement,
-           viewState.presentation == .hidden || viewState.presentation == .progress || viewState.isProgressBarFocused
-        {
+           viewState.presentation == .hidden || viewState.presentation == .progress || viewState.isProgressBarFocused {
             seekingPress = press.type
             viewState.showProgress()
         }

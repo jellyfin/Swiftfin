@@ -11,6 +11,7 @@ import SwiftUI
 struct ImageContentColumnsLayout: Layout {
 
     private struct Measurements {
+
         let contentSize: CGSize
         let contentWidth: CGFloat
         let imageHeight: CGFloat

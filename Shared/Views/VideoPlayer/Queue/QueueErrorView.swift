@@ -19,6 +19,7 @@ struct QueueErrorView: PresentationView {
 
     let retry: () -> Void
 
+    @ContentBuilder
     private var retryButton: some View {
         AlternateLayoutView {
             Label(L10n.retry, systemImage: "arrow.clockwise")
@@ -40,6 +41,7 @@ struct QueueErrorView: PresentationView {
         }
     }
 
+    @ContentBuilder
     private var errorCard: some View {
         VStack(alignment: .leading, spacing: viewLayout.edgePadding / 2) {
             Text(L10n.unknownError)
@@ -62,6 +64,7 @@ struct QueueErrorView: PresentationView {
         .focusSection()
     }
 
+    @ContentBuilder
     var standardView: some View {
         CompactOrRegularView(isCompact: viewState.isCompact) {
             ErrorView(error: ErrorMessage(L10n.unknownError))
@@ -73,6 +76,7 @@ struct QueueErrorView: PresentationView {
         .padding(.trailing, viewState.supplementInsets.trailing)
     }
 
+    @ContentBuilder
     var largeView: some View {
         errorCard
     }

@@ -11,6 +11,7 @@ import SwiftUI
 #if os(tvOS)
 struct BasicHoverButtonStyle: ButtonStyle {
 
+    @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .hoverEffect(.lift)

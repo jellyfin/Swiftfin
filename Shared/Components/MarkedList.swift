@@ -20,14 +20,15 @@ struct MarkedList<Content: View, Marker: View>: View {
 
     init(
         spacing: CGFloat,
-        @ViewBuilder marker: @escaping (Int) -> Marker,
-        @ViewBuilder content: @escaping () -> Content
+        @ContentBuilder marker: @escaping (Int) -> Marker,
+        @ContentBuilder content: @escaping () -> Content
     ) {
         self.marker = marker
         self.content = content()
         self.spacing = spacing
     }
 
+    @ContentBuilder
     var body: some View {
         _VariadicView.Tree(
             MarkedListLayout(
@@ -47,6 +48,7 @@ extension MarkedList {
         let spacing: CGFloat
         let marker: (Int) -> Marker
 
+        @ContentBuilder
         func body(children: _VariadicView.Children) -> some View {
             VStack(alignment: .leading, spacing: spacing) {
                 ForEach(Array(zip(children.indices, children)), id: \.0) { child in
@@ -69,6 +71,7 @@ extension MarkedList {
         let marker: Marker
         let content: EntryContent
 
+        @ContentBuilder
         private var _bullet: some View {
             marker
                 .trackingSize($markerSize)
@@ -76,6 +79,7 @@ extension MarkedList {
 
         // TODO: this can cause clipping issues with text since
         //       with .offset, find fix
+        @ContentBuilder
         var body: some View {
             ZStack {
                 content

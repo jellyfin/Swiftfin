@@ -11,6 +11,7 @@ import SwiftUI
 struct EasedGradient: View, ShapeStyle {
 
     enum Curve {
+
         case linear
         case easeIn
         case easeOut
@@ -132,6 +133,7 @@ struct EasedGradient: View, ShapeStyle {
         )
     }
 
+    @ContentBuilder
     var body: some View {
         linearGradient
     }

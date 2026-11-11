@@ -16,6 +16,7 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
     let onEditingChanged: (Bool) -> Void
     let onFocusChanged: (Bool) -> Void
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         SliderContainerRepresentable(
             value: value,

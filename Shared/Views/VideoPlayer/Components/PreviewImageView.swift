@@ -20,6 +20,7 @@ extension VideoPlayer.PlaybackControls {
 
         let previewImageProvider: PreviewImageProvider
 
+        @ContentBuilder
         var body: some View {
             ZStack {
                 Color.black

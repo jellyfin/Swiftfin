@@ -9,16 +9,19 @@
 import SwiftUI
 
 protocol WithText {
+
     var textBody: Text { get }
 }
 
 extension Text: WithText {
+
     var textBody: Text {
         self
     }
 }
 
 extension String: WithText {
+
     var textBody: Text {
         Text(self)
     }

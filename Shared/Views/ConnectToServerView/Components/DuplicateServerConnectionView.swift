@@ -21,6 +21,7 @@ extension ConnectToServerView {
         let server: ServerState
         let action: () -> Void
 
+        @ContentBuilder
         var standardView: some View {
             NavigationStack {
                 Form {
@@ -70,6 +71,7 @@ extension ConnectToServerView {
             }
         }
 
+        @ContentBuilder
         var largeView: some View {
             VStack(spacing: 8) {
                 Text(L10n.connection)

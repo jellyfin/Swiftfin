@@ -27,7 +27,7 @@ where Value.RawValue: Equatable {
         selection: Binding<Value>,
         customTitle: String,
         customDescription: String,
-        @ViewBuilder customContent: @escaping (Binding<Value>) -> CustomContent
+        @ContentBuilder customContent: @escaping (Binding<Value>) -> CustomContent
     ) {
         self._customValue = State(initialValue: selection.wrappedValue)
         self.title = title
@@ -55,6 +55,7 @@ where Value.RawValue: Equatable {
         )
     }
 
+    @ContentBuilder
     private var picker: some View {
         Picker(title, selection: pickerSelection) {
             ForEach(Value.allCases.asArray, id: \.self) { value in
@@ -76,6 +77,7 @@ where Value.RawValue: Equatable {
         }
     }
 
+    @ContentBuilder
     private var content: some View {
         #if os(tvOS)
         ListRowMenu(title, subtitle: Text(selection.wrappedValue.displayTitle)) {
@@ -86,6 +88,7 @@ where Value.RawValue: Equatable {
         #endif
     }
 
+    @ContentBuilder
     var body: some View {
         content
             .alert(customTitle, isPresented: $isPresentingCustomValue) {

@@ -19,9 +19,10 @@ struct OnSizeChangedModifier<Wrapped: View>: ViewModifier {
     @State
     private var size: CGSize = .zero
 
-    @ViewBuilder
+    @ContentBuilder
     var wrapped: (CGSize) -> Wrapped
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         wrapped(size)
             .onSizeChanged { newSize, _ in
@@ -32,6 +33,7 @@ struct OnSizeChangedModifier<Wrapped: View>: ViewModifier {
 
 extension View {
 
+    @ContentBuilder
     func onSizeChanged(
         perform action: @escaping (CGSize, EdgeInsets) -> Void
     ) -> some View {

@@ -43,6 +43,7 @@ struct PosterImage<Element: Poster>: View {
         )
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             Rectangle()

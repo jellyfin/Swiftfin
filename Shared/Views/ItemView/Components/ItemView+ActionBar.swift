@@ -33,6 +33,7 @@ extension ItemView {
             self.alignment = alignment
         }
 
+        @ContentBuilder
         var body: some View {
             let (visible, overflow, menu) = buttonConfiguration.resolvedButtons(for: provider)
             let defaultFocusedButton = provider.item.presentPlayButton ?

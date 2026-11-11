@@ -179,8 +179,7 @@ final class ServerSocketManager {
                 }
             } catch {
                 if let socketError = error as? JellyfinSocket.Session.SocketError,
-                   case .unauthorized = socketError
-                {
+                   case .unauthorized = socketError {
                     wasRefused = true
                 }
 

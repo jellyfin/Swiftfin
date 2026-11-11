@@ -37,7 +37,7 @@ struct ScheduledRecordingsLibrary: BaseItemKindLibrary {
 
     func makeLibraryBody(
         viewModel: PagingLibraryViewModel<Self>,
-        @ViewBuilder content: @escaping () -> some View
+        @ContentBuilder content: @escaping () -> some View
     ) -> AnyView {
         content()
             .onReceive(Notifications[.recordingTimersDidChange].publisher) {

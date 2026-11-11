@@ -24,6 +24,7 @@ extension VideoPlayer.UIContainerViewController {
         private var focusedElement: String?
 
         #if os(iOS)
+        @ContentBuilder
         private func closeButton(size: CGFloat) -> some View {
             Button {
                 viewState.selectedSupplementID = nil
@@ -52,6 +53,7 @@ extension VideoPlayer.UIContainerViewController {
                 }?.id
         }
 
+        @ContentBuilder
         private func supplementContainer(for supplement: some VideoPlayerSupplement) -> some View {
             AlternateLayoutView(alignment: .topLeading) {
                 Color.clear
@@ -70,6 +72,7 @@ extension VideoPlayer.UIContainerViewController {
             #endif
         }
 
+        @ContentBuilder
         private var tabButtons: some View {
             AlternateLayoutView {
                 // swiftlint:disable:next hard_coded_display_string
@@ -129,6 +132,7 @@ extension VideoPlayer.UIContainerViewController {
             .foregroundStyle(.white)
         }
 
+        @ContentBuilder
         var body: some View {
             ZStack {
                 #if os(iOS)
@@ -140,7 +144,6 @@ extension VideoPlayer.UIContainerViewController {
                 #endif
 
                 VStack(alignment: .leading, spacing: 0) {
-
                     tabButtons
 
                     SupplementTabView(
@@ -177,7 +180,8 @@ extension VideoPlayer.UIContainerViewController {
             .task(id: focusedSupplementID) {
                 let previousSelection = viewState.selectedSupplementID
                 guard !viewState.isSupplementFocusPending,
-                      let id = focusedSupplementID, id != previousSelection
+                      let id = focusedSupplementID,
+                      id != previousSelection
                 else { return }
 
                 if previousSelection != nil {

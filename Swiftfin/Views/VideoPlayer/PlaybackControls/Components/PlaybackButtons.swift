@@ -29,6 +29,7 @@ extension VideoPlayer.PlaybackControls {
             !mediaSession.item.isLiveStream
         }
 
+        @ContentBuilder
         private var playButton: some View {
             Button {
                 switch mediaSession.playbackRequestStatus {
@@ -50,6 +51,7 @@ extension VideoPlayer.PlaybackControls {
             .disabled(!mediaSession.canControlPlayback)
         }
 
+        @ContentBuilder
         private var jumpForwardButton: some View {
             JumpButton(interval: jumpForwardInterval, isForward: true) {
                 mediaSession.seek(by: jumpForwardInterval.rawValue)
@@ -57,6 +59,7 @@ extension VideoPlayer.PlaybackControls {
             .disabled(!mediaSession.canSeek)
         }
 
+        @ContentBuilder
         private var jumpBackwardButton: some View {
             JumpButton(interval: jumpBackwardInterval, isForward: false) {
                 mediaSession.seek(by: .zero - (jumpBackwardInterval.rawValue))
@@ -64,6 +67,7 @@ extension VideoPlayer.PlaybackControls {
             .disabled(!mediaSession.canSeek)
         }
 
+        @ContentBuilder
         var body: some View {
             HStack(spacing: 0) {
                 if shouldShowJumpButtons {
@@ -93,6 +97,7 @@ extension VideoPlayer.PlaybackControls {
         let isForward: Bool
         let action: () -> Void
 
+        @ContentBuilder
         var body: some View {
             Button {
                 action()

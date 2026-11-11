@@ -50,7 +50,7 @@ enum NowPlayableCommand: CaseIterable, Hashable, Sendable {
     case like
     case dislike
 
-    // Bookmark
+    /// Bookmark
     case bookmark
 
     // Languages

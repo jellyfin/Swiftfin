@@ -30,18 +30,21 @@ struct CustomDeviceProfilesView: View {
         customDeviceProfileAction == .add || customProfiles.isNotEmpty
     }
 
+    @ContentBuilder
     private var addButton: some View {
         Button(L10n.add) {
             router.route(to: .createDeviceProfile)
         }
     }
 
+    @ContentBuilder
     private func deleteButton(profile: CustomDeviceProfile) -> some View {
         Button(L10n.delete, systemImage: "trash", role: .destructive) {
             customProfiles.removeFirst(equalTo: profile)
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "doc.on.doc") {
             behaviorView
@@ -61,6 +64,7 @@ struct CustomDeviceProfilesView: View {
         }
     }
 
+    @ContentBuilder
     private var behaviorView: some View {
         Section(L10n.behavior) {
             #if os(iOS)
@@ -86,9 +90,9 @@ struct CustomDeviceProfilesView: View {
         }
     }
 
+    @ContentBuilder
     private var customProfileView: some View {
         Section(customDeviceProfileAction == .add ? L10n.custom : L10n.profiles) {
-
             if customProfiles.isEmpty {
                 addButton
             }
@@ -117,7 +121,7 @@ struct CustomDeviceProfilesView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var defaultProfileView: some View {
         if customDeviceProfileAction == .add {
             Section(L10n.default) {
@@ -148,6 +152,7 @@ struct CustomDeviceProfilesView: View {
         }
     }
 
+    @ContentBuilder
     private func profileView(
         useAsTranscodingProfile: Bool,
         audio: [AudioCodec],

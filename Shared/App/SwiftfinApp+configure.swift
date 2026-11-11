@@ -16,10 +16,8 @@ import UIKit
 extension SwiftfinApp {
 
     static func configure() {
-
         // Logging
         LoggingSystem.bootstrap { label in
-
             // TODO: have setting for log level
             //       - default info, boolean to go down to trace
             let handlers: [any LogHandler] = [PersistentLogHandler(label: label)]

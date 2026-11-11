@@ -24,6 +24,7 @@ struct ServerTaskDetailsView: View {
         viewModel.task.state == .running || viewModel.task.state == .cancelling
     }
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -62,7 +63,6 @@ struct ServerTaskDetailsView: View {
             if let lastExecutionResult = viewModel.task.lastExecutionResult {
                 if let status = lastExecutionResult.status, let endTime = lastExecutionResult.endTimeUtc {
                     Section(L10n.lastRun) {
-
                         LabeledContent(
                             L10n.status,
                             value: status.displayTitle
@@ -98,6 +98,7 @@ struct ServerTaskDetailsView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         contentView
             .animation(.linear(duration: 0.1), value: viewModel.task.state)

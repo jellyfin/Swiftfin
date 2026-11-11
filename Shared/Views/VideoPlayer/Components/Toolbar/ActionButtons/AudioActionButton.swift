@@ -30,7 +30,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             }
         }
 
-        @ViewBuilder
+        @ContentBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
             @Bindable
             var playbackItem = playbackItem
@@ -49,6 +49,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             }
         }
 
+        @ContentBuilder
         var body: some View {
             if let playbackItem = mediaSession.playbackItem {
                 Menu(L10n.audio, systemImage: systemImage) {

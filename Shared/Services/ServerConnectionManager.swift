@@ -20,6 +20,7 @@ final class ServerConnectionManager: ObservableObject {
 
     @CasePathable
     enum Action {
+
         case resolveActiveConnection
         case scheduleConnectionResolution
         case start
@@ -44,6 +45,7 @@ final class ServerConnectionManager: ObservableObject {
     }
 
     enum State: Equatable {
+
         case initial
         case evaluating
         case connected(ServerConnection)
@@ -51,6 +53,7 @@ final class ServerConnectionManager: ObservableObject {
     }
 
     enum Resolution: Equatable {
+
         case connected(ServerConnection)
         case unreachable([ServerConnection])
     }
@@ -219,8 +222,7 @@ final class ServerConnectionManager: ObservableObject {
         guard !Task.isCancelled else { return }
 
         if case let .connected(reachableConnection) = resolution,
-           currentConnection?.id != reachableConnection.id
-        {
+           currentConnection?.id != reachableConnection.id {
             Notifications[.didChangeServerConnection].post(reachableConnection)
         }
 

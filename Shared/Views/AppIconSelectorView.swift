@@ -25,6 +25,7 @@ struct AppIconSelectorView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         Form {
             ForEach(AppIcon.allCases) { icon in
@@ -57,6 +58,7 @@ extension AppIconSelectorView {
         let icon: AppIcon
         let action: () -> Void
 
+        @ContentBuilder
         var body: some View {
             Button(action: action) {
                 HStack {

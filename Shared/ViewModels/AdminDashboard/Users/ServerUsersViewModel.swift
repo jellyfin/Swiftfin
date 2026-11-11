@@ -17,6 +17,7 @@ final class ServerUsersViewModel: ViewModel, Identifiable {
 
     @CasePathable
     enum Action {
+
         case getUsers(isHidden: Bool, isDisabled: Bool)
         case deleteUsers([String])
         case appendUser(UserDto)
@@ -42,16 +43,19 @@ final class ServerUsersViewModel: ViewModel, Identifiable {
     }
 
     enum BackgroundState {
+
         case gettingUsers
         case deletingUsers
         case appendingUsers
     }
 
     enum Event {
+
         case deleted
     }
 
     enum State {
+
         case content
         case error
         case initial

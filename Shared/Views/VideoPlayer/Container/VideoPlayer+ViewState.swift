@@ -156,8 +156,7 @@ extension VideoPlayer {
                           focusCoordinator.focusedIDs.contains($0.focusID) ||
                               focusCoordinator.lastFocusedIDs.contains($0.focusID)
                       }),
-                      !isOverlayActionFocused
-            {
+                      !isOverlayActionFocused {
                 focusPlaybackControls()
             }
         }
@@ -272,11 +271,12 @@ extension VideoPlayer {
             pendingSupplementFocusID != nil
         }
 
-        // The host fade and container slide can finish in either order. Keep the request
-        // pending until the preferred control receives focus after these transitions.
+        /// The host fade and container slide can finish in either order. Keep the request
+        /// pending until the preferred control receives focus after these transitions.
         func focusSupplementIfNeeded(_ id: String) {
             guard pendingSupplementFocusID == id,
-                  let selectedSupplement, selectedSupplement.id == id
+                  let selectedSupplement,
+                  selectedSupplement.id == id
             else { return }
 
             containerView?.focusSupplementContent()
@@ -487,8 +487,7 @@ extension VideoPlayer {
                     #if os(tvOS)
                     if let supplement = self.selectedSupplement,
                        self.pendingSupplementFocusID == supplement.id,
-                       focusedIDs.contains(supplement.preferredFocusID)
-                    {
+                       focusedIDs.contains(supplement.preferredFocusID) {
                         self.pendingSupplementFocusID = nil
                     }
                     #endif

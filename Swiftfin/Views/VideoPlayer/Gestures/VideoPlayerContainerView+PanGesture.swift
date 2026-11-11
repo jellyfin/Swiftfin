@@ -66,8 +66,7 @@ extension VideoPlayer.UIContainerViewController {
         if Defaults[.VideoPlayer.Gesture.horizontalSwipeAction] != .none, direction.isHorizontal {
             if !viewState.didSwipe,
                max(velocity.x.magnitude, velocity.y.magnitude) >= 1200,
-               max(translation.x.magnitude, translation.y.magnitude) >= 80
-            {
+               max(translation.x.magnitude, translation.y.magnitude) >= 80 {
                 handleSwipeAction(direction: direction)
                 viewState.didSwipe = true
             }
@@ -347,9 +346,10 @@ extension VideoPlayer.UIContainerViewController {
         return PanHandlingAction<Float>(
             startValue: AVAudioSession.sharedInstance().outputVolume
         ) { startState, handlingState, _ in
-            guard handlingState.gestureState != .ended, let slider = volumeView
-                .subviews
-                .first(where: { $0 is UISlider }) as? UISlider else { return }
+            guard handlingState.gestureState != .ended,
+                  let slider = volumeView
+                    .subviews
+                    .first(where: { $0 is UISlider }) as? UISlider else { return }
 
             let translation: CGFloat = {
                 if startState.direction.isHorizontal {

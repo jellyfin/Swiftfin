@@ -117,9 +117,10 @@ final class ItemStore {
         var program: ItemRecord?
 
         // Nested programs share the parent request revision and merge scope
-        if patch.scope != .metadataSnapshot, let value = patch.value.currentProgram, let object = patch.program,
-           value.id != id
-        {
+        if patch.scope != .metadataSnapshot,
+           let value = patch.value.currentProgram,
+           let object = patch.program,
+           value.id != id {
             program = try merge(ItemPatch.decoded(value, object: object, scope: patch.scope), token: token)
         }
 

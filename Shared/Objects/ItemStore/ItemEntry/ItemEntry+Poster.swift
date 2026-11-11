@@ -41,18 +41,22 @@ extension ItemEntry: @MainActor Poster {
         snapshot.imageSources(for: displayType, environment: environment)
     }
 
+    @ContentBuilder
     func transform(image: Image, displayType: PosterDisplayType) -> some View {
         snapshot.transform(image: image, displayType: displayType)
     }
 
+    @ContentBuilder
     var posterLabel: some View {
         snapshot.posterLabel
     }
 
+    @ContentBuilder
     var posterContextMenu: some View {
         snapshot.posterContextMenu
     }
 
+    @ContentBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         snapshot.posterOverlay(for: displayType)
     }

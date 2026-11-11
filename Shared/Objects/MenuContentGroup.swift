@@ -19,7 +19,7 @@ struct MenuContentGroup: Identifiable, Equatable {
     init(
         id: String = UUID().uuidString,
         isPrimary: Bool = false,
-        @ViewBuilder content: () -> some View
+        @ContentBuilder content: () -> some View
     ) {
         self.id = id
         self.isPrimary = isPrimary

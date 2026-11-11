@@ -16,6 +16,7 @@ extension ItemView {
         @SharedBaseItem
         var item: BaseItemDto
 
+        @ContentBuilder
         var body: some View {
             DotHStack {
                 if let firstGenre = item.genres?.first {

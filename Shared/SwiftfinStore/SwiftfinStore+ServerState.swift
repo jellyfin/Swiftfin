@@ -44,8 +44,7 @@ extension ServerState {
             let activeConnectionID = StoredValues[.Server.activeConnectionID(id: id)]
 
             if activeConnectionID.isNotEmpty,
-               let connection = connections.first(where: { $0.id == activeConnectionID })
-            {
+               let connection = connections.first(where: { $0.id == activeConnectionID }) {
                 return connection
             }
 
@@ -96,7 +95,6 @@ extension ServerState {
     }
 
     func getPublicSystemInfo() async throws -> PublicSystemInfo {
-
         let request = Paths.getPublicSystemInfo
         let response = try await client.send(request)
 

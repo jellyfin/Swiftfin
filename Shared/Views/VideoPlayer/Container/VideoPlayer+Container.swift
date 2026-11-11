@@ -29,8 +29,8 @@ extension VideoPlayer {
             viewState: ViewState,
             mediaSession: MediaSession,
             videoSize: @escaping () -> CGSize,
-            @ViewBuilder player: @escaping (VideoLayout) -> Player,
-            @ViewBuilder playbackControls: @escaping () -> PlaybackControls
+            @ContentBuilder player: @escaping (VideoLayout) -> Player,
+            @ContentBuilder playbackControls: @escaping () -> PlaybackControls
         ) {
             self.viewState = viewState
             self.mediaSession = mediaSession
@@ -118,6 +118,7 @@ extension VideoPlayer {
             @Environment(ViewState.self)
             private var viewState
 
+            @ContentBuilder
             func body(content: Content) -> some View {
                 content
                     .layoutContainer(size: viewState.layoutSize)
@@ -138,6 +139,7 @@ extension VideoPlayer {
                 !viewState.isTabletop && viewState.visibleElements.contains(.dimming)
             }
 
+            @ContentBuilder
             var body: some View {
                 VideoViewport(videoSize: videoSize) { videoLayout in
                     player(videoLayout)
@@ -195,6 +197,7 @@ extension VideoPlayer {
                 }
             }
 
+            @ContentBuilder
             var body: some View {
                 Group {
                     #if os(iOS)
@@ -763,8 +766,8 @@ extension VideoPlayer {
             #endif
         }
 
-        // Setup player view separately after view appears to hopefully
-        // prevent player playing before the view is done presenting
+        /// Setup player view separately after view appears to hopefully
+        /// prevent player playing before the view is done presenting
         private func setupPlayerView() {
             addChild(playerViewController)
             view.addSubview(playerView)
@@ -817,7 +820,6 @@ extension VideoPlayer {
         }
 
         private func setupOnLoadConstraints() {
-
             supplementHeight = supplementContainerOffset(isCompact: viewLayout.usesCompactPlayer)
             supplementOffset = -dismissedSupplementContainerOffset
 
@@ -1064,8 +1066,7 @@ extension VideoPlayer {
             // A late animation completion must not undo navigation within the player
             // or into another focus environment, such as a menu.
             if let nextFocusedView = context.nextFocusedView,
-               !nextFocusedView.isDescendant(of: supplementContainerView)
-            {
+               !nextFocusedView.isDescendant(of: supplementContainerView) {
                 pendingPlaybackFocusRequest = nil
             }
         }
@@ -1079,8 +1080,7 @@ extension VideoPlayer {
                viewState.visibleElements.contains(.supplements),
                let supplement = viewState.singleSupplement,
                context.focusHeading.contains(.down),
-               context.nextFocusedView?.isDescendant(of: supplementContainerView) == true
-            {
+               context.nextFocusedView?.isDescendant(of: supplementContainerView) == true {
                 DispatchQueue.main.async { [weak self] in
                     guard let self,
                           !viewState.isPresentingSupplement,

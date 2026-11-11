@@ -31,9 +31,10 @@ struct NotchReader<Content: View>: View {
     @State
     private var measurement: NotchMeasurement?
 
-    @ViewBuilder
+    @ContentBuilder
     let content: (NotchMeasurement?) -> Content
 
+    @ContentBuilder
     var body: some View {
         content(measurement)
             .overlay {
@@ -175,7 +176,8 @@ enum NotchDeviceReader {
         typealias Getter = @convention(c) (AnyObject, Selector) -> Double
         let getter = unsafeBitCast(method_getImplementation(method), to: Getter.self)
         let radius = getter(screen, selector)
-        guard radius.isFinite, radius >= 0,
+        guard radius.isFinite,
+              radius >= 0,
               radius <= min(screen.bounds.width, screen.bounds.height) / 2
         else { return 0 }
 

@@ -44,7 +44,7 @@ struct CulturePicker: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private var picker: some View {
         let _selection = {
             if isUsingTwoLetterISO {
@@ -67,6 +67,7 @@ struct CulturePicker: View {
         )
     }
 
+    @ContentBuilder
     var body: some View {
         Group {
             #if os(tvOS)

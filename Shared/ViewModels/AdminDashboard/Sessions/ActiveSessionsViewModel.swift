@@ -95,7 +95,6 @@ final class ActiveSessionsViewModel: ViewModel {
     }
 
     private func updateSessions(_ incomingSessions: [SessionInfoDto], mergeItems: Bool = true) {
-
         guard !environment.isPaused else {
             logger.debug("Socket updates are paused")
             return

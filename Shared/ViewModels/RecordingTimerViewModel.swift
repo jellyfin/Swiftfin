@@ -15,6 +15,7 @@ final class RecordingTimerViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
         case toggleRecording
         case toggleSeriesRecording
@@ -32,15 +33,18 @@ final class RecordingTimerViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
         case updating
     }
 
     enum Event {
+
         case updated
     }
 
     enum State {
+
         case error
         case initial
     }

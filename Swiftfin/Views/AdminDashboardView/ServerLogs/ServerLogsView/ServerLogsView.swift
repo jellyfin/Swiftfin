@@ -24,6 +24,7 @@ struct ServerLogsView: View {
     @StateObject
     private var viewModel = ServerLogsViewModel()
 
+    @ContentBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -57,6 +58,7 @@ struct ServerLogsView: View {
         }
     }
 
+    @ContentBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {

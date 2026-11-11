@@ -21,6 +21,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @Environment(MediaSession.self)
         private var mediaSession
 
+        @ContentBuilder
         var body: some View {
             @Bindable
             var mediaSession = mediaSession

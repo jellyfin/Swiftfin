@@ -26,11 +26,10 @@ struct EditLocalServerView: View {
         self.isDeletePresented = isDeletePresented
     }
 
+    @ContentBuilder
     var body: some View {
         Form(systemImage: "server.rack") {
-
             Section(L10n.server) {
-
                 LabeledContent(
                     L10n.name,
                     value: viewModel.server.name

@@ -69,6 +69,7 @@ struct MainTabView: View {
         }
     }
 
+    @ContentBuilder
     private func tabRoot(_ tab: TabCoordinator.TabData) -> some View {
         NavigationInjectionView(coordinator: tab.coordinator) {
             tab.item
@@ -86,6 +87,7 @@ struct MainTabView: View {
         .environment(\.tabItemSelected, tab.publisher)
     }
 
+    @ContentBuilder
     private func tabView() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
@@ -112,7 +114,7 @@ struct MainTabView: View {
         }
     }
 
-    @ViewBuilder
+    @ContentBuilder
     private func tabContent() -> some View {
         #if os(tvOS)
         switch tabBarPlacement {
@@ -130,6 +132,7 @@ struct MainTabView: View {
         #endif
     }
 
+    @ContentBuilder
     var body: some View {
         tabContent()
             .onChange(of: userSessionManager.pendingDeepLink) {
@@ -157,10 +160,10 @@ private struct FirstTabSettingsBarButton: View {
     @Router
     private var router
 
+    @ContentBuilder
     var body: some View {
         if router.isRootOfPath,
-           let userSession
-        {
+           let userSession {
             SettingsBarButton(userSession: userSession) {
                 router.route(to: .settings)
             }

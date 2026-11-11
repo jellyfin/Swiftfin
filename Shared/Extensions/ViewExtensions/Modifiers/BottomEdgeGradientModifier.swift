@@ -15,6 +15,7 @@ struct BottomEdgeGradientModifier: ViewModifier {
 
     let bottomColor: Color
 
+    @ContentBuilder
     func body(content: Content) -> some View {
         content
             .trackingSize($contentSize)

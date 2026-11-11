@@ -30,7 +30,7 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
     init(
         items: [Item],
         action: @escaping (Item) -> Void,
-        @ViewBuilder topContent: @escaping (Item) -> TopContent
+        @ContentBuilder topContent: @escaping (Item) -> TopContent
     ) {
         self.items = items
         self.action = action
@@ -55,10 +55,10 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
         selectedPoster = focusedPoster
     }
 
+    @ContentBuilder
     var body: some View {
         CinematicContentGroupContainer {
             VStack(alignment: .leading, spacing: 10) {
-
                 if let selectedItem {
                     topContent(selectedItem)
                         .id(selectedItem.hashValue)

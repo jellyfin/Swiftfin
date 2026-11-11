@@ -85,8 +85,8 @@ extension StoredValues.Keys {
             )
         }
 
-        // Doesn't use `CurrentUserKey` because data may be
-        // retrieved and stored without a user session
+        /// Doesn't use `CurrentUserKey` because data may be
+        /// retrieved and stored without a user session
         static func accessPolicy(id: String) -> Key<LocalUserAccessPolicy> {
             UserKey(
                 ownerID: id,
@@ -95,8 +95,8 @@ extension StoredValues.Keys {
             )
         }
 
-        // Doesn't use `CurrentUserKey` because data may be
-        // retrieved and stored without a user session
+        /// Doesn't use `CurrentUserKey` because data may be
+        /// retrieved and stored without a user session
         static func data(id: String) -> Key<UserDto> {
             UserKey(
                 ownerID: id,

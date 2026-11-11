@@ -19,6 +19,7 @@ extension ItemActionButtons {
             provider.item.userData?.isPlayed == true
         }
 
+        @ContentBuilder
         var body: some View {
             Button(
                 isPlayed ? L10n.markAsUnplayed : L10n.markAsPlayed,

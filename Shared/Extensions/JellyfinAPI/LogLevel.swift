@@ -10,6 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension LogLevel: SystemImageable, Displayable {
+
     public var color: Color {
         switch self {
         case .trace:

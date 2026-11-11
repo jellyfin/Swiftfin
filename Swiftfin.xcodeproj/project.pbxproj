@@ -806,6 +806,7 @@
 				ml,
 				af,
 				"yue-Hant",
+				"en-GB",
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
@@ -1528,6 +1529,14 @@
 				minimumVersion = 0.2.0;
 			};
 		};
+		E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/CollectionVGrid.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LeoNatan/LNPopupUI/";
@@ -1590,6 +1599,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.13.4;
+			};
+		};
+		E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/CollectionHStack.git";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
@@ -1670,22 +1687,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.0.0;
-			};
-		};
-		E16C08F5305A385900895062 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionHStack.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-		E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionVGrid.git";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

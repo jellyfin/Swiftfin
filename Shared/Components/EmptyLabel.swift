@@ -16,6 +16,7 @@ struct EmptyLabel: View {
         self.title = text.textBody
     }
 
+    @ContentBuilder
     var body: some View {
         Label {
             title

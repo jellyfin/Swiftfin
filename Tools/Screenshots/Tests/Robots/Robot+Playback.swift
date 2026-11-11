@@ -84,7 +84,8 @@ extension Robot {
 
                 // The slider uses relative motion. Keep both ends of the drag on the timeline.
                 let start = app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(
-                    dx: delta > 0 ? left + 2 : right - 2, dy: remaining.frame.minY - 10
+                    dx: delta > 0 ? left + 2 : right - 2,
+                    dy: remaining.frame.minY - 10
                 ))
 
                 start.press(forDuration: 0.3, thenDragTo: start.withOffset(CGVector(dx: width * delta, dy: 0)))
@@ -129,7 +130,7 @@ extension Robot {
         return false
     }
 
-    // Presses act on the controls while they are up.
+    /// Presses act on the controls while they are up.
     private func waitForControlsToHide() {
         for _ in 0 ..< 15 where elapsedProgress() != nil {
             sleep(1)
