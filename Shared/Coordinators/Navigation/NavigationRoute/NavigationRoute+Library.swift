@@ -24,6 +24,20 @@ extension NavigationRoute {
     }
 
     @MainActor
+    static func editFilters(
+        filters: ItemFilterCollection,
+        savedFilter: StoredItemFilter? = nil,
+        onSave: ((StoredItemFilter) -> Void)? = nil
+    ) -> NavigationRoute {
+        NavigationRoute(
+            id: "edit-filters",
+            style: .sheet
+        ) {
+            EditFiltersView(filters: filters, savedFilter: savedFilter, onSave: onSave)
+        }
+    }
+
+    @MainActor
     static func contentGroup(
         provider: some ContentGroupProvider
     ) -> NavigationRoute {

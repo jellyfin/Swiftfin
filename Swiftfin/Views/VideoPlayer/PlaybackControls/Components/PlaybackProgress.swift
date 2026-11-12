@@ -42,6 +42,10 @@ extension VideoPlayer.PlaybackControls {
 
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
+        @Default(.VideoPlayer.jumpBackwardInterval)
+        private var jumpBackwardInterval
+        @Default(.VideoPlayer.jumpForwardInterval)
+        private var jumpForwardInterval
 
         @Environment(ViewState.self)
         private var viewState
@@ -49,6 +53,13 @@ extension VideoPlayer.PlaybackControls {
         private var reduceMotion
         @Environment(MediaSession.self)
         private var mediaSession
+
+        @AccessibilityFocusState
+        private var isAccessibilityFocused: Bool
+
+        @State
+        private var announcedSeconds: Duration = .zero
+
         @State
         private var currentTranslation: CGPoint = .zero
 
@@ -182,6 +193,29 @@ extension VideoPlayer.PlaybackControls {
             .disabled(!mediaSession.canSeek)
         }
 
+        private var accessibilityValue: String {
+            guard let runtime = mediaSession.item.runtime, runtime > .zero else {
+                return announcedSeconds.formatted(.spokenRuntime)
+            }
+
+            return L10n.playbackPositionOfTotal(
+                announcedSeconds.formatted(.spokenRuntime),
+                runtime.formatted(.spokenRuntime)
+            )
+        }
+
+        private func accessibilityAdjust(_ direction: AccessibilityAdjustmentDirection) {
+            let interval: Duration = switch direction {
+            case .increment: jumpForwardInterval.rawValue
+            case .decrement: .zero - jumpBackwardInterval.rawValue
+            @unknown default: .zero
+            }
+
+            guard interval != .zero, mediaSession.seek(by: interval) else { return }
+
+            announcedSeconds = mediaSession.seconds
+        }
+
         @ContentBuilder
         var body: some View {
             VStack(spacing: 5) {
@@ -191,6 +225,12 @@ extension VideoPlayer.PlaybackControls {
                 } else {
                     capsuleSlider
                         .trackingSize($sliderSize)
+                        .accessibilityElement()
+                        .accessibilityLabel(L10n.playbackPosition)
+                        .accessibilityValue(accessibilityValue)
+                        .accessibilityAdjustableAction(accessibilityAdjust)
+                        .accessibilityFocused($isAccessibilityFocused)
+                        .contentShape(.accessibility, Rectangle().inset(by: -15))
 
                     SplitTimeStamp()
                         .offset(y: isScrubbing ? 5 : 0)
@@ -206,6 +246,7 @@ extension VideoPlayer.PlaybackControls {
                         .posterBorder()
                         .cornerRadius(ratio: 1 / 30, of: \.width)
                         .offset(x: previewXOffset, y: -100)
+                        .accessibilityHidden(true)
                 }
             }
             .overlay(alignment: .bottom) {
@@ -213,12 +254,21 @@ extension VideoPlayer.PlaybackControls {
                     slowScrubbingIndicator
                         .offset(y: viewLayout.edgePadding * 2)
                         .transition(.opacity.animation(.linear(duration: 0.1)))
+                        .accessibilityHidden(true)
                 }
             }
             .onChange(of: isSlowScrubbing) {
                 guard isScrubbing else { return }
 
                 UIDevice.impact(.soft)
+            }
+            .onChange(of: scrubbedSeconds) {
+                guard !isAccessibilityFocused else { return }
+
+                announcedSeconds = scrubbedSeconds
+            }
+            .onChange(of: isAccessibilityFocused, initial: true) {
+                announcedSeconds = scrubbedSeconds
             }
         }
     }

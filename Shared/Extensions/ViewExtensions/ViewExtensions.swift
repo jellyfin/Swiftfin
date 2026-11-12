@@ -232,6 +232,7 @@ extension View {
     @inlinable
     func isVisible(_ isVisible: Bool) -> some View {
         opacity(isVisible ? 1 : 0)
+            .accessibilityHidden(!isVisible)
     }
 
     @ContentBuilder
