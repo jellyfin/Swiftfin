@@ -21,6 +21,9 @@ extension LabelStyle where Self == HorizontalLabelStyle {
 
 struct HorizontalLabelStyle: LabelStyle {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Environment(\.controlSize)
     private var controlSize
 
@@ -28,7 +31,7 @@ struct HorizontalLabelStyle: LabelStyle {
 
     @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: CapsuleButtonStyle.CapsuleControlMetrics(controlSize).labelSpacing) {
+        HStack(spacing: CapsuleButtonStyle.CapsuleControlMetrics(controlSize, layout: viewLayout).labelSpacing) {
             if iconEdge == .leading {
                 configuration.icon
             }

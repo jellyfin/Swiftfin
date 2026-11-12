@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import JellyfinAPI
 import SwiftUI
 
@@ -75,6 +76,15 @@ extension ItemView {
         }
 
         @ContentBuilder
+        private var scrollView: some View {
+            ScrollView {
+                ContentGroupVStack(groups: groups)
+                    .edgePadding(.bottom)
+                    .padding(.top, isEnhanced ? 0 : (frameForParentView[.tabView]?.safeAreaInsets.top ?? 0))
+            }
+        }
+
+        @ContentBuilder
         var body: some View {
             ZStack {
                 if viewLayout.isLarge, isEnhanced {
@@ -82,10 +92,15 @@ extension ItemView {
                         .ignoresSafeArea()
                 }
 
-                ScrollView {
-                    ContentGroupVStack(groups: groups)
-                        .edgePadding(.bottom)
-                        .padding(.top, isEnhanced ? 0 : (frameForParentView[.tabView]?.safeAreaInsets.top ?? 0))
+                Group {
+                    #if os(tvOS)
+                    CollectionHStackFocusScope {
+                        scrollView
+                            .scrollClipDisabled()
+                    }
+                    #else
+                    scrollView
+                    #endif
                 }
                 .trackingFrame(for: .scrollView)
                 .ignoresSafeArea(.container, edges: viewLayout.value(standard: [], large: isEnhanced ? .all : [.horizontal, .top]))

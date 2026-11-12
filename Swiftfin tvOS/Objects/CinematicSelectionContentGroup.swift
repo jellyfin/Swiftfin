@@ -55,19 +55,13 @@ struct CinematicSelectionContentGroup: ContentGroup {
                     .logo,
                     itemID: item.parentLogoItemID,
                     tag: item.parentLogoImageTag,
-                    environment: ImageSourceOptions(
-                        maxWidth: CinematicSelectionLayout.logoMaxWidth,
-                        maxHeight: CinematicSelectionLayout.logoMaxHeight
-                    )
+                    environment: ImageSourceOptions(maxHeight: CinematicSelectionLayout.logoMaxHeight)
                 )
             } else {
                 item.imageSource(
                     .logo,
                     itemID: item.id,
-                    environment: ImageSourceOptions(
-                        maxWidth: CinematicSelectionLayout.logoMaxWidth,
-                        maxHeight: CinematicSelectionLayout.logoMaxHeight
-                    )
+                    environment: ImageSourceOptions(maxHeight: CinematicSelectionLayout.logoMaxHeight)
                 )
             }
         }
@@ -83,18 +77,25 @@ struct CinematicSelectionContentGroup: ContentGroup {
                 router.route(to: .item(item: item.snapshot))
             } topContent: { item in
                 ImageView(itemSelectorImageSource(for: item.snapshot))
+                    .image { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: CinematicSelectionLayout.logoMaxHeight)
+                    }
                     .placeholder { _ in
                         EmptyView()
                     }
                     .failure {
                         Text(item.displayTitle)
+                            .fixedSize(horizontal: false, vertical: true)
                             .font(.largeTitle)
                             .fontWeight(.semibold)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                            .foregroundStyle(.primary)
                     }
-                    .edgePadding(.leading)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: CinematicSelectionLayout.logoMaxHeight, alignment: .bottomLeading)
-                    .frame(maxWidth: CinematicSelectionLayout.logoMaxWidth)
+                    .edgePadding(.horizontal)
             }
             .preference(
                 key: ContentGroupCustomizationKey.self,
@@ -193,5 +194,4 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
 private enum CinematicSelectionLayout {
 
     static let logoMaxHeight: CGFloat = 100
-    static let logoMaxWidth: CGFloat = 450
 }
