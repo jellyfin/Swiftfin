@@ -14,11 +14,17 @@ extension ButtonStyle where Self == CapsuleButtonStyle {
         CapsuleButtonStyle()
     }
 
-    static func capsule(selectionTint: Color = .white, focusTint: Color? = nil, isSelectionActive: Bool = true) -> Self {
+    static func capsule(
+        selectionTint: Color = .white,
+        focusTint: Color? = nil,
+        isSelectionActive: Bool = true,
+        anchor: HorizontalEdge? = nil
+    ) -> Self {
         CapsuleButtonStyle(
             selectionTint: selectionTint,
             focusTint: focusTint,
-            isSelectionActive: isSelectionActive
+            isSelectionActive: isSelectionActive,
+            anchor: anchor
         )
     }
 }
@@ -33,48 +39,51 @@ struct CapsuleButtonStyle: ButtonStyle {
         let minimumHeight: CGFloat
         let labelSpacing: CGFloat
 
-        init(_ controlSize: ControlSize) {
+        init(_ controlSize: ControlSize, layout: ViewLayout) {
             switch controlSize {
             case .mini:
                 self.font = .caption2
-                self.horizontalPadding = 6
-                self.verticalPadding = 2
-                self.minimumHeight = 20
-                self.labelSpacing = 2
+                self.horizontalPadding = layout.value(standard: 6, large: 12)
+                self.verticalPadding = layout.value(standard: 2, large: 4)
+                self.minimumHeight = layout.value(standard: 20, large: 40)
+                self.labelSpacing = layout.value(standard: 2, large: 4)
 
             case .small:
                 self.font = .footnote
-                self.horizontalPadding = 8
-                self.verticalPadding = 4
-                self.minimumHeight = 26
-                self.labelSpacing = 2
+                self.horizontalPadding = layout.value(standard: 8, large: 16)
+                self.verticalPadding = layout.value(standard: 4, large: 8)
+                self.minimumHeight = layout.value(standard: 26, large: 52)
+                self.labelSpacing = layout.value(standard: 2, large: 4)
 
             case .regular:
                 self.font = .callout
-                self.horizontalPadding = 10
-                self.verticalPadding = 5
-                self.minimumHeight = 30
-                self.labelSpacing = 4
+                self.horizontalPadding = layout.value(standard: 10, large: 20)
+                self.verticalPadding = layout.value(standard: 5, large: 10)
+                self.minimumHeight = layout.value(standard: 30, large: 60)
+                self.labelSpacing = layout.value(standard: 4, large: 8)
 
             case .large:
                 self.font = .headline
-                self.horizontalPadding = 12
-                self.verticalPadding = 6
-                self.minimumHeight = 36
-                self.labelSpacing = 5
+                self.horizontalPadding = layout.value(standard: 12, large: 24)
+                self.verticalPadding = layout.value(standard: 6, large: 12)
+                self.minimumHeight = layout.value(standard: 36, large: 72)
+                self.labelSpacing = layout.value(standard: 5, large: 10)
 
             case .extraLarge:
                 self.font = .title3
-                self.horizontalPadding = 16
-                self.verticalPadding = 8
-                self.minimumHeight = 44
-                self.labelSpacing = 6
+                self.horizontalPadding = layout.value(standard: 16, large: 32)
+                self.verticalPadding = layout.value(standard: 8, large: 16)
+                self.minimumHeight = layout.value(standard: 44, large: 88)
+                self.labelSpacing = layout.value(standard: 6, large: 12)
 
             @unknown default:
-                self = CapsuleControlMetrics(.regular)
+                self = CapsuleControlMetrics(.regular, layout: layout)
             }
         }
     }
+
+    @AdaptiveLayout
+    private var viewLayout
 
     @Environment(\.controlSize)
     private var controlSize
@@ -90,9 +99,10 @@ struct CapsuleButtonStyle: ButtonStyle {
     var selectionTint: Color = .white
     var focusTint: Color?
     var isSelectionActive: Bool = true
+    var anchor: HorizontalEdge?
 
     private var metrics: CapsuleControlMetrics {
-        CapsuleControlMetrics(controlSize)
+        CapsuleControlMetrics(controlSize, layout: viewLayout)
     }
 
     private var isHighlighted: Bool {
@@ -159,5 +169,6 @@ struct CapsuleButtonStyle: ButtonStyle {
             .animation(.linear(duration: 0.1), value: isSelectionActive)
             .animation(.linear(duration: 0.1), value: configuration.isPressed)
             .accessibilityAddTraits(isSelected ? .isSelected : [])
+            .frame(width: anchor == nil ? nil : metrics.minimumHeight, alignment: anchor == .leading ? .leading : .trailing)
     }
 }

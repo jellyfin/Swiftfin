@@ -58,18 +58,20 @@ struct SearchView: View {
             VStack(spacing: 0) {
                 #if os(tvOS)
                 if enabledDrawerFilters.isNotEmpty {
+                    let availableTypes = viewModel.filterViewModel.availableFilterTypes(from: enabledDrawerFilters)
+
                     ScrollView(.horizontal) {
                         HStack(spacing: 20) {
-                            FilterTrack(viewModel: viewModel.filterViewModel, types: enabledDrawerFilters, focus: $focusedFilter)
+                            FilterTrack(viewModel: viewModel.filterViewModel, types: availableTypes, focus: $focusedFilter)
                         }
                     }
                     .scrollClipDisabled()
                     .scrollIndicators(.hidden)
-                    .frame(height: 64)
+                    .frame(height: FilterTrack.metrics(for: viewLayout).minimumHeight)
                     .coordinatedFocusScope(
                         $focusedFilter,
-                        values: enabledDrawerFilters.map(FilterTrack.FocusTarget.filter) +
-                            (viewModel.filterViewModel.hasActiveFilters ? [.reset] : [])
+                        values: availableTypes.map(FilterTrack.FocusTarget.filter)
+                            .appending(.options, if: viewModel.filterViewModel.hasFilterOptions)
                     )
                     .edgePadding(.horizontal)
                     .padding(.vertical, viewLayout.itemSpacing)
@@ -103,7 +105,7 @@ struct SearchView: View {
             }
         }
         .ignoresSafeArea(edges: viewLayout.scrollContentEdges(extendsTop: false))
-        .defaultScrollAnchor(viewModel.canSearch ? .top : .center, for: .alignment)
+        .defaultScrollAnchor(viewLayout.isLarge || viewModel.canSearch ? .top : .center, for: .alignment)
         .scrollIndicators(.hidden)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard)

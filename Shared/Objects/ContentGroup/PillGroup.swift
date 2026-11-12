@@ -72,7 +72,6 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                     }
                     .labelStyle(.leadingIcon)
                     .buttonStyle(.capsule)
-                    .controlSize(viewLayout.value(standard: .regular, large: .large))
                     .edgePadding(.horizontal)
                 }
                 .scrollIndicators(.hidden)
