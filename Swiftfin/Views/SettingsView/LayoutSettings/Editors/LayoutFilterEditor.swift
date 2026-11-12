@@ -14,6 +14,9 @@ struct LayoutFilterEditor: View {
     @Binding
     var filters: ItemFilterCollection
 
+    @StoredValue(.User.savedFilters)
+    private var savedFilters
+
     private let library: LibraryReference?
 
     @Router
@@ -22,6 +25,22 @@ struct LayoutFilterEditor: View {
     init(filters: Binding<ItemFilterCollection>, library: LibraryReference? = nil) {
         _filters = filters
         self.library = library
+    }
+
+    private var savableFilters: ItemFilterCollection {
+        filters
+            .mutating(\.itemTypes, with: [])
+            .mutating(\.query, with: nil)
+    }
+
+    private var selectedSavedFilter: StoredItemFilter? {
+        savedFilters.first { $0.filters == savableFilters }
+    }
+
+    private func applyFilters(_ savedFilters: ItemFilterCollection) {
+        filters = savedFilters
+            .mutating(\.itemTypes, with: filters.itemTypes)
+            .mutating(\.query, with: filters.query)
     }
 
     private var sortBy: Binding<ItemSortBy> {
@@ -75,6 +94,26 @@ struct LayoutFilterEditor: View {
     @ContentBuilder
     var body: some View {
         Section {
+            Menu {
+                ForEach(savedFilters) { savedFilter in
+                    Button {
+                        applyFilters(savedFilter.filters)
+                    } label: {
+                        if selectedSavedFilter?.id == savedFilter.id {
+                            Label(savedFilter.name, systemImage: "checkmark")
+                        } else {
+                            Text(savedFilter.name)
+                        }
+                    }
+                }
+            } label: {
+                LabeledContent(L10n.savedFilters) {
+                    Text(selectedSavedFilter?.name ?? (savableFilters == .default ? L10n.none : L10n.custom))
+                        .lineLimit(1)
+                }
+            }
+            .disabled(savedFilters.isEmpty)
+
             TextField(
                 L10n.search,
                 value: $filters.query,
@@ -109,6 +148,11 @@ struct LayoutFilterEditor: View {
                         .tag(order)
                 }
             }
+
+            Button(L10n.reset) {
+                applyFilters(.default)
+            }
+            .disabled(savableFilters == .default)
         } header: {
             Text(L10n.filters)
         }
