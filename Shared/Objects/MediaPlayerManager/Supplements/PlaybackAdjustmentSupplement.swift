@@ -137,9 +137,9 @@ extension PlaybackAdjustmentSupplement {
                     set: { sleepTimer.start(until: start.addingTimeInterval($0 * 60)) }
                 )
             },
-            range: 1 ... 1440,
+            range: 0 ... 1440,
             step: 1,
-            presets: [15, 30, 60, 120, 240, 480],
+            presets: [15, 30, 60, 120, 240, 360],
             resetValue: 1,
             formatValue: { minutes in
                 start.addingTimeInterval(minutes * 60).formatted(date: .omitted, time: .shortened)
