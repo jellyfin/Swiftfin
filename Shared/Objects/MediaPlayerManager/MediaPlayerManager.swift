@@ -38,6 +38,11 @@ final class MediaPlayerManager {
     @ObservationIgnored
     private var lifecycleObservations: Set<AnyCancellable> = []
 
+    @ObservationIgnored
+    private(set) lazy var sleepTimer = SleepTimer { [weak self] in
+        self?.currentSession
+    }
+
     var hasActivePlayback: Bool {
         currentSession?.hasActivePlayback == true
     }

@@ -8,6 +8,7 @@
 
 import Combine
 import Defaults
+import FactoryKit
 import Foundation
 import Observation
 import SwiftUI
@@ -104,7 +105,8 @@ extension VideoPlayer {
                 .segments
                 .map { [$0 as any VideoPlayerOverlayActionProviding] } ?? []) +
                 supplements
-                .compactMap { $0 as? any VideoPlayerOverlayActionProviding }
+                .compactMap { $0 as? any VideoPlayerOverlayActionProviding } +
+                [FactoryKit.Container.shared.mediaPlayerManager().sleepTimer]
 
             return providers.flatMap { provider in
                 provider.overlayActions.map {

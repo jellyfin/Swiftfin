@@ -121,6 +121,32 @@ extension PlaybackAdjustmentSupplement {
         )
     }
 
+    static func sleepTimer(_ sleepTimer: SleepTimer) -> Self {
+        let start = Date(timeIntervalSinceReferenceDate: (Date.now.timeIntervalSinceReferenceDate / 60).rounded(.up) * 60)
+
+        if sleepTimer.deadline == nil {
+            sleepTimer.start(until: start.addingTimeInterval(30 * 60))
+        }
+
+        return Self(
+            id: "PlaybackAdjustment-sleepTimer",
+            displayTitle: L10n.sleepTimer,
+            value: { _ in
+                Binding(
+                    get: { (sleepTimer.deadline?.timeIntervalSince(start) ?? 0) / 60 },
+                    set: { sleepTimer.start(until: start.addingTimeInterval($0 * 60)) }
+                )
+            },
+            range: 1 ... 1440,
+            step: 1,
+            presets: [15, 30, 60, 120, 240, 480],
+            resetValue: 1,
+            formatValue: { minutes in
+                start.addingTimeInterval(minutes * 60).formatted(date: .omitted, time: .shortened)
+            }
+        )
+    }
+
     private static func offset(
         id: String,
         title: String,

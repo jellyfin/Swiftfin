@@ -1758,6 +1758,8 @@ internal enum L10n {
   internal static let skip = L10n.tr("Localizable", "skip", fallback: "Skip")
   /// Skip duplicates
   internal static let skipDuplicates = L10n.tr("Localizable", "skipDuplicates", fallback: "Skip duplicates")
+  /// Sleep timer
+  internal static let sleepTimer = L10n.tr("Localizable", "sleepTimer", fallback: "Sleep timer")
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slow scrub
@@ -1770,6 +1772,12 @@ internal enum L10n {
   internal static let smallest = L10n.tr("Localizable", "smallest", fallback: "Smallest")
   /// Smart
   internal static let smart = L10n.tr("Localizable", "smart", fallback: "Smart")
+  /// Snooze
+  internal static let snooze = L10n.tr("Localizable", "snooze", fallback: "Snooze")
+  /// Snooze %@
+  internal static func snoozeDuration(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "snoozeDuration", String(describing: p1), fallback: "Snooze %@")
+  }
   /// Sort
   internal static let sort = L10n.tr("Localizable", "sort", fallback: "Sort")
   /// Sort name
@@ -2104,6 +2112,8 @@ internal enum L10n {
   internal static let weekend = L10n.tr("Localizable", "weekend", fallback: "Weekend")
   /// Weekly
   internal static let weekly = L10n.tr("Localizable", "weekly", fallback: "Weekly")
+  /// When timer ends
+  internal static let whenTimerEnds = L10n.tr("Localizable", "whenTimerEnds", fallback: "When timer ends")
   /// Wi-Fi
   internal static let wifi = L10n.tr("Localizable", "wifi", fallback: "Wi-Fi")
   /// Wi-Fi Name

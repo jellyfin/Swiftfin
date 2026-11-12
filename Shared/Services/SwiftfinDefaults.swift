@@ -275,6 +275,14 @@ extension Defaults.Keys {
             UserKey("resumeOffset", default: 0)
         }
 
+        static var sleepTimerAction: Key<SleepTimerAction> {
+            UserKey("sleepTimerAction", default: .pause)
+        }
+
+        static var sleepTimerSnoozeInterval: Key<Int> {
+            UserKey("sleepTimerSnoozeInterval", default: 10)
+        }
+
         static var supplements: Key<[VideoPlayerSupplementType]> {
             UserKey(
                 "videoPlayerSupplements",

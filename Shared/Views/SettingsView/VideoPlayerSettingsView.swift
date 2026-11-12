@@ -38,6 +38,13 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
+    // MARK: - Sleep Timer Defaults
+
+    @Default(.VideoPlayer.sleepTimerAction)
+    private var sleepTimerAction
+    @Default(.VideoPlayer.sleepTimerSnoozeInterval)
+    private var sleepTimerSnoozeInterval
+
     // MARK: - Slider Defaults
 
     @Default(.VideoPlayer.Overlay.chapterSlider)
@@ -97,6 +104,8 @@ struct VideoPlayerSettingsView: View {
             buttonSettings
 
             resumeSettings
+
+            sleepTimerSettings
 
             sliderSettings
 
@@ -231,6 +240,27 @@ struct VideoPlayerSettingsView: View {
             Text(L10n.resume)
         } footer: {
             Text(L10n.resumeOffsetDescription)
+        }
+    }
+
+    // MARK: - Sleep Timer Settings
+
+    @ContentBuilder
+    private var sleepTimerSettings: some View {
+        Section(L10n.sleepTimer) {
+            PlatformPicker(L10n.whenTimerEnds, selection: $sleepTimerAction)
+
+            if sleepTimerAction == .pause {
+                Stepper(L10n.snooze, value: $sleepTimerSnoozeInterval, in: 1 ... 60, step: 1) {
+                    LabeledContent(L10n.snooze) {
+                        Text(
+                            Duration.seconds(sleepTimerSnoozeInterval * 60),
+                            format: .units(allowed: [.hours, .minutes], width: .abbreviated)
+                        )
+                        .foregroundStyle(.secondary)
+                    }
+                }
+            }
         }
     }
 

@@ -21,6 +21,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     case playPreviousItem
     case nextChapter
     case previousChapter
+    case sleepTimer
     case subtitles
     #if os(iOS)
     case gestureLock
@@ -52,6 +53,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.nextChapter
         case .previousChapter:
             L10n.previousChapter
+        case .sleepTimer:
+            L10n.sleepTimer
         case .subtitles:
             L10n.subtitles
         #if os(iOS)
@@ -83,6 +86,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .playPreviousItem: "backward.end.fill"
         case .nextChapter: "forward.frame.fill"
         case .previousChapter: "backward.frame.fill"
+        case .sleepTimer: "moon.zzz"
         case .subtitles: "captions.bubble.fill"
         case .subtitleOffset: "textformat.abc"
         }
@@ -94,6 +98,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .audio: "speaker.wave.2"
         case .autoPlay: "stop.fill"
         case .pictureInPicture: "pip.exit"
+        case .sleepTimer: "moon.zzz.fill"
         case .subtitles: "captions.bubble"
         default:
             systemImage
@@ -121,6 +126,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .playPreviousItem: usesLiquidGlassSymbols ? "backward.end.fill" : "backward.end.circle.fill"
         case .nextChapter: usesLiquidGlassSymbols ? "forward.frame.fill" : "forward.frame"
         case .previousChapter: usesLiquidGlassSymbols ? "backward.frame.fill" : "backward.frame"
+        case .sleepTimer: "moon.zzz"
         case .subtitles: "captions.bubble.fill"
         case .subtitleOffset: "textformat.abc"
         }
@@ -142,6 +148,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .gestureLock: "lock.open.fill"
 
         case .pictureInPicture: "pip.exit"
+
+        case .sleepTimer: "moon.zzz.fill"
 
         case .subtitles: "captions.bubble"
 
@@ -180,6 +188,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         .subtitles,
         .subtitleOffset,
         .playbackSpeed,
+        .sleepTimer,
         .pictureInPicture,
         .playbackSettings,
     ].filter { supportedCases.contains($0) }
