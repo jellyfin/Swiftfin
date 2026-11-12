@@ -1758,6 +1758,10 @@ internal enum L10n {
   internal static let skip = L10n.tr("Localizable", "skip", fallback: "Skip")
   /// Skip duplicates
   internal static let skipDuplicates = L10n.tr("Localizable", "skipDuplicates", fallback: "Skip duplicates")
+  /// Sleeps at %1$@
+  internal static func sleepsAtTime(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "sleepsAtTime", String(describing: p1), fallback: "Sleeps at %1$@")
+  }
   /// Sleep timer
   internal static let sleepTimer = L10n.tr("Localizable", "sleepTimer", fallback: "Sleep timer")
   /// Slider

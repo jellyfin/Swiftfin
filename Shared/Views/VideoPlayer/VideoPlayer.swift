@@ -82,7 +82,8 @@ struct VideoPlayer: View {
         }
         .onChange(of: mediaPlayerManager.sleepTimer.deadline) { oldDeadline, newDeadline in
             guard Defaults[.VideoPlayer.sleepTimerAction] == .pause && newDeadline == nil,
-                  let oldDeadline, oldDeadline <= .now
+                  let oldDeadline,
+                  oldDeadline <= .now
             else { return }
 
             viewState.toastProxy.present(

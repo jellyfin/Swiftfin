@@ -26,7 +26,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             if let deadline = sleepTimer.deadline {
                 Menu(L10n.sleepTimer, systemImage: VideoPlayerActionButton.sleepTimer.secondarySystemImage) {
                     Label(
-                        deadline.formatted(date: .omitted, time: .shortened),
+                        L10n.sleepsAtTime(deadline.formatted(date: .omitted, time: .shortened)),
                         systemImage: VideoPlayerActionButton.sleepTimer.systemImage
                     )
 
