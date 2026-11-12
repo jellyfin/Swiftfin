@@ -120,7 +120,8 @@ struct FilterTrack: View {
     }
 
     private var targets: [FocusTarget] {
-        (viewModel.hasFilterOptions ? [.options] : []) + types.map(FocusTarget.filter)
+        types.map(FocusTarget.filter)
+            .prepending(.options, if: viewModel.hasFilterOptions)
     }
 
     private func isSelected(_ target: FocusTarget) -> Bool {

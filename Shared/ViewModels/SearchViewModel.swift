@@ -76,6 +76,10 @@ final class SearchViewModel: ViewModel {
     }
 
     private func observeFilters() {
+        filterViewModel.objectWillChange
+            .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &cancellables)
+
         filterViewModel.$currentFilters
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] _ in

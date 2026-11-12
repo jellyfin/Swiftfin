@@ -120,6 +120,14 @@ final class FilterViewModel: ViewModel {
         return currentFilters.containsFilters(ofType: type)
     }
 
+    func availableFilterTypes(from types: [ItemFilterType]) -> [ItemFilterType] {
+        types.filter { type in
+            type.group.contains {
+                allFilters[keyPath: $0.keyPath].isNotEmpty
+            }
+        }
+    }
+
     @Function(\Action.Cases.reset)
     private func resetCurrentFilters(_ type: ItemFilterType?) {
         guard let type else {

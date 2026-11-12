@@ -22,7 +22,11 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
     private var drawer: some View {
         ScrollView(.horizontal) {
             HStack {
-                FilterTrack(viewModel: viewModel, types: types, focus: $focusedFilter)
+                FilterTrack(
+                    viewModel: viewModel,
+                    types: viewModel.availableFilterTypes(from: types),
+                    focus: $focusedFilter
+                )
             }
         }
         .contentMargins(.horizontal, 16, for: .scrollContent)
