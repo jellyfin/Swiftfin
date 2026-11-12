@@ -6,54 +6,25 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 import Observation
 
 @MainActor
 @Observable
-final class SleepTimer: VideoPlayerOverlayActionProviding {
-
-    let id = "SleepTimer"
+final class SleepTimer {
 
     private(set) var deadline: Date?
-    private(set) var snoozePromptID: UUID?
 
-    @ObservationIgnored
-    private weak var pausedSession: MediaSession?
     @ObservationIgnored
     private var task: Task<Void, Never>?
     @ObservationIgnored
-    private var resumeObservation: ObservationToken?
-    @ObservationIgnored
-    private let currentSession: @MainActor () -> MediaSession?
+    private let onExpire: @MainActor () -> Void
 
-    init(currentSession: @escaping @MainActor () -> MediaSession?) {
-        self.currentSession = currentSession
-    }
-
-    var overlayActions: [VideoPlayerOverlayAction] {
-        guard let snoozePromptID,
-              let pausedSession,
-              pausedSession === currentSession(),
-              pausedSession.playbackRequestStatus == .paused else { return [] }
-
-        let snooze = Duration.seconds(Defaults[.VideoPlayer.sleepTimerSnoozeInterval] * 60)
-
-        return [VideoPlayerOverlayAction(
-            id: snoozePromptID.uuidString,
-            title: L10n.snoozeDuration(snooze.formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))),
-            systemImage: VideoPlayerActionButton.sleepTimer.systemImage
-        ) { [weak self] in
-            guard let self else { return }
-
-            start(until: .now.addingTimeInterval(snooze.seconds))
-            pausedSession.setPlaybackRequestStatus(status: .playing)
-        }]
+    init(onExpire: @escaping @MainActor () -> Void) {
+        self.onExpire = onExpire
     }
 
     func start(until date: Date) {
-        clearSnoozePrompt()
         task?.cancel()
         deadline = date
 
@@ -66,38 +37,13 @@ final class SleepTimer: VideoPlayerOverlayActionProviding {
 
             task = nil
             deadline = nil
-
-            guard let session = currentSession() else { return }
-
-            switch Defaults[.VideoPlayer.sleepTimerAction] {
-            case .pause:
-                session.setPlaybackRequestStatus(status: .paused)
-                pausedSession = session
-                snoozePromptID = UUID()
-                resumeObservation = ObservationToken { [weak session] in
-                    session?.playbackRequestStatus
-                } onChange: { [weak self] status in
-                    if status == .playing {
-                        self?.clearSnoozePrompt()
-                    }
-                }
-
-            case .stop:
-                session.stop()
-            }
+            onExpire()
         }
     }
 
     func cancel() {
-        clearSnoozePrompt()
         task?.cancel()
         task = nil
         deadline = nil
-    }
-
-    private func clearSnoozePrompt() {
-        snoozePromptID = nil
-        pausedSession = nil
-        resumeObservation = nil
     }
 }

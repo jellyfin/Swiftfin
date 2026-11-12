@@ -1772,12 +1772,6 @@ internal enum L10n {
   internal static let smallest = L10n.tr("Localizable", "smallest", fallback: "Smallest")
   /// Smart
   internal static let smart = L10n.tr("Localizable", "smart", fallback: "Smart")
-  /// Snooze
-  internal static let snooze = L10n.tr("Localizable", "snooze", fallback: "Snooze")
-  /// Snooze %@
-  internal static func snoozeDuration(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "snoozeDuration", String(describing: p1), fallback: "Snooze %@")
-  }
   /// Sort
   internal static let sort = L10n.tr("Localizable", "sort", fallback: "Sort")
   /// Sort name

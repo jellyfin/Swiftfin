@@ -23,11 +23,12 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         var body: some View {
             let sleepTimer = mediaPlayerManager.sleepTimer
 
-            if let deadline = mediaPlayerManager.sleepTimer.deadline {
+            if let deadline = sleepTimer.deadline {
                 Menu(L10n.sleepTimer, systemImage: VideoPlayerActionButton.sleepTimer.secondarySystemImage) {
-                    Button(L10n.endsAt(deadline.formatted(date: .omitted, time: .shortened))) {
-                        viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.sleepTimer(sleepTimer))
-                    }
+                    Label(
+                        deadline.formatted(date: .omitted, time: .shortened),
+                        systemImage: VideoPlayerActionButton.sleepTimer.systemImage
+                    )
 
                     Button(L10n.cancel, role: .destructive) {
                         sleepTimer.cancel()
@@ -35,10 +36,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 }
                 .menuOrder(.fixed)
             } else {
-                Button {
+                Button(L10n.sleepTimer, systemImage: VideoPlayerActionButton.sleepTimer.systemImage) {
                     viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.sleepTimer(sleepTimer))
-                } label: {
-                    Label(L10n.sleepTimer, systemImage: VideoPlayerActionButton.sleepTimer.systemImage)
                 }
             }
         }

@@ -42,8 +42,6 @@ struct VideoPlayerSettingsView: View {
 
     @Default(.VideoPlayer.sleepTimerAction)
     private var sleepTimerAction
-    @Default(.VideoPlayer.sleepTimerSnoozeInterval)
-    private var sleepTimerSnoozeInterval
 
     // MARK: - Slider Defaults
 
@@ -249,18 +247,6 @@ struct VideoPlayerSettingsView: View {
     private var sleepTimerSettings: some View {
         Section(L10n.sleepTimer) {
             PlatformPicker(L10n.whenTimerEnds, selection: $sleepTimerAction)
-
-            if sleepTimerAction == .pause {
-                Stepper(L10n.snooze, value: $sleepTimerSnoozeInterval, in: 1 ... 60, step: 1) {
-                    LabeledContent(L10n.snooze) {
-                        Text(
-                            Duration.seconds(sleepTimerSnoozeInterval * 60),
-                            format: .units(allowed: [.hours, .minutes], width: .abbreviated)
-                        )
-                        .foregroundStyle(.secondary)
-                    }
-                }
-            }
         }
     }
 

@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import FactoryKit
 import Foundation
 import Observation
@@ -40,7 +41,12 @@ final class MediaPlayerManager {
 
     @ObservationIgnored
     private(set) lazy var sleepTimer = SleepTimer { [weak self] in
-        self?.currentSession
+        switch Defaults[.VideoPlayer.sleepTimerAction] {
+        case .pause:
+            self?.currentSession?.setPlaybackRequestStatus(status: .paused)
+        case .stop:
+            self?.stop()
+        }
     }
 
     var hasActivePlayback: Bool {
