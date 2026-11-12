@@ -31,7 +31,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     )
 
                     Button(L10n.cancel, role: .destructive) {
-                        sleepTimer.cancel()
+                        sleepTimer.invalidate()
                     }
                 }
                 .menuOrder(.fixed)

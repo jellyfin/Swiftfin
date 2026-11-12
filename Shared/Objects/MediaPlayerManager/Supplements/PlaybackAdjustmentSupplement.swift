@@ -121,7 +121,7 @@ extension PlaybackAdjustmentSupplement {
         )
     }
 
-    static func sleepTimer(_ sleepTimer: SleepTimer) -> Self {
+    static func sleepTimer(_ sleepTimer: DeadlineTimer) -> Self {
         let start = Date(timeIntervalSinceReferenceDate: (Date.now.timeIntervalSinceReferenceDate / 60).rounded(.up) * 60)
 
         if sleepTimer.deadline == nil {

@@ -40,7 +40,7 @@ final class MediaPlayerManager {
     private var lifecycleObservations: Set<AnyCancellable> = []
 
     @ObservationIgnored
-    private(set) lazy var sleepTimer = SleepTimer { [weak self] in
+    private(set) lazy var sleepTimer = DeadlineTimer { [weak self] in
         switch Defaults[.VideoPlayer.sleepTimerAction] {
         case .pause:
             self?.currentSession?.setPlaybackRequestStatus(status: .paused)
