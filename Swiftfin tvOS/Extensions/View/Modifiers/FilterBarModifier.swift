@@ -31,10 +31,12 @@ struct FilterBarModifier: ViewModifier {
 
     @ContentBuilder
     private var filters: some View {
+        let availableTypes = viewModel.availableFilterTypes(from: types)
+
         VStack(spacing: 20) {
             ForEach(subviews: FilterTrack(
                 viewModel: viewModel,
-                types: types,
+                types: availableTypes,
                 focus: $focusedFilter,
                 style: .compact,
                 iconEdge: edge
@@ -50,10 +52,8 @@ struct FilterBarModifier: ViewModifier {
         .frame(width: 64)
         .coordinatedFocusScope(
             $focusedFilter,
-            values: types
-                .filter(viewModel.hasFilters)
-                .map(FilterTrack.FocusTarget.filter) +
-                (viewModel.hasFilterOptions ? [.options] : [])
+            values: availableTypes.map(FilterTrack.FocusTarget.filter)
+                .appending(.options, if: viewModel.hasFilterOptions)
         )
     }
 

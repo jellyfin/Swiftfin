@@ -120,9 +120,11 @@ final class FilterViewModel: ViewModel {
         return currentFilters.containsFilters(ofType: type)
     }
 
-    func hasFilters(type: ItemFilterType) -> Bool {
-        type.group.contains {
-            allFilters[keyPath: $0.keyPath].isNotEmpty
+    func availableFilterTypes(from types: [ItemFilterType]) -> [ItemFilterType] {
+        types.filter { type in
+            type.group.contains {
+                allFilters[keyPath: $0.keyPath].isNotEmpty
+            }
         }
     }
 

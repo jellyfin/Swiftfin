@@ -58,9 +58,11 @@ struct SearchView: View {
             VStack(spacing: 0) {
                 #if os(tvOS)
                 if enabledDrawerFilters.isNotEmpty {
+                    let availableTypes = viewModel.filterViewModel.availableFilterTypes(from: enabledDrawerFilters)
+
                     ScrollView(.horizontal) {
                         HStack(spacing: 20) {
-                            FilterTrack(viewModel: viewModel.filterViewModel, types: enabledDrawerFilters, focus: $focusedFilter)
+                            FilterTrack(viewModel: viewModel.filterViewModel, types: availableTypes, focus: $focusedFilter)
                         }
                     }
                     .scrollClipDisabled()
@@ -68,10 +70,8 @@ struct SearchView: View {
                     .frame(height: 64)
                     .coordinatedFocusScope(
                         $focusedFilter,
-                        values: enabledDrawerFilters
-                            .filter(viewModel.filterViewModel.hasFilters)
-                            .map(FilterTrack.FocusTarget.filter) +
-                            (viewModel.filterViewModel.hasFilterOptions ? [.options] : [])
+                        values: availableTypes.map(FilterTrack.FocusTarget.filter)
+                            .appending(.options, if: viewModel.filterViewModel.hasFilterOptions)
                     )
                     .edgePadding(.horizontal)
                     .padding(.vertical, viewLayout.itemSpacing)
