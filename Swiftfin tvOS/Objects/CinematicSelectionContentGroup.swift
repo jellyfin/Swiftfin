@@ -93,12 +93,8 @@ struct CinematicSelectionContentGroup: ContentGroup {
                             .fontWeight(.semibold)
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
+                            .foregroundStyle(.primary)
                     }
-                    .frame(
-                        maxWidth: .infinity,
-                        minHeight: CinematicSelectionLayout.logoMaxHeight,
-                        alignment: .bottomLeading
-                    )
                     .edgePadding(.horizontal)
             }
             .preference(

@@ -33,48 +33,51 @@ struct CapsuleButtonStyle: ButtonStyle {
         let minimumHeight: CGFloat
         let labelSpacing: CGFloat
 
-        init(_ controlSize: ControlSize) {
+        init(_ controlSize: ControlSize, layout: ViewLayout) {
             switch controlSize {
             case .mini:
                 self.font = .caption2
-                self.horizontalPadding = UIDevice.isTV ? 12 : 6
-                self.verticalPadding = UIDevice.isTV ? 4 : 2
-                self.minimumHeight = UIDevice.isTV ? 40 : 20
-                self.labelSpacing = UIDevice.isTV ? 4 : 2
+                self.horizontalPadding = layout.value(standard: 6, large: 12)
+                self.verticalPadding = layout.value(standard: 2, large: 4)
+                self.minimumHeight = layout.value(standard: 20, large: 40)
+                self.labelSpacing = layout.value(standard: 2, large: 4)
 
             case .small:
                 self.font = .footnote
-                self.horizontalPadding = UIDevice.isTV ? 16 : 8
-                self.verticalPadding = UIDevice.isTV ? 8 : 4
-                self.minimumHeight = UIDevice.isTV ? 52 : 26
-                self.labelSpacing = UIDevice.isTV ? 4 : 2
+                self.horizontalPadding = layout.value(standard: 8, large: 16)
+                self.verticalPadding = layout.value(standard: 4, large: 8)
+                self.minimumHeight = layout.value(standard: 26, large: 52)
+                self.labelSpacing = layout.value(standard: 2, large: 4)
 
             case .regular:
                 self.font = .callout
-                self.horizontalPadding = UIDevice.isTV ? 20 : 10
-                self.verticalPadding = UIDevice.isTV ? 10 : 5
-                self.minimumHeight = UIDevice.isTV ? 60 : 30
-                self.labelSpacing = UIDevice.isTV ? 8 : 4
+                self.horizontalPadding = layout.value(standard: 10, large: 20)
+                self.verticalPadding = layout.value(standard: 5, large: 10)
+                self.minimumHeight = layout.value(standard: 30, large: 60)
+                self.labelSpacing = layout.value(standard: 4, large: 8)
 
             case .large:
                 self.font = .headline
-                self.horizontalPadding = UIDevice.isTV ? 24 : 12
-                self.verticalPadding = UIDevice.isTV ? 12 : 6
-                self.minimumHeight = UIDevice.isTV ? 72 : 36
-                self.labelSpacing = UIDevice.isTV ? 10 : 5
+                self.horizontalPadding = layout.value(standard: 12, large: 24)
+                self.verticalPadding = layout.value(standard: 6, large: 12)
+                self.minimumHeight = layout.value(standard: 36, large: 72)
+                self.labelSpacing = layout.value(standard: 5, large: 10)
 
             case .extraLarge:
                 self.font = .title3
-                self.horizontalPadding = UIDevice.isTV ? 32 : 16
-                self.verticalPadding = UIDevice.isTV ? 16 : 8
-                self.minimumHeight = UIDevice.isTV ? 88 : 44
-                self.labelSpacing = UIDevice.isTV ? 12 : 6
+                self.horizontalPadding = layout.value(standard: 16, large: 32)
+                self.verticalPadding = layout.value(standard: 8, large: 16)
+                self.minimumHeight = layout.value(standard: 44, large: 88)
+                self.labelSpacing = layout.value(standard: 6, large: 12)
 
             @unknown default:
-                self = CapsuleControlMetrics(.regular)
+                self = CapsuleControlMetrics(.regular, layout: layout)
             }
         }
     }
+
+    @AdaptiveLayout
+    private var viewLayout
 
     @Environment(\.controlSize)
     private var controlSize
@@ -92,7 +95,7 @@ struct CapsuleButtonStyle: ButtonStyle {
     var isSelectionActive: Bool = true
 
     private var metrics: CapsuleControlMetrics {
-        CapsuleControlMetrics(controlSize)
+        CapsuleControlMetrics(controlSize, layout: viewLayout)
     }
 
     private var isHighlighted: Bool {

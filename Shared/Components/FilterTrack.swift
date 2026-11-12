@@ -57,6 +57,22 @@ struct FilterTrack: View {
     var style: Style = .regular
     var iconEdge: HorizontalEdge = .leading
 
+    static func controlSize(for layout: ViewLayout) -> ControlSize {
+        layout.value(standard: .small, large: .large)
+    }
+
+    static func metrics(for layout: ViewLayout) -> CapsuleButtonStyle.CapsuleControlMetrics {
+        .init(controlSize(for: layout), layout: layout)
+    }
+
+    private var metrics: CapsuleButtonStyle.CapsuleControlMetrics {
+        Self.metrics(for: viewLayout)
+    }
+
+    private var collapsedLabelWidth: CGFloat {
+        metrics.minimumHeight - 2 * metrics.horizontalPadding
+    }
+
     private var targets: [FocusTarget] {
         (viewModel.hasActiveFilters ? [.reset] : []) + types.map(FocusTarget.filter)
     }
@@ -79,13 +95,13 @@ struct FilterTrack: View {
     }
 
     @ContentBuilder
-    private func buttonIcon(for target: FocusTarget) -> some View {
+    private func buttonIcon(for target: FocusTarget, isCollapsed: Bool) -> some View {
         Image(systemName: target.systemImage)
             #if os(tvOS)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 32, height: 32)
-                .padding(.vertical, 8)
+                .frame(width: isCollapsed ? collapsedLabelWidth : nil)
             #endif
     }
 
@@ -93,21 +109,24 @@ struct FilterTrack: View {
     private func buttonLabel(for target: FocusTarget) -> some View {
         let showsTitle = style == .regular || focus.wrappedValue == target
 
-        HStack(spacing: viewLayout.value(standard: 4, large: 12)) {
+        HStack(spacing: viewLayout.value(standard: 4, large: metrics.labelSpacing)) {
             if iconEdge == .leading {
-                buttonIcon(for: target)
+                buttonIcon(for: target, isCollapsed: !showsTitle)
             }
 
             Text(target.title)
                 .isVisible(showsTitle)
 
             if iconEdge == .trailing {
-                buttonIcon(for: target)
+                buttonIcon(for: target, isCollapsed: !showsTitle)
             }
         }
         .lineLimit(1)
         .fixedSize()
-        .frame(width: showsTitle ? nil : 32, alignment: iconEdge == .leading ? .leading : .trailing)
+        .frame(
+            width: showsTitle ? nil : viewLayout.value(standard: 32, large: collapsedLabelWidth),
+            alignment: iconEdge == .leading ? .leading : .trailing
+        )
     }
 
     @ContentBuilder
@@ -149,8 +168,8 @@ struct FilterTrack: View {
             button(for: target)
                 .fixedSize()
         }
-        .font(viewLayout.value(standard: .footnote, large: .callout))
-        .controlSize(viewLayout.value(standard: .small, large: .large))
+        .font(metrics.font)
+        .controlSize(Self.controlSize(for: viewLayout))
         .buttonStyle(.capsule(selectionTint: theme.accentColor, focusTint: viewLayout.value(standard: nil, large: .white)))
         #if os(tvOS)
         .animation(.snappy(duration: 0.2), value: focus.wrappedValue)

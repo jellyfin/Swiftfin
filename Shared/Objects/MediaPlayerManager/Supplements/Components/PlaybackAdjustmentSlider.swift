@@ -148,7 +148,6 @@ struct PlaybackAdjustmentSlider: View {
             .buttonStyle(.capsule)
             .padding(.top, viewLayout.isLarge ? 8 : 4)
         }
-        .controlSize(viewLayout.isLarge ? .large : .regular)
         .accessibilityElement(children: .contain)
     }
 }
