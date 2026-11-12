@@ -81,7 +81,9 @@ struct VideoPlayer: View {
             viewState.toastProxy.present(message, systemName: "exclamationmark.triangle")
         }
         .onChange(of: mediaPlayerManager.sleepTimer.deadline) { oldDeadline, newDeadline in
-            guard newDeadline == nil, let oldDeadline, oldDeadline <= .now else { return }
+            guard Defaults[.VideoPlayer.sleepTimerAction] == .pause && newDeadline == nil,
+                  let oldDeadline, oldDeadline <= .now
+            else { return }
 
             viewState.toastProxy.present(
                 L10n.sleepTimer,
