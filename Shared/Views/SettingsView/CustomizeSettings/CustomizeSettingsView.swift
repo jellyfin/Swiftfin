@@ -40,6 +40,12 @@ struct CustomizeSettingsView: View {
                 Text(L10n.filters)
             }
 
+            #if os(iOS)
+            ChevronButton(L10n.layout) {
+                router.route(to: .layoutSettings)
+            }
+            #endif
+
             ChevronButton(L10n.items) {
                 router.route(to: .itemSettings)
             }
@@ -56,7 +62,9 @@ struct CustomizeSettingsView: View {
                 router.route(to: .videoPlayerSettings)
             }
 
+            #if os(tvOS)
             HomeSection()
+            #endif
         }
         .navigationTitle(L10n.advanced)
     }

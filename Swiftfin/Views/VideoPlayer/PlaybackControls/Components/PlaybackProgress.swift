@@ -151,10 +151,7 @@ extension VideoPlayer.PlaybackControls {
                     .trackingSize($sliderSize)
             } content: {
                 SliderContainer(
-                    value: Bindable(viewState).scrubbedSeconds.map(
-                        getter: { $0.seconds },
-                        setter: { .seconds($0) }
-                    ),
+                    value: Bindable(viewState).scrubbedSeconds.seconds,
                     total: sliderTotal,
                     isScrollingEnabled: mediaSession.canSeek
                 )

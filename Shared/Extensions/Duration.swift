@@ -41,7 +41,8 @@ extension Duration {
     }
 
     var seconds: Double {
-        Double(components.seconds) + Double(components.attoseconds) * 1e-18
+        get { Double(components.seconds) + Double(components.attoseconds) * 1e-18 }
+        set { self = .seconds(newValue) }
     }
 
     var minutes: Double {

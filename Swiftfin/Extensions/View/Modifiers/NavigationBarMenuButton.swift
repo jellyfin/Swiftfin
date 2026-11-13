@@ -13,9 +13,6 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
     @AppTheme
     private var theme
 
-    @State
-    private var collectedMenuGroups: [MenuContentGroup] = []
-
     private let menuContent: MenuContent
     private let isLoading: Bool
     private let isHidden: Bool
@@ -33,13 +30,12 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
     @ContentBuilder
     func body(content: Self.Content) -> some View {
         content
-            .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
+            .coordinatedToolbar {
+                CoordinatedToolbarItem {
                     if isLoading {
                         ProgressView()
                     }
 
-//                    if !isHidden, collectedMenuGroups.isNotEmpty {
                     if !isHidden {
                         let systemImage = if #available(iOS 26, *) {
                             "ellipsis"
@@ -49,19 +45,12 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
 
                         Menu(L10n.options, systemImage: systemImage) {
                             menuContent
-
-                            ForEach(collectedMenuGroups) { group in
-                                group.content
-                            }
                         }
                         .labelStyle(.iconOnly)
                         .fontWeight(.semibold)
                         .foregroundStyle(theme.accentColor)
                     }
                 }
-            }
-            .onPreferenceChange(MenuContentKey.self) { newGroups in
-                collectedMenuGroups = newGroups
             }
     }
 }

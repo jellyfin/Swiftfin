@@ -47,11 +47,7 @@ extension TabItem {
             title: L10n.dashboard,
             systemImage: "server.rack"
         ) {
-            #if os(iOS)
-            AdminDashboardView()
-            #else
             EmptyView()
-            #endif
         }
     }
 

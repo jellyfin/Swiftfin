@@ -23,6 +23,9 @@ struct ExperimentalSettingsView: View {
     #if os(iOS)
     @Default(.Experimental.chromecast)
     private var isChromecastEnabled
+
+    @Default(.Experimental.layout)
+    private var isLayoutExperimentEnabled
     #endif
 
     @Injected(\.userSessionManager)
@@ -47,6 +50,15 @@ struct ExperimentalSettingsView: View {
                 }
             #endif
 
+            #if os(iOS)
+            Section {
+                Toggle(L10n.tabsAndViews, isOn: $isLayoutExperimentEnabled)
+            } footer: {
+                Text(
+                    "Arrange tabs and views in Settings, Customize, Advanced, Layout."
+                )
+            }
+            #endif
             // swiftlint:enable hard_coded_display_string
         }
         .onChange(of: isServerConnectionAutoSwitchEnabled) {

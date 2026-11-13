@@ -12,16 +12,22 @@ import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
-// TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
-
-    #if os(tvOS)
-    @Default(.Customization.tabBarPlacement)
-    private var tabBarPlacement
-    #endif
 
     @InjectedObject(\.userSessionManager)
     private var userSessionManager
+
+    @Default(.Experimental.layout)
+    private var isLayoutExperimentEnabled
+
+    @Default(.Customization.advancedLayout)
+    private var isAdvancedLayoutEnabled
+
+    @StoredValue(.User.layout)
+    private var layout
+
+    @State
+    private var isSettingsPresented = false
 
     @StateObject
     private var tabCoordinator: TabCoordinator
@@ -31,33 +37,19 @@ struct MainTabView: View {
     }
 
     private static var defaultTabCoordinator: TabCoordinator {
-        #if os(iOS)
-        TabCoordinator {
-            TabItem.contentGroup(provider: DefaultContentGroupProvider())
-            TabItem.search
-            TabItem.media
-        }
-        #else
-        TabCoordinator {
-            TabItem.contentGroup(provider: DefaultContentGroupProvider())
+        TabCoordinator(tabs: TabItem.defaultItems)
+    }
 
-            TabItem.library(
-                title: L10n.tvShowsCapitalized,
-                systemName: "tv",
-                filters: .init(itemTypes: [.series])
-            )
+    private var resolvedTabItems: [TabItem] {
+        TabItem.layoutItems(
+            configuration: layout,
+            advanced: isAdvancedLayoutEnabled,
+            experimentEnabled: isLayoutExperimentEnabled
+        )
+    }
 
-            TabItem.library(
-                title: L10n.movies,
-                systemName: "film",
-                filters: .init(itemTypes: [.movie])
-            )
-
-            TabItem.search
-            TabItem.media
-            TabItem.settings
-        }
-        #endif
+    private func updateTabs() {
+        tabCoordinator.updateTabs(resolvedTabItems)
     }
 
     private func routePendingDeepLink(_ deepLink: DeepLink?) {
@@ -75,14 +67,15 @@ struct MainTabView: View {
             tab.item
                 .content
                 .withViewContext(.isTabRoot)
-                #if os(iOS)
-                .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
-                    view.topBarTrailing {
-                        FirstTabSettingsBarButton()
+                .coordinatedToolbar {
+                    CoordinatedToolbarItem(order: .trailing) {
+                        TabSettingsBarButton {
+                            isSettingsPresented = true
+                        }
                     }
                 }
-                #endif
         }
+        .id(ObjectIdentifier(tab.coordinator))
         .environmentObject(tabCoordinator)
         .environment(\.tabItemSelected, tab.publisher)
     }
@@ -93,16 +86,9 @@ struct MainTabView: View {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
                 Tab(
                     value: tab.item.id,
-                    role: tab.item.id == TabItem.search.id ? .search : nil
+                    role: tab.item.destination == .search ? .search : nil
                 ) {
-                    #if os(tvOS)
-                    GeometryReader { _ in
-                        tabRoot(tab)
-                    }
-                    .trackingFrame(for: .tabView)
-                    #else
                     tabRoot(tab)
-                    #endif
                 } label: {
                     Label(
                         tab.item.displayTitle,
@@ -115,26 +101,9 @@ struct MainTabView: View {
     }
 
     @ContentBuilder
-    private func tabContent() -> some View {
-        #if os(tvOS)
-        switch tabBarPlacement {
-        case .sidebar:
-            tabView()
-                .tabViewStyle(.sidebarAdaptable)
-
-        case .tabBar:
-            tabView()
-                .tabViewStyle(.tabBarOnly)
-        }
-        #else
+    var body: some View {
         tabView()
             .tabViewStyle(.sidebarAdaptable)
-        #endif
-    }
-
-    @ContentBuilder
-    var body: some View {
-        tabContent()
             .onChange(of: userSessionManager.pendingDeepLink) {
                 routePendingDeepLink(userSessionManager.consumePendingDeepLink())
             }
@@ -143,16 +112,20 @@ struct MainTabView: View {
                     await tabCoordinator.route(to: route)
                 }
             }
-            #if os(tvOS)
-            .background(alignment: .top) {
-                FocusedPosterCinematicBackgroundView()
+            .sheet(isPresented: $isSettingsPresented) {
+                NavigationInjectionView(coordinator: NavigationCoordinator()) {
+                    SettingsView()
+                }
             }
-            #endif
+            .onFirstAppear(perform: updateTabs)
+            .onChange(of: isLayoutExperimentEnabled, updateTabs)
+            .onChange(of: isAdvancedLayoutEnabled, updateTabs)
+            .onChange(of: layout, updateTabs)
+            .onChange(of: userSessionManager.currentSession?.userData.policy?.isAdministrator, updateTabs)
     }
 }
 
-#if os(iOS)
-private struct FirstTabSettingsBarButton: View {
+private struct TabSettingsBarButton: View {
 
     @Injected(\.currentUserSession)
     private var userSession
@@ -160,14 +133,15 @@ private struct FirstTabSettingsBarButton: View {
     @Router
     private var router
 
+    let action: () -> Void
+
     @ContentBuilder
     var body: some View {
         if router.isRootOfPath,
            let userSession {
             SettingsBarButton(userSession: userSession) {
-                router.route(to: .settings)
+                action()
             }
         }
     }
 }
-#endif

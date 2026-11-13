@@ -29,16 +29,19 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
     let filterViewModel: FilterViewModel
     @SharedBaseItem
     var parent: BaseItemDto
+    let useRememberedFilters: Bool
 
     init(
         parent: BaseItemDto,
         filters: ItemFilterCollection? = nil,
         staticFilters: ItemFilterCollection = .default,
-        grouping: BaseItemDto.Grouping? = nil
+        grouping: BaseItemDto.Grouping? = nil,
+        useRememberedFilters: Bool = true
     ) {
         var filters = filters ?? .default
 
-        if let id = parent.id,
+        if useRememberedFilters,
+           let id = parent.id,
            Defaults[.Customization.Library.rememberFilters],
            staticFilters.union(filters).itemTypes.isEmpty {
             filters = filters.union(StoredValues[.User.libraryFilters(parentID: id)])
@@ -66,16 +69,14 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
             staticFilters: staticFilters
         )
         self.parent = parent
+        self.useRememberedFilters = useRememberedFilters
     }
 
     func makeMenuContent(environment: Binding<Environment>) -> AnyView {
         Group {
             if let groupings = parent.groupings, groupings.elements.isNotEmpty {
                 Picker(
-                    selection: environment.map(
-                        getter: { $0.grouping },
-                        setter: { .init(grouping: $0, filters: environment.wrappedValue.filters) }
-                    )
+                    selection: environment.grouping
                 ) {
                     ForEach(groupings.elements) { grouping in
                         Text(grouping.displayTitle)
@@ -387,7 +388,8 @@ private struct ItemLibraryBody<Content: View>: View {
     }
 
     private func rememberFilters(from filters: ItemFilterCollection) {
-        guard let id = viewModel.library.parent.id,
+        guard viewModel.library.useRememberedFilters,
+              let id = viewModel.library.parent.id,
               Defaults[.Customization.Library.rememberFilters],
               filterViewModel.libraryItemTypes.isEmpty
         else { return }

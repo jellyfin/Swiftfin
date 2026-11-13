@@ -121,17 +121,11 @@ extension Defaults.Keys {
             )
         }
 
-        static var nextUpPosterType: Key<PosterDisplayType> {
-            UserKey("nextUpPosterType", default: .portrait)
+        #if os(iOS)
+        static var advancedLayout: Key<Bool> {
+            UserKey("advancedLayout", default: false)
         }
-
-        static var recentlyAddedPosterType: Key<PosterDisplayType> {
-            UserKey("recentlyAddedPosterType", default: .portrait)
-        }
-
-        static var latestInLibraryPosterType: Key<PosterDisplayType> {
-            UserKey("latestInLibraryPosterType", default: .portrait)
-        }
+        #endif
 
         static var shouldShowRecommendations: Key<Bool> {
             UserKey("shouldShowRecommendations", default: true)
@@ -385,6 +379,12 @@ extension Defaults.Keys {
 
     /// Experimental settings
     enum Experimental {
+
+        #if os(iOS)
+        static var layout: Key<Bool> {
+            UserKey("experimentalLayout", default: false)
+        }
+        #endif
 
         // TODO: don't use L10n key as key, just used to not
         // lose translations

@@ -24,6 +24,7 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
     let environment: Environment
     let id: String
     let library: Library
+    let libraryStyleKey: StoredValues.Key<LibraryStyle>?
     let posterDisplayType: PosterDisplayType
     let posterSize: PosterDisplayType.Size
     let viewModel: PagingLibraryViewModel<Library>
@@ -38,12 +39,14 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
         displayTitle: String? = nil,
         posterDisplayType: PosterDisplayType = .portrait,
         posterSize: PosterDisplayType.Size = .small,
+        libraryStyleKey: StoredValues.Key<LibraryStyle>? = nil,
         environment: Environment
     ) {
         self.displayTitle = displayTitle ?? library.parent.displayTitle
         self.environment = environment
         self.id = id
         self.library = library
+        self.libraryStyleKey = libraryStyleKey
         self.posterDisplayType = posterDisplayType
         self.posterSize = posterSize
         self.viewModel = .init(library: library, pageSize: 20)
@@ -55,6 +58,7 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
         displayTitle: String? = nil,
         posterDisplayType: PosterDisplayType = .portrait,
         posterSize: PosterDisplayType.Size = .small,
+        libraryStyleKey: StoredValues.Key<LibraryStyle>? = nil,
         _viewContext: ViewContext? = nil
     ) {
         self.init(
@@ -63,6 +67,7 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
             displayTitle: displayTitle,
             posterDisplayType: posterDisplayType,
             posterSize: posterSize,
+            libraryStyleKey: libraryStyleKey,
             environment: .init(viewContext: _viewContext ?? .init())
         )
     }

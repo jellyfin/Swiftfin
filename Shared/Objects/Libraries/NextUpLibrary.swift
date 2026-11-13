@@ -17,10 +17,12 @@ struct NextUpLibrary: BaseItemKindLibrary {
         var enableRewatching: Bool
         var maxNextUp: TimeInterval
 
-        static let `default`: Self = .init(
-            enableRewatching: Defaults[.Customization.Home.resumeNextUp],
-            maxNextUp: Defaults[.Customization.Home.maxNextUp]
-        )
+        static var `default`: Self {
+            .init(
+                enableRewatching: Defaults[.Customization.Home.resumeNextUp],
+                maxNextUp: Defaults[.Customization.Home.maxNextUp]
+            )
+        }
     }
 
     let libraryItemTypes: [BaseItemKind] = [.episode]

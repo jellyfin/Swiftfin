@@ -43,9 +43,15 @@ struct NavigationInjectionView: View {
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             content
+                #if os(iOS)
+                    .coordinatedToolbarScope()
+                #endif
                 .trackingFrame(for: .layoutContainer)
                 .navigationDestination(for: NavigationRoute.self) { route in
                     route.destination
+                        #if os(iOS)
+                            .coordinatedToolbarScope()
+                        #endif
                         .trackingFrame(for: .layoutContainer)
                         .removingViewContext(.isTabRoot)
                         .environment(
