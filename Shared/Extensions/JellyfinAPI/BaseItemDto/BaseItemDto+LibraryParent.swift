@@ -45,10 +45,7 @@ extension BaseItemDto: LibraryParent {
         supportedItemTypes(for: nil)
     }
 
-    /// Folder libraries browse direct children, including nested folders.
-    /// A folder that directly contains a standalone photo is resolved by
-    /// the server as a `PhotoAlbum` instead of a `Folder` (#2431), so it
-    /// is treated as a folder collection here as well.
+    /// Folder libraries browse direct children, including nested folders
     var isFolderCollection: Bool {
         libraryType == .folder ||
             libraryType == .photoAlbum ||
