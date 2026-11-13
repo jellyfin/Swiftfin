@@ -30,7 +30,7 @@ extension EnvironmentValues {
     var localUserAuthenticationAction: LocalUserAuthenticationAction? = nil
 }
 
-struct WithLocalUserAuthentication<Content: View>: View {
+struct LocalUserAuthenticationModifier: ViewModifier {
 
     private struct PinRequest: Identifiable {
 
@@ -41,12 +41,6 @@ struct WithLocalUserAuthentication<Content: View>: View {
 
     @State
     private var pinRequest: PinRequest?
-
-    private let content: Content
-
-    init(@ContentBuilder content: () -> Content) {
-        self.content = content()
-    }
 
     private func handlePinAuthentication(reason: String?) async throws -> String {
         try Task.checkCancellation()
@@ -110,7 +104,7 @@ struct WithLocalUserAuthentication<Content: View>: View {
     }
 
     @ContentBuilder
-    var body: some View {
+    func body(content: Content) -> some View {
         content
             .environment(
                 \.localUserAuthenticationAction,

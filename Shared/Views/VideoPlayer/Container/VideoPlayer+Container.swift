@@ -282,7 +282,8 @@ extension VideoPlayer {
                             .ignoresSafeRegion(.all)
                     }
                     #else
-                    OverlayToastView(proxy: viewState.toastProxy) { playbackControls }
+                    playbackControls
+                        .modifier(OverlayToastModifier(proxy: viewState.toastProxy))
                     #endif
                 }
                 #if os(iOS)
