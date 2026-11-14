@@ -282,6 +282,27 @@ extension VideoPlayer {
             containerView?.focusSupplementContent()
             focusCoordinator.focus(selectedSupplement.preferredFocusID)
         }
+
+        @ObservationIgnored
+        private var pendingSupplementFocusExpiry: Task<Void, Never>?
+
+        /// Rapid input can interrupt the transitions that complete the handoff. Pending
+        /// focus disables the tabs, so it must not outlive them, or the panel holds no focus.
+        private func expirePendingSupplementFocus() {
+            pendingSupplementFocusExpiry?.cancel()
+
+            guard let id = pendingSupplementFocusID else { return }
+
+            pendingSupplementFocusExpiry = Task { [weak self] in
+                try? await Task.sleep(for: .seconds(1.5))
+
+                guard let self, !Task.isCancelled, pendingSupplementFocusID == id else { return }
+
+                focusSupplementIfNeeded(id)
+                pendingSupplementFocusID = nil
+                containerView?.focusSupplementContent()
+            }
+        }
         #endif
 
         var isPresentingSupplement: Bool {
@@ -747,6 +768,7 @@ extension VideoPlayer {
             #if os(tvOS)
             if selectedSupplementID != previousSupplementID {
                 pendingSupplementFocusID = singleSupplement?.id == selectedSupplementID ? selectedSupplementID : nil
+                expirePendingSupplementFocus()
             }
             #endif
 
