@@ -773,11 +773,13 @@ extension VideoPlayer {
             pendingPlaybackFocusRequest = playbackFocusRequest
 
             completion = { [weak self] finished in
-                guard let self, finished else { return }
+                guard let self else { return }
 
+                // An interrupted slide must still hand off focus, or the tabs stay disabled.
+                // focusSupplementIfNeeded ignores requests that a newer transition replaced.
                 if let supplementID {
                     viewState.focusSupplementIfNeeded(supplementID)
-                } else if let playbackFocusRequest {
+                } else if finished, let playbackFocusRequest {
                     restorePlaybackFocusIfNeeded(playbackFocusRequest)
                 }
             }
@@ -1343,7 +1345,12 @@ extension VideoPlayer {
         @objc
         private func handleMenuEnded() {
             // Let a system menu or alert consume Back before dismissing player UI.
-            guard !viewState.isFocusOutsidePlayer || viewState.presentation == .hidden else { return }
+            // While supplement focus is pending, nothing in the player can hold focus,
+            // so focus being "outside" does not mean a menu owns Back.
+            guard !viewState.isFocusOutsidePlayer ||
+                viewState.presentation == .hidden ||
+                viewState.isSupplementFocusPending
+            else { return }
 
             if viewState.isScrubbing {
                 viewState.cancelScrub()
