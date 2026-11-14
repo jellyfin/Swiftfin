@@ -31,19 +31,8 @@ struct ActiveSessionDetailsView: View {
         viewModel.session.playState?.isPaused == true
     }
 
-    private var canControl: Bool {
-        guard let user = viewModel.userSession?.userData else { return false }
-
-        let session = viewModel.session
-
-        return user.policy?.enableRemoteControlOfOtherUsers == true
-            || session.userID == nil
-            || session.userID == user.id
-            || session.additionalUsers?.contains { $0.userID == user.id } == true
-    }
-
     private var hasPlaybackControls: Bool {
-        canControl && viewModel.session.isSupportsMediaControl == true && viewModel.session.nowPlayingItem != nil
+        viewModel.session.canControlPlayback(by: viewModel.userSession?.userData)
     }
 
     private var hasMessageControl: Bool {

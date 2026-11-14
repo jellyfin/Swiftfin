@@ -20,9 +20,13 @@ extension ActiveSessionsView {
         @CurrentDate
         private var currentDate: Date
 
+        @Environment(\.viewContext)
+        private var viewContext
+
         @ObservedObject
         var viewModel: SessionViewModel
 
+        let posterDisplayType: PosterDisplayType
         let action: () -> Void
 
         private var session: SessionInfoDto {
@@ -35,28 +39,27 @@ extension ActiveSessionsView {
 
         @ContentBuilder
         private var rowLeading: some View {
-            if let nowPlayingItem = session.nowPlayingItem {
-                PosterImage(
-                    item: nowPlayingItem,
-                    type: nowPlayingItem.posterDisplayType(for: .compact),
-                    contentMode: .fit
-                )
-                .frame(width: 60)
-                .frame(minHeight: 90)
-                .subtleShadow()
-            } else {
-                ZStack {
-                    session.device.clientColor
+            PosterImage(
+                item: session,
+                type: posterDisplayType,
+                size: .extraSmall
+            )
+            .id(session.nowPlayingItem?.id)
+            .overlay {
+                if session.nowPlayingItem == nil {
+                    ZStack {
+                        session.device.clientColor
 
-                    Image(session.device.image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .padding(8)
+                        Image(session.device.image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .padding(8)
+                    }
+                    .posterStyle(posterDisplayType)
                 }
-                .posterStyle(.square)
-                .frame(width: 60, height: 60)
-                .subtleShadow()
             }
+            .subtleShadow()
+            .frame(width: posterDisplayType == .landscape ? 110 : 60)
         }
 
         @ContentBuilder
@@ -68,7 +71,7 @@ extension ActiveSessionsView {
 
                 Text(nowPlayingItem.name ?? L10n.unknown)
                     .multilineTextAlignment(.leading)
-                    .lineLimit(2)
+                    .lineLimit(1)
 
                 ProgressSection(
                     item: nowPlayingItem,
@@ -86,28 +89,21 @@ extension ActiveSessionsView {
                 Text(session.userName ?? L10n.unknown)
                     .font(.headline)
 
-                if let client = session.client {
-                    LabeledContent(
-                        L10n.client,
-                        value: client
-                    )
-                }
+                DotHStack {
+                    if let client = session.client {
+                        Text(client)
+                    }
 
-                if let device = session.deviceName {
-                    LabeledContent(
-                        L10n.device,
-                        value: device
-                    )
+                    if let device = session.deviceName {
+                        Text(device)
+                    }
                 }
+                .lineLimit(1)
 
-                if let lastActivityDate = session.lastActivityDate {
-                    LabeledContent(
-                        L10n.lastSeen,
-                        value: lastActivityDate,
-                        format: .lastSeen
-                    )
-                    .id(currentDate)
-                    .monospacedDigit()
+                LabeledContent(L10n.lastSeen) {
+                    Text(session.lastActivityDate, format: .lastSeen)
+                        .id(currentDate)
+                        .monospacedDigit()
                 }
             }
             .font(.subheadline)
@@ -125,6 +121,28 @@ extension ActiveSessionsView {
                 }
             } action: {
                 action()
+            }
+            .posterContextMenu(for: session) {
+                VStack(alignment: .leading) {
+                    PosterImage(
+                        item: session,
+                        type: posterDisplayType,
+                        size: .small
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .subtleShadow()
+
+                    session.posterLabel
+                        .allowsHitTesting(false)
+                }
+                .environment(\.posterDisplayType, posterDisplayType)
+                .foregroundStyle(.primary, .secondary)
+                .posterAccessibility(for: session)
+                .frame(width: viewLayout.posterMinimumWidth(for: posterDisplayType))
+                .padding(20)
+                .backport
+                .glassEffect(in: .rect(cornerRadius: 10))
+                .withViewContext(viewContext)
             }
             .withViewContext(.isListRowSeparatorVisible)
         }
