@@ -20,6 +20,8 @@ extension MediaTrackIndexMap {
     ) -> MediaTrackIndexMap {
         var map = MediaTrackIndexMap()
 
+        let externalIndexes = mediaStreams.filter { $0.isExternal == true }.compactMap(\.index)
+
         for (streamType, trackType) in [(MediaStreamType.audio, MPVTrackType.audio), (.subtitle, .subtitle)] {
             let streams = mediaStreams.filter { $0.type == streamType && $0.isExternal != true && !$0.isSidecarSubtitle }
             let internalTracks = tracks.filter { $0.type == trackType && !$0.isExternal }
@@ -39,7 +41,8 @@ extension MediaTrackIndexMap {
                     continue
                 }
 
-                let exact = remaining.filter { $0.sourceStreamIndex == index }
+                let sourceIndex = index - externalIndexes.count(where: { $0 < index })
+                let exact = remaining.filter { $0.sourceStreamIndex == sourceIndex }
                 let matches = exact.isEmpty ? remaining.filter { track in
                     guard track.sourceStreamIndex == nil else {
                         return false
