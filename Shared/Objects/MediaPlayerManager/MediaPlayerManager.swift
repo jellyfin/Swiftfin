@@ -77,8 +77,17 @@ final class MediaPlayerManager {
         stop()
 
         var intent = intent
-        if intent.queue == nil, intent.item.type == .episode {
-            intent.queue = EpisodeMediaPlayerQueue()
+        if intent.queue == nil {
+            if intent.item.type == .episode {
+                intent.queue = EpisodeMediaPlayerQueue()
+            } else if intent.item.type == .video, let parentID = intent.item.parentID?.nilIfBlank {
+                let filters = StoredValues[.User.libraryFilters(parentID: parentID)]
+                intent.queue = FolderMediaPlayerQueue(
+                    parentID: parentID,
+                    sortBy: filters.sortBy,
+                    sortOrder: filters.sortOrder
+                )
+            }
         }
 
         let session = MediaSession(
