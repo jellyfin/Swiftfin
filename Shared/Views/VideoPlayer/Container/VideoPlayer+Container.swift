@@ -773,11 +773,11 @@ extension VideoPlayer {
             pendingPlaybackFocusRequest = playbackFocusRequest
 
             completion = { [weak self] finished in
-                guard let self, finished else { return }
+                guard let self else { return }
 
                 if let supplementID {
                     viewState.focusSupplementIfNeeded(supplementID)
-                } else if let playbackFocusRequest {
+                } else if finished, let playbackFocusRequest {
                     restorePlaybackFocusIfNeeded(playbackFocusRequest)
                 }
             }
@@ -1343,7 +1343,10 @@ extension VideoPlayer {
         @objc
         private func handleMenuEnded() {
             // Let a system menu or alert consume Back before dismissing player UI.
-            guard !viewState.isFocusOutsidePlayer || viewState.presentation == .hidden else { return }
+            guard !viewState.isFocusOutsidePlayer ||
+                viewState.presentation == .hidden ||
+                UIFocusSystem.focusSystem(for: view)?.focusedItem == nil
+            else { return }
 
             if viewState.isScrubbing {
                 viewState.cancelScrub()
