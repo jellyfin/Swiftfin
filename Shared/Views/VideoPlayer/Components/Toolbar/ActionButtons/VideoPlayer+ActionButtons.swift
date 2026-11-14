@@ -140,6 +140,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 NextChapter()
             case .previousChapter:
                 PreviousChapter()
+            case .sleepTimer:
+                SleepTimerMenu()
             case .subtitles:
                 Subtitles()
             #if os(iOS)

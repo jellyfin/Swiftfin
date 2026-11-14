@@ -48,6 +48,7 @@ extension BaseItemDto: LibraryParent {
     /// Folder libraries browse direct children, including nested folders
     var isFolderCollection: Bool {
         libraryType == .folder ||
+            libraryType == .photoAlbum ||
             ((libraryType == .collectionFolder || libraryType == .userView) && (collectionType ?? .folders) == .folders)
     }
 
@@ -56,7 +57,7 @@ extension BaseItemDto: LibraryParent {
             if libraryType == .userView, collectionType == .movies || collectionType == .tvshows {
                 return [.collectionFolder]
             }
-            return BaseItemKind.supportedCases.appending([.folder, .collectionFolder])
+            return BaseItemKind.supportedCases.appending([.folder, .collectionFolder, .photoAlbum])
         }
 
         return switch (collectionType, libraryType) {
