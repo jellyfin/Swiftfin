@@ -11,13 +11,6 @@ import Foundation
 import JellyfinAPI
 import Observation
 
-/// Plays the playable videos of one folder in order.
-///
-/// The folder is the direct parent of the video playback started with,
-/// and only its direct children are queued (no recursion into
-/// subfolders). The order is the folder's saved sort order, which
-/// defaults to name ascending. When the last video ends, the queue
-/// has no next item and playback stops.
 @MainActor
 @Observable
 final class FolderMediaPlayerQueue: MediaPlayerQueue {

@@ -81,9 +81,6 @@ final class MediaPlayerManager {
             if intent.item.type == .episode {
                 intent.queue = EpisodeMediaPlayerQueue()
             } else if intent.item.type == .video, let parentID = intent.item.parentID?.nilIfBlank {
-                // Plain videos are what Home Videos libraries contain.
-                // Play the videos of the same folder in order, following
-                // the folder's saved sort order, and stop after the last one.
                 let filters = StoredValues[.User.libraryFilters(parentID: parentID)]
                 intent.queue = FolderMediaPlayerQueue(
                     parentID: parentID,
