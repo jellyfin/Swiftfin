@@ -22,7 +22,7 @@ extension BaseItemDto: LibraryElement {
 
     func supportedLibraryStyleOptions(grouping: Grouping?) -> LibraryStyleOptions {
         switch type {
-        case .collectionFolder, .folder, .userView:
+        case .collectionFolder, .folder, .photoAlbum, .userView:
             return BaseItemKind.libraryStyleOptions(for: supportedItemTypes(for: grouping))
         default:
             break
@@ -45,7 +45,7 @@ extension BaseItemDto: LibraryElement {
         grouping: Grouping?
     ) {
         switch type {
-        case .collectionFolder, .folder, .userView:
+        case .collectionFolder, .folder, .photoAlbum, .userView:
             router.route(
                 to: .library(library: ItemLibrary(parent: self, filters: .default, grouping: grouping)),
                 in: namespace
