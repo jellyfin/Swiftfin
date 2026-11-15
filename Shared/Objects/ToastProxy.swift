@@ -10,6 +10,7 @@ import Combine
 import SwiftUI
 
 @propertyWrapper
+@MainActor
 struct Toaster: DynamicProperty {
 
     @EnvironmentObject
