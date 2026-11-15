@@ -14,7 +14,7 @@ import Transmission
 
 struct PresentationControllerShouldDismissPreferenceKey: PreferenceKey {
 
-    static var defaultValue: Bool = true
+    static let defaultValue: Bool = true
 
     static func reduce(value: inout Bool, nextValue: () -> Bool) {
         value = nextValue()
