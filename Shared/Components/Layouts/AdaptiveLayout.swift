@@ -172,6 +172,7 @@ struct ViewLayout: Equatable {
 }
 
 @propertyWrapper
+@MainActor
 struct AdaptiveLayout: DynamicProperty {
 
     @Environment(\.horizontalSizeClass)

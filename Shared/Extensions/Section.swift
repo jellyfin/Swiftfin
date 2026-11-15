@@ -26,6 +26,7 @@ extension Section where Parent == Text, Footer == Text, Content: View {
 // MARK: - Section Overloads
 
 @ContentBuilder
+@MainActor
 func Section(
     _ title: String,
     @ContentBuilder content: @escaping () -> some View,
@@ -40,6 +41,7 @@ func Section(
 }
 
 @ContentBuilder
+@MainActor
 func Section(
     _ title: String,
     footer: String,
@@ -55,6 +57,7 @@ func Section(
 }
 
 @ContentBuilder
+@MainActor
 func Section(
     _ title: String,
     @ContentBuilder content: @escaping () -> some View,
