@@ -35,11 +35,9 @@ extension SessionInfoDto: Poster {
     }
 
     func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
-
         var details: [String?] = [client, deviceName]
 
         if let nowPlayingItem, let playState {
-
             details.append(playState.isPaused == true ? L10n.pause : L10n.play)
 
             let position = PosterAccessibility.duration(playState.position ?? .zero)
