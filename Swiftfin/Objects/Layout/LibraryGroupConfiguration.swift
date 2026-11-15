@@ -10,12 +10,12 @@ import Foundation
 
 struct LibraryGroupConfiguration: Codable, Hashable {
 
-    var library: LibraryReference?
+    var library: ItemReference?
     var filters: ItemFilterCollection
     var poster: PosterGroupSettings
 
     init(
-        library: LibraryReference? = nil,
+        library: ItemReference? = nil,
         filters: ItemFilterCollection = .default,
         poster: PosterGroupSettings = .default
     ) {

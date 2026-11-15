@@ -14,27 +14,31 @@ struct ItemReference: Codable, Hashable, Identifiable, Displayable, SystemImagea
     let id: String
     var name: String
     var itemType: BaseItemKind?
+    var collectionType: CollectionType?
 
     init(
         id: String,
         name: String,
-        itemType: BaseItemKind? = nil
+        itemType: BaseItemKind? = nil,
+        collectionType: CollectionType? = nil
     ) {
         self.id = id
         self.name = name
         self.itemType = itemType
+        self.collectionType = collectionType
     }
 
     init(item: BaseItemDto) {
         self.init(
             id: item.id ?? "",
             name: item.displayTitle,
-            itemType: item.type
+            itemType: item.type,
+            collectionType: item.collectionType
         )
     }
 
     var displayTitle: String {
-        name.nilIfEmpty ?? L10n.unknown
+        name.isEmpty ? L10n.unknown : name
     }
 
     var systemImage: String {
@@ -43,6 +47,7 @@ struct ItemReference: Codable, Hashable, Identifiable, Displayable, SystemImagea
 
     var baseItem: BaseItemDto {
         BaseItemDto(
+            collectionType: collectionType,
             id: id,
             name: displayTitle,
             type: itemType

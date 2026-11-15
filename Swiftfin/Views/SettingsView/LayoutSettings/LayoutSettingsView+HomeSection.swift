@@ -66,4 +66,16 @@ extension LayoutSettingsView {
             }
         }
     }
+
+    struct PostersSection: View {
+
+        @ContentBuilder
+        var body: some View {
+            Section(L10n.posters) {
+                ForEach(HomePosterGroup.allCases) { group in
+                    HomePosterSettingsView.Row(group: group)
+                }
+            }
+        }
+    }
 }

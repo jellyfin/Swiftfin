@@ -23,12 +23,7 @@ struct PosterGroupSettingsEditor: View {
     init(settings: Binding<PosterGroupSettings>) {
         self.init(
             displayType: settings.displayType,
-            size: settings.size.map(
-                getter: \.posterSize,
-                setter: { selected in
-                    PosterSize.allCases.first { $0.posterSize == selected } ?? settings.wrappedValue.size
-                }
-            )
+            size: settings.size
         )
     }
 
@@ -42,10 +37,9 @@ struct PosterGroupSettingsEditor: View {
         }
 
         Picker(L10n.size, selection: $size) {
-            ForEach(PosterSize.allCases, id: \.self) { size in
-                Text(size.displayTitle)
-                    .tag(size.posterSize)
-            }
+            Text(L10n.smallest).tag(PosterDisplayType.Size.extraSmall)
+            Text(L10n.regular).tag(PosterDisplayType.Size.small)
+            Text(L10n.larger).tag(PosterDisplayType.Size.medium)
         }
     }
 }

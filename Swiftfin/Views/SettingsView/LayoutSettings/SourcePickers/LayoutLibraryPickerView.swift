@@ -6,24 +6,16 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
 struct LayoutLibraryPickerView: View {
 
-    @Injected(\.currentUserSession)
-    private var userSession
-
     @Router
     private var router
 
-    @State
-    private var libraries: [BaseItemDto] = []
-    @State
-    private var error: ErrorMessage?
-    @State
-    private var isLoading = true
+    @StateObject
+    private var viewModel = PagingLibraryViewModel(library: UserViewLibrary())
 
     private let selectionID: String?
     private let onSelect: (BaseItemDto?) -> Void
@@ -36,24 +28,43 @@ struct LayoutLibraryPickerView: View {
         self.onSelect = onSelect
     }
 
+    private var libraries: [BaseItemDto] {
+        viewModel.elements.compactMap { element in
+            guard case let .userView(item) = element,
+                  item.snapshot.collectionType != .livetv
+            else { return nil }
+
+            var library = item.snapshot
+            library.collectionType = library.collectionType ?? .folders
+            if library.type == .userView, library.collectionType == .folders {
+                library.type = .folder
+            }
+            return library
+        }
+    }
+
     @ContentBuilder
     var body: some View {
         Group {
-            if isLoading {
+            switch viewModel.state {
+            case .initial, .refreshing:
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let error {
-                ErrorView(error: error)
-            } else {
+
+            case .content:
                 libraryList
+
+            case .error:
+                viewModel.error.map(ErrorView.init)
             }
         }
         .navigationTitle(L10n.libraries)
         .refreshable {
-            await getLibraries()
+            viewModel.error = nil
+            await viewModel.refresh()
         }
-        .task {
-            await getLibraries()
+        .onFirstAppear {
+            viewModel.refresh()
         }
     }
 
@@ -68,10 +79,10 @@ struct LayoutLibraryPickerView: View {
                     systemImage: "rectangle.stack"
                 )
                 .listRowBackground(Color.clear)
-            } else {
-                ForEach(libraries, id: \.id) { library in
-                    libraryButton(library)
-                }
+            }
+
+            ForEach(libraries, id: \.id) { library in
+                libraryButton(library)
             }
         }
     }
@@ -84,14 +95,12 @@ struct LayoutLibraryPickerView: View {
             router.dismiss()
         } label: {
             HStack {
-                Image(systemName: library?.systemImage ?? "rectangle.stack.fill")
-                    .foregroundStyle(.secondary)
-                    .frame(width: 28)
-                    .accessibilityHidden(true)
-
-                Text(library?.displayTitle ?? L10n.all)
-                    .foregroundStyle(.primary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                Label(
+                    library?.displayTitle ?? L10n.all,
+                    systemImage: library?.systemImage ?? "rectangle.stack.fill"
+                )
+                .labelStyle(.listRow)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 if isSelected {
                     ListRowCheckbox()
@@ -102,56 +111,9 @@ struct LayoutLibraryPickerView: View {
             }
             .contentShape(Rectangle())
         }
+        .foregroundStyle(.primary, .secondary)
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-    }
-
-    @MainActor
-    private func getLibraries() async {
-        isLoading = true
-        error = nil
-        defer { isLoading = false }
-
-        guard let userSession else {
-            libraries = []
-            error = ErrorMessage(L10n.signIn)
-            return
-        }
-
-        do {
-            let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
-            async let userViews = userSession.client.send(
-                Paths.getUserViews(parameters: parameters)
-            )
-            async let currentUser = userSession.client.send(Paths.getCurrentUser)
-
-            let excludedLibraryIDs = try await currentUser.value.configuration?.myMediaExcludes ?? []
-
-            try Task.checkCancellation()
-
-            libraries = try await (userViews.value.items ?? [])
-                .coalesced(property: \.collectionType, with: .folders)
-                .intersecting(
-                    CollectionType.supportedCases.filter { $0 != .livetv },
-                    using: \.collectionType
-                )
-                .subtracting(excludedLibraryIDs, using: \.id)
-                .filter { $0.id?.isEmpty == false }
-                .map { item in
-                    if item.type == .userView, item.collectionType == .folders {
-                        return item.mutating(\.type, with: .folder)
-                    }
-
-                    return item
-                }
-        } catch is CancellationError {
-            return
-        } catch {
-            guard !Task.isCancelled else { return }
-
-            libraries = []
-            self.error = ErrorMessage(error.localizedDescription)
-        }
     }
 }

@@ -48,16 +48,7 @@ struct ExperimentalSettingsView: View {
                     }
                     ChromecastController.updateAvailability()
                 }
-            #endif
-
-            #if os(iOS)
-            Section {
-                Toggle(L10n.tabsAndViews, isOn: $isLayoutExperimentEnabled)
-            } footer: {
-                Text(
-                    "Arrange tabs and views in Settings, Customize, Advanced, Layout."
-                )
-            }
+            Toggle(L10n.layout, isOn: $isLayoutExperimentEnabled)
             #endif
             // swiftlint:enable hard_coded_display_string
         }

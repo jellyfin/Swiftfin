@@ -120,6 +120,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     let library: Library
     let pageSize: Int
 
+    private let refreshesForStoreChanges: Bool
     private var nextOffset = 0
     private var nextSearchOffset = 0
 
@@ -159,6 +160,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     init(
         library: Library,
         pageSize: Int = defaultPagingLibraryPageSize,
+        refreshesForStoreChanges: Bool = true,
         userSession: UserSession? = Container.shared.currentUserSession()
     ) {
         self.id = library.parent.pagingLibraryID
@@ -169,6 +171,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         self.hasNextSearchPage = false
         self.library = library
         self.pageSize = pageSize
+        self.refreshesForStoreChanges = refreshesForStoreChanges
 
         super.init()
         self.userSession = userSession
@@ -274,7 +277,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     }
 
     private func scheduleRefreshForStoreChange() {
-        guard !isInvalidated else { return }
+        guard !isInvalidated, refreshesForStoreChanges else { return }
 
         hasPendingStoreRefresh = true
 

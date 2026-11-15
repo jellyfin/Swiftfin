@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct AddTabView: View {
@@ -23,13 +24,12 @@ struct AddTabView: View {
         }
     }
 
+    @ContentBuilder
     private func row(_ destination: TabDestination) -> some View {
-        let tab = TabConfiguration(destination: destination)
-
-        return Button {
+        Button {
             addTab(destination)
         } label: {
-            Label(configuration.title(for: tab), systemImage: configuration.icon(for: tab))
+            Label(configuration.title(for: destination), systemImage: configuration.icon(for: destination))
         }
         .foregroundStyle(.primary)
         .disabled(!configuration.canAddTab(destination: destination))
@@ -45,7 +45,7 @@ struct AddTabView: View {
         router.route(to: NavigationRoute(id: "layout-tab-item") {
             LayoutItemPickerView(
                 selectionID: nil,
-                includedItemTypes: LayoutItemTypes.all,
+                includedItemTypes: BaseItemKind.supportedCases,
                 nilSelectionTitle: nil,
                 title: L10n.items,
                 disabledItemIDs: existingItemIDs,
@@ -78,7 +78,8 @@ struct AddTabView: View {
                 }
             }
         }
-        .navigationTitle(L10n.addTab)
+        .labelStyle(.listRow)
+        .navigationTitle(L10n.tabs)
         .navigationBarCloseButton { router.dismiss() }
     }
 }

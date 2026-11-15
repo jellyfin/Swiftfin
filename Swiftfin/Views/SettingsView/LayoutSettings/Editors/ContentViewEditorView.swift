@@ -14,16 +14,10 @@ struct ContentViewEditorView: View {
     private var editMode: EditMode = .inactive
 
     @State
-    private var draft: LayoutDraft
+    private var view: ContentViewConfiguration
 
-    private var view: ContentViewConfiguration {
-        get { draft.configuration.views[0] }
-        nonmutating set { draft.configuration.views[0] = newValue }
-    }
-
-    private var viewBinding: Binding<ContentViewConfiguration> {
-        draft.binding(for: view, in: \.views)
-    }
+    @State
+    private var isIconPickerPresented = false
 
     @Router
     private var router
@@ -34,8 +28,7 @@ struct ContentViewEditorView: View {
         view: ContentViewConfiguration = .init(),
         onSave: @escaping (ContentViewConfiguration) -> Void
     ) {
-        let draft = LayoutDraft(configuration: .init(views: [view]))
-        _draft = State(initialValue: draft)
+        _view = State(initialValue: view)
         self.onSave = onSave
     }
 
@@ -43,21 +36,18 @@ struct ContentViewEditorView: View {
         editMode.isEditing
     }
 
-    private var iconChoices: [TabIcon.Choice] {
-        guard !TabIcon.choices.contains(where: { $0.systemImage == view.icon }) else { return TabIcon.choices }
-
-        return [.init(title: L10n.userView, systemImage: view.icon)] + TabIcon.choices
-    }
-
-    private func add(_ group: ContentGroupConfiguration) {
+    private func add(_ source: ContentGroupSource) {
+        let group = ContentGroupConfiguration(source: source)
         view.groups.append(group)
         routeToGroup(group)
     }
 
     private func routeToGroup(_ group: ContentGroupConfiguration) {
+        guard let index = view.groups.firstIndex(where: { $0.id == group.id }) else { return }
+
         router.route(
             to: NavigationRoute(id: "layout-group-\(group.id)") {
-                ContentGroupEditorView(group: draft.binding(for: group, in: view.id))
+                ContentGroupEditorView(group: $view.groups[index])
             }
         )
     }
@@ -76,65 +66,53 @@ struct ContentViewEditorView: View {
 
     @ContentBuilder
     private var addGroupMenu: some View {
-        Menu {
+        Menu(L10n.add, systemImage: "plus") {
             Button(L10n.libraries, systemImage: "rectangle.stack.fill") {
-                add(.library(reference: nil))
+                add(.library(.init()))
             }
 
             Button(L10n.continue, systemImage: "play.circle") {
-                add(.resume())
+                add(.resume(.init()))
             }
 
             Button(L10n.nextUp, systemImage: "text.badge.plus") {
-                add(.nextUp())
+                add(.nextUp(.init()))
             }
 
             Menu(L10n.liveTV, systemImage: "play.tv") {
-                Button(L10n.liveTV, systemImage: "rectangle.grid.2x2.fill") {
-                    add(.liveTV(element: .quickLinks))
-                }
-
-                Button(L10n.onNow, systemImage: "play.tv.fill") {
-                    add(.liveTV(element: .onNow))
-                }
-
-                Button(L10n.recordings, systemImage: "record.circle") {
-                    add(.liveTV(element: .recordings))
-                }
-
-                ForEach(
-                    [
-                        ProgramSection.series,
-                        .movies,
-                        .kids,
-                        .sports,
-                        .news,
-                    ],
-                    id: \.self
-                ) { section in
-                    Button(section.displayTitle, systemImage: "tv") {
-                        add(.liveTV(
-                            element: .programCategory(section)
-                        ))
+                ForEach(LiveTVElement.allCases, id: \.self) { element in
+                    Button(element.displayTitle, systemImage: element.systemImage) {
+                        add(.liveTV(.init(element: element)))
                     }
                 }
             }
 
             Button(L10n.genres, systemImage: "theatermasks.fill") {
-                add(.genres())
+                add(.genres(.init()))
             }
-        } label: {
-            Label(L10n.addGroup, systemImage: "plus")
         }
+        .labelStyle(.titleAndIcon)
+    }
+
+    private func save() {
+        guard view.hasValidName else { return }
+
+        onSave(view)
+        router.dismiss()
     }
 
     @ContentBuilder
     private var saveButton: some View {
-        Button(L10n.save) {
-            guard view.hasValidName else { return }
-
-            onSave(view)
-            router.dismiss()
+        Group {
+            if #available(iOS 26, *) {
+                Button(role: .confirm, action: save)
+            } else {
+                Button(L10n.save, systemImage: "checkmark", action: save)
+                    .labelStyle(.iconOnly)
+                    .backport
+                    .buttonStyle(.glassProminent)
+                    .controlSize(.small)
+            }
         }
         .disabled(!view.hasValidName || isEditing)
     }
@@ -143,13 +121,13 @@ struct ContentViewEditorView: View {
     var body: some View {
         Form(systemImage: "rectangle.3.group") {
             Section {
-                TextField(L10n.name, text: viewBinding.name)
-                Picker(L10n.icon, selection: viewBinding.icon) {
-                    ForEach(iconChoices) { choice in
-                        Label(choice.title, systemImage: choice.systemImage)
-                            .tag(choice.systemImage)
-                    }
+                TextField(L10n.name, text: $view.name)
+                ChevronButton {
+                    isIconPickerPresented = true
+                } label: {
+                    Label(L10n.icon, systemImage: view.icon)
                 }
+                .accessibilityValue(TabIcon.choices.first { $0.systemImage == view.icon }?.title ?? L10n.icon)
             }
 
             Section {
@@ -196,6 +174,7 @@ struct ContentViewEditorView: View {
                 Text(L10n.groupsDescription)
             }
         }
+        .labelStyle(.listRow)
         .environment(\.editMode, $editMode)
         .onChange(of: view.groups.isEmpty) { _, isEmpty in
             if isEmpty {
@@ -205,6 +184,13 @@ struct ContentViewEditorView: View {
         .navigationTitle(view.displayTitle)
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton { router.dismiss() }
-        .topBarTrailing { saveButton }
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                saveButton
+            }
+        }
+        .sheet(isPresented: $isIconPickerPresented) {
+            TabIconPicker(selection: $view.icon)
+        }
     }
 }

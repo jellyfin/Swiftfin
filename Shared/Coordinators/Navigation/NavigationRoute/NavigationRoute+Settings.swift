@@ -97,6 +97,25 @@ extension NavigationRoute {
             LayoutSettingsView()
         }
     }
+
+    static var homeLayoutSettings: NavigationRoute {
+        NavigationRoute(id: "homeLayoutSettings") {
+            Form(systemImage: "house.fill") {
+                LayoutSettingsView.HomeSection()
+                LayoutSettingsView.PostersSection()
+            }
+            .navigationTitle(L10n.home)
+        }
+    }
+
+    static var searchLayoutSettings: NavigationRoute {
+        NavigationRoute(id: "searchLayoutSettings") {
+            Form(systemImage: "magnifyingglass") {
+                LayoutSettingsView.SearchSection()
+            }
+            .navigationTitle(L10n.search)
+        }
+    }
     #endif
 
     static var customizeSettingsView: NavigationRoute {

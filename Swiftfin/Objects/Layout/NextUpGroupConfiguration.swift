@@ -12,14 +12,14 @@ struct NextUpGroupConfiguration: Codable, Hashable {
 
     static let defaultDays = 366
 
-    var library: LibraryReference?
+    var library: ItemReference?
     var series: ItemReference?
     var enableRewatching: Bool
     var maxDays: Int?
     var poster: PosterGroupSettings
 
     init(
-        library: LibraryReference? = nil,
+        library: ItemReference? = nil,
         series: ItemReference? = nil,
         enableRewatching: Bool = false,
         maxDays: Int? = Self.defaultDays,

@@ -11,19 +11,19 @@ import JellyfinAPI
 
 struct ResumeGroupConfiguration: Codable, Hashable {
 
-    var parent: LibraryReference?
+    var parent: ItemReference?
     var searchTerm: String?
     var itemTypes: [BaseItemKind]
     var poster: PosterGroupSettings
 
     init(
-        parent: LibraryReference? = nil,
+        parent: ItemReference? = nil,
         searchTerm: String? = nil,
         itemTypes: [BaseItemKind] = [.episode, .movie, .video],
         poster: PosterGroupSettings = .resume
     ) {
         self.parent = parent
-        self.searchTerm = searchTerm.nilIfEmpty
+        self.searchTerm = searchTerm.isNilOrEmpty ? nil : searchTerm
         self.itemTypes = itemTypes
         self.poster = poster
     }

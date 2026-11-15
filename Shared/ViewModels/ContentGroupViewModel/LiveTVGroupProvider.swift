@@ -10,7 +10,7 @@ import JellyfinAPI
 
 struct LiveTVGroupProvider: ContentGroupProvider {
 
-    private enum LiveTVPill: Displayable, SystemImageable {
+    enum QuickLink: Displayable, SystemImageable {
 
         case channels
         case guide
@@ -42,6 +42,28 @@ struct LiveTVGroupProvider: ContentGroupProvider {
                 "calendar.badge.clock"
             }
         }
+
+        @MainActor
+        var route: NavigationRoute {
+            switch self {
+            case .channels:
+                .library(
+                    library: ItemLibrary(
+                        parent: BaseItemDto(name: L10n.channels),
+                        filters: .init(itemTypes: [.liveTvChannel])
+                    )
+                )
+
+            case .guide:
+                .liveGuide
+
+            case .recordings:
+                .library(library: RecordingsLibrary())
+
+            case .schedule:
+                .library(library: ScheduledRecordingsLibrary())
+            }
+        }
     }
 
     let id: String = "live-tv"
@@ -51,32 +73,9 @@ struct LiveTVGroupProvider: ContentGroupProvider {
         PillGroup(
             displayTitle: "",
             id: "live-tv-channels",
-            elements: [LiveTVPill.channels, .guide, .recordings, .schedule]
+            elements: [QuickLink.channels, .guide, .recordings, .schedule]
         ) { router, pill in
-            switch pill {
-            case .channels:
-                router.route(
-                    to: .library(
-                        library: ItemLibrary(
-                            parent: BaseItemDto(name: L10n.channels),
-                            filters: .init(itemTypes: [.liveTvChannel])
-                        )
-                    )
-                )
-
-            case .guide:
-                router.route(to: .liveGuide)
-
-            case .recordings:
-                router.route(
-                    to: .library(library: RecordingsLibrary())
-                )
-
-            case .schedule:
-                router.route(
-                    to: .library(library: ScheduledRecordingsLibrary())
-                )
-            }
+            router.route(to: pill.route)
         }
 
         PosterGroup(

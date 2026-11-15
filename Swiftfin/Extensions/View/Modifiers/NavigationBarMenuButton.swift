@@ -30,8 +30,8 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
     @ContentBuilder
     func body(content: Self.Content) -> some View {
         content
-            .coordinatedToolbar {
-                CoordinatedToolbarItem {
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     if isLoading {
                         ProgressView()
                     }

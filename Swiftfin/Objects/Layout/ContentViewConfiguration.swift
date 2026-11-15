@@ -28,7 +28,7 @@ struct ContentViewConfiguration: Codable, Hashable, Identifiable, Displayable, S
     }
 
     var displayTitle: String {
-        name.nilIfEmpty ?? L10n.userView
+        name.isEmpty ? L10n.userView : name
     }
 
     var systemImage: String {
@@ -36,6 +36,6 @@ struct ContentViewConfiguration: Codable, Hashable, Identifiable, Displayable, S
     }
 
     var hasValidName: Bool {
-        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        name.nilIfBlank != nil
     }
 }

@@ -33,23 +33,15 @@ struct MainTabView: View {
     private var tabCoordinator: TabCoordinator
 
     init() {
-        _tabCoordinator = StateObject(wrappedValue: Self.defaultTabCoordinator)
-    }
-
-    private static var defaultTabCoordinator: TabCoordinator {
-        TabCoordinator(tabs: TabItem.defaultItems)
-    }
-
-    private var resolvedTabItems: [TabItem] {
-        TabItem.layoutItems(
-            configuration: layout,
-            advanced: isAdvancedLayoutEnabled,
-            experimentEnabled: isLayoutExperimentEnabled
-        )
+        _tabCoordinator = StateObject(wrappedValue: TabCoordinator(tabs: TabItem.defaultItems))
     }
 
     private func updateTabs() {
-        tabCoordinator.updateTabs(resolvedTabItems)
+        tabCoordinator.updateTabs(TabItem.layoutItems(
+            configuration: layout,
+            advanced: isAdvancedLayoutEnabled,
+            experimentEnabled: isLayoutExperimentEnabled
+        ))
     }
 
     private func routePendingDeepLink(_ deepLink: DeepLink?) {
@@ -67,10 +59,12 @@ struct MainTabView: View {
             tab.item
                 .content
                 .withViewContext(.isTabRoot)
-                .coordinatedToolbar {
-                    CoordinatedToolbarItem(order: .trailing) {
-                        TabSettingsBarButton {
-                            isSettingsPresented = true
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        if let userSession = userSessionManager.currentSession {
+                            SettingsBarButton(userSession: userSession) {
+                                isSettingsPresented = true
+                            }
                         }
                     }
                 }
@@ -84,10 +78,7 @@ struct MainTabView: View {
     private func tabView() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
-                Tab(
-                    value: tab.item.id,
-                    role: tab.item.destination == .search ? .search : nil
-                ) {
+                Tab(value: tab.item.id) {
                     tabRoot(tab)
                 } label: {
                     Label(
@@ -122,26 +113,5 @@ struct MainTabView: View {
             .onChange(of: isAdvancedLayoutEnabled, updateTabs)
             .onChange(of: layout, updateTabs)
             .onChange(of: userSessionManager.currentSession?.userData.policy?.isAdministrator, updateTabs)
-    }
-}
-
-private struct TabSettingsBarButton: View {
-
-    @Injected(\.currentUserSession)
-    private var userSession
-
-    @Router
-    private var router
-
-    let action: () -> Void
-
-    @ContentBuilder
-    var body: some View {
-        if router.isRootOfPath,
-           let userSession {
-            SettingsBarButton(userSession: userSession) {
-                action()
-            }
-        }
     }
 }

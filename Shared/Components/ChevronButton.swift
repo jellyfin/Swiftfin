@@ -215,7 +215,7 @@ struct ChevronButtonValueContent<Label: View, Value: View>: View {
     var body: some View {
         HStack {
             label
-                .labelStyle(BoldIconLabelStyle())
+                .labelStyle(.listRow)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             value
@@ -236,11 +236,18 @@ struct ChevronButtonLabelContent<Label: View>: View {
     @ContentBuilder
     var body: some View {
         label
-            .labelStyle(BoldIconLabelStyle())
+            .labelStyle(.listRow)
     }
 }
 
-private struct BoldIconLabelStyle: LabelStyle {
+extension LabelStyle where Self == ListRowLabelStyle {
+
+    static var listRow: Self {
+        ListRowLabelStyle()
+    }
+}
+
+struct ListRowLabelStyle: LabelStyle {
 
     @ContentBuilder
     func makeBody(configuration: Configuration) -> some View {
@@ -249,6 +256,7 @@ private struct BoldIconLabelStyle: LabelStyle {
         } icon: {
             configuration.icon
                 .fontWeight(.bold)
+                .foregroundStyle(.primary)
         }
     }
 }

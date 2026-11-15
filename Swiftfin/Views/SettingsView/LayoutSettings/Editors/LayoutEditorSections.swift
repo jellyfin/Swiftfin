@@ -50,16 +50,24 @@ struct LayoutEditorSections: View {
         Group {
             Section {
                 ForEach(configuration.tabs) { tab in
-                    if !editMode.isEditing,
-                       case let .contentView(id) = tab.destination,
-                       let view = configuration.view(withID: id) {
+                    if !editMode.isEditing, tab.destination == .home {
+                        ChevronButton(L10n.home, systemName: tab.destination.systemImage) {
+                            router.route(to: .homeLayoutSettings)
+                        }
+                    } else if !editMode.isEditing, tab.destination == .search {
+                        ChevronButton(L10n.search, systemName: tab.destination.systemImage) {
+                            router.route(to: .searchLayoutSettings)
+                        }
+                    } else if !editMode.isEditing,
+                              case let .contentView(id) = tab.destination,
+                              let view = configuration.view(withID: id) {
                         ChevronButton {
                             editView(view)
                         } label: {
                             Label(view.displayTitle, systemImage: view.systemImage)
                         }
                     } else {
-                        Label(configuration.title(for: tab), systemImage: configuration.icon(for: tab))
+                        Label(configuration.title(for: tab.destination), systemImage: configuration.icon(for: tab.destination))
                     }
                 }
                 .onMove {
@@ -72,7 +80,8 @@ struct LayoutEditorSections: View {
                 }
                 .deleteDisabled(configuration.tabs.count == 1)
 
-                ChevronButton(L10n.addTab, systemName: "plus", action: addTab)
+                Button(L10n.add, systemImage: "plus", action: addTab)
+                    .labelStyle(.titleAndIcon)
                     .disabled(!configuration.canAddTab || editMode.isEditing)
             } header: {
                 HStack {
@@ -86,20 +95,25 @@ struct LayoutEditorSections: View {
                 }
             } footer: {
                 if !configuration.canAddTab {
-                    Text(L10n.tabLimit)
+                    Text(L10n.tabLimit(LayoutConfiguration.maximumTabCount))
                 }
             }
 
             Section(L10n.userViews) {
                 ForEach(configuration.views) { view in
-                    ChevronButton(view.displayTitle) { editView(view) }
-                        .swipeActions {
-                            Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                                pendingViewDeletion = view
-                            }
+                    ChevronButton { editView(view) } label: {
+                        Label(view.displayTitle, systemImage: view.systemImage)
+                    }
+                    .swipeActions {
+                        Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                            pendingViewDeletion = view
                         }
+                    }
                 }
-                ChevronButton(L10n.addView, systemName: "plus") { editView() }
+                Button(L10n.add, systemImage: "plus") {
+                    editView()
+                }
+                .labelStyle(.titleAndIcon)
             }
             .disabled(editMode.isEditing)
 
@@ -110,6 +124,7 @@ struct LayoutEditorSections: View {
                 .disabled(editMode.isEditing)
             }
         }
+        .labelStyle(.listRow)
         .environment(\.editMode, $editMode)
         .confirmationDialog(L10n.reset, isPresented: $isResetPresented, titleVisibility: .visible) {
             Button(L10n.reset, role: .destructive) {

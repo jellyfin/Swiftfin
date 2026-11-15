@@ -38,12 +38,8 @@ struct LayoutSettingsView: View {
                 LayoutEditorSections(configuration: $configuration)
             } else {
                 HomeSection()
-
-                Section(L10n.posters) {
-                    ForEach(HomePosterGroup.allCases) { group in
-                        HomePosterSettingsView.Row(group: group)
-                    }
-                }
+                SearchSection()
+                PostersSection()
             }
         }
         .navigationTitle(L10n.layout)

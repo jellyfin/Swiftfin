@@ -8,12 +8,15 @@
 
 import Foundation
 
-enum LiveTVElement: Codable, Hashable, Displayable, SystemImageable {
+enum LiveTVElement: CaseIterable, Codable, Hashable, Displayable, SystemImageable {
 
     case quickLinks
     case onNow
     case recordings
     case programCategory(ProgramSection)
+
+    static let allCases: [Self] = [.quickLinks, .onNow, .recordings] +
+        [ProgramSection.series, .movies, .kids, .sports, .news].map(Self.programCategory)
 
     var displayTitle: String {
         switch self {

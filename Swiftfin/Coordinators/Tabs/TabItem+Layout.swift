@@ -12,8 +12,9 @@ import SwiftUI
 
 extension TabItem {
 
+    @MainActor
     static var defaultItems: [TabItem] {
-        [.home, .search, .media]
+        LayoutConfiguration.defaultTabs.compactMap { TabItem($0, in: .default) }
     }
 
     @MainActor
@@ -52,8 +53,8 @@ extension TabItem {
 
         self.init(
             id: tab.id,
-            title: layout.title(for: tab),
-            systemImage: layout.icon(for: tab),
+            title: layout.title(for: tab.destination),
+            systemImage: layout.icon(for: tab.destination),
             destination: tab.destination
         ) {
             Self.content(for: tab, view: view)

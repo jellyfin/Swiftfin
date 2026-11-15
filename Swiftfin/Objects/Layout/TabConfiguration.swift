@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TabConfiguration: Codable, Hashable, Identifiable, Displayable, SystemImageable {
+struct TabConfiguration: Codable, Hashable, Identifiable {
 
     let id: String
     var destination: TabDestination
@@ -19,14 +19,6 @@ struct TabConfiguration: Codable, Hashable, Identifiable, Displayable, SystemIma
     ) {
         self.id = id
         self.destination = destination
-    }
-
-    var displayTitle: String {
-        destination.displayTitle
-    }
-
-    var systemImage: String {
-        destination.systemImage
     }
 
     static let home = Self(
@@ -43,33 +35,4 @@ struct TabConfiguration: Codable, Hashable, Identifiable, Displayable, SystemIma
         id: "media",
         destination: .media
     )
-
-    static func liveTV(
-        id: String = "live-tv"
-    ) -> Self {
-        .init(
-            id: id,
-            destination: .liveTV
-        )
-    }
-
-    static func contentView(
-        id: String = UUID().uuidString,
-        viewID: String
-    ) -> Self {
-        .init(
-            id: id,
-            destination: .contentView(id: viewID)
-        )
-    }
-
-    static func admin(
-        id: String = UUID().uuidString,
-        destination: AdminTabDestination
-    ) -> Self {
-        .init(
-            id: id,
-            destination: .admin(destination)
-        )
-    }
 }

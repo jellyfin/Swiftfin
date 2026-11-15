@@ -12,8 +12,8 @@ import SwiftUI
 
 struct ContentGroupEditorView: View {
 
-    @Binding
-    private var group: ContentGroupConfiguration
+    @StateObject
+    private var group: PublishedBox<ContentGroupConfiguration>
     @State
     private var isNextUpDaysPresented = false
 
@@ -21,85 +21,77 @@ struct ContentGroupEditorView: View {
     private var router
 
     init(group: Binding<ContentGroupConfiguration>) {
-        _group = group
-    }
-
-    private var groupTitle: Binding<String> {
-        Binding {
-            group.title ?? ""
-        } set: {
-            group.title = $0.nilIfEmpty
-        }
+        _group = StateObject(wrappedValue: PublishedBox(source: group))
     }
 
     private var libraryConfiguration: Binding<LibraryGroupConfiguration>? {
-        guard case .library = group.source else { return nil }
+        guard case .library = group.value.source else { return nil }
 
         return Binding {
-            guard case let .library(configuration) = group.source else { return .init() }
+            guard case let .library(configuration) = group.value.source else { return .init() }
 
             return configuration
         } set: {
-            group.source = .library($0)
+            group.value.source = .library($0)
         }
     }
 
     private var resumeConfiguration: Binding<ResumeGroupConfiguration>? {
-        guard case .resume = group.source else { return nil }
+        guard case .resume = group.value.source else { return nil }
 
         return Binding {
-            guard case let .resume(configuration) = group.source else { return .init() }
+            guard case let .resume(configuration) = group.value.source else { return .init() }
 
             return configuration
         } set: {
-            group.source = .resume($0)
+            group.value.source = .resume($0)
         }
     }
 
     private var nextUpConfiguration: Binding<NextUpGroupConfiguration>? {
-        guard case .nextUp = group.source else { return nil }
+        guard case .nextUp = group.value.source else { return nil }
 
         return Binding {
-            guard case let .nextUp(configuration) = group.source else { return .init() }
+            guard case let .nextUp(configuration) = group.value.source else { return .init() }
 
             return configuration
         } set: {
-            group.source = .nextUp($0)
+            group.value.source = .nextUp($0)
         }
     }
 
     private var liveTVConfiguration: Binding<LiveTVGroupConfiguration>? {
-        guard case .liveTV = group.source else { return nil }
+        guard case .liveTV = group.value.source else { return nil }
 
         return Binding {
-            guard case let .liveTV(configuration) = group.source else { return .init() }
+            guard case let .liveTV(configuration) = group.value.source else { return .init() }
 
             return configuration
         } set: {
-            group.source = .liveTV($0)
+            group.value.source = .liveTV($0)
         }
     }
 
     private var genresConfiguration: Binding<GenresGroupConfiguration>? {
-        guard case .genres = group.source else { return nil }
+        guard case .genres = group.value.source else { return nil }
 
         return Binding {
-            guard case let .genres(configuration) = group.source else { return .init() }
+            guard case let .genres(configuration) = group.value.source else { return .init() }
 
             return configuration
         } set: {
-            group.source = .genres($0)
+            group.value.source = .genres($0)
         }
     }
 
     private func chooseLibrary(
         selectionID: String?,
-        action: @escaping (LibraryReference?) -> Void
+        action: @escaping (ItemReference?) -> Void
     ) {
         router.route(
-            to: NavigationRoute(id: "layout-group-library-\(group.id)") {
+            to: NavigationRoute(id: "layout-group-library-\(group.value.id)") {
                 LayoutLibraryPickerView(selectionID: selectionID) { item in
-                    action(item.map(LibraryReference.init(library:)))
+                    action(item.map(ItemReference.init(item:)))
                 }
             }
         )
@@ -110,7 +102,7 @@ struct ContentGroupEditorView: View {
         action: @escaping (ItemReference?) -> Void
     ) {
         router.route(
-            to: NavigationRoute(id: "layout-group-series-\(group.id)") {
+            to: NavigationRoute(id: "layout-group-series-\(group.value.id)") {
                 LayoutItemPickerView(
                     selectionID: selectionID,
                     includedItemTypes: [.series],
@@ -123,15 +115,19 @@ struct ContentGroupEditorView: View {
         )
     }
 
-    private func chooseItemTypes(_ selection: Binding<[BaseItemKind]>) {
+    private func chooseItemTypes(
+        _ selection: Binding<[BaseItemKind]>,
+        sources: [BaseItemKind] = BaseItemKind.supportedCases
+    ) {
         router.route(
-            to: NavigationRoute(id: "layout-group-item-types-\(group.id)") {
+            to: NavigationRoute(id: "layout-group-item-types-\(group.value.id)") {
                 SelectorView(
                     selection: selection,
-                    sources: LayoutItemTypes.all,
+                    sources: sources,
                     type: .multi
                 )
                 .navigationTitle(L10n.type)
+                .toolbarTitleDisplayMode(.inline)
             }
         )
     }
@@ -147,23 +143,10 @@ struct ContentGroupEditorView: View {
         }
     }
 
-    private var liveTVElements: [LiveTVElement] {
-        [
-            .quickLinks,
-            .onNow,
-            .recordings,
-            .programCategory(.series),
-            .programCategory(.movies),
-            .programCategory(.kids),
-            .programCategory(.sports),
-            .programCategory(.news),
-        ]
-    }
-
     @ContentBuilder
     private func sourceRow(
         title: String,
-        reference: LibraryReference?,
+        reference: ItemReference?,
         action: @escaping () -> Void
     ) -> some View {
         ChevronButton(title, action: action) {
@@ -210,14 +193,10 @@ struct ContentGroupEditorView: View {
                     }
                 }
 
-                TextField(
-                    L10n.search,
-                    value: configuration.searchTerm,
-                    format: .nilIfEmptyString
-                )
+                SearchFilterRow(query: configuration.searchTerm)
 
                 ChevronButton(L10n.type) {
-                    chooseItemTypes(configuration.itemTypes)
+                    chooseItemTypes(configuration.itemTypes, sources: ResumeItemsLibrary().libraryItemTypes)
                 } content: {
                     Text(configuration.wrappedValue.itemTypes.isEmpty ? L10n.all : "\(configuration.wrappedValue.itemTypes.count)")
                 }
@@ -299,7 +278,7 @@ struct ContentGroupEditorView: View {
         if let configuration = liveTVConfiguration {
             Section(L10n.liveTV) {
                 Picker(L10n.liveTV, selection: configuration.element) {
-                    ForEach(liveTVElements, id: \.self) { element in
+                    ForEach(LiveTVElement.allCases, id: \.self) { element in
                         Label(element.displayTitle, systemImage: element.systemImage)
                             .tag(element)
                     }
@@ -325,11 +304,7 @@ struct ContentGroupEditorView: View {
                     }
                 }
 
-                TextField(
-                    L10n.search,
-                    value: configuration.searchTerm,
-                    format: .nilIfEmptyString
-                )
+                SearchFilterRow(query: configuration.searchTerm)
 
                 ChevronButton(L10n.type) {
                     chooseItemTypes(configuration.itemTypes)
@@ -342,7 +317,7 @@ struct ContentGroupEditorView: View {
 
     @ContentBuilder
     private var configurationEditor: some View {
-        switch group.source {
+        switch group.value.source {
         case .library:
             libraryEditor
         case .resume:
@@ -358,18 +333,19 @@ struct ContentGroupEditorView: View {
 
     @ContentBuilder
     var body: some View {
-        Form(systemImage: group.systemImage) {
+        Form(systemImage: group.value.systemImage) {
             Section(L10n.name) {
                 TextField(
                     L10n.name,
-                    text: groupTitle,
-                    prompt: Text(group.source.displayTitle)
+                    value: $group.value.title,
+                    format: .nilIfEmptyString,
+                    prompt: Text(group.value.source.displayTitle)
                 )
             }
 
             configurationEditor
         }
-        .navigationTitle(group.displayTitle)
+        .navigationTitle(group.value.displayTitle)
         .toolbarTitleDisplayMode(.inline)
     }
 }

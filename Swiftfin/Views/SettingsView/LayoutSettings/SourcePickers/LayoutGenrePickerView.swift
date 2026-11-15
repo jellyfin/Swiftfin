@@ -14,14 +14,11 @@ struct LayoutGenrePickerView: View {
 
     @Binding
     var selection: [ItemGenre]
-    let library: LibraryReference?
+    let library: ItemReference?
     let itemTypes: [BaseItemKind]
 
     @Injected(\.currentUserSession)
     private var userSession
-    @Router
-    private var router
-
     @State
     private var genres: [ItemGenre] = []
     @State
@@ -55,12 +52,8 @@ struct LayoutGenrePickerView: View {
             }
         }
         .navigationTitle(L10n.genres)
-        .navigationBarCloseButton { router.dismiss() }
+        .toolbarTitleDisplayMode(.inline)
         .searchable(text: $search)
-        .topBarTrailing {
-            Button(L10n.reset) { selection = [] }
-                .disabled(selection.isEmpty)
-        }
         .refreshable { await loadGenres() }
         .task { await loadGenres() }
     }
@@ -79,7 +72,8 @@ struct LayoutGenrePickerView: View {
             var parameters = Paths.GetQueryFiltersParameters()
             parameters.userID = userSession.user.id
             parameters.parentID = library?.id
-            parameters.includeItemTypes = itemTypes.isEmpty ? library?.baseItem.supportedItemTypes ?? LayoutItemTypes.all : itemTypes
+            parameters.includeItemTypes = itemTypes.isEmpty ? library?.baseItem.supportedItemTypes ?? BaseItemKind
+                .supportedCases : itemTypes
             parameters.isRecursive = true
             let response = try await userSession.client.send(Paths.getQueryFilters(parameters: parameters))
             try Task.checkCancellation()

@@ -47,7 +47,7 @@ enum HomePosterGroup: String, Codable, CaseIterable, Displayable, Identifiable {
                 displayType: .grid,
                 posterDisplayType: defaultSettings.displayType,
                 listColumnCount: 1,
-                posterSize: defaultSettings.size.posterSize
+                posterSize: defaultSettings.size
             )
         )
 
@@ -65,7 +65,7 @@ enum HomePosterGroup: String, Codable, CaseIterable, Displayable, Identifiable {
             id: id ?? self.id,
             library: library,
             posterDisplayType: defaultSettings.displayType,
-            posterSize: defaultSettings.size.posterSize,
+            posterSize: defaultSettings.size,
             libraryStyleKey: libraryStyleKey,
             _viewContext: viewContext
         )
@@ -90,7 +90,7 @@ enum HomePosterGroup: String, Codable, CaseIterable, Displayable, Identifiable {
 
         var style = key.defaultValue()
         style.posterDisplayType = settings.displayType
-        style.posterSize = settings.size.posterSize
+        style.posterSize = settings.size
         StoredValues[key] = style
     }
 

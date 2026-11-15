@@ -6,42 +6,21 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import FactoryKit
-import Foundation
 import JellyfinAPI
 import SwiftUI
 
 struct LayoutItemPickerView: View {
 
-    @Injected(\.currentUserSession)
-    private var userSession
-
     @Router
     private var router
 
+    @StateObject
+    private var viewModel: PagingLibraryViewModel<ItemLibrary>
+
     @State
-    private var items: [BaseItemDto] = []
-    @State
-    private var error: ErrorMessage?
-    @State
-    private var isLoading = true
-    @State
-    private var searchQuery = ""
-    @State
-    private var activeRequestID: UUID?
-    @State
-    private var hasMoreItems = false
-    @State
-    private var isLoadingMore = false
-    @State
-    private var loadedQuery = ""
-    @State
-    private var nextPageStartIndex = 0
-    @State
-    private var pageError: ErrorMessage?
+    private var isSearchPresented = false
 
     private let selectionID: String?
-    private let includedItemTypes: [BaseItemKind]
     private let nilSelectionTitle: String?
     private let title: String
     private let disabledItemIDs: Set<String>
@@ -58,7 +37,15 @@ struct LayoutItemPickerView: View {
         onSelect: @escaping (BaseItemDto?) -> Void
     ) {
         self.selectionID = selectionID
-        self.includedItemTypes = includedItemTypes
+        self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(
+            library: ItemLibrary(
+                parent: BaseItemDto(),
+                filters: .init(itemTypes: includedItemTypes, sortBy: [.name]),
+                useRememberedFilters: false
+            ),
+            pageSize: 100,
+            refreshesForStoreChanges: false
+        ))
         self.nilSelectionTitle = nilSelectionTitle
         self.title = title
         self.disabledItemIDs = disabledItemIDs
@@ -67,6 +54,10 @@ struct LayoutItemPickerView: View {
     }
 
     private func select(_ item: BaseItemDto?) {
+        // End search before its text field is removed from the navigation stack.
+        if dismissOnSelect {
+            isSearchPresented = false
+        }
         onSelect(item)
         if dismissOnSelect {
             router.dismiss()
@@ -76,31 +67,24 @@ struct LayoutItemPickerView: View {
     @ContentBuilder
     var body: some View {
         Group {
-            if isLoading {
+            if viewModel.background.is(.searching) {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let error {
+            } else if let error = viewModel.error, viewModel.searchElements.isEmpty, viewModel.isSearchActive {
                 ErrorView(error: error)
             } else {
                 itemList
             }
         }
         .navigationTitle(title)
-        .searchable(text: $searchQuery)
+        .searchable(text: $viewModel.searchQuery, isPresented: $isSearchPresented)
+        .onChange(of: viewModel.searchQuery) {
+            viewModel.error = nil
+        }
         .refreshable {
-            await getItems(query: normalizedSearchQuery)
+            viewModel.error = nil
+            await viewModel.search(query: viewModel.searchQuery.nilIfBlank ?? "")
         }
-        .task(id: searchQuery) {
-            do {
-                try await Task.sleep(for: .milliseconds(350))
-                try Task.checkCancellation()
-                await getItems(query: normalizedSearchQuery)
-            } catch {}
-        }
-    }
-
-    private var normalizedSearchQuery: String {
-        searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     @ContentBuilder
@@ -129,37 +113,38 @@ struct LayoutItemPickerView: View {
                 .accessibilityAddTraits(selectionID == nil ? .isSelected : [])
             }
 
-            if items.isEmpty {
+            if viewModel.searchElements.isEmpty {
                 ContentUnavailableView(
-                    normalizedSearchQuery.isEmpty ? L10n.noItems.localizedCapitalized : L10n.noResults.localizedCapitalized,
-                    systemImage: normalizedSearchQuery.isEmpty ? "rectangle.on.rectangle.slash" : "magnifyingglass"
+                    viewModel.isSearchActive ? L10n.noResults.localizedCapitalized : L10n.search,
+                    systemImage: "magnifyingglass"
                 )
                 .listRowBackground(Color.clear)
             }
 
-            ForEach(items, id: \.id) { item in
-                itemButton(item)
-                    .task {
-                        if item.id == items.last?.id {
-                            await getNextPage()
+            ForEach(viewModel.searchElements) { item in
+                itemButton(item.snapshot)
+                    .onAppear {
+                        if item.id == viewModel.searchElements.last?.id {
+                            viewModel.getNextSearchPage()
                         }
                     }
             }
 
-            if let pageError {
+            if let error = viewModel.error, !viewModel.searchElements.isEmpty {
                 VStack {
-                    Text(pageError.localizedDescription)
+                    Text(error.localizedDescription)
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
                     Button(L10n.retry) {
-                        Task { await getNextPage() }
+                        viewModel.error = nil
+                        viewModel.getNextSearchPage()
                     }
                 }
                 .frame(maxWidth: .infinity)
             }
 
-            if isLoadingMore {
+            if viewModel.background.is(.gettingNextSearchPage) {
                 ProgressView()
                     .frame(maxWidth: .infinity)
                     .listRowBackground(Color.clear)
@@ -225,129 +210,4 @@ struct LayoutItemPickerView: View {
 
         return components.isEmpty ? nil : components.joined(separator: " • ")
     }
-
-    @MainActor
-    private func getItems(query: String) async {
-        let requestID = UUID()
-        activeRequestID = requestID
-        hasMoreItems = false
-        isLoading = true
-        isLoadingMore = false
-        loadedQuery = query
-        nextPageStartIndex = 0
-        error = nil
-        pageError = nil
-
-        defer {
-            if activeRequestID == requestID {
-                isLoading = false
-            }
-        }
-
-        guard let userSession else {
-            items = []
-            error = ErrorMessage(L10n.signIn)
-            return
-        }
-
-        let parameters = itemParameters(
-            query: query,
-            startIndex: 0,
-            userID: userSession.user.id
-        )
-
-        do {
-            let response = try await userSession.client.send(
-                Paths.getItems(parameters: parameters)
-            )
-            try Task.checkCancellation()
-            guard activeRequestID == requestID else { return }
-
-            let responseItems = response.value.items ?? []
-            items = responseItems
-                .filter { $0.id?.isEmpty == false }
-                .uniqued { $0.id }
-            nextPageStartIndex = responseItems.count
-            hasMoreItems = responseItems.count == Self.pageSize
-        } catch is CancellationError {
-            return
-        } catch {
-            guard !Task.isCancelled, activeRequestID == requestID else { return }
-
-            items = []
-            self.error = ErrorMessage(error.localizedDescription)
-        }
-    }
-
-    @MainActor
-    private func getNextPage() async {
-        guard hasMoreItems,
-              !isLoading,
-              !isLoadingMore,
-              let userSession,
-              normalizedSearchQuery == loadedQuery,
-              let requestID = activeRequestID
-        else {
-            return
-        }
-
-        isLoadingMore = true
-        pageError = nil
-
-        defer {
-            if activeRequestID == requestID {
-                isLoadingMore = false
-            }
-        }
-
-        let parameters = itemParameters(
-            query: loadedQuery,
-            startIndex: nextPageStartIndex,
-            userID: userSession.user.id
-        )
-
-        do {
-            let response = try await userSession.client.send(
-                Paths.getItems(parameters: parameters)
-            )
-            try Task.checkCancellation()
-
-            guard activeRequestID == requestID,
-                  normalizedSearchQuery == loadedQuery
-            else {
-                return
-            }
-
-            let responseItems = response.value.items ?? []
-            items = (items + responseItems)
-                .filter { $0.id?.isEmpty == false }
-                .uniqued { $0.id }
-            nextPageStartIndex += responseItems.count
-            hasMoreItems = responseItems.count == Self.pageSize
-        } catch {
-            guard !Task.isCancelled, activeRequestID == requestID else { return }
-
-            pageError = ErrorMessage(error.localizedDescription)
-        }
-    }
-
-    private func itemParameters(
-        query: String,
-        startIndex: Int,
-        userID: String
-    ) -> Paths.GetItemsParameters {
-        var parameters = Paths.GetItemsParameters()
-        parameters.enableUserData = true
-        parameters.includeItemTypes = includedItemTypes
-        parameters.isRecursive = true
-        parameters.limit = Self.pageSize
-        parameters.searchTerm = query.isEmpty ? nil : query
-        parameters.sortBy = [.name]
-        parameters.sortOrder = [.ascending]
-        parameters.startIndex = startIndex
-        parameters.userID = userID
-        return parameters
-    }
-
-    private static let pageSize = 100
 }

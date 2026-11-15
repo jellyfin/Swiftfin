@@ -25,7 +25,7 @@ struct HomePosterSettingsView: View {
         Form(systemImage: "rectangle.3.group") {
             PosterGroupSettingsEditor(
                 displayType: $libraryStyle.posterDisplayType,
-                size: $libraryStyle.posterSize.coalesce(group.defaultSettings.size.posterSize)
+                size: $libraryStyle.posterSize.coalesce(group.defaultSettings.size)
             )
         }
         .navigationTitle(group.displayTitle)

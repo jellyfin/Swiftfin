@@ -24,18 +24,18 @@ struct LayoutConfiguration: Hashable, Storable {
         tabs.count < Self.maximumTabCount
     }
 
-    func title(for tab: TabConfiguration) -> String {
-        if case let .contentView(id) = tab.destination {
-            return view(withID: id)?.displayTitle ?? tab.destination.displayTitle
+    func title(for destination: TabDestination) -> String {
+        if case let .contentView(id) = destination {
+            return view(withID: id)?.displayTitle ?? destination.displayTitle
         }
-        return tab.destination.displayTitle
+        return destination.displayTitle
     }
 
-    func icon(for tab: TabConfiguration) -> String {
-        if case let .contentView(id) = tab.destination {
-            return view(withID: id)?.systemImage ?? tab.destination.systemImage
+    func icon(for destination: TabDestination) -> String {
+        if case let .contentView(id) = destination {
+            return view(withID: id)?.systemImage ?? destination.systemImage
         }
-        return tab.destination.systemImage
+        return destination.systemImage
     }
 
     func canAddTab(destination: TabDestination) -> Bool {

@@ -11,7 +11,11 @@ import JellyfinAPI
 struct RecommendedProgramsLibrary: BaseItemKindLibrary {
 
     let libraryItemTypes: [BaseItemKind] = [.program]
-    let parent: TitledLibraryParent = .init(displayTitle: L10n.onNow, id: "programs-recommended")
+    let parent: TitledLibraryParent
+
+    init(parent: TitledLibraryParent = .init(displayTitle: L10n.onNow, id: "programs-recommended")) {
+        self.parent = parent
+    }
 
     func retrievePage(
         environment: Empty,

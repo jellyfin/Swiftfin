@@ -17,30 +17,26 @@ struct LayoutFilterEditor: View {
     @StoredValue(.User.savedFilters)
     private var savedFilters
 
-    private let library: LibraryReference?
+    private let library: ItemReference?
 
     @Router
     private var router
 
-    init(filters: Binding<ItemFilterCollection>, library: LibraryReference? = nil) {
+    init(filters: Binding<ItemFilterCollection>, library: ItemReference? = nil) {
         _filters = filters
         self.library = library
-    }
-
-    private var savableFilters: ItemFilterCollection {
-        filters
-            .mutating(\.itemTypes, with: [])
-            .mutating(\.query, with: nil)
-    }
-
-    private var selectedSavedFilter: StoredItemFilter? {
-        savedFilters.first { $0.filters == savableFilters }
     }
 
     private func applyFilters(_ savedFilters: ItemFilterCollection) {
         filters = savedFilters
             .mutating(\.itemTypes, with: filters.itemTypes)
             .mutating(\.query, with: filters.query)
+    }
+
+    private func chooseSavedFilters() {
+        router.route(to: NavigationRoute(id: "layout-saved-filters") {
+            SavedFiltersView(onApply: applyFilters)
+        })
     }
 
     private var sortBy: Binding<ItemSortBy> {
@@ -60,7 +56,7 @@ struct LayoutFilterEditor: View {
     }
 
     private func chooseGenres() {
-        router.route(to: NavigationRoute(id: "layout-genres", style: .sheet) {
+        router.route(to: NavigationRoute(id: "layout-genres") {
             LayoutGenrePickerView(selection: $filters.genres, library: library, itemTypes: filters.itemTypes)
         })
     }
@@ -70,10 +66,11 @@ struct LayoutFilterEditor: View {
             to: NavigationRoute(id: "layout-item-types") {
                 SelectorView(
                     selection: $filters.itemTypes,
-                    sources: LayoutItemTypes.all,
+                    sources: BaseItemKind.supportedCases,
                     type: .multi
                 )
                 .navigationTitle(L10n.type)
+                .toolbarTitleDisplayMode(.inline)
             }
         )
     }
@@ -87,6 +84,7 @@ struct LayoutFilterEditor: View {
                     type: .multi
                 )
                 .navigationTitle(L10n.filters)
+                .toolbarTitleDisplayMode(.inline)
             }
         )
     }
@@ -94,33 +92,12 @@ struct LayoutFilterEditor: View {
     @ContentBuilder
     var body: some View {
         Section {
-            Menu {
-                ForEach(savedFilters) { savedFilter in
-                    Button {
-                        applyFilters(savedFilter.filters)
-                    } label: {
-                        if selectedSavedFilter?.id == savedFilter.id {
-                            Label(savedFilter.name, systemImage: "checkmark")
-                        } else {
-                            Text(savedFilter.name)
-                        }
-                    }
-                }
-            } label: {
-                LabeledContent(L10n.savedFilters) {
-                    Text(selectedSavedFilter?.name ?? (savableFilters == .default ? L10n.none : L10n.custom))
-                        .lineLimit(1)
-                }
-            }
-            .disabled(savedFilters.isEmpty)
+            Button(L10n.savedFilters, action: chooseSavedFilters)
+                .disabled(savedFilters.isEmpty)
+        }
 
-            TextField(
-                L10n.search,
-                value: $filters.query,
-                format: .nilIfEmptyString
-            )
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled()
+        Section {
+            SearchFilterRow(query: $filters.query)
 
             ChevronButton(L10n.genres, action: chooseGenres) {
                 Text(filters.genres.isEmpty ? L10n.all : filters.genres.map(\.displayTitle).joined(separator: ", "))
@@ -135,26 +112,19 @@ struct LayoutFilterEditor: View {
                 Text(filters.traits.isEmpty ? L10n.all : "\(filters.traits.count)")
             }
 
-            Picker(L10n.sort, selection: sortBy) {
-                ForEach(ItemSortBy.supportedCases, id: \.self) { sort in
-                    Text(sort.displayTitle)
-                        .tag(sort)
-                }
-            }
-
-            Picker(L10n.order, selection: sortOrder) {
-                ForEach(ItemSortOrder.allCases, id: \.self) { order in
-                    Text(order.displayTitle)
-                        .tag(order)
-                }
-            }
-
-            Button(L10n.reset) {
-                applyFilters(.default)
-            }
-            .disabled(savableFilters == .default)
+            Picker(L10n.sort, selection: sortBy, onlySupported: true)
+            Picker(L10n.order, selection: sortOrder)
         } header: {
-            Text(L10n.filters)
+            HStack {
+                Text(L10n.filters)
+
+                Spacer()
+
+                Button(L10n.reset) {
+                    applyFilters(.default)
+                }
+                .disabled(filters == ItemFilterCollection(itemTypes: filters.itemTypes, query: filters.query))
+            }
         }
     }
 }

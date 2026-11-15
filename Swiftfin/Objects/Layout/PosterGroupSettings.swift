@@ -10,15 +10,51 @@ import Foundation
 
 struct PosterGroupSettings: Codable, Hashable {
 
+    private enum CodingKeys: String, CodingKey {
+
+        case displayType
+        case size
+    }
+
     var displayType: PosterDisplayType
-    var size: PosterSize
+    var size: PosterDisplayType.Size
 
     init(
         displayType: PosterDisplayType = .portrait,
-        size: PosterSize = .small
+        size: PosterDisplayType.Size = .small
     ) {
         self.displayType = displayType
         self.size = size
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(displayType, forKey: .displayType)
+
+        switch size {
+        case .extraSmall: try container.encode("extraSmall", forKey: .size)
+        case .small: try container.encode("small", forKey: .size)
+        case .medium: try container.encode("medium", forKey: .size)
+        case .custom: try container.encode(size, forKey: .size)
+        }
+    }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        displayType = try container.decode(PosterDisplayType.self, forKey: .displayType)
+
+        if let size = try? container.decode(PosterDisplayType.Size.self, forKey: .size) {
+            self.size = size
+        } else {
+            // The original experimental layout stored sizes as strings.
+            switch try container.decode(String.self, forKey: .size) {
+            case "extraSmall": size = .extraSmall
+            case "small": size = .small
+            case "medium": size = .medium
+            default:
+                throw DecodingError.dataCorruptedError(forKey: .size, in: container, debugDescription: "Invalid poster size")
+            }
+        }
     }
 
     static let `default` = Self()

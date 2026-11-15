@@ -11,17 +11,17 @@ import JellyfinAPI
 
 struct GenresGroupConfiguration: Codable, Hashable {
 
-    var parent: LibraryReference?
+    var parent: ItemReference?
     var searchTerm: String?
     var itemTypes: [BaseItemKind]
 
     init(
-        parent: LibraryReference? = nil,
+        parent: ItemReference? = nil,
         searchTerm: String? = nil,
         itemTypes: [BaseItemKind] = []
     ) {
         self.parent = parent
-        self.searchTerm = searchTerm.nilIfEmpty
+        self.searchTerm = searchTerm.isNilOrEmpty ? nil : searchTerm
         self.itemTypes = itemTypes
     }
 }
