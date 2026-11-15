@@ -10,9 +10,10 @@ import SwiftUI
 
 typealias MenuContentGroupBuilder = ArrayBuilder<MenuContentGroup>
 
+@MainActor
 struct MenuContentGroup: Identifiable, Equatable {
 
-    let id: String
+    nonisolated let id: String
     let content: AnyView
     let isPrimary: Bool
 
@@ -26,14 +27,14 @@ struct MenuContentGroup: Identifiable, Equatable {
         self.content = AnyView(content())
     }
 
-    static func == (lhs: MenuContentGroup, rhs: MenuContentGroup) -> Bool {
+    nonisolated static func == (lhs: MenuContentGroup, rhs: MenuContentGroup) -> Bool {
         lhs.id == rhs.id
     }
 }
 
 struct MenuContentKey: PreferenceKey {
 
-    static var defaultValue: [MenuContentGroup] = []
+    static let defaultValue: [MenuContentGroup] = []
 
     static func reduce(value: inout [MenuContentGroup], nextValue: () -> [MenuContentGroup]) {
         value.append(contentsOf: nextValue())

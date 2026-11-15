@@ -9,6 +9,7 @@
 import Foundation
 import JellyfinAPI
 
+@MainActor
 struct ProgramBlock: Identifiable {
 
     struct ID: Hashable {
