@@ -20,12 +20,11 @@ struct ActiveSessionsView: View {
 
     @StateObject
     private var gridProxy = CollectionVGridProxy()
+    @StateObject
+    private var viewModel = ActiveSessionsViewModel()
 
     @StoredValue(.User.libraryStyle(id: "active-sessions"))
     private var libraryStyle: LibraryStyle
-
-    @StateObject
-    private var viewModel = ActiveSessionsViewModel()
 
     @ContentBuilder
     private var activeWithinFilterButton: some View {
@@ -123,8 +122,9 @@ struct ActiveSessionsView: View {
                     }
                 }
                 .proxy(gridProxy)
+                .contentInsetAdjustmentBehavior(.never)
+                .ignoresSafeArea(edges: .vertical)
             }
-            .ignoresSafeArea(edges: .vertical)
         }
     }
 

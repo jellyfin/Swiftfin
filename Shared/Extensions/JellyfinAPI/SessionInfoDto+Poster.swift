@@ -30,6 +30,39 @@ extension SessionInfoDto: Poster {
         nowPlayingItem?.systemImage ?? "person.fill"
     }
 
+    func resolveEnvironment(_ environment: EnvironmentValues) -> Environment {
+        nowPlayingItem?.resolveEnvironment(environment) ?? .default
+    }
+
+    func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
+
+        var details: [String?] = [client, deviceName]
+
+        if let nowPlayingItem, let playState {
+
+            details.append(playState.isPaused == true ? L10n.pause : L10n.play)
+
+            let position = PosterAccessibility.duration(playState.position ?? .zero)
+
+            if let runtime = nowPlayingItem.runtime {
+                details.append(L10n.playbackPositionOfTotal(position, PosterAccessibility.duration(runtime)))
+            } else {
+                details.append(position)
+            }
+
+            details.append(playMethodDisplayTitle)
+
+            if playState.playMethod == .transcode {
+                details.append(contentsOf: transcodingInfo?.transcodeReasons?.map(\.displayTitle) ?? [])
+            }
+        }
+
+        return PosterAccessibility(
+            label: PosterAccessibility.joined([displayTitle, nowPlayingItem?.displayTitle]),
+            value: PosterAccessibility.joined(details)
+        )
+    }
+
     @ContentBuilder
     var posterLabel: some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -60,11 +93,16 @@ extension SessionInfoDto: Poster {
         for displayType: PosterDisplayType,
         environment: Environment
     ) -> [ImageSource] {
-        guard let nowPlayingItem,
-              displayType != .square || nowPlayingItem.type?.preferredPosterDisplayType == .square
-        else { return [] }
+        nowPlayingItem?.imageSources(for: displayType, environment: environment) ?? []
+    }
 
-        return nowPlayingItem.imageSources(for: displayType, environment: environment)
+    @ContentBuilder
+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
+        if let nowPlayingItem {
+            nowPlayingItem.transform(image: image, displayType: displayType)
+        } else {
+            image
+        }
     }
 }
 
@@ -122,6 +160,12 @@ private struct SessionPosterOverlay: View {
     let session: SessionInfoDto
     let displayType: PosterDisplayType
 
+    private var playbackProgress: Double {
+        guard let runtime = session.nowPlayingItem?.runTimeTicks, runtime > 0 else { return 0 }
+
+        return Double(session.playState?.positionTicks ?? 0) / Double(runtime)
+    }
+
     @ArrayBuilder<QuadrantItem>
     private func indicators(_ playState: PlayerStateInfo) -> [QuadrantItem] {
         if playState.playMethod == .transcode, let transcodeReasons = session.transcodingInfo?.transcodeReasons {
@@ -135,7 +179,7 @@ private struct SessionPosterOverlay: View {
 
     @ContentBuilder
     var body: some View {
-        if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
+        if session.nowPlayingItem != nil, let playState = session.playState {
             VStack(spacing: 0) {
                 Quadrant(.topTrailing) {
                     QuadrantItem(color: theme.accentColor) {
@@ -146,7 +190,7 @@ private struct SessionPosterOverlay: View {
 
                 ProgressIndicator(
                     title: (playState.position ?? .zero).formatted(.runtime),
-                    progress: Double(playState.positionTicks ?? 0) / Double(nowPlayingItem.runTimeTicks ?? 1),
+                    progress: playbackProgress,
                     posterDisplayType: displayType
                 ) {
                     indicators(playState)

@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension SessionViewModel: LibraryElement {
+extension SessionViewModel: @MainActor LibraryElement {
 
     nonisolated static func == (lhs: SessionViewModel, rhs: SessionViewModel) -> Bool {
         lhs === rhs

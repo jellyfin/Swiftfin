@@ -47,15 +47,8 @@ extension ActiveSessionsView {
             .id(session.nowPlayingItem?.id)
             .overlay {
                 if session.nowPlayingItem == nil {
-                    ZStack {
-                        session.device.clientColor
-
-                        Image(session.device.image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .padding(8)
-                    }
-                    .posterStyle(posterDisplayType)
+                    session.posterOverlay(for: posterDisplayType)
+                        .posterStyle(posterDisplayType)
                 }
             }
             .subtleShadow()
