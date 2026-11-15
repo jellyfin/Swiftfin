@@ -8,6 +8,7 @@
 
 import Foundation
 import Network
+import Synchronization
 
 #if os(iOS)
 import NetworkExtension
@@ -87,19 +88,17 @@ struct NetworkConnectionContext: Equatable {
         #endif
     }
 
-    private final class ContinuationResumeState {
+    private final class ContinuationResumeState: Sendable {
 
-        private let lock = NSLock()
-        private var didResume = false
+        private let didResume = Mutex(false)
 
         func resume() -> Bool {
-            lock.lock()
-            defer { lock.unlock() }
+            didResume.withLock { didResume in
+                guard !didResume else { return false }
 
-            guard !didResume else { return false }
-
-            didResume = true
-            return true
+                didResume = true
+                return true
+            }
         }
     }
 }
