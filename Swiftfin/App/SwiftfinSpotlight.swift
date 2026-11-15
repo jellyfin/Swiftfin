@@ -9,22 +9,20 @@
 import CoreSpotlight
 import Foundation
 
-struct SwiftfinSpotlight {
+enum SwiftfinSpotlight {
 
-    private let mainIndex = CSSearchableIndex(name: "SwiftfinAppIndex")
+    @concurrent
+    static func addSwiftfinToSpotlight() async {
+        let attributeSet = CSSearchableItemAttributeSet(contentType: UTType.application)
+        attributeSet.title = L10n.jellyfin
 
-    func addSwiftfinToSpotlight() {
-        Task.detached {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: UTType.application)
-            attributeSet.title = L10n.jellyfin
+        let searchableItem = CSSearchableItem(
+            uniqueIdentifier: "org.jellyfin.swiftfin",
+            domainIdentifier: nil,
+            attributeSet: attributeSet
+        )
 
-            let searchableItem = CSSearchableItem(
-                uniqueIdentifier: "org.jellyfin.swiftfin",
-                domainIdentifier: nil,
-                attributeSet: attributeSet
-            )
-
-            try? await mainIndex.indexSearchableItems([searchableItem])
-        }
+        let mainIndex = CSSearchableIndex(name: "SwiftfinAppIndex")
+        try? await mainIndex.indexSearchableItems([searchableItem])
     }
 }

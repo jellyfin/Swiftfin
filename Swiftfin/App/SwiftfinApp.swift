@@ -20,7 +20,9 @@ struct SwiftfinApp: App {
         // Sometimes the tab bar won't appear properly on push, always have material background.
         UITabBar.appearance().scrollEdgeAppearance = UITabBarAppearance(idiom: .unspecified)
 
-        SwiftfinSpotlight().addSwiftfinToSpotlight()
+        Task {
+            await SwiftfinSpotlight.addSwiftfinToSpotlight()
+        }
     }
 
     var body: some Scene {
