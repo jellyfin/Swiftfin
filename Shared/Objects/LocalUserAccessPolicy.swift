@@ -44,7 +44,7 @@ enum LocalUserAccessPolicy: String, CaseIterable, Codable, Displayable {
     }
 }
 
-protocol EvaluatedLocalUserAccessPolicy {}
+protocol EvaluatedLocalUserAccessPolicy: Sendable {}
 
 struct PinEvaluatedUserAccessPolicy: EvaluatedLocalUserAccessPolicy {
 

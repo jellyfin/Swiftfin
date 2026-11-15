@@ -14,7 +14,7 @@ import SwiftUI
 
 struct LocalUserAuthenticationAction {
 
-    let action: (LocalUserAccessPolicy, String?) async throws -> EvaluatedLocalUserAccessPolicy
+    let action: @MainActor (LocalUserAccessPolicy, String?) async throws -> EvaluatedLocalUserAccessPolicy
 
     func callAsFunction(
         policy: LocalUserAccessPolicy,
@@ -81,6 +81,7 @@ struct LocalUserAuthenticationModifier: ViewModifier {
         #endif
     }
 
+    @MainActor
     private func handleAuthentication(
         policy: LocalUserAccessPolicy,
         reason: String?
