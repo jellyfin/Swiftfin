@@ -86,15 +86,16 @@ struct MediaPlaybackPreferences {
 
         switch captions.displayType {
         case .forcedOnly:
-            return forcedIndex
+            return defaultIndex
 
         case .alwaysOn:
             return best(in: streams.filter { $0.isForced != true }, languages: preferredLanguages, defaultIndex: defaultIndex)?.index
                 ?? forcedIndex
 
         case .automatic:
-            // Honor the account's subtitle mode and remembered selections when it provides a track.
-            if let defaultIndex, streams.contains(where: { $0.index == defaultIndex }) {
+            guard let defaultIndex else { return nil }
+
+            if defaultIndex == -1 || streams.contains(where: { $0.index == defaultIndex }) {
                 return defaultIndex
             }
 
