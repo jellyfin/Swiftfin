@@ -13,6 +13,7 @@ struct LibraryStyle: Hashable, Storable, WithDefaultValue {
     var displayType: LibraryDisplayType
     var posterDisplayType: PosterDisplayType
     var listColumnCount: Int
+    var posterSize: PosterDisplayType.Size?
 
     static let `default`: LibraryStyle = .init(
         displayType: .grid,

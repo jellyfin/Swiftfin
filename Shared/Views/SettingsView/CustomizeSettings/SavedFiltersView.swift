@@ -16,6 +16,8 @@ struct SavedFiltersView: View {
     @StoredValue(.User.savedFilters)
     private var savedFilters
 
+    var onApply: ((ItemFilterCollection) -> Void)?
+
     @ContentBuilder
     var body: some View {
         Form(systemImage: "line.3.horizontal.decrease") {
@@ -24,8 +26,17 @@ struct SavedFiltersView: View {
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(savedFilters) { filter in
-                    ChevronButton(filter.name) {
-                        router.route(to: .editFilters(filters: filter.filters, savedFilter: filter))
+                    if let onApply {
+                        LabeledContent(filter.name) {
+                            Button(L10n.use) {
+                                onApply(filter.filters)
+                                router.dismiss()
+                            }
+                        }
+                    } else {
+                        ChevronButton(filter.name) {
+                            router.route(to: .editFilters(filters: filter.filters, savedFilter: filter))
+                        }
                     }
                 }
             }

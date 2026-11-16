@@ -11,10 +11,11 @@ import JellyfinAPI
 struct RecordingsLibrary: BaseItemKindLibrary {
 
     let libraryItemTypes: [BaseItemKind] = [.movie, .episode, .video]
-    let parent: TitledLibraryParent = .init(
-        displayTitle: L10n.recordings,
-        id: "recordings"
-    )
+    let parent: TitledLibraryParent
+
+    init(parent: TitledLibraryParent = .init(displayTitle: L10n.recordings, id: "recordings")) {
+        self.parent = parent
+    }
 
     func retrievePage(
         environment: Empty,
