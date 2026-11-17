@@ -91,10 +91,7 @@ struct MainTabView: View {
     private func tabView() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
-                Tab(
-                    value: tab.item.id,
-                    role: tab.item.id == TabItem.search.id ? .search : nil
-                ) {
+                Tab(value: tab.item.id) {
                     #if os(tvOS)
                     GeometryReader { _ in
                         tabRoot(tab)

@@ -49,9 +49,8 @@ extension NavigationRoute {
             id: "userSignIn",
             style: .sheet
         ) {
-            WithLocalUserAuthentication {
-                UserSignInView(server: server, user: user)
-            }
+            UserSignInView(server: server, user: user)
+                .modifier(LocalUserAuthenticationModifier())
         }
     }
 }

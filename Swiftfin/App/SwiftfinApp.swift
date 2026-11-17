@@ -23,22 +23,9 @@ struct SwiftfinApp: App {
         SwiftfinSpotlight().addSwiftfinToSpotlight()
     }
 
-    // TODO: move all these to single view and ViewModifiers
-
     var body: some Scene {
         WindowGroup {
-            ThemePreferencesEnvironment {
-                OverlayToastView {
-                    PreferencesView {
-                        WithLocalUserAuthentication {
-                            RootView()
-                                .supportedOrientations(UIDevice.isPhone ? .portrait : .all)
-                        }
-                    }
-                    .ignoresSafeArea(.container)
-                }
-                .trackingFrame(for: .layoutContainer)
-            }
+            RootView()
         }
     }
 }
