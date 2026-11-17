@@ -192,6 +192,10 @@ final class MediaSession {
         playbackItem?.baseItem ?? intent.item
     }
 
+    var duration: Duration? {
+        playbackState.duration ?? item.runtime
+    }
+
     var playbackBitrate: PlaybackBitrate {
         intent.configuration.requestedBitrate
     }
@@ -612,7 +616,7 @@ final class MediaSession {
         let origin = seconds
         let previousRequest = timeline.pending?.id
 
-        timeline.requestSeek(to: position, duration: playbackState.duration ?? item.runtime)
+        timeline.requestSeek(to: position, duration: duration)
 
         if let request = timeline.pending, request.id != previousRequest {
             playbackEventSubject.send(.seekRequested(request, origin: origin))

@@ -86,15 +86,10 @@ extension VideoPlayer {
                                 AlternateLayoutView {
                                     Image(systemName: "circle")
                                 } content: {
-                                    TimelineView(.animation(paused: countdown.pausedAt != nil)) { context in
-                                        let interval = countdown.interval
-                                        let remaining = max(
-                                            interval.upperBound.timeIntervalSince(countdown.pausedAt ?? context.date),
-                                            0
-                                        )
-                                        let total = interval.upperBound.timeIntervalSince(interval.lowerBound)
+                                    TimelineView(.animation(paused: countdown.deadline == nil)) { context in
+                                        let remaining = max(countdown.deadline?.timeIntervalSince(context.date) ?? countdown.remaining, 0)
 
-                                        ProgressView(value: min(max(1 - remaining / total, 0), 1)) {
+                                        ProgressView(value: min(max(1 - remaining / countdown.duration, 0), 1)) {
                                             EmptyView()
                                         } currentValueLabel: {
                                             Text(Int(remaining.rounded(.up)), format: .number)
