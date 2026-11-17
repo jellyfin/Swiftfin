@@ -7,9 +7,13 @@
 //
 
 import Defaults
+import FactoryKit
 import SwiftUI
 
 struct VideoPlayer: View {
+
+    @Injected(\.mediaPlayerManager)
+    private var mediaPlayerManager
 
     @Router
     private var router
@@ -75,6 +79,17 @@ struct VideoPlayer: View {
             guard let message else { return }
 
             viewState.toastProxy.present(message, systemName: "exclamationmark.triangle")
+        }
+        .onChange(of: mediaPlayerManager.sleepTimer.deadline) { oldDeadline, newDeadline in
+            guard Defaults[.VideoPlayer.sleepTimerAction] == .pause && newDeadline == nil,
+                  let oldDeadline,
+                  oldDeadline <= .now
+            else { return }
+
+            viewState.toastProxy.present(
+                L10n.sleepTimer,
+                systemName: VideoPlayerActionButton.sleepTimer.secondarySystemImage
+            )
         }
         .preference(
             key: PresentationControllerShouldDismissPreferenceKey.self,

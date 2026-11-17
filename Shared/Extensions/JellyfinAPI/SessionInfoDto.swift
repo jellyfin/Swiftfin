@@ -41,6 +41,15 @@ extension SessionInfoDto: @retroactive Comparable {
         }
     }
 
+    func canControlPlayback(by user: UserDto?) -> Bool {
+        guard let user, isSupportsMediaControl == true, nowPlayingItem != nil else { return false }
+
+        return user.policy?.enableRemoteControlOfOtherUsers == true
+            || userID == nil
+            || userID == user.id
+            || additionalUsers?.contains { $0.userID == user.id } == true
+    }
+
     /// Orders by:
     /// - Now playing status
     /// - Username

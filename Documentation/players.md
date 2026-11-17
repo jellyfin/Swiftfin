@@ -143,12 +143,29 @@ Swiftfin offers two player engines: **MPV** and **AVPlayer**. MPV is the default
 
 ## Captions & Accessibility
 
-Both players follow your system caption and audible-media preferences (system *Settings > Accessibility*):
+Jellyfin chooses subtitles first. Your device's caption settings can adjust that choice. Manual choices, including Off, take priority.
 
-- **Captions** can be set to *Always On*, *Forced Only*, or *Automatic*. Swiftfin prefers captions in your system's preferred languages, favoring SDH captions when available.
+On iOS, find **Closed Captions + SDH** and **Automatic Subtitles → When Languages Don’t Match** under **Settings → Accessibility → Subtitles & Captioning**.
+
+These examples assume English language preferences, available tracks, and no remembered or manual choice. Full subtitles cover all dialogue and forced subtitles usually translate short sections.
+
+| Jellyfin account setting  | Both options off                       | When Languages Don’t Match      | Closed Captions + SDH    |
+| ------------------------- | -------------------------------------- | ------------------------------- | ------------------------ |
+| **Always**                | Full English subtitles                 | Full English subtitles          | Full English captions    |
+| **None**                  | Off                                    | Off                             | Full English captions    |
+| **Only Forced**           | English forced subtitles               | English forced subtitles        | Full English captions    |
+| **Smart**, English audio  | English forced subtitles               | English forced subtitles        | Full English captions    |
+| **Smart**, Japanese audio | English subtitles                      | English subtitles               | Full English captions    |
+| **Default**               | Jellyfin's choice based on track flags | Same Jellyfin choice            | Full English captions    |
+
+- Jellyfin **Always** prefers full subtitles in your account's language, then suitable forced subtitles, then Off.
+- With **Closed Captions + SDH** on, Swiftfin prefers your caption languages and captions with sound descriptions. If no full subtitles exist, tries forced subtitles matching the audio language, then Off.
+- With **Closed Captions + SDH** off, Swiftfin keeps Jellyfin's choice, including Off.
+- **When Languages Don’t Match** only tries another suitable track when Jellyfin's chosen track is unavailable.
+
 - **Audio Descriptions** are selected automatically when a track is clearly labeled as described audio.
-- **Caption style** (font, size, and color) comes from your system caption styles.
-- **Show on Skip Back** follows the system setting. When captions are off, skipping or scrubbing back briefly turns captions on so you can catch missed dialogue, then turns them off again. This works with text subtitles in MPV and with captions AVPlayer can switch locally. It is unavailable if your OS version doesn't provide the setting.
+- **Caption styles** come from your device's caption styles.
+- **Show on Skip Back** briefly shows compatible captions after you skip backward, then turns them off again.
 
 ---
 

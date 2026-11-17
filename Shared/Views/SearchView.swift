@@ -53,7 +53,7 @@ struct SearchView: View {
     }
 
     @ContentBuilder
-    var body: some View {
+    private var contentView: some View {
         ScrollView {
             VStack(spacing: 0) {
                 #if os(tvOS)
@@ -78,26 +78,17 @@ struct SearchView: View {
                 }
                 #endif
 
-                ZStack {
-                    switch viewModel.state {
-                    case .error:
-                        viewModel.error.map(ErrorView.init)
-
-                    case .initial:
-                        if viewModel.canSearch {
-                            if viewModel.isEmpty {
-                                Text(L10n.noResults)
-                            } else {
-                                ContentGroupVStack(
-                                    groups: viewModel.itemContentGroupViewModel.groups
-                                )
-                            }
+                Group {
+                    if viewModel.canSearch {
+                        if viewModel.isEmpty {
+                            Text(L10n.noResults)
                         } else {
-                            suggestionsView
+                            ContentGroupVStack(
+                                groups: viewModel.itemContentGroupViewModel.groups
+                            )
                         }
-
-                    case .searching:
-                        ProgressView()
+                    } else {
+                        suggestionsView
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -107,11 +98,27 @@ struct SearchView: View {
         .ignoresSafeArea(edges: viewLayout.scrollContentEdges(extendsTop: false))
         .defaultScrollAnchor(viewLayout.isLarge || viewModel.canSearch ? .top : .center, for: .alignment)
         .scrollIndicators(.hidden)
+    }
+
+    @ContentBuilder
+    var body: some View {
+        ZStack {
+            switch viewModel.state {
+            case .error:
+                viewModel.error.map(ErrorView.init)
+
+            case .initial:
+                contentView
+
+            case .searching:
+                ProgressView()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard)
         .navigationTitle(L10n.search)
         .toolbarTitleDisplayMode(.inline)
-        .searchFocused($isSearchFocused)
         .onReceive(tabItemSelected) { event in
             if event.isRepeat, event.isRoot {
                 isSearchFocused = true
@@ -127,6 +134,7 @@ struct SearchView: View {
             text: $searchQuery,
             prompt: L10n.search
         )
+        .searchFocused($isSearchFocused)
         .environmentObject(focusCoordinator)
         #if os(tvOS)
         .modifier(SearchSafeAreaModifier())

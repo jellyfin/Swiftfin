@@ -10,19 +10,13 @@ import Defaults
 import FactoryKit
 import SwiftUI
 
-struct ThemePreferencesEnvironment<Content: View>: View {
+struct ThemePreferencesModifier: ViewModifier {
 
     @InjectedObject(\.userSessionManager)
     private var userSessionManager
 
-    private let content: Content
-
-    init(@ContentBuilder content: () -> Content) {
-        self.content = content()
-    }
-
     @ContentBuilder
-    var body: some View {
+    func body(content: Content) -> some View {
         content
             .modifier(StoredThemePreferencesModifier(userID: userSessionManager.currentSession?.user.id))
     }

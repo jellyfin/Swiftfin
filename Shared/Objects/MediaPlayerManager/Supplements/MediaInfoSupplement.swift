@@ -294,6 +294,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                 .clipShape(RoundedRectangle(cornerRadius: 32))
                 .edgePadding()
                 .frame(maxWidth: .infinity, alignment: .topLeading)
+                .focusable(item.isLiveStream && (!item.canBeRecorded || !recordingViewModel.canManageRecordings))
                 .focusSection()
                 .task(id: item.currentProgram?.id) {
                     await recordingViewModel.refresh()
