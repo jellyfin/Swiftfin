@@ -105,6 +105,8 @@ struct VideoPlayerSettingsView: View {
 
             sleepTimerSettings
 
+            mediaSegmentSettings
+
             sliderSettings
 
             supplementSettings
@@ -157,39 +159,15 @@ struct VideoPlayerSettingsView: View {
     }
     #endif
 
-    // MARK: - Button Settings
-
-    @ContentBuilder
-    private func jumpIntervalPicker(title: String, selection: Binding<MediaJumpInterval>) -> some View {
-        CustomAlertPicker(
-            title: title,
-            selection: selection,
-            customTitle: L10n.jump,
-            customDescription: L10n.customJumpIntervalDescription
-        ) { value in
-            TextField(
-                L10n.duration,
-                value: value
-                    .map(
-                        getter: { Int($0.rawValue.seconds) },
-                        setter: { MediaJumpInterval(rawValue: .seconds($0)) }
-                    )
-                    .clamp(min: 1, max: 600),
-                format: .number
-            )
-            .keyboardType(.numberPad)
-        }
-    }
-
     @ContentBuilder
     private var buttonSettings: some View {
         Section(L10n.buttons) {
-            jumpIntervalPicker(
+            JumpIntervalPicker(
                 title: L10n.jumpBackwardLength,
                 selection: $jumpBackwardLength
             )
 
-            jumpIntervalPicker(
+            JumpIntervalPicker(
                 title: L10n.jumpForwardLength,
                 selection: $jumpForwardLength
             )
@@ -238,6 +216,17 @@ struct VideoPlayerSettingsView: View {
             Text(L10n.resume)
         } footer: {
             Text(L10n.resumeOffsetDescription)
+        }
+    }
+
+    // MARK: - Media Segement Settings
+
+    @ContentBuilder
+    private var mediaSegmentSettings: some View {
+        Section(L10n.mediaSegments) {
+            ChevronButton(L10n.mediaSegments) {
+                router.route(to: .mediaSegmentSettings)
+            }
         }
     }
 
@@ -403,6 +392,37 @@ struct VideoPlayerSettingsView: View {
             Text(L10n.textStyle)
         } footer: {
             Text(L10n.captionStyleSettingsDescription)
+        }
+    }
+}
+
+extension VideoPlayerSettingsView {
+
+    private struct JumpIntervalPicker: View {
+
+        let title: String
+        var selection: Binding<MediaJumpInterval>
+
+        @ContentBuilder
+        var body: some View {
+            CustomAlertPicker(
+                title: title,
+                selection: selection,
+                customTitle: L10n.jump,
+                customDescription: L10n.customJumpIntervalDescription
+            ) { value in
+                TextField(
+                    L10n.duration,
+                    value: value
+                        .map(
+                            getter: { Int($0.rawValue.seconds) },
+                            setter: { MediaJumpInterval(rawValue: .seconds($0)) }
+                        )
+                        .clamp(min: 1, max: 600),
+                    format: .number
+                )
+                .keyboardType(.numberPad)
+            }
         }
     }
 }

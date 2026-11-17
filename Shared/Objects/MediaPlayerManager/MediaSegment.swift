@@ -14,7 +14,7 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
     let id: String
     let type: MediaSegmentType
     let start: Duration
-    let end: Duration
+    private(set) var end: Duration
 
     init?(_ segment: MediaSegmentDto, itemID: String) {
         guard segment.itemID == nil || segment.itemID == itemID,
@@ -34,8 +34,6 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
     }
 
     func skipTarget(at position: Duration, duration: Duration?) -> Duration? {
-        guard type == .intro || type == .outro else { return nil }
-
         let target = duration.map { min(end, $0) } ?? end
         guard position >= start, position < target else { return nil }
 
@@ -58,5 +56,14 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
                 return $0.id < $1.id
             }
             .filter { ids.insert($0.id).inserted }
+            .reduce(into: []) { segments, segment in
+                // Handle back to back segments of the same type as a single entity
+                if let index = segments.lastIndex(where: { $0.type == segment.type }),
+                   segments[index].end >= segment.start {
+                    segments[index].end = max(segments[index].end, segment.end)
+                } else {
+                    segments.append(segment)
+                }
+            }
     }
 }
