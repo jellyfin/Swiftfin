@@ -267,14 +267,11 @@ extension NavigationRoute {
         }
     }
 
-    static func mediaSegmentItemTypeSelector(selectedItemTypesBinding: Binding<[BaseItemKind]>) -> NavigationRoute {
-        NavigationRoute(id: "mediaSegmentItemTypeSelector") {
-            SelectorView(
-                selection: selectedItemTypesBinding,
-                sources: BaseItemKind.allCases.filter { $0.mediaType == .video && !$0.isLiveStream },
-                type: .multi
-            )
-            .navigationTitle(L10n.itemTypes.localizedCapitalized)
+    static var mediaSegmentMediaTypes: NavigationRoute {
+        NavigationRoute(
+            id: "mediaSegmentMediaTypes"
+        ) {
+            MediaSegmentMediaTypesView()
         }
     }
 

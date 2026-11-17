@@ -8,7 +8,7 @@
 
 import JellyfinAPI
 
-extension MediaSegmentType: Displayable {
+extension MediaSegmentType: Displayable, SupportedCaseIterable {
 
     var displayTitle: String {
         switch self {
@@ -23,7 +23,19 @@ extension MediaSegmentType: Displayable {
         case .intro:
             L10n.intro
         case .unknown:
-            L10n.unknown
+            L10n.other
         }
+    }
+
+    /// Reordered based on when you would see these in a video
+    static var supportedCases: [MediaSegmentType] {
+        [
+            .intro,
+            .recap,
+            .commercial,
+            .preview,
+            .outro,
+            .unknown,
+        ]
     }
 }

@@ -134,7 +134,11 @@ extension VideoPlayer {
         }
 
         func dismissOverlayAction(_ id: OverlayAction.ID) {
-            dismissedOverlayActions.insert(id)
+            if let onDismiss = overlayActions.first(where: { $0.id == id })?.button.onDismiss {
+                onDismiss()
+            } else {
+                dismissedOverlayActions.insert(id)
+            }
         }
 
         #if os(tvOS)

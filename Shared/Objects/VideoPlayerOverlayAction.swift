@@ -6,6 +6,8 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Foundation
+
 @MainActor
 protocol VideoPlayerOverlayActionProviding {
 
@@ -16,20 +18,32 @@ protocol VideoPlayerOverlayActionProviding {
 @MainActor
 struct VideoPlayerOverlayAction: Identifiable {
 
+    struct Countdown {
+
+        let interval: ClosedRange<Date>
+        let pausedAt: Date?
+    }
+
     let id: String
     let title: String
     let systemImage: String?
+    let countdown: Countdown?
+    let onDismiss: (@MainActor () -> Void)?
     let action: @MainActor () -> Void
 
     init(
         id: String,
         title: String,
         systemImage: String? = nil,
+        countdown: Countdown? = nil,
+        onDismiss: (@MainActor () -> Void)? = nil,
         action: @escaping @MainActor () -> Void
     ) {
         self.id = id
         self.title = title
         self.systemImage = systemImage
+        self.countdown = countdown
+        self.onDismiss = onDismiss
         self.action = action
     }
 }

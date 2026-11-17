@@ -19,7 +19,6 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
     init?(_ segment: MediaSegmentDto, itemID: String) {
         guard segment.itemID == nil || segment.itemID == itemID,
               let type = segment.type,
-              type != .unknown,
               let start = segment.startTicks,
               let end = segment.endTicks,
               start >= 0,
@@ -57,7 +56,7 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
             }
             .filter { ids.insert($0.id).inserted }
             .reduce(into: []) { segments, segment in
-                // Handle back to back segments of the same type as a single entity
+                // Handle back-to-back segments of the same type as a single duration
                 if let index = segments.lastIndex(where: { $0.type == segment.type }),
                    segments[index].end >= segment.start {
                     segments[index].end = max(segments[index].end, segment.end)
