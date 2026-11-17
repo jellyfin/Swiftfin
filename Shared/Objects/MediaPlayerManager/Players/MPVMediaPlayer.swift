@@ -10,7 +10,6 @@ import Combine
 import JellyfinAPI
 import Logging
 import MPVUI
-import Observation
 import SwiftUI
 
 @MainActor

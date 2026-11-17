@@ -11,20 +11,18 @@ import SwiftUI
 
 struct EPGCollectionView: UIViewRepresentable {
 
-    @AppTheme
-    private var theme
-
     @AdaptiveLayout
     private var viewLayout
 
-    @ObservedObject
-    var viewModel: EPGViewModel
+    @AppTheme
+    private var theme
 
-    let proxy: EPGScrollProxy
     let bottomInset: CGFloat
     let onReachedBottom: () -> Void
     let onSelect: (BaseItemDto) -> Void
     let onSelectGroup: (ProgramBlock) -> Void
+    let proxy: EPGScrollProxy
+    let viewModel: EPGViewModel
 
     private var layout: EPGLayout {
         EPGLayout(viewLayout: viewLayout)

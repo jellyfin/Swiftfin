@@ -20,11 +20,11 @@ struct ItemView: View {
         static let play = "itemView-play"
     }
 
-    @Default(.Customization.itemViewType)
-    private var itemViewType
-
     @AdaptiveLayout
     private var viewLayout
+
+    @Default(.Customization.itemViewType)
+    private var itemViewType
 
     @Environment(\.frameForParentView)
     private var frameForParentView
@@ -32,21 +32,22 @@ struct ItemView: View {
     @Router
     private var router
 
-    private var buttonConfiguration = ItemActionButtons.Configuration()
+    @State
+    private var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
 
+    @StateObject
+    private var deleteViewModel: ItemEditorViewModel
     @StateObject
     private var focusCoordinator = FocusCoordinator(initial: Component.play)
     @StateObject
     private var provider: ItemContentGroupProvider
-    @StateObject
-    private var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
-    @StateObject
-    private var deleteViewModel: ItemEditorViewModel
+
+    private var buttonConfiguration = ItemActionButtons.Configuration()
 
     init(provider: ItemContentGroupProvider) {
-        self._provider = StateObject(wrappedValue: provider)
-        self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
         self._deleteViewModel = StateObject(wrappedValue: ItemEditorViewModel(item: provider.item))
+        self._provider = StateObject(wrappedValue: provider)
+        self._viewModel = State(initialValue: ContentGroupViewModel(provider: provider))
     }
 
     private var isCompact: Bool {

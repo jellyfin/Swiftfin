@@ -19,9 +19,9 @@ struct ServerActivityView: View {
     @Router
     private var router
 
-    @StateObject
+    @State
     private var usersViewModel = PagingLibraryViewModel(library: ServerUsersLibrary())
-    @StateObject
+    @State
     private var viewModel = PagingLibraryViewModel(library: ServerActivityLibrary())
 
     // MARK: - Body

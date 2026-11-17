@@ -9,6 +9,7 @@
 @_exported import CasePaths
 @_exported import Engine
 import Foundation
+@_exported import Observation
 @_exported import StatefulMacros
 @_exported import SwiftfinMacros
 

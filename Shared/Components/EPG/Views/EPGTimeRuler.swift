@@ -13,8 +13,7 @@ struct EPGTimeRuler: View {
     @AdaptiveLayout
     private var viewLayout
 
-    @ObservedObject
-    var viewModel: EPGViewModel
+    let viewModel: EPGViewModel
 
     /// Count of timestamps needed for the period (30m increments)
     private var labelCount: Int {

@@ -39,7 +39,7 @@ extension SeriesEpisodeContentGroup {
 
     struct LoadingEpisodesView<Header: View>: View {
 
-        let header: Header
+        private let header: Header
 
         init(@ContentBuilder header: () -> Header) {
             self.header = header()
@@ -61,21 +61,20 @@ extension SeriesEpisodeContentGroup {
 
     struct SeasonEpisodesView<Header: View>: View {
 
-        @ObservedObject
-        var seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>
-
         @OptionalSharedBaseItem
-        var playButtonItem: BaseItemDto?
-        let header: Header
+        private var playButtonItem: BaseItemDto?
+
+        private let header: Header
+        private let seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
         init(
-            seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>,
             playButtonItem: BaseItemDto?,
+            seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>,
             @ContentBuilder header: () -> Header
         ) {
-            self.seasonViewModel = seasonViewModel
-            self.playButtonItem = playButtonItem
             self.header = header()
+            self.playButtonItem = playButtonItem
+            self.seasonViewModel = seasonViewModel
         }
 
         private var elements: [EpisodeElement] {
@@ -122,22 +121,22 @@ extension SeriesEpisodeContentGroup {
 
     private struct EpisodeCollectionLayout<Header: View, Content: View>: View {
 
-        @AdaptiveLayout
-        private var viewLayout
-
         private enum FocusedSection: Hashable {
 
             case seasons
             case episodes
         }
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @FocusState
         private var focusedSection: FocusedSection?
 
-        let elements: [EpisodeElement]
-        let preferredElementID: EpisodeElement.ID?
-        let header: Header
-        let content: (EpisodeElement) -> Content
+        private let elements: [EpisodeElement]
+        private let header: Header
+        private let preferredElementID: EpisodeElement.ID?
+        private let content: (EpisodeElement) -> Content
 
         init(
             elements: [EpisodeElement],
@@ -145,10 +144,10 @@ extension SeriesEpisodeContentGroup {
             @ContentBuilder header: () -> Header,
             @ContentBuilder content: @escaping (EpisodeElement) -> Content
         ) {
-            self.elements = elements
-            self.preferredElementID = preferredElementID
-            self.header = header()
             self.content = content
+            self.elements = elements
+            self.header = header()
+            self.preferredElementID = preferredElementID
         }
 
         private var layout: CollectionHStackLayout {

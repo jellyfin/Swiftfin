@@ -34,7 +34,7 @@ extension EPGSupplement: VideoPlayerSupplement {
         @State
         private var lastSuccessfulRefresh = Date.distantPast
 
-        @StateObject
+        @State
         private var viewModel = EPGViewModel()
 
         private let refreshInterval: TimeInterval = 3 * 60
@@ -43,8 +43,8 @@ extension EPGSupplement: VideoPlayerSupplement {
         private var content: some View {
             EPGLoadableView(viewModel: viewModel) {
                 EPGContentView(
-                    viewModel: viewModel,
                     selectedChannelID: mediaSession.item.id,
+                    viewModel: viewModel,
                     action: select
                 )
             }

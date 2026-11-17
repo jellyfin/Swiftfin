@@ -26,12 +26,10 @@ struct SearchView: View {
     #endif
 
     @State
-    private var searchQuery = ""
+    private var viewModel = SearchViewModel()
 
     @StateObject
     private var focusCoordinator: FocusCoordinator = .init()
-    @StateObject
-    private var viewModel = SearchViewModel()
 
     @TabItemSelected
     private var tabItemSelected
@@ -41,7 +39,7 @@ struct SearchView: View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions) { item in
                 Button(item.displayTitle) {
-                    searchQuery = item.displayTitle
+                    viewModel.query = item.displayTitle
                 }
                 #if os(tvOS)
                 .buttonStyle(.plain)
@@ -62,7 +60,7 @@ struct SearchView: View {
 
                     ScrollView(.horizontal) {
                         HStack(spacing: 20) {
-                            FilterTrack(viewModel: viewModel.filterViewModel, types: availableTypes, focus: $focusedFilter)
+                            FilterTrack(focus: $focusedFilter, types: availableTypes, viewModel: viewModel.filterViewModel)
                         }
                     }
                     .scrollClipDisabled()
@@ -127,20 +125,14 @@ struct SearchView: View {
         .onFirstAppear {
             viewModel.getSuggestions()
         }
-        .onChange(of: searchQuery) {
-            viewModel.search(query: searchQuery)
-        }
         .searchable(
-            text: $searchQuery,
+            text: $viewModel.query,
             prompt: L10n.search
         )
         .searchFocused($isSearchFocused)
         .environmentObject(focusCoordinator)
         #if os(tvOS)
         .modifier(SearchSafeAreaModifier())
-        .onReceive(viewModel.filterViewModel.$currentFilters) { filters in
-            searchQuery = filters.query ?? ""
-        }
         #endif
         #if os(iOS)
         .navigationBarFilterDrawer(

@@ -9,8 +9,8 @@
 import Combine
 import Foundation
 
-@MainActor
-@Stateful
+@Observable
+@StatefulObservable
 final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
     @CasePathable
@@ -37,16 +37,19 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         case refreshing
     }
 
-    @Published
-    private(set) var groups: [any ContentGroup] = []
-
-    private var candidateGroups: [any ContentGroup] = []
-    private var groupCancellables = Set<AnyCancellable>()
-    private var needsGroupRebuild = true
+    @ObservationIgnored
     private var isRefreshingGroups = false
+    @ObservationIgnored
+    private var needsGroupRebuild = true
+
     private let refreshSource = UUID()
 
+    private var candidateGroups: [any ContentGroup] = []
     var provider: Provider
+
+    var groups: [any ContentGroup] {
+        candidateGroups.filter(\._shouldBeResolved)
+    }
 
     init(provider: Provider) {
         self.provider = provider
@@ -100,7 +103,6 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
                 } else {
                     await refreshViewModels(in: candidateGroups, inBackground: true)
                     try Task.checkCancellation()
-                    resolveGroups()
                 }
             }
         } catch {
@@ -111,31 +113,10 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         refreshIfPendingChanges()
     }
 
-    private func resolveGroups() {
-        let resolved = candidateGroups.filter(\._shouldBeResolved)
-
-        if groups.map(\.id) != resolved.map(\.id) {
-            groups = resolved
-        }
-    }
-
     private func uniqueViewModels(in groups: [any ContentGroup]) -> [any WithRefresh] {
         var seen = Set<ObjectIdentifier>()
         return groups.map { $0.viewModel as any WithRefresh }
             .filter { seen.insert(ObjectIdentifier($0 as AnyObject)).inserted }
-    }
-
-    private func observeGroups() {
-        groupCancellables.removeAll()
-
-        for case let viewModel as ViewModel in uniqueViewModels(in: candidateGroups) {
-            viewModel.objectWillChange
-                .receive(on: RunLoop.main)
-                .sink { [weak self] in
-                    self?.resolveGroups()
-                }
-                .store(in: &groupCancellables)
-        }
     }
 
     private func refreshViewModels(in groups: [any ContentGroup], inBackground: Bool) async {
@@ -160,9 +141,5 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         try Task.checkCancellation()
 
         candidateGroups = newGroups
-        observeGroups()
-
-        // New groups may reuse IDs but own different view models
-        groups = candidateGroups.filter(\._shouldBeResolved)
     }
 }

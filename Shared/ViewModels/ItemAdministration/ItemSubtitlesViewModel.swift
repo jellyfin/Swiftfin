@@ -6,21 +6,19 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Foundation
 import JellyfinAPI
 
-@MainActor
-@Stateful
+@Observable
+@StatefulObservable
 final class ItemSubtitlesViewModel: ViewModel {
 
     @CasePathable
     enum Action {
 
-        case _actuallySearch(isPerfectMatch: Bool)
         case delete(Set<MediaStream>)
         case refresh
-        case search(isPerfectMatch: Bool)
+        case search
         case set(Set<String>)
         case upload(file: URL, isForced: Bool, isHearingImpaired: Bool)
 
@@ -28,8 +26,10 @@ final class ItemSubtitlesViewModel: ViewModel {
             switch self {
             case .refresh:
                 .to(.initial, then: .content)
-            case ._actuallySearch, .search:
+
+            case .search:
                 .background(.searching)
+
             case .set, .upload, .delete:
                 .background(.updating)
             }
@@ -45,6 +45,7 @@ final class ItemSubtitlesViewModel: ViewModel {
     enum Event {
 
         case deleted
+        case error
         case uploaded
     }
 
@@ -55,42 +56,82 @@ final class ItemSubtitlesViewModel: ViewModel {
         case error
     }
 
-    @Published
-    private(set) var internalSubtitles: [MediaStream]
-    @Published
-    private(set) var externalSubtitles: [MediaStream]
-    @Published
+    private struct SearchOptions: Equatable, Sendable {
+
+        let isPerfectMatch: Bool
+        let language: String?
+    }
+
+    @ObservationIgnored
+    private var searchObservationID: UUID?
+
+    var isPerfectMatch = false {
+        didSet {
+            guard isPerfectMatch != oldValue else { return }
+
+            core.cancel(action: \.search)
+        }
+    }
+
+    private var itemStorage: ValueBox<ItemEntry>
+
+    var language: String? = Locale.current.language.languageCode?.identifier(.alpha3) {
+        didSet {
+            guard language != oldValue else { return }
+
+            core.cancel(action: \.search)
+        }
+    }
+
     private(set) var results: [RemoteSubtitleInfo] = []
 
-    /// Default to user's language
-    @Published
-    var language: String? = Locale.current.language.languageCode?.identifier(.alpha3)
+    var externalSubtitles: [MediaStream] {
+        subtitles.filter { $0.isExternal == true }
+    }
 
-    @SharedBaseItem
-    var item: BaseItemDto
+    var internalSubtitles: [MediaStream] {
+        subtitles.filter { $0.isExternal == false }
+    }
 
-    private var query: CurrentValueSubject<Bool, Never> = .init(false)
+    var item: BaseItemDto {
+        itemStorage.value.snapshot
+    }
 
-    init(item: BaseItemDto) {
-        self.item = item
-
-        let subtitles = (item.mediaSources ?? [])
+    private var subtitles: [MediaStream] {
+        (item.mediaSources ?? [])
             .compactMap(\.subtitleStreams)
             .flattened()
+    }
 
-        self.internalSubtitles = subtitles.filter { $0.isExternal == false }
-        self.externalSubtitles = subtitles.filter { $0.isExternal == true }
-
+    init(item: BaseItemDto) {
+        self.itemStorage = .init(value: ItemEntry.resolve(item))
         super.init()
+    }
 
-        $language
-            .combineLatest(query)
-            .debounce(for: 0.5, scheduler: RunLoop.main)
-            .removeDuplicates(by: { $0.0 == $1.0 && $0.1 == $1.1 })
-            .sink { [weak self] _, isPerfectMatch in
-                self?._actuallySearch(isPerfectMatch: isPerfectMatch)
+    func observeSearchOptions() async {
+        guard !Task.isCancelled else { return }
+
+        let observationID = UUID()
+        searchObservationID = observationID
+        core.cancel(action: \.search)
+        defer {
+            if searchObservationID == observationID {
+                searchObservationID = nil
+                core.cancel(action: \.search)
             }
-            .store(in: &cancellables)
+        }
+
+        await DebouncedObservation.run(
+            { [self] in
+                SearchOptions(isPerfectMatch: isPerfectMatch, language: language)
+            },
+            for: .milliseconds(500)
+        ) { [self] _ in
+            guard searchObservationID == observationID else { return }
+
+            core.cancel(action: \.search)
+            search()
+        }
     }
 
     @Function(\Action.Cases.refresh)
@@ -99,31 +140,17 @@ final class ItemSubtitlesViewModel: ViewModel {
     }
 
     private func refreshItem() async throws {
-        $item = try await requireUserSession().getFullItem(item)
+        let entry = try await requireUserSession().getFullItem(item)
+        try Task.checkCancellation()
 
-        let subtitles = (item.mediaSources ?? [])
-            .compactMap(\.subtitleStreams)
-            .flattened()
-            .grouped(by: \.isExternal)
-
-        internalSubtitles = subtitles[false] ?? []
-        externalSubtitles = subtitles[true] ?? []
+        itemStorage = .init(value: entry)
     }
 
     @Function(\Action.Cases.search)
-    private func _search(_ isPerfectMatch: Bool) async throws {
-        query.send(isPerfectMatch)
-
-        await cancel()
-    }
-
-    @Function(\Action.Cases._actuallySearch)
-    private func __actuallySearch(_ isPerfectMatch: Bool) async throws {
+    private func _search() async throws {
         guard let itemID = item.id else {
             throw ErrorMessage(L10n.unknownError)
         }
-
-        // Avoids errors when `None` is selected
         guard let language, language.isNotEmpty else {
             results = []
             return
@@ -135,6 +162,7 @@ final class ItemSubtitlesViewModel: ViewModel {
             isPerfectMatch: isPerfectMatch
         )
         let results = try await send(request)
+        try Task.checkCancellation()
 
         self.results = results.value
     }

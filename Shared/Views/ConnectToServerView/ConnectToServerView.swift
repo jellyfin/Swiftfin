@@ -22,11 +22,9 @@ struct ConnectToServerView: View {
 
     @State
     private var duplicateServer: ServerState? = nil
-
     @State
     private var url: String = ""
-
-    @StateObject
+    @State
     private var viewModel = ConnectToServerViewModel()
 
     private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
@@ -43,7 +41,6 @@ struct ConnectToServerView: View {
             duplicateServer = server
 
         case .error:
-            UIDevice.feedback(.error)
             isURLFocused = true
         }
     }
@@ -162,6 +159,9 @@ struct ConnectToServerView: View {
 
                 viewModel.searchForServers()
             }
+            .onDisappear {
+                viewModel.cancel()
+            }
             .onReceive(viewModel.events, perform: onEvent)
             .topBarTrailing {
                 if viewModel.state == .connecting {
@@ -175,6 +175,6 @@ struct ConnectToServerView: View {
                     router.dismiss()
                 }
             }
-            .errorMessage($viewModel.error)
+            .errorAlert(viewModel.events)
     }
 }

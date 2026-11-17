@@ -10,7 +10,6 @@ import Combine
 import Defaults
 import FactoryKit
 import Foundation
-import Observation
 
 extension Container {
 

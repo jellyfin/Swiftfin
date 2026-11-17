@@ -21,17 +21,10 @@ struct SearchContentGroupProvider: ContentGroupProvider {
         }
     }
 
-    let id: String = UUID().uuidString
     let displayTitle: String = L10n.search
-    let filterViewModel: FilterViewModel
-    var environment: Environment
+    let id: String = UUID().uuidString
 
-    init() {
-        let filterViewModel: FilterViewModel = .init()
-
-        self.filterViewModel = filterViewModel
-        self.environment = .init(filters: filterViewModel.currentFilters)
-    }
+    var environment: Environment = .default
 
     @ContentGroupBuilder
     func makeGroups(environment: Environment) async throws -> [any ContentGroup] {

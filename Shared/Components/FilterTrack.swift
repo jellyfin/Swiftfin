@@ -60,9 +60,6 @@ private struct FilterTrackLabelStyle: LabelStyle {
 
 struct FilterTrack: View {
 
-    @AdaptiveLayout
-    private var viewLayout
-
     enum Style {
 
         case compact
@@ -93,19 +90,21 @@ struct FilterTrack: View {
         }
     }
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @AppTheme
     private var theme
-
-    @ObservedObject
-    var viewModel: FilterViewModel
 
     @Router
     private var router
 
-    let types: [ItemFilterType]
     let focus: FocusState<FocusTarget?>.Binding
-    var style: Style = .regular
+    let types: [ItemFilterType]
+    let viewModel: FilterViewModel
+
     var iconEdge: HorizontalEdge = .leading
+    var style: Style = .regular
 
     static func controlSize(for layout: ViewLayout) -> ControlSize {
         layout.value(standard: .small, large: .large)

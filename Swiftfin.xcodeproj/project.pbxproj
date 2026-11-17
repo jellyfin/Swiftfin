@@ -97,6 +97,10 @@
 		E19009260000000000000001 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000003 /* SwiftfinMacros */; };
 		E19009260000000000000002 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000004 /* SwiftfinMacros */; };
 		E19010180000000000000001 /* GoogleCastDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = E19010180000000000000002 /* GoogleCastDynamic */; };
+		E19011170000000000000007 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E19011170000000000000003 /* AsyncAlgorithms */; };
+		E19011170000000000000008 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E19011170000000000000004 /* AsyncAlgorithms */; };
+		E19011170000000000000009 /* PerceptionCore in Frameworks */ = {isa = PBXBuildFile; productRef = E19011170000000000000005 /* PerceptionCore */; };
+		E1901117000000000000000A /* PerceptionCore in Frameworks */ = {isa = PBXBuildFile; productRef = E19011170000000000000006 /* PerceptionCore */; };
 		E19138CA2E7E7FA20061E464 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19138C92E7E7FA20061E464 /* StatefulMacros */; };
 		E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E19D41B12BF2BFA50082B8B2 /* KeychainSwift */; };
 		E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E19DDEC62948EF9900954E10 /* OrderedCollections */; };
@@ -292,6 +296,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E19011170000000000000008 /* AsyncAlgorithms in Frameworks */,
+				E1901117000000000000000A /* PerceptionCore in Frameworks */,
 				E19005010000000000000002 /* MPVUI in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
@@ -340,6 +346,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E19011170000000000000007 /* AsyncAlgorithms in Frameworks */,
+				E19011170000000000000009 /* PerceptionCore in Frameworks */,
 				E12B93072947CD0F00CE0BD9 /* Pulse in Frameworks */,
 				E12CDBBF2FFB592A00828742 /* CollectionVGrid in Frameworks */,
 				62666E3E27E503FA00EC0ECD /* MediaAccessibility.framework in Frameworks */,
@@ -578,6 +586,8 @@
 			);
 			name = "Swiftfin tvOS";
 			packageProductDependencies = (
+				E19011170000000000000004 /* AsyncAlgorithms */,
+				E19011170000000000000006 /* PerceptionCore */,
 				E13DD3CC27164CA7009D4DAF /* CoreStore */,
 				E12186DD2718F1C50010884C /* Defaults */,
 				E1002B6A2793E36600E47059 /* Algorithms */,
@@ -633,6 +643,8 @@
 			);
 			name = "Swiftfin iOS";
 			packageProductDependencies = (
+				E19011170000000000000003 /* AsyncAlgorithms */,
+				E19011170000000000000005 /* PerceptionCore */,
 				E13DD3C52716499E009D4DAF /* CoreStore */,
 				E13DD3D227168E65009D4DAF /* Defaults */,
 				E1002B672793CFBA00E47059 /* Algorithms */,
@@ -810,6 +822,8 @@
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
+				E19011170000000000000001 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
+				E19011170000000000000002 /* XCRemoteSwiftPackageReference "swift-perception" */,
 				5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */,
 				E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */,
@@ -1526,7 +1540,7 @@
 			repositoryURL = "https://github.com/LePips/StatefulMacro";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.0;
+				minimumVersion = 0.2.1;
 			};
 		};
 		E12CDBBD2FFB592A00828742 /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
@@ -1639,6 +1653,22 @@
 			requirement = {
 				kind = exactVersion;
 				version = 4.8.6;
+			};
+		};
+		E19011170000000000000001 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.7;
+			};
+		};
+		E19011170000000000000002 /* XCRemoteSwiftPackageReference "swift-perception" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-perception";
+			requirement = {
+				kind = exactVersion;
+				version = 2.0.11;
 			};
 		};
 		E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */ = {
@@ -1981,6 +2011,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */;
 			productName = GoogleCastDynamic;
+		};
+		E19011170000000000000003 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19011170000000000000001 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+		E19011170000000000000004 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19011170000000000000001 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+		E19011170000000000000005 /* PerceptionCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19011170000000000000002 /* XCRemoteSwiftPackageReference "swift-perception" */;
+			productName = PerceptionCore;
+		};
+		E19011170000000000000006 /* PerceptionCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19011170000000000000002 /* XCRemoteSwiftPackageReference "swift-perception" */;
+			productName = PerceptionCore;
 		};
 		E19138C92E7E7FA20061E464 /* StatefulMacros */ = {
 			isa = XCSwiftPackageProductDependency;

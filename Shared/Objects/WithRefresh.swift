@@ -11,7 +11,7 @@ protocol WithRefresh {
 
     associatedtype Background: WithRefresh = Empty
 
-    var background: Background { get set }
+    var background: Background { get }
 
     func refresh()
     func refresh() async
@@ -20,7 +20,6 @@ protocol WithRefresh {
 extension WithRefresh where Background == Empty {
 
     var background: Empty {
-        get { .init() }
-        set {}
+        .init()
     }
 }

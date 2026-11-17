@@ -59,20 +59,25 @@ final class MediaPlayerItemPreferences {
             }
             .store(in: &observations)
 
-        let readiness = ObservationToken { [weak item] in
-            item?.canSelectTracks == true
-        } onChange: { [weak self] ready in
-            if ready {
-                self?.apply()
+        apply()
+
+        // Applying the initial preferences can replace the item synchronously.
+        guard item?.mediaPreferences === self else { return }
+
+        Task { [weak self, weak item] in
+            let readiness = ObservableValues { [weak item] in
+                item?.canSelectTracks == true
+            }
+
+            for await ready in readiness {
+                guard !Task.isCancelled, let self, item?.mediaPreferences === self else { return }
+
+                if ready {
+                    apply()
+                }
             }
         }
-
-        // Initial delivery can replace the item synchronously.
-        if item?.mediaPreferences === self {
-            AnyCancellable(readiness).store(in: &observations)
-        } else {
-            readiness.cancel()
-        }
+        .store(in: &observations)
     }
 
     func apply() {

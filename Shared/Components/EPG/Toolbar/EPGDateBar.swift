@@ -16,15 +16,10 @@ struct EPGDateBar: View {
     @FocusState
     private var focusedDate: Date?
 
-    @ObservedObject
-    var viewModel: EPGViewModel
-
-    private var selectedDate: Date {
-        max(viewModel.startDate, Calendar.current.startOfDay(for: .now))
-    }
+    let viewModel: EPGViewModel
 
     private func isSelected(_ date: Date) -> Bool {
-        Calendar.current.isDate(date, inSameDayAs: selectedDate)
+        Calendar.current.isDate(date, inSameDayAs: viewModel.selectedDate)
     }
 
     @ContentBuilder
