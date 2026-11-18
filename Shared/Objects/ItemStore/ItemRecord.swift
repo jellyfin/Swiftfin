@@ -8,7 +8,6 @@
 
 import Foundation
 import JellyfinAPI
-import Observation
 
 typealias ItemUserDataField = WritableKeyPath<UserItemDataDto, Bool?>
 

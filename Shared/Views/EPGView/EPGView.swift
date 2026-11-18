@@ -17,7 +17,7 @@ struct EPGView: View {
     @Router
     private var router
 
-    @StateObject
+    @State
     private var viewModel = EPGViewModel()
 
     @ContentBuilder

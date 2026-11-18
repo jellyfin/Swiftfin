@@ -15,7 +15,7 @@ struct ItemSubtitleUploadView: View {
     @AppTheme
     private var theme
 
-    @ObservedObject
+    @Bindable
     var viewModel: ItemSubtitlesViewModel
 
     @Router
@@ -73,14 +73,11 @@ struct ItemSubtitleUploadView: View {
         .navigationTitle(L10n.subtitle)
         .toolbarTitleDisplayMode(.inline)
         .onReceive(viewModel.events) { event in
-            switch event {
-            case .deleted:
-                break
-            case .uploaded:
+            if case .uploaded = event {
                 router.dismiss()
             }
         }
-        .errorMessage($viewModel.error)
+        .errorAlert(viewModel.events)
         .navigationBarCloseButton {
             router.dismiss()
         }

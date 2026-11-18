@@ -15,16 +15,16 @@ struct ServerUserParentalRatingView: View {
     private var router
 
     @State
+    private var parentalRatingsViewModel: PagingLibraryViewModel<ParentalRatingLibrary>
+    @State
     private var tempPolicy: UserPolicy
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
-    @StateObject
-    private var parentalRatingsViewModel: PagingLibraryViewModel<ParentalRatingLibrary>
 
     init(viewModel: ServerUserAdminViewModel) {
+        self._parentalRatingsViewModel = State(initialValue: .init(library: .init()))
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self._parentalRatingsViewModel = StateObject(wrappedValue: .init(library: .init()))
 
         guard let policy = viewModel.user.policy else {
             preconditionFailure("User policy cannot be empty.")

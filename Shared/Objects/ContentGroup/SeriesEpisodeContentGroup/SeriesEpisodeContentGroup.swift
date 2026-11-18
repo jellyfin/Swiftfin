@@ -14,9 +14,10 @@ import SwiftUI
 
 struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
-    let id: String
     @OptionalSharedBaseItem
     var playButtonItem: BaseItemDto?
+
+    let id: String
     let viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
     var _shouldBeResolved: Bool {
@@ -34,21 +35,20 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
     func body(with viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>) -> Body {
         Body(
-            viewModel: viewModel,
-            playButtonItem: playButtonItem
+            playButtonItem: playButtonItem,
+            viewModel: viewModel
         )
     }
 
     struct Body: View {
-
-        @ObservedObject
-        var viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
         @OptionalSharedBaseItem
         var playButtonItem: BaseItemDto?
 
         @State
         private var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?
+
+        let viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
         private var selectedSeasonViewModel: PagingLibraryViewModel<EpisodeLibrary>? {
             viewModel.elements.first { $0.id == selection }
@@ -89,8 +89,8 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             Group {
                 if let selectedSeasonViewModel {
                     SeasonEpisodesView(
-                        seasonViewModel: selectedSeasonViewModel,
-                        playButtonItem: playButtonItem
+                        playButtonItem: playButtonItem,
+                        seasonViewModel: selectedSeasonViewModel
                     ) {
                         seasonSelectorView
                     }

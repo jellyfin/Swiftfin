@@ -17,8 +17,8 @@ extension NavigationRoute {
             style: .sheet
         ) {
             FilterView(
-                viewModel: viewModel,
-                type: type
+                type: type,
+                viewModel: viewModel
             )
         }
     }

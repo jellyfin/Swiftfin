@@ -11,7 +11,6 @@ import AVKit
 import Combine
 import Foundation
 @preconcurrency import JellyfinAPI
-import Observation
 import SwiftUI
 
 @MainActor

@@ -11,7 +11,7 @@ import SwiftUI
 
 struct CountryPicker: View {
 
-    @StateObject
+    @State
     private var viewModel: PagingLibraryViewModel<CountryLibrary>
 
     private let selection: Binding<String?>
@@ -20,7 +20,7 @@ struct CountryPicker: View {
     init(_ title: String, twoLetterISORegion: Binding<String?>) {
         self.selection = twoLetterISORegion
         self.title = title
-        self._viewModel = .init(wrappedValue: .init(library: .init()))
+        self._viewModel = .init(initialValue: .init(library: .init()))
     }
 
     private var currentCountry: CountryInfo? {

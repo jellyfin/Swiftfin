@@ -10,6 +10,12 @@ import SwiftUI
 
 struct LetterPickerBar: PresentationView {
 
+    private enum Row: Hashable {
+
+        case letter(ItemLetter)
+        case dot
+    }
+
     @AdaptiveLayout
     private var viewLayout
 
@@ -19,23 +25,15 @@ struct LetterPickerBar: PresentationView {
     @FocusState
     private var focusedLetter: ItemLetter?
 
-    @ObservedObject
-    var viewModel: FilterViewModel
-
     @State
-    private var letterSize: CGSize = .zero
+    private var activeLetter: ItemLetter?
     @State
     private var barHeight: CGFloat = 0
     @State
-    private var activeLetter: ItemLetter?
+    private var letterSize: CGSize = .zero
 
     private let letters = ItemLetter.allCases
-
-    private enum Row: Hashable {
-
-        case letter(ItemLetter)
-        case dot
-    }
+    let viewModel: FilterViewModel
 
     private var dimension: CGFloat {
         max(letterSize.width, letterSize.height) + 2
