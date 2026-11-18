@@ -71,7 +71,7 @@ extension BaseItemDto {
             artwork: image.map { image in MPMediaItemArtwork(boundsSize: image.size) { _ in image }},
             albumArtist: isAudio ? content.albumArtist?.nilIfBlank ?? joined((content.albumArtists ?? []).map(\.name)) : nil,
             albumTitle: isAudio ? content.album?.nilIfBlank : nil,
-            overview: content.overview?.nilIfBlank ?? overview?.nilIfBlank,
+            overview: content.overview?.plainText.nilIfBlank ?? overview?.plainText.nilIfBlank,
             contentRating: content.officialRating?.nilIfBlank ?? officialRating?.nilIfBlank,
             genre: joined((content.genres ?? genres ?? []).map(Optional.some))
         )
@@ -162,6 +162,22 @@ extension BaseItemDto {
         default:
             true
         }
+    }
+
+    @MainActor
+    var richOverview: AttributedString? {
+        guard let overview else { return nil }
+
+        if let id, let record = Container.shared.currentUserSession()?.items[id] {
+            return record.richOverview(for: overview)
+        }
+
+        return overview.richText
+    }
+
+    @MainActor
+    var plainOverview: String? {
+        richOverview?.plainText.nilIfBlank
     }
 
     @MainActor

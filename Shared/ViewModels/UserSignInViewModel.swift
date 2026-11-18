@@ -97,7 +97,7 @@ final class UserSignInViewModel: ObservableObject {
     @Published
     private(set) var publicUsers: [UserDto] = []
     @Published
-    private(set) var serverDisclaimer: String? = nil
+    private(set) var serverDisclaimer: AttributedString? = nil
 
     private let logger = Logger.swiftfin()
     private var cancellables = Set<AnyCancellable>()
@@ -279,11 +279,12 @@ final class UserSignInViewModel: ObservableObject {
         return response.value
     }
 
-    private func retrieveServerDisclaimer() async throws -> String? {
+    private func retrieveServerDisclaimer() async throws -> AttributedString? {
         let request = Paths.getBrandingOptions
         let response = try await server.client.send(request)
 
-        guard let disclaimer = response.value.loginDisclaimer, disclaimer.isNotEmpty else { return nil }
+        guard let disclaimer = response.value.loginDisclaimer?.richText,
+              disclaimer.plainText.isNotEmpty else { return nil }
 
         return disclaimer
     }

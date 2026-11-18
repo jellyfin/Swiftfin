@@ -93,7 +93,7 @@ struct AboutItemGroup: ContentGroup {
         @ContentBuilder
         private var descriptionCard: some View {
             let subtitle = item.taglines?.first ?? item.parentTitle
-            let hasOverviewContent = item.taglines?.first?.isNotEmpty == true || item.overview?.isNotEmpty == true
+            let hasOverviewContent = item.taglines?.first?.isNotEmpty == true || item.plainOverview != nil
 
             AboutCard(
                 title: item.displayTitle,
@@ -103,7 +103,7 @@ struct AboutItemGroup: ContentGroup {
                     router.route(to: .itemOverview(item: item))
                 }
             } content: {
-                if let overview = $item.item.plainOverview, overview.isNotEmpty {
+                if let overview = item.plainOverview {
                     SeeMoreText(overview)
                         .font(.footnote)
                         .lineLimit(4)

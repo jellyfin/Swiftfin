@@ -21,7 +21,7 @@ extension ItemView {
 
         private var isPresented: Bool {
             item.taglines?.contains(where: \.isNotEmpty) == true ||
-                item.overview?.isNotEmpty == true
+                item.plainOverview != nil
         }
 
         @ContentBuilder
@@ -35,7 +35,7 @@ extension ItemView {
                             .lineLimit(2)
                     }
 
-                    if let itemOverview = $item.item.plainOverview, itemOverview.isNotEmpty {
+                    if let itemOverview = item.plainOverview {
                         PresentationContent {
                             Button {
                                 router.route(to: .itemOverview(item: item))

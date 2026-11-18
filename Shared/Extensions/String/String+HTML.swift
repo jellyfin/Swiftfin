@@ -10,21 +10,19 @@ import SwiftUI
 
 extension String {
 
-    private var containsHTML: Bool {
-        contains(#/<\/?[a-zA-Z][^>]*>|&(?:[a-zA-Z]+|#[0-9]+|#[xX][0-9a-fA-F]+);/#)
-    }
-
-    private var containsMarkdown: Bool {
-        contains(#/(?:^|[^\w*])([*_]{1,2})[^\s*_](?:.*?[^\s*_])?\1(?:$|[^\w*])|~~.+?~~|`[^`]+`|\[[^\]]+\]\([^)\s]+\)/#)
-    }
-
     var richText: AttributedString {
         var value: AttributedString
 
-        if containsHTML {
-            var parser = HTMLParser(escapingMarkdown.markdown)
+        if contains(#/<\/?[a-zA-Z][^>]*>|&(?:[a-zA-Z]+|#[0-9]+|#[xX][0-9a-fA-F]+);/#) {
+            let literalTags = #/<(code|kbd|pre|samp|script|style|tt)\b[^>]*>.*?<\/\1\s*>/#.ignoresCase().dotMatchesNewlines()
+            let protected = replacing(literalTags) { match in
+                match.output.0.replacing(#/(?<tag><\/?[a-zA-Z][^>]*>)|[\\`*_\[\]~]/#) { character in
+                    character.output.tag.map(String.init) ?? "\\" + character.output.0
+                }
+            }
+            var parser = HTMLParser(protected.markdown)
             value = parser.parse()
-        } else if containsMarkdown {
+        } else if contains(#/(?:^|[^\w*])([*_]{1,2})[^\s*_](?:.*?[^\s*_])?\1(?:$|[^\w*])|~~.+?~~|`[^`]+`|\[[^\]]+\]\([^)\s]+\)/#) {
             value = markdown
         } else {
             return AttributedString(self)
@@ -43,13 +41,16 @@ extension String {
     }
 
     var plainText: String {
-        String(richText.characters)
+        richText.plainText
     }
+}
 
-    private var escapingMarkdown: String {
-        replacing(#/(?<tag><\/?[a-zA-Z][^>]*>)|[\\`*_\[\]~]/#) { match in
-            match.output.tag.map(String.init) ?? "\\" + match.output.0
-        }
+extension AttributedString {
+
+    var plainText: String {
+        String(characters)
+            .replacing(#/\s+/#, with: String.space)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
@@ -61,15 +62,6 @@ extension String {
 
         case line
         case paragraph
-
-        var text: String {
-            switch self {
-            case .line:
-                .newLine
-            case .paragraph:
-                .newParagraph
-            }
-        }
     }
 
     private struct HTMLRule {
@@ -143,14 +135,24 @@ extension String {
             case .pre:
                 HTMLRule(intent: .code, htmlBreak: .paragraph, preservesWhitespace: true)
             case .sup:
-                HTMLRule(attributes: AttributeContainer().baselineOffset(CGFloat(5)))
+                Self.script(baselineOffset: 5)
             case .sub:
-                HTMLRule(attributes: AttributeContainer().baselineOffset(CGFloat(-3)))
-            case .h1, .h2, .h3, .h4, .h5, .h6:
-                HTMLRule(intent: .stronglyEmphasized, htmlBreak: .paragraph)
-            case .p, .blockquote, .table:
+                Self.script(baselineOffset: -3)
+            case .h1:
+                Self.heading(.title)
+            case .h2:
+                Self.heading(.title2)
+            case .h3:
+                Self.heading(.title3)
+            case .h4:
+                Self.heading(.headline)
+            case .h5:
+                Self.heading(.subheadline)
+            case .h6:
+                Self.heading(.footnote)
+            case .p, .blockquote, .table, .tr:
                 HTMLRule(htmlBreak: .paragraph)
-            case .div:
+            case .div, .td:
                 HTMLRule(htmlBreak: .line)
             case .br:
                 HTMLRule(htmlBreak: .line, isVoid: true)
@@ -162,15 +164,19 @@ extension String {
                 HTMLRule(htmlBreak: .paragraph, childMarker: { String(repeating: .space, count: $1 * 4) + "\($0)." + .space })
             case .li:
                 HTMLRule(htmlBreak: .line, compactsBreaks: true)
-            case .tr:
-                HTMLRule(htmlBreak: .line, childMarker: { index, _ in index > 1 ? .space : .empty })
-            case .td:
-                HTMLRule()
             case .th:
-                HTMLRule(intent: .stronglyEmphasized)
+                HTMLRule(intent: .stronglyEmphasized, htmlBreak: .line)
             case .script, .style:
                 HTMLRule(isHidden: true)
             }
+        }
+
+        private static func heading(_ font: Font) -> HTMLRule {
+            HTMLRule(attributes: AttributeContainer().font(font), intent: .stronglyEmphasized, htmlBreak: .paragraph)
+        }
+
+        private static func script(baselineOffset: CGFloat) -> HTMLRule {
+            HTMLRule(attributes: AttributeContainer().font(Font.caption2).baselineOffset(baselineOffset))
         }
 
         private static func href(in attributes: Substring) -> URL? {
@@ -180,7 +186,7 @@ extension String {
 
             let value = match.output.double ?? match.output.single ?? match.output.bare ?? ""
 
-            return URL(string: String(value).replacing("&amp;", with: "&"))
+            return String(value).replacing("&amp;", with: "&").url
         }
     }
 }
@@ -237,7 +243,9 @@ extension String {
                 guard let tag = HTMLTag(rawValue: match.output.name.lowercased()) else { continue }
 
                 if match.output.closing.isNotEmpty {
-                    close(tag)
+                    if let index = openTags.lastIndex(where: { $0.tag == tag }) {
+                        requestBreak(for: openTags.remove(at: index).rule)
+                    }
                 } else {
                     let rule = tag.rule(attributes: match.output.attributes)
 
@@ -249,7 +257,7 @@ extension String {
         }
 
         private mutating func open(_ tag: HTMLTag, rule: HTMLRule) {
-            requestBreak(rule.htmlBreak, stacks: rule.isVoid)
+            requestBreak(for: rule)
 
             if let parent = openTags.indices.last {
                 openTags[parent].childCount += 1
@@ -266,18 +274,10 @@ extension String {
             }
         }
 
-        private mutating func close(_ tag: HTMLTag) {
-            guard let index = openTags.lastIndex(where: { $0.tag == tag }) else { return }
+        private mutating func requestBreak(for rule: HTMLRule) {
+            guard var htmlBreak = rule.htmlBreak else { return }
 
-            let closed = openTags.remove(at: index)
-
-            requestBreak(closed.rule.htmlBreak, stacks: false)
-        }
-
-        private mutating func requestBreak(_ htmlBreak: HTMLBreak?, stacks: Bool) {
-            guard var htmlBreak else { return }
-
-            if stacks, pendingBreak != nil {
+            if rule.isVoid, pendingBreak != nil {
                 htmlBreak = .paragraph
             }
 
@@ -292,8 +292,9 @@ extension String {
             guard !isOpen(where: \.isHidden) else { return }
 
             var text = AttributedString(source[run.range])
+            let preservesWhitespace = isOpen(where: \.preservesWhitespace)
 
-            if isHTML, !isOpen(where: \.preservesWhitespace) {
+            if isHTML, !preservesWhitespace {
                 let collapsed = String(text.characters).replacing(#/\s+/#) { match in
                     match.output.filter(\.isNewline).count > 1 ? String.newParagraph : .space
                 }
@@ -308,7 +309,7 @@ extension String {
                 text.mergeAttributes(openTag.rule.attributes)
             }
 
-            append(text, preservingWhitespace: isOpen(where: \.preservesWhitespace))
+            append(text, preservingWhitespace: preservesWhitespace)
         }
 
         private mutating func append(_ text: AttributedString, preservingWhitespace: Bool) {
@@ -332,7 +333,7 @@ extension String {
                     result.characters.removeLast()
                 }
 
-                result.append(AttributedString(pendingBreak.text))
+                result.append(AttributedString(pendingBreak == .paragraph ? String.newParagraph : .newLine))
             }
 
             pendingBreak = nil
