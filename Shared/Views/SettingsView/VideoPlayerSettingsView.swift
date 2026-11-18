@@ -402,10 +402,10 @@ extension VideoPlayerSettingsView {
 
     private struct JumpIntervalPicker: View {
 
+        let title: String
+
         @Binding
         var selection: MediaJumpInterval
-
-        let title: String
 
         @ContentBuilder
         var body: some View {
