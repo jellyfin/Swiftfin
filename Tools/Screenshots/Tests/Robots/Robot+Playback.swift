@@ -67,7 +67,9 @@ extension Robot {
             sleep(1)
         }
 
-        tap(button(L10n.aspectFill))
+        if UIDevice.isPad {
+            tap(button(L10n.aspectFill))
+        }
 
         let remaining = waitFor(app.staticTexts["playbackRemainingTime"])
         let right = remaining.frame.maxX
