@@ -23,6 +23,7 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
     private let load: Loader
     private weak var mediaSession: MediaSession?
     private(set) var segments: [MediaSegment] = []
+    private(set) var skippedSegment: MediaSegment?
 
     private var dismissed: Set<String> = []
     private var suppressed: String?
@@ -94,6 +95,7 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
                 request = nil
                 events = nil
                 segments = []
+                skippedSegment = nil
                 dismissed = []
                 suppressed = nil
                 stopCountdown()
@@ -158,6 +160,7 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
         if countdown?.segmentID != active.segment.id {
             stopCountdown()
             countdown = (active.segment.id, TimeInterval(configuration.skipDelay))
+            skippedSegment = nil
         }
 
         if let countdown, countdown.remaining <= 0 {
@@ -187,6 +190,7 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
         }
 
         stopCountdown()
+        skippedSegment = active.segment
         mediaSession.seek(to: active.target)
     }
 
