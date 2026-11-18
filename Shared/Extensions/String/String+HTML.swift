@@ -49,7 +49,7 @@ extension AttributedString {
 
     var plainText: String {
         String(characters)
-            .replacing(#/\s+/#, with: String.space)
+            .replacing(#/\s+/#) { $0.output.contains(where: \.isNewline) ? String.newLine : .space }
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
