@@ -103,8 +103,6 @@ extension View {
         AnyView(self)
     }
 
-    // TODO: rename `errorAlert`
-
     /// Error Message Alert
     @ContentBuilder
     func errorMessage(
@@ -128,6 +126,19 @@ extension View {
 
             UIDevice.feedback(.error)
         }
+    }
+
+    @ContentBuilder
+    func errorAlert<Events: Publisher>(
+        _ events: Events,
+        dismissAction: @escaping () -> Void = {}
+    ) -> some View where Events.Output: WithErrorEvent, Events.Failure == Never {
+        modifier(
+            ErrorMessageEventModifier(
+                dismissAction: dismissAction,
+                events: events
+            )
+        )
     }
 
     @ContentBuilder

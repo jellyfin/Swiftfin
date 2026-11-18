@@ -19,8 +19,8 @@ extension View {
     ) -> some View {
         modifier(
             FilterBarModifier(
-                viewModel: viewModel,
-                types: types
+                types: types,
+                viewModel: viewModel
             )
         )
     }

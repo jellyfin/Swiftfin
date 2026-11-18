@@ -15,25 +15,25 @@ import SwiftUI
 // - Likely just an init for Binding<String> instead of Binding<String?>
 struct CulturePicker: View {
 
-    @StateObject
+    @State
     private var viewModel: PagingLibraryViewModel<CultureLibrary>
 
+    private let isUsingTwoLetterISO: Bool
     private let selection: Binding<String?>
     private let title: String
-    private let isUsingTwoLetterISO: Bool
 
     init(_ title: String, twoLetterISOLanguageName: Binding<String?>) {
+        self.isUsingTwoLetterISO = true
         self.selection = twoLetterISOLanguageName
         self.title = title
-        self._viewModel = .init(wrappedValue: .init(library: .init()))
-        self.isUsingTwoLetterISO = true
+        self._viewModel = .init(initialValue: .init(library: .init()))
     }
 
     init(_ title: String, threeLetterISOLanguageName: Binding<String?>) {
+        self.isUsingTwoLetterISO = false
         self.selection = threeLetterISOLanguageName
         self.title = title
-        self._viewModel = .init(wrappedValue: .init(library: .init()))
-        self.isUsingTwoLetterISO = false
+        self._viewModel = .init(initialValue: .init(library: .init()))
     }
 
     private var currentCulture: CultureDto? {

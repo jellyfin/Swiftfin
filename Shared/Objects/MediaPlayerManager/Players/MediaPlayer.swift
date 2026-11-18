@@ -8,7 +8,6 @@
 
 import Foundation
 import JellyfinAPI
-import Observation
 import SwiftUI
 
 // TODO: Maybe clean up Providing protocols

@@ -26,8 +26,8 @@ extension View {
     ) -> some View {
         modifier(
             NavigationBarFilterDrawerModifier(
-                viewModel: viewModel,
-                types: types
+                types: types,
+                viewModel: viewModel
             )
         )
     }

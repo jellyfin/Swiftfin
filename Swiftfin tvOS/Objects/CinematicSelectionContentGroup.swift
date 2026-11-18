@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import JellyfinAPI
 import SwiftUI
 
@@ -39,11 +38,10 @@ struct CinematicSelectionContentGroup: ContentGroup {
         @Environment(\.frameForParentView)
         private var frameForParentView
 
-        @ObservedObject
-        var viewModel: CinematicSelectionContentGroupViewModel
-
         @Router
         private var router
+
+        let viewModel: CinematicSelectionContentGroupViewModel
 
         private var parentFrame: CGRect {
             frameForParentView[.scrollView, default: .zero].frame
@@ -117,12 +115,13 @@ struct CinematicRecentlyAddedContentGroup: ContentGroup {
     @ContentBuilder
     func body(with viewModel: CinematicSelectionContentGroupViewModel) -> some View {
         PosterHStackLibrarySection(
-            viewModel: viewModel.recentlyAddedViewModel,
-            group: viewModel.recentlyAddedGroup
+            group: viewModel.recentlyAddedGroup,
+            viewModel: viewModel.recentlyAddedViewModel
         )
     }
 }
 
+@Observable
 final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
 
     struct Background: WithRefresh {
@@ -143,21 +142,20 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
     let recentlyAddedGroup: PosterGroup<RecentlyAddedLibrary>
     let resumeViewModel: PagingLibraryViewModel<ResumeItemsLibrary>
 
-    var recentlyAddedViewModel: PagingLibraryViewModel<RecentlyAddedLibrary> {
-        recentlyAddedGroup.viewModel
+    var background: Background {
+        Background(viewModel: self)
     }
 
-    var background: Background {
-        get { Background(viewModel: self) }
-        set {}
+    var hasContent: Bool {
+        hasResumeItems || recentlyAddedViewModel.elements.isNotEmpty
     }
 
     var hasResumeItems: Bool {
         resumeViewModel.elements.isNotEmpty
     }
 
-    var hasContent: Bool {
-        hasResumeItems || recentlyAddedViewModel.elements.isNotEmpty
+    var recentlyAddedViewModel: PagingLibraryViewModel<RecentlyAddedLibrary> {
+        recentlyAddedGroup.viewModel
     }
 
     init(
@@ -168,13 +166,6 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
         self.recentlyAddedGroup = PosterGroup(library: recentlyAddedLibrary)
 
         super.init()
-
-        resumeViewModel.objectWillChange
-            .merge(with: recentlyAddedViewModel.objectWillChange)
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-            .store(in: &cancellables)
     }
 
     func refresh() {

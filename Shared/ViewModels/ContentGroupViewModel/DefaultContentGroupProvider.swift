@@ -20,8 +20,10 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
     let displayTitle: String = L10n.home
     let id: String = "default-content-group-provider"
 
-    var refreshRequests: AnyPublisher<Void, Never> {
-        userSession?.userLibraryChanges ?? Combine.Empty().eraseToAnyPublisher()
+    var refreshRequests: AnyPublisher<ContentGroupRefreshRequest, Never> {
+        userSession?.userLibraryChanges
+            .map { ContentGroupRefreshRequest() }
+            .eraseToAnyPublisher() ?? Combine.Empty().eraseToAnyPublisher()
     }
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {

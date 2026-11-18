@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ParentalRatingPicker: View {
 
-    @StateObject
+    @State
     private var viewModel: PagingLibraryViewModel<ParentalRatingLibrary>
 
     private let selection: Binding<String?>
@@ -20,7 +20,7 @@ struct ParentalRatingPicker: View {
     init(_ title: String, name: Binding<String?>) {
         self.selection = name
         self.title = title
-        self._viewModel = .init(wrappedValue: .init(library: .init()))
+        self._viewModel = .init(initialValue: .init(library: .init()))
     }
 
     private var currentParentalRating: ParentalRating? {

@@ -7,7 +7,6 @@
 //
 
 import JellyfinAPI
-import Observation
 
 @MainActor
 @Observable

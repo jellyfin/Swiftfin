@@ -9,7 +9,6 @@
 import Combine
 import Defaults
 import Foundation
-import Observation
 import SwiftUI
 
 extension VideoPlayer {
@@ -516,78 +515,115 @@ extension VideoPlayer {
             self.mediaSession = mediaSession
             freezePlaybackTimeIfHidden()
 
-            var previousActivity: (MediaSession.Activity?, Bool)?
+            var previousItem = mediaSession.playbackItem
+            playbackItemDidChange()
 
-            let observations = [
-                ObservationToken { [weak mediaSession] in
+            Task { [weak self, weak mediaSession] in
+                let items = ObservableValues { [weak mediaSession] in
                     mediaSession?.playbackItem
-                } onChange: { [weak self] _ in
-                    guard let self else { return }
+                }
 
-                    dismissedOverlayActions.removeAll()
+                for await item in items {
+                    guard !Task.isCancelled else { return }
+                    guard item === mediaSession?.playbackItem, item !== previousItem else { continue }
 
-                    if let selectedSupplementID {
-                        if supplements.contains(where: { $0.id == selectedSupplementID }) {
-                            transition(to: presentation)
-                        } else {
-                            self.selectedSupplementID = nil
-                        }
-                    }
+                    previousItem = item
+                    self?.playbackItemDidChange()
+                }
+            }
+            .store(in: &sessionObservations)
 
-                    if supplements.isEmpty {
-                        containerView?.cancelSupplementPan()
-                    }
+            var previousStatus = mediaSession.playbackRequestStatus
+            playbackRequestStatusDidChange(previousStatus)
 
-                    cancelScrub()
-                    freezePlaybackTimeIfHidden()
-
-                    if let rate = originalPlaybackRate {
-                        self.mediaSession?.rate = rate
-                        originalPlaybackRate = nil
-                    }
-
-                    setInteraction(.speedBoost, active: false)
-
-                    #if os(iOS)
-                    cancelTapGesture()
-                    panHandlingAction = nil
-                    #endif
-
-                    fitVideo()
-                },
-                ObservationToken { [weak mediaSession] in
+            Task { [weak self, weak mediaSession] in
+                let statuses = ObservableValues { [weak mediaSession] in
                     mediaSession?.playbackRequestStatus
-                } onChange: { [weak self] status in
-                    guard let self else { return }
+                }
 
-                    #if os(tvOS)
-                    if status == .paused, presentation == .hidden {
-                        showControls()
-                    }
-                    #endif
+                for await status in statuses {
+                    guard !Task.isCancelled else { return }
+                    guard status == mediaSession?.playbackRequestStatus, let status, status != previousStatus else { continue }
 
-                    refreshAutoDismiss()
-                },
-                ObservationToken { [weak mediaSession] in
+                    previousStatus = status
+                    self?.playbackRequestStatusDidChange(status)
+                }
+            }
+            .store(in: &sessionObservations)
+
+            var previousActivity = (mediaSession.activity, mediaSession.canSeek)
+            playbackActivityDidChange(canSeek: previousActivity.1)
+
+            Task { [weak self, weak mediaSession] in
+                let activities = ObservableValues { [weak mediaSession] in
                     (mediaSession?.activity, mediaSession?.canSeek == true)
-                } onChange: { [weak self] activity in
-                    guard let self else { return }
+                }
 
-                    if let previousActivity, previousActivity == activity {
-                        return
-                    }
+                for await activity in activities {
+                    guard !Task.isCancelled else { return }
+                    guard activity == (mediaSession?.activity, mediaSession?.canSeek == true),
+                          let currentActivity = activity.0,
+                          previousActivity != (
+                              currentActivity,
+                              activity.1
+                          ) else { continue }
 
-                    previousActivity = activity
+                    previousActivity = (currentActivity, activity.1)
+                    self?.playbackActivityDidChange(canSeek: activity.1)
+                }
+            }
+            .store(in: &sessionObservations)
+        }
 
-                    if !activity.1 {
-                        cancelScrub()
-                    }
+        private func playbackItemDidChange() {
+            dismissedOverlayActions.removeAll()
 
-                    refreshAutoDismiss()
-                },
-            ]
+            if let selectedSupplementID {
+                if supplements.contains(where: { $0.id == selectedSupplementID }) {
+                    transition(to: presentation)
+                } else {
+                    self.selectedSupplementID = nil
+                }
+            }
 
-            observations.forEach { $0.store(in: &sessionObservations) }
+            if supplements.isEmpty {
+                containerView?.cancelSupplementPan()
+            }
+
+            cancelScrub()
+            freezePlaybackTimeIfHidden()
+
+            if let rate = originalPlaybackRate {
+                mediaSession?.rate = rate
+                originalPlaybackRate = nil
+            }
+
+            setInteraction(.speedBoost, active: false)
+
+            #if os(iOS)
+            cancelTapGesture()
+            panHandlingAction = nil
+            #endif
+
+            fitVideo()
+        }
+
+        private func playbackRequestStatusDidChange(_ status: MediaSession.PlaybackRequestStatus) {
+            #if os(tvOS)
+            if status == .paused, presentation == .hidden {
+                showControls()
+            }
+            #endif
+
+            refreshAutoDismiss()
+        }
+
+        private func playbackActivityDidChange(canSeek: Bool) {
+            if !canSeek {
+                cancelScrub()
+            }
+
+            refreshAutoDismiss()
         }
 
         func disconnect() {

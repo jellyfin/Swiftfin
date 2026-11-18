@@ -12,17 +12,15 @@ import SwiftUI
 
 struct EPGLoadableView<Content: View>: View {
 
-    @ObservedObject
-    private var viewModel: EPGViewModel
-
     private let content: Content
+    private let viewModel: EPGViewModel
 
     init(
         viewModel: EPGViewModel,
         @ContentBuilder content: () -> Content
     ) {
-        self.viewModel = viewModel
         self.content = content()
+        self.viewModel = viewModel
     }
 
     @ContentBuilder
@@ -48,21 +46,19 @@ struct EPGLoadableView<Content: View>: View {
 
 struct EPGContentView: View {
 
-    @ObservedObject
-    private var viewModel: EPGViewModel
+    @State
+    private var selectedGroup: ProgramBlock?
 
     @StateObject
     private var proxy = EPGScrollProxy()
 
-    @State
-    private var selectedGroup: ProgramBlock?
-
     private let action: (BaseItemDto) -> Void
     private let selectedChannelID: String?
+    private let viewModel: EPGViewModel
 
     init(
-        viewModel: EPGViewModel,
         selectedChannelID: String? = nil,
+        viewModel: EPGViewModel,
         action: @escaping (BaseItemDto) -> Void
     ) {
         self.action = action
@@ -95,10 +91,10 @@ struct EPGContentView: View {
         } content: { frame in
             HStack(spacing: 0) {
                 EPGChannelColumn(
-                    viewModel: viewModel,
+                    bottomInset: frame.safeAreaInsets.bottom,
                     proxy: proxy,
                     selectedChannelID: selectedChannelID,
-                    bottomInset: frame.safeAreaInsets.bottom
+                    viewModel: viewModel
                 ) { item in
                     action(item)
                 }
@@ -116,8 +112,6 @@ struct EPGContentView: View {
                     Divider()
 
                     EPGCollectionView(
-                        viewModel: viewModel,
-                        proxy: proxy,
                         bottomInset: frame.safeAreaInsets.bottom,
                         onReachedBottom: {
                             viewModel.getNextPage()
@@ -127,7 +121,9 @@ struct EPGContentView: View {
                         },
                         onSelectGroup: {
                             selectedGroup = $0
-                        }
+                        },
+                        proxy: proxy,
+                        viewModel: viewModel
                     )
                 }
             }

@@ -10,7 +10,6 @@ import Combine
 import Defaults
 import FactoryKit
 import JellyfinAPI
-import Observation
 import SwiftUI
 
 @MainActor

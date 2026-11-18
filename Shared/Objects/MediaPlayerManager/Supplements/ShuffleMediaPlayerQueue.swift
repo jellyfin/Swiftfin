@@ -9,7 +9,6 @@
 import Combine
 import Foundation
 import JellyfinAPI
-import Observation
 
 @MainActor
 @Observable
@@ -22,25 +21,27 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
 
     private struct CollectionSource {
 
-        var items: [ItemEntry] = []
         var excludedIDs: Set<String> = []
         var isExhausted = false
+        var items: [ItemEntry] = []
     }
 
-    private(set) var state: MediaPlayerQueueState = .initial
-    private(set) var items: [ItemEntry] = []
+    @ObservationIgnored
+    private var refillID: UUID?
+    @ObservationIgnored
+    private var refillTask: Task<Void, Error>?
 
-    private let parent: ItemEntry
-    private var userSession: UserSession?
     private let loadPage: PageLoader
-    private weak var mediaSession: MediaSession?
+    private let parent: ItemEntry
+
+    private var collections: CollectionSource?
     private var currentIndex: Int?
     private var excludedIDs: Set<String> = []
     private var isExhausted = false
-    private var collections: CollectionSource?
-
-    @ObservationIgnored
-    private var refillTask: Task<Void, Error>?
+    private(set) var items: [ItemEntry] = []
+    private weak var mediaSession: MediaSession?
+    private(set) var state: MediaPlayerQueueState = .initial
+    private var userSession: UserSession?
 
     var currentEntryID: ItemEntry.ID? {
         currentIndex.map { items[$0].id }
@@ -65,8 +66,8 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
             return response.items.map { ItemEntry(item: $0) }
         }
     ) {
-        self.parent = SharedBaseItem(wrappedValue: parent).entry
         self.loadPage = loadPage
+        self.parent = SharedBaseItem(wrappedValue: parent).entry
         if parent.collectionType == .boxsets {
             collections = CollectionSource()
         }
@@ -99,6 +100,8 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
         guard currentIndex != nil else { return nil }
 
         try await refillTask?.value
+        try Task.checkCancellation()
+
         if nextItem == nil, !isExhausted {
             try await loadMore()
         }
@@ -109,31 +112,58 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
     func observe(_ mediaSession: MediaSession) -> AnyCancellable {
         self.mediaSession = mediaSession
 
-        let observation = ObservationToken { [weak mediaSession] in
-            mediaSession?.playbackItem?.baseItem.id
-        } onChange: { [weak self] itemID in
-            guard let self, let itemID else { return }
+        var previousItemID = mediaSession.playbackItem?.baseItem.id
+        currentItemDidChange(previousItemID)
 
-            currentIndex = items.firstIndex { $0.itemID == itemID }
-            if let currentIndex, items.count - currentIndex - 1 <= Self.refillThreshold, state != .error {
-                refresh()
+        let observation = Task { [weak self, weak mediaSession] in
+            let itemIDs = ObservableValues { [weak mediaSession] in
+                mediaSession?.playbackItem?.baseItem.id
+            }
+
+            for await itemID in itemIDs {
+                guard !Task.isCancelled else { return }
+                guard itemID == mediaSession?.playbackItem?.baseItem.id, itemID != previousItemID else { continue }
+
+                previousItemID = itemID
+                self?.currentItemDidChange(itemID)
             }
         }
 
         return AnyCancellable { [self, observation] in
             MainActor.assumeIsolated {
                 observation.cancel()
+                if refillTask != nil {
+                    state = .content
+                }
                 refillTask?.cancel()
+                refillTask = nil
+                refillID = nil
                 self.mediaSession = nil
             }
+        }
+    }
+
+    private func currentItemDidChange(_ itemID: String?) {
+        guard let itemID else { return }
+
+        currentIndex = items.firstIndex { $0.itemID == itemID }
+        if let currentIndex, items.count - currentIndex - 1 <= Self.refillThreshold, state != .error {
+            refresh()
         }
     }
 
     func refresh() {
         guard currentIndex != nil, !isExhausted, refillTask == nil else { return }
 
+        let id = UUID()
+        refillID = id
         refillTask = Task {
-            defer { refillTask = nil }
+            defer {
+                if refillID == id {
+                    refillTask = nil
+                    refillID = nil
+                }
+            }
             try await loadMore()
         }
     }
@@ -155,6 +185,7 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
     }
 
     private func loadMore() async throws {
+        try Task.checkCancellation()
         guard let userSession else { throw UserSessionError.missingCurrentSession }
 
         state = items.isEmpty ? .loading : .content
@@ -178,6 +209,8 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
                 parameters.excludeItemIDs = Array(excludedIDs)
 
                 let page = try await fetchPage(parameters, userSession: userSession)
+                try Task.checkCancellation()
+
                 let newItems = page.filter { excludedIDs.insert($0.itemID).inserted }
                 isExhausted = isExhausted || newItems.isEmpty
                 items.append(contentsOf: newItems.filter {
@@ -185,10 +218,14 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
                 })
             } while items.count == previousCount && !isExhausted
             state = .content
-        } catch is CancellationError {
-            state = .content
-            throw CancellationError()
         } catch {
+            guard !Task.isCancelled else { throw CancellationError() }
+
+            if error is CancellationError {
+                state = .content
+                throw error
+            }
+
             state = .error
             throw error
         }
@@ -197,6 +234,8 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
     private func fetchPage(_ parameters: Paths.GetItemsParameters, userSession: UserSession) async throws -> [ItemEntry] {
         guard var collections else {
             let page = try await loadPage(parameters, userSession)
+            try Task.checkCancellation()
+
             isExhausted = page.count < Self.pageSize
             return page
         }
@@ -211,6 +250,8 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
                 query.includeItemTypes = [.boxSet]
                 query.excludeItemIDs = Array(collections.excludedIDs)
                 let page = try await loadPage(query, userSession)
+                try Task.checkCancellation()
+
                 let newItems = page.filter { collections.excludedIDs.insert($0.itemID).inserted }
                 collections.isExhausted = page.count < Self.pageSize || newItems.isEmpty
                 collections.items = newItems.filter { $0.snapshot.type == .boxSet }
@@ -228,6 +269,8 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
             var query = parameters
             query.parentID = collection.itemID
             let page = try await loadPage(query, userSession)
+            try Task.checkCancellation()
+
             let newItems = page.filter { !excludedIDs.contains($0.itemID) }
             collections.items.removeFirst()
             if page.count == Self.pageSize, !newItems.isEmpty {

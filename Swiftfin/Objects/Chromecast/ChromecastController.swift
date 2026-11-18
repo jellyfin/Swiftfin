@@ -10,7 +10,6 @@
 import Defaults
 import Foundation
 @preconcurrency import GoogleCast
-import Observation
 
 @MainActor
 @Observable

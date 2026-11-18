@@ -9,7 +9,6 @@
 import Combine
 import Foundation
 import JellyfinAPI
-import Observation
 
 @MainActor
 @Observable
