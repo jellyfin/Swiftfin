@@ -86,32 +86,34 @@ extension VideoPlayer.PlaybackControls {
                 Text(scrubbedSeconds, format: .runtime)
                     .accessibilityIdentifier("playbackElapsedTime")
 
-                Group {
-                    // swiftlint:disable:next hard_coded_display_string
-                    Text("/")
+                if isScrubbing {
+                    Group {
+                        // swiftlint:disable:next hard_coded_display_string
+                        Text("/")
 
-                    Text(viewState.playbackSeconds, format: .runtime)
+                        Text(viewState.playbackSeconds, format: .runtime)
+                    }
+                    .foregroundStyle(.secondary)
                 }
-                .foregroundStyle(.secondary)
-                .isVisible(isScrubbing)
             }
         }
 
         @ContentBuilder
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
-                Group {
-                    if let runtime = mediaSession.item.runtime {
-                        Text(runtime - viewState.playbackSeconds, format: .runtime)
-                    } else {
-                        Text(verbatim: .emptyRuntime)
-                    }
+                if isScrubbing {
+                    Group {
+                        if let runtime = mediaSession.item.runtime {
+                            Text(runtime - viewState.playbackSeconds, format: .runtime)
+                        } else {
+                            Text(verbatim: .emptyRuntime)
+                        }
 
-                    // swiftlint:disable:next hard_coded_display_string
-                    Text("/")
+                        // swiftlint:disable:next hard_coded_display_string
+                        Text("/")
+                    }
+                    .foregroundStyle(.secondary)
                 }
-                .foregroundStyle(.secondary)
-                .isVisible(isScrubbing)
 
                 if let runtime = mediaSession.item.runtime {
                     switch trailingTimestampType {
