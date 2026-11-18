@@ -198,7 +198,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                         .foregroundStyle(.secondary)
                 }
 
-                if let overview = item.overview ?? item.currentProgram?.overview {
+                if let overview = $item.item.plainOverview ?? $item.item.currentProgram?.plainOverview {
                     Text(overview)
                         .font(.subheadline)
                         .fontWeight(.regular)
@@ -252,7 +252,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                             .foregroundStyle(.secondary)
                     }
 
-                    if let overview = item.overview ?? item.currentProgram?.overview {
+                    if let overview = $item.item.plainOverview ?? $item.item.currentProgram?.plainOverview {
                         Text(overview)
                             .font(.subheadline)
                             .fontWeight(.regular)

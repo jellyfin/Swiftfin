@@ -35,7 +35,7 @@ extension IdentifyItemView {
                             .foregroundStyle(Color.primary)
 
                         if let overview = result.overview {
-                            Text(overview)
+                            Text(overview.plainText)
                                 .lineLimit(3)
                                 .font(.subheadline)
                                 .foregroundStyle(Color.secondary)

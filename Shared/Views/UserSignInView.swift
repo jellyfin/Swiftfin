@@ -240,7 +240,7 @@ struct UserSignInView: View {
 
         if let disclaimer = viewModel.serverDisclaimer {
             Section(L10n.disclaimer) {
-                Text(disclaimer.markdown)
+                Text(disclaimer.richText)
                     .font(.callout)
             }
         }

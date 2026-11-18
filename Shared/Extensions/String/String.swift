@@ -146,6 +146,10 @@ extension String {
     static let empty = ""
     /// " "
     static let space = " "
+    /// \n
+    static let newLine = "\n"
+    /// \n\n
+    static let newParagraph = "\n\n"
 
     static let tab = "\u{0009}"
     /// —

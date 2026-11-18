@@ -18,7 +18,7 @@ final class ItemRecord: Identifiable {
 
     nonisolated let id: String
     private var metadata: BaseItemDto?
-    private var currentProgram: ItemRecord?
+    private(set) var currentProgram: ItemRecord?
     /// Pending writes overlay confirmed data until each write finishes
     private var optimisticChanges: [(id: UUID, field: ItemUserDataField, value: Bool)] = []
 
@@ -28,6 +28,25 @@ final class ItemRecord: Identifiable {
     private var userDataRevisions = FieldRevisions()
     @ObservationIgnored
     private var programRevision: UInt64 = 0
+    @ObservationIgnored
+    private var richOverviewCache: (overview: String, value: AttributedString)?
+
+    var richOverview: AttributedString? {
+        guard let overview = metadata?.overview else { return nil }
+
+        if let richOverviewCache, richOverviewCache.overview == overview {
+            return richOverviewCache.value
+        }
+
+        let value = overview.richText
+        richOverviewCache = (overview, value)
+
+        return value
+    }
+
+    var plainOverview: String? {
+        richOverview.map { String($0.characters) }
+    }
 
     var value: BaseItemDto? {
         guard var value = metadata else { return nil }
@@ -173,6 +192,7 @@ final class ItemRecord: Identifiable {
         metadataRevisions = .init()
         userDataRevisions = .init()
         programRevision = 0
+        richOverviewCache = nil
         optimisticChanges.removeAll()
     }
 

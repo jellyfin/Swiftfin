@@ -35,7 +35,7 @@ extension ItemView {
                             .lineLimit(2)
                     }
 
-                    if let itemOverview = item.overview, itemOverview.isNotEmpty {
+                    if let itemOverview = $item.item.plainOverview, itemOverview.isNotEmpty {
                         PresentationContent {
                             Button {
                                 router.route(to: .itemOverview(item: item))
