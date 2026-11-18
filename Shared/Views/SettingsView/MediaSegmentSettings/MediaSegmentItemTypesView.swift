@@ -10,12 +10,12 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct MediaSegmentMediaTypesView: View {
+struct MediaSegmentItemTypesView: View {
 
     @Default(.VideoPlayer.mediaSegments)
     private var configuration
 
-    private let mediaTypes = MediaSegmentConfiguration.default.itemTypes
+    private let itemTypes = MediaSegmentConfiguration.default.itemTypes
 
     @ContentBuilder
     var body: some View {
@@ -23,7 +23,7 @@ struct MediaSegmentMediaTypesView: View {
             Section(L10n.mediaTypes) {
                 SelectorView(
                     selection: $configuration.itemTypes,
-                    sources: mediaTypes,
+                    sources: itemTypes,
                     type: .multi
                 )
             }
@@ -32,9 +32,9 @@ struct MediaSegmentMediaTypesView: View {
         .navigationTitle(L10n.mediaTypes.localizedCapitalized)
         .topBarTrailing {
             Button(L10n.reset) {
-                configuration.itemTypes = mediaTypes
+                configuration.itemTypes = itemTypes
             }
-            .enabled(Set(configuration.itemTypes) != Set(mediaTypes))
+            .enabled(Set(configuration.itemTypes) != Set(itemTypes))
         }
     }
 }

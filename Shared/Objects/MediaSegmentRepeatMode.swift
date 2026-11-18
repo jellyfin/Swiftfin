@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum MediaSegmentSkipPolicy: String, CaseIterable, Displayable, Storable {
+enum MediaSegmentRepeatMode: String, CaseIterable, Displayable, Storable {
 
     case once
     case everyTime

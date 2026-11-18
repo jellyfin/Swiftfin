@@ -49,22 +49,22 @@ struct MediaSegmentSettingsView: View {
             }
 
             Section(L10n.configuration) {
-                PlatformPicker(L10n.frequency, selection: $configuration.skipPolicy)
+                PlatformPicker(L10n.repeat, selection: $configuration.repeatMode)
             } learnMore: {
                 LabeledContent(
-                    MediaSegmentSkipPolicy.once.displayTitle,
-                    value: MediaSegmentSkipPolicy.once.description
+                    MediaSegmentRepeatMode.once.displayTitle,
+                    value: MediaSegmentRepeatMode.once.description
                 )
 
                 LabeledContent(
-                    MediaSegmentSkipPolicy.everyTime.displayTitle,
-                    value: MediaSegmentSkipPolicy.everyTime.description
+                    MediaSegmentRepeatMode.everyTime.displayTitle,
+                    value: MediaSegmentRepeatMode.everyTime.description
                 )
             }
 
             Section {
                 ChevronButton(L10n.mediaTypes) {
-                    router.route(to: .mediaSegmentMediaTypes)
+                    router.route(to: .mediaSegmentItemTypes)
                 }
             } footer: {
                 Text(L10n.mediaSegmentMediaTypesDescription)
@@ -72,17 +72,9 @@ struct MediaSegmentSettingsView: View {
 
             if configuration.actions.values.contains(.skip) {
                 Section {
-                    Stepper(
-                        L10n.skipDelay,
-                        value: $configuration.skipDelay.map(
-                            getter: { Int($0.seconds) },
-                            setter: { .seconds($0) }
-                        ),
-                        in: 0 ... 30,
-                        step: 1
-                    ) {
+                    Stepper(L10n.skipDelay, value: $configuration.skipDelay, in: 0 ... 30, step: 1) {
                         LabeledContent(L10n.skipDelay) {
-                            Text(Int(configuration.skipDelay.seconds), format: SecondFormatter())
+                            Text(configuration.skipDelay, format: SecondFormatter())
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -90,9 +82,15 @@ struct MediaSegmentSettingsView: View {
                     Text(L10n.skipDelayDescription)
                 }
 
-                if configuration.skipDelay > .zero {
+                if configuration.skipDelay > 0 {
                     Section {
-                        PlatformPicker(L10n.shortSegments, selection: $configuration.shortSegmentAction)
+                        #if os(tvOS)
+                        ListRowMenu(L10n.shortSegments, subtitle: Text(configuration.shortSegmentAction.displayTitle)) {
+                            Picker(L10n.shortSegments, selection: $configuration.shortSegmentAction, onlySupported: true)
+                        }
+                        #else
+                        Picker(L10n.shortSegments, selection: $configuration.shortSegmentAction, onlySupported: true)
+                        #endif
                     } footer: {
                         Text(L10n.shortSegmentsDescription)
                     }

@@ -786,8 +786,6 @@ internal enum L10n {
   internal static let format3D = L10n.tr("Localizable", "format3D", fallback: "3D format")
   /// Framerate
   internal static let framerate = L10n.tr("Localizable", "framerate", fallback: "Framerate")
-  /// Frequency
-  internal static let frequency = L10n.tr("Localizable", "frequency", fallback: "Frequency")
   /// From beginning
   internal static let fromBeginning = L10n.tr("Localizable", "fromBeginning", fallback: "From beginning")
   /// Full side-by-side
@@ -1568,6 +1566,8 @@ internal enum L10n {
   internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
   /// Reorder
   internal static let reorder = L10n.tr("Localizable", "reorder", fallback: "Reorder")
+  /// Repeat
+  internal static let `repeat` = L10n.tr("Localizable", "repeat", fallback: "Repeat")
   /// Replace
   internal static let replace = L10n.tr("Localizable", "replace", fallback: "Replace")
   /// Replace all metadata

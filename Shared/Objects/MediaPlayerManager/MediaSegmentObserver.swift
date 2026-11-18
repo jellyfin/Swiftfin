@@ -104,7 +104,7 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
     }
 
     func dismissOverlayAction(_ id: String) {
-        if configuration.skipPolicy == .once {
+        if configuration.repeatMode == .once {
             dismissed.insert(id)
         } else {
             suppressed = id
@@ -157,7 +157,7 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
 
         if countdown?.segmentID != active.segment.id {
             stopCountdown()
-            countdown = (active.segment.id, configuration.skipDelay.seconds)
+            countdown = (active.segment.id, TimeInterval(configuration.skipDelay))
         }
 
         if let countdown, countdown.remaining <= 0 {
@@ -182,7 +182,7 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
     }
 
     private func skip(_ active: (segment: MediaSegment, target: Duration), in mediaSession: MediaSession) {
-        if configuration.skipPolicy == .once {
+        if configuration.repeatMode == .once {
             dismissed.insert(active.segment.id)
         }
 
@@ -200,7 +200,7 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
                 id: segment.id,
                 title: L10n.cancel,
                 countdown: .init(
-                    duration: configuration.skipDelay.seconds,
+                    duration: TimeInterval(configuration.skipDelay),
                     deadline: countdownTimer.deadline,
                     remaining: countdown.remaining
                 )

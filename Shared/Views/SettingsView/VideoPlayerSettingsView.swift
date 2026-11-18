@@ -159,6 +159,8 @@ struct VideoPlayerSettingsView: View {
     }
     #endif
 
+    // MARK: - Button Settings
+
     @ContentBuilder
     private var buttonSettings: some View {
         Section(L10n.buttons) {
@@ -219,7 +221,16 @@ struct VideoPlayerSettingsView: View {
         }
     }
 
-    // MARK: - Media Segement Settings
+    // MARK: - Sleep Timer Settings
+
+    @ContentBuilder
+    private var sleepTimerSettings: some View {
+        Section(L10n.sleepTimer) {
+            PlatformPicker(L10n.whenTimerEnds, selection: $sleepTimerAction)
+        }
+    }
+
+    // MARK: - Media Segment Settings
 
     @ContentBuilder
     private var mediaSegmentSettings: some View {
@@ -227,15 +238,6 @@ struct VideoPlayerSettingsView: View {
             ChevronButton(L10n.mediaSegments) {
                 router.route(to: .mediaSegmentSettings)
             }
-        }
-    }
-
-    // MARK: - Sleep Timer Settings
-
-    @ContentBuilder
-    private var sleepTimerSettings: some View {
-        Section(L10n.sleepTimer) {
-            PlatformPicker(L10n.whenTimerEnds, selection: $sleepTimerAction)
         }
     }
 
@@ -400,14 +402,16 @@ extension VideoPlayerSettingsView {
 
     private struct JumpIntervalPicker: View {
 
+        @Binding
+        var selection: MediaJumpInterval
+
         let title: String
-        var selection: Binding<MediaJumpInterval>
 
         @ContentBuilder
         var body: some View {
             CustomAlertPicker(
                 title: title,
-                selection: selection,
+                selection: $selection,
                 customTitle: L10n.jump,
                 customDescription: L10n.customJumpIntervalDescription
             ) { value in

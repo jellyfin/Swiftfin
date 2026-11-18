@@ -13,9 +13,9 @@ struct MediaSegmentConfiguration: Hashable, Storable, WithDefaultValue {
 
     var actions: [MediaSegmentType: MediaSegmentAction] = [.intro: .ask, .outro: .ask]
     var itemTypes: [BaseItemKind] = BaseItemKind.allCases.filter { $0.mediaType == .video && !$0.isLiveStream }
-    var skipDelay: Duration = .seconds(5)
-    var skipPolicy: MediaSegmentSkipPolicy = .once
-    var shortSegmentAction: ShortMediaSegmentAction = .ask
+    var skipDelay: Int = 5
+    var repeatMode: MediaSegmentRepeatMode = .once
+    var shortSegmentAction: MediaSegmentAction = .ask
 
     subscript(type: MediaSegmentType) -> MediaSegmentAction {
         get {
@@ -29,14 +29,9 @@ struct MediaSegmentConfiguration: Hashable, Storable, WithDefaultValue {
     func action(for segment: MediaSegment) -> MediaSegmentAction {
         let action = self[segment.type]
 
-        guard action == .skip, segment.end - segment.start < skipDelay else { return action }
+        guard action == .skip, segment.end - segment.start < .seconds(skipDelay) else { return action }
 
-        switch shortSegmentAction {
-        case .ask:
-            return .ask
-        case .off:
-            return .off
-        }
+        return shortSegmentAction
     }
 
     static let `default` = MediaSegmentConfiguration()
