@@ -83,7 +83,8 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
                     filters: .init(
                         itemTypes: [.movie, .series],
                         sortBy: [.dateCreated],
-                        sortOrder: [.descending]
+                        sortOrder: [.descending],
+                        traits: Defaults[.Customization.Home.Rewatching.configuration].recentlyAdded ? [] : [.isUnplayed]
                     )
                 )
             )

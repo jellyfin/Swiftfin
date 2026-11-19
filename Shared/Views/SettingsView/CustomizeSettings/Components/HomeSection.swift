@@ -20,50 +20,73 @@ extension CustomizeSettingsView {
         private var showRecentlyPlayed
         @Default(.Customization.Home.maxNextUp)
         private var maxNextUp
-        @Default(.Customization.Home.resumeNextUp)
-        private var resumeNextUp
+        @Default(.Customization.Home.Rewatching.configuration)
+        private var rewatchingConfiguration
 
         @ContentBuilder
         var body: some View {
-            Section(L10n.home) {
-                Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)
-                Toggle(L10n.recentlyPlayed, isOn: $showRecentlyPlayed)
-                Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
+            Form(systemImage: "gear") {
+                Section {
+                    Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)
+                    Toggle(L10n.recentlyPlayed, isOn: $showRecentlyPlayed)
+                } header: {
+                    Text(L10n.sections)
+                }
 
-                StateAdapter(initialValue: false) { isNextUpDaysPresented in
-                    ChevronButton {
-                        isNextUpDaysPresented.wrappedValue = true
-                    } label: {
-                        LabeledContent {
-                            if maxNextUp > 0 {
-                                Text(
-                                    Duration.seconds(maxNextUp),
-                                    format: .units(allowed: [.days], width: .abbreviated)
-                                )
-                                .foregroundStyle(.secondary)
-                            } else {
-                                Text(L10n.disabled)
-                                    .foregroundStyle(.secondary)
-                            }
+                Section {
+                    Toggle(L10n.continueWatching, isOn: $rewatchingConfiguration.resume)
+                    Toggle(L10n.nextUp, isOn: $rewatchingConfiguration.nextUp)
+
+                    if showRecentlyAdded {
+                        Toggle(L10n.recentlyAdded, isOn: $rewatchingConfiguration.recentlyAdded)
+                    }
+
+                    Toggle(L10n.latest, isOn: $rewatchingConfiguration.latest)
+                } header: {
+                    Text(L10n.rewatching)
+                } footer: {
+                    Text(L10n.rewatchingDescription)
+                }
+
+                Section {
+                    StateAdapter(initialValue: false) { isNextUpDaysPresented in
+                        ChevronButton {
+                            isNextUpDaysPresented.wrappedValue = true
                         } label: {
-                            Text(L10n.nextUpDays)
+                            LabeledContent {
+                                if maxNextUp > 0 {
+                                    Text(
+                                        Duration.seconds(maxNextUp),
+                                        format: .units(allowed: [.days], width: .abbreviated)
+                                    )
+                                    .foregroundStyle(.secondary)
+                                } else {
+                                    Text(L10n.disabled)
+                                        .foregroundStyle(.secondary)
+                                }
+                            } label: {
+                                Text(L10n.nextUpDays)
+                            }
+                        }
+                        .alert(
+                            L10n.nextUpDays,
+                            isPresented: isNextUpDaysPresented
+                        ) {
+                            TextField(
+                                L10n.days,
+                                value: $maxNextUp,
+                                format: .dayInterval(range: 0 ... 1000)
+                            )
+                            .keyboardType(.numberPad)
+                        } message: {
+                            Text(L10n.nextUpDaysDescription)
                         }
                     }
-                    .alert(
-                        L10n.nextUpDays,
-                        isPresented: isNextUpDaysPresented
-                    ) {
-                        TextField(
-                            L10n.days,
-                            value: $maxNextUp,
-                            format: .dayInterval(range: 0 ... 1000)
-                        )
-                        .keyboardType(.numberPad)
-                    } message: {
-                        Text(L10n.nextUpDaysDescription)
-                    }
+                } header: {
+                    Text(L10n.nextUp)
                 }
             }
+            .navigationTitle(L10n.home)
         }
     }
 }

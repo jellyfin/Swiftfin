@@ -6,9 +6,19 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 
 struct LatestInLibrary: BaseItemKindLibrary {
+
+    struct Environment: WithDefaultValue {
+
+        var enableRewatching: Bool
+
+        static let `default`: Self = .init(
+            enableRewatching: Defaults[.Customization.Home.Rewatching.configuration].latest
+        )
+    }
 
     let hasNextPage = false
 
@@ -24,12 +34,13 @@ struct LatestInLibrary: BaseItemKindLibrary {
     }
 
     func retrievePage(
-        environment: Empty,
+        environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [ItemPatch] {
         var parameters = Paths.GetLatestMediaParameters()
         parameters.enableUserData = true
         parameters.fields = PosterSubtitleField.itemFields
+        parameters.isPlayed = environment.enableRewatching ? nil : false
         parameters.limit = pageState.pageSize
         parameters.parentID = parent.id
         parameters.userID = pageState.userSession.user.id
@@ -38,5 +49,9 @@ struct LatestInLibrary: BaseItemKindLibrary {
         let response = try await pageState.userSession.client.send(request)
 
         return try pageState.items(from: response)
+    }
+
+    func includes(_ element: ItemEntry, environment: Environment) -> Bool {
+        environment.enableRewatching || element.item.confirmedUserData?.matches([.isUnplayed]) != false
     }
 }

@@ -420,6 +420,8 @@ internal enum L10n {
   internal static let containers = L10n.tr("Localizable", "containers", fallback: "Containers")
   /// Continue
   internal static let `continue` = L10n.tr("Localizable", "continue", fallback: "Continue")
+  /// Continue Watching
+  internal static let continueWatching = L10n.tr("Localizable", "continueWatching", fallback: "Continue Watching")
   /// Continuing
   internal static let continuing = L10n.tr("Localizable", "continuing", fallback: "Continuing")
   /// Control other users
@@ -954,6 +956,8 @@ internal enum L10n {
   }
   /// Last seen
   internal static let lastSeen = L10n.tr("Localizable", "lastSeen", fallback: "Last seen")
+  /// Latest
+  internal static let latest = L10n.tr("Localizable", "latest", fallback: "Latest")
   /// Latest %@
   internal static func latestWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "latestWithString", String(describing: p1), fallback: "Latest %@")
@@ -1160,8 +1164,6 @@ internal enum L10n {
   internal static let nextUpDays = L10n.tr("Localizable", "nextUpDays", fallback: "Days in Next Up")
   /// Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.
   internal static let nextUpDaysDescription = L10n.tr("Localizable", "nextUpDaysDescription", fallback: "Set the maximum amount of days a show should stay in the \'Next Up\' list without watching it.")
-  /// Rewatching in Next Up
-  internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
   /// No
   internal static let no = L10n.tr("Localizable", "no", fallback: "No")
   /// No activity
@@ -1604,6 +1606,8 @@ internal enum L10n {
   internal static let reviews = L10n.tr("Localizable", "reviews", fallback: "Reviews")
   /// Rewatching
   internal static let rewatching = L10n.tr("Localizable", "rewatching", fallback: "Rewatching")
+  /// Show watched items in these sections.
+  internal static let rewatchingDescription = L10n.tr("Localizable", "rewatchingDescription", fallback: "Show watched items in these sections.")
   /// Rewind
   internal static let rewind = L10n.tr("Localizable", "rewind", fallback: "Rewind")
   /// Right
@@ -1666,6 +1670,8 @@ internal enum L10n {
   internal static let secondarySubtitleOffset = L10n.tr("Localizable", "secondarySubtitleOffset", fallback: "Secondary subtitle offset")
   /// Secondary subtitles
   internal static let secondarySubtitles = L10n.tr("Localizable", "secondarySubtitles", fallback: "Secondary subtitles")
+  /// Sections
+  internal static let sections = L10n.tr("Localizable", "sections", fallback: "Sections")
   /// Security
   internal static let security = L10n.tr("Localizable", "security", fallback: "Security")
   /// Seek

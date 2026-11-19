@@ -6,21 +6,32 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 
 struct RecentlyAddedLibrary: BaseItemKindLibrary {
+
+    struct Environment: WithDefaultValue {
+
+        var enableRewatching: Bool
+
+        static let `default`: Self = .init(
+            enableRewatching: Defaults[.Customization.Home.Rewatching.configuration].recentlyAdded
+        )
+    }
 
     let libraryItemTypes: [BaseItemKind] = [.movie, .series]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.recentlyAdded.localizedCapitalized, id: "recently-added")
 
     func retrievePage(
-        environment: Empty,
+        environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [ItemPatch] {
         var parameters = Paths.GetItemsParameters()
         parameters.enableUserData = true
         parameters.fields = PosterSubtitleField.itemFields
         parameters.includeItemTypes = [.movie, .series]
+        parameters.isPlayed = environment.enableRewatching ? nil : false
         parameters.isRecursive = true
         parameters.limit = pageState.pageSize
         parameters.sortBy = [.dateCreated]
@@ -32,5 +43,9 @@ struct RecentlyAddedLibrary: BaseItemKindLibrary {
         let response = try await pageState.userSession.client.send(request)
 
         return try pageState.items(from: response)
+    }
+
+    func includes(_ element: ItemEntry, environment: Environment) -> Bool {
+        environment.enableRewatching || element.item.confirmedUserData?.matches([.isUnplayed]) != false
     }
 }

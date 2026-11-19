@@ -212,12 +212,19 @@ extension Defaults.Keys {
 
         enum Home {
 
+            enum Rewatching {
+
+                static var configuration: Key<RewatchingConfiguration> {
+                    UserKey("rewatchingConfiguration", default: .default)
+                }
+            }
+
             static var showRecentlyAdded: Key<Bool> {
                 UserKey("showRecentlyAdded", default: true)
             }
 
-            static var resumeNextUp: Key<Bool> {
-                UserKey("homeResumeNextUp", default: false)
+            static var showRecentlyPlayed: Key<Bool> {
+                UserKey("showRecentlyPlayed", default: false)
             }
 
             static var maxNextUp: Key<TimeInterval> {
@@ -225,10 +232,6 @@ extension Defaults.Keys {
                     "homeMaxNextUp",
                     default: 366 * 86400
                 )
-            }
-
-            static var showRecentlyPlayed: Key<Bool> {
-                UserKey("showRecentlyPlayed", default: false)
             }
         }
 
