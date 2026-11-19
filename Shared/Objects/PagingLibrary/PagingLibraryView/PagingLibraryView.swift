@@ -38,12 +38,12 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     private var router
 
     @State
+    private var gridProxy = CollectionVGridProxy()
+    @State
     private var viewModel: PagingLibraryViewModel<Library>
 
     @StateObject
     private var focusCoordinator = FocusCoordinator(waitingFor: Focus.firstElement.rawValue)
-    @StateObject
-    private var gridProxy = CollectionVGridProxy()
 
     @StoredValue
     private var parentLibraryStyle: LibraryStyle
