@@ -152,11 +152,13 @@ struct HTMLTextParser {
         guard text.characters.isNotEmpty else { return }
 
         if let pendingBreak, result.characters.isNotEmpty {
-            while result.characters.last == " " || result.characters.last == "\t" {
+            let endsWithParagraph = result.characters.suffix(2).elementsEqual(String.newParagraph)
+
+            while result.characters.last?.isWhitespace == true {
                 result.characters.removeLast()
             }
 
-            result.append(AttributedString(pendingBreak == .paragraph ? String.newParagraph : .newLine))
+            result.append(AttributedString(pendingBreak == .paragraph || endsWithParagraph ? String.newParagraph : .newLine))
         }
 
         pendingBreak = nil

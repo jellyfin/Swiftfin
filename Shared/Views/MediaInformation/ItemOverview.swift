@@ -21,26 +21,39 @@ struct ItemOverviewView: View {
     var item: BaseItemDto
 
     @ContentBuilder
-    var body: some View {
-        ScrollView {
-            VStack(alignment: viewLayout.value(standard: .leading, large: .center), spacing: 10) {
-                if let firstTagline = item.taglines?.first {
-                    Text(firstTagline)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.leading)
-                }
-
-                if let itemOverview = item.richOverview {
-                    Text(itemOverview)
-                        .font(.body)
-                        .multilineTextAlignment(.leading)
-                }
+    private var content: some View {
+        VStack(alignment: viewLayout.value(standard: .leading, large: .center), spacing: 10) {
+            if let firstTagline = item.taglines?.first {
+                Text(firstTagline)
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.leading)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .edgePadding()
+
+            if let itemOverview = item.richOverview {
+                Text(itemOverview)
+                    .font(.body)
+                    .multilineTextAlignment(.leading)
+            }
         }
-        .scrollIndicators(.hidden)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .edgePadding()
+    }
+
+    @ContentBuilder
+    var body: some View {
+        Group {
+            #if os(tvOS)
+            Marquee(axis: .vertical, resetType: .loop, speed: 50, fade: 0) {
+                content
+            }
+            #else
+            ScrollView {
+                content
+            }
+            .scrollIndicators(.hidden)
+            #endif
+        }
         .navigationTitle(item.displayTitle)
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {

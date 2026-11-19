@@ -283,8 +283,8 @@ final class UserSignInViewModel: ObservableObject {
         let request = Paths.getBrandingOptions
         let response = try await server.client.send(request)
 
-        guard let disclaimer = response.value.loginDisclaimer?.richText,
-              disclaimer.plainText.isNotEmpty else { return nil }
+        guard let disclaimer = response.value.loginDisclaimer?.attributedString,
+              disclaimer.plainString.isNotEmpty else { return nil }
 
         return disclaimer
     }

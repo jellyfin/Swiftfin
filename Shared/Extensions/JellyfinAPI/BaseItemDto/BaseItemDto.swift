@@ -71,7 +71,7 @@ extension BaseItemDto {
             artwork: image.map { image in MPMediaItemArtwork(boundsSize: image.size) { _ in image }},
             albumArtist: isAudio ? content.albumArtist?.nilIfBlank ?? joined((content.albumArtists ?? []).map(\.name)) : nil,
             albumTitle: isAudio ? content.album?.nilIfBlank : nil,
-            overview: content.overview?.plainText.nilIfBlank ?? overview?.plainText.nilIfBlank,
+            overview: content.overview?.plainString.nilIfBlank ?? overview?.plainString.nilIfBlank,
             contentRating: content.officialRating?.nilIfBlank ?? officialRating?.nilIfBlank,
             genre: joined((content.genres ?? genres ?? []).map(Optional.some))
         )
@@ -172,12 +172,12 @@ extension BaseItemDto {
             return record.richOverview(for: overview)
         }
 
-        return overview.richText
+        return overview.attributedString
     }
 
     @MainActor
     var plainOverview: String? {
-        richOverview?.plainText.nilIfBlank
+        richOverview?.plainString.nilIfBlank
     }
 
     @MainActor

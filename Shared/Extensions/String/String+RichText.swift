@@ -14,7 +14,7 @@ extension String {
     private static let htmlPattern = #/<\/?[a-zA-Z][^>]*>|&(?:[a-zA-Z]+|#[0-9]+|#[xX][0-9a-fA-F]+);/#
     private static let markdownPattern = #/(?:^|[^\w*])([*_]{1,2})[^\s*_](?:.*?[^\s*_])?\1(?:$|[^\w*])|~~.+?~~|`[^`]+`|\[[^\]]+\]\([^)\s]+\)/#
 
-    var richText: AttributedString {
+    var attributedString: AttributedString {
         var value: AttributedString
 
         if contains(Self.htmlPattern) {
@@ -38,14 +38,14 @@ extension String {
         return value
     }
 
-    var plainText: String {
-        richText.plainText
+    var plainString: String {
+        attributedString.plainString
     }
 }
 
 extension AttributedString {
 
-    var plainText: String {
+    var plainString: String {
         String(characters)
             .replacing(#/\s+/#) { $0.output.contains(where: \.isNewline) ? String.newLine : .space }
             .trimmingCharacters(in: .whitespacesAndNewlines)

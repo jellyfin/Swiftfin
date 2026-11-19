@@ -56,13 +56,13 @@ final class ItemRecord: Identifiable {
     }
 
     func richOverview(for overview: String) -> AttributedString {
-        guard overview == metadata?.overview else { return overview.richText }
+        guard overview == metadata?.overview else { return overview.attributedString }
 
         if let richOverviewCache, richOverviewCache.source == overview {
             return richOverviewCache.value
         }
 
-        let value = overview.richText
+        let value = overview.attributedString
         richOverviewCache = (overview, value)
 
         return value
