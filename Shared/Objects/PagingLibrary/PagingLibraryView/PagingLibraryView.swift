@@ -37,12 +37,13 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @Router
     private var router
 
+    @State
+    private var gridProxy = CollectionVGridProxy()
+    @State
+    private var viewModel: PagingLibraryViewModel<Library>
+
     @StateObject
     private var focusCoordinator = FocusCoordinator(waitingFor: Focus.firstElement.rawValue)
-    @StateObject
-    private var gridProxy = CollectionVGridProxy()
-    @StateObject
-    private var viewModel: PagingLibraryViewModel<Library>
 
     @StoredValue
     private var parentLibraryStyle: LibraryStyle
@@ -83,7 +84,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     init(library: Library, displayTitle: String? = nil) {
         self.displayTitle = displayTitle
         self._parentLibraryStyle = StoredValue(.User.libraryStyle(id: library.parent.pagingLibraryID))
-        self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(library: library))
+        self._viewModel = State(initialValue: PagingLibraryViewModel(library: library))
     }
 
     private func contentInsets(for frame: GeometryProxy) -> EdgeInsets {
@@ -258,7 +259,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .animation(.linear(duration: 0.2), value: viewModel.elements)
         .animation(.linear(duration: 0.2), value: viewModel.searchElements)
         .navigationTitle(displayTitle ?? viewModel.library.parent.displayTitle)
-        .errorMessage($viewModel.error)
+        .errorAlert(viewModel.events)
         #if os(tvOS)
         .toolbarVisibility(.hidden, for: .navigationBar)
         #else
@@ -271,8 +272,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             gridProxy.redraw()
         }
         .onReceive(viewModel.events) { event in
-            switch event {
-            case let .gotRandomItem(element):
+            if case let .gotRandomItem(element) = event {
                 element.libraryDidSelectElement(router: router, in: namespace)
             }
         }

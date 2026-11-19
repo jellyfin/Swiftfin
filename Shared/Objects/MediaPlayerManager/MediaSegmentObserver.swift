@@ -10,7 +10,6 @@ import Combine
 import Defaults
 import Foundation
 import JellyfinAPI
-import Observation
 
 @MainActor
 @Observable
@@ -83,10 +82,15 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
             }
         }
 
-        let playback = ObservationToken { [weak self] in
-            self?.isPlaying ?? false
-        } onChange: { [weak self] _ in
-            self?.updateCountdown()
+        let playback = Task { [weak self] in
+            let playing = ObservableValues { [weak self] in
+                self?.isPlaying ?? false
+            }
+
+            for await _ in playing {
+                guard !Task.isCancelled else { return }
+                self?.updateCountdown()
+            }
         }
 
         return AnyCancellable { [self, playback] in

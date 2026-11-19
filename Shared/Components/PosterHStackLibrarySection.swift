@@ -11,9 +11,6 @@ import SwiftUI
 struct PosterHStackLibrarySection<Library: PagingLibrary>: View
 where Library.Element: LibraryElement, Library.Element: Poster {
 
-    @AdaptiveLayout
-    private var viewLayout
-
     private enum FocusSection {
 
         case header
@@ -31,16 +28,17 @@ where Library.Element: LibraryElement, Library.Element: Poster {
         }
     }
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @FocusState
     private var focusedSection: FocusSection?
-
-    @ObservedObject
-    var viewModel: PagingLibraryViewModel<Library>
 
     @Router
     private var router
 
     let group: PosterGroup<Library>
+    let viewModel: PagingLibraryViewModel<Library>
 
     private func routeToLibrary() {
         router.route(to: .library(library: viewModel.library, displayTitle: group.displayTitle))

@@ -43,25 +43,12 @@ final class ScreenshotTests: XCTestCase {
 
         guard !robot.isDuo else { return }
 
-        setPhoneLandscape(true)
-
         robot.play()
             .preparePlayback(at: 0.5)
             .screenshot("Playback", waitForIdle: false)
 
-        setPhoneLandscape(false)
-
         app.terminate()
         app.launch()
         robot.switchUser().screenshot("UserSelection")
-    }
-
-    @MainActor
-    private func setPhoneLandscape(_ isLandscape: Bool) {
-        #if os(iOS)
-        if UIDevice.isPhone {
-            XCUIDevice.shared.orientation = isLandscape ? .landscapeLeft : .portrait
-        }
-        #endif
     }
 }

@@ -10,17 +10,11 @@ import SwiftUI
 
 struct EPGDateMenu: View {
 
-    @ObservedObject
-    var viewModel: EPGViewModel
+    let viewModel: EPGViewModel
 
     private var selection: Binding<Date> {
         Binding(
-            get: {
-                max(
-                    Calendar.current.startOfDay(for: viewModel.startDate),
-                    Calendar.current.startOfDay(for: .now)
-                )
-            },
+            get: { viewModel.selectedDate },
             set: {
                 viewModel.setDate(date: $0)
             }

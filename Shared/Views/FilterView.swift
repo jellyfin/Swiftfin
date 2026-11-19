@@ -10,13 +10,11 @@ import SwiftUI
 
 struct FilterView: View {
 
-    @ObservedObject
-    var viewModel: FilterViewModel
-
     @Router
     private var router
 
     let type: ItemFilterType
+    let viewModel: FilterViewModel
 
     @ContentBuilder
     private func selector(group: ItemFilterType.Group) -> some View {

@@ -20,8 +20,7 @@ struct ItemSubtitlesView: View {
     private var isPresentingDeleteConfirmation = false
     @State
     private var selectedSubtitles: Set<MediaStream> = []
-
-    @StateObject
+    @State
     private var viewModel: ItemSubtitlesViewModel
 
     private var hasSubtitles: Bool {
@@ -37,7 +36,7 @@ struct ItemSubtitlesView: View {
     }
 
     init(item: BaseItemDto) {
-        self._viewModel = StateObject(wrappedValue: .init(item: item))
+        self._viewModel = State(initialValue: .init(item: item))
     }
 
     @ContentBuilder
@@ -60,7 +59,7 @@ struct ItemSubtitlesView: View {
         .navigationTitle(L10n.subtitles)
         .navigationBarBackButtonHidden(isEditing)
         .toolbarTitleDisplayMode(.inline)
-        .errorMessage($viewModel.error)
+        .errorAlert(viewModel.events)
         .if(!isEditing) { view in
             view
                 .navigationBarCloseButton {

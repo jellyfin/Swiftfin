@@ -6,30 +6,25 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Foundation
 import JellyfinAPI
-import SwiftUI
 
-@MainActor
-@Stateful
+@Observable
+@StatefulObservable
 final class SearchViewModel: ViewModel {
 
     @CasePathable
     enum Action {
 
         case getSuggestions
-        case search(query: String)
-        case _actuallySearch
+        case search(filters: ItemFilterCollection)
 
         var transition: Transition {
             switch self {
             case .getSuggestions:
                 .none
-            case let .search(query):
-                query.isEmpty ? .to(.initial) : .to(.searching)
-            case ._actuallySearch:
-                .to(.searching, then: .initial)
+            case let .search(filters):
+                .to(filters.hasQueryableFilters ? .searching : .initial, then: .initial)
                     .onRepeat(.cancel)
             }
         }
@@ -42,13 +37,24 @@ final class SearchViewModel: ViewModel {
         case searching
     }
 
-    @SharedBaseItems
-    private(set) var suggestions: [BaseItemDto] = []
+    let filterViewModel = FilterViewModel()
 
-    let itemContentGroupViewModel: ContentGroupViewModel<SearchContentGroupProvider>
+    private(set) var itemContentGroupViewModel: ContentGroupViewModel<SearchContentGroupProvider>
 
-    var filterViewModel: FilterViewModel {
-        itemContentGroupViewModel.provider.filterViewModel
+    var query = "" {
+        didSet {
+            let normalizedQuery = query.nilIfBlank
+            guard normalizedQuery != filterViewModel.currentFilters.query else { return }
+
+            core.cancel(action: \.search)
+            filterViewModel.currentFilters.query = normalizedQuery
+        }
+    }
+
+    private var suggestionsStorage = ValueBox<[ItemEntry]>(value: [])
+
+    var canSearch: Bool {
+        filterViewModel.currentFilters.hasQueryableFilters
     }
 
     var isEmpty: Bool {
@@ -59,8 +65,8 @@ final class SearchViewModel: ViewModel {
         !isEmpty
     }
 
-    var canSearch: Bool {
-        filterViewModel.currentFilters.hasQueryableFilters
+    var suggestions: [BaseItemDto] {
+        suggestionsStorage.value.compactMap(\.value)
     }
 
     override init() {
@@ -68,42 +74,48 @@ final class SearchViewModel: ViewModel {
 
         super.init()
 
-        itemContentGroupViewModel.objectWillChange
-            .sink { [weak self] _ in self?.objectWillChange.send() }
-            .store(in: &cancellables)
+        DebouncedObservation.observe(
+            { [filterViewModel] in
+                filterViewModel.currentFilters
+            },
+            for: .milliseconds(500),
+            onChange: { [weak self] filters in
+                self?.filtersDidChange(filters)
+            }
+        ) { [weak self] filters in
+            guard filters.hasQueryableFilters else { return }
 
-        observeFilters()
+            self?.search(filters: filters)
+        }
+        .store(in: &cancellables)
     }
 
-    private func observeFilters() {
-        filterViewModel.objectWillChange
-            .sink { [weak self] _ in self?.objectWillChange.send() }
-            .store(in: &cancellables)
+    private func filtersDidChange(_ filters: ItemFilterCollection) {
+        if query.nilIfBlank != filters.query {
+            query = filters.query ?? ""
+        }
 
-        filterViewModel.$currentFilters
-            .debounce(for: 0.5, scheduler: RunLoop.main)
-            .sink { [weak self] _ in
-                self?._actuallySearch()
-            }
-            .store(in: &cancellables)
+        core.cancel(action: \.search)
+
+        if !filters.hasQueryableFilters {
+            search(filters: filters)
+        }
     }
 
     @Function(\Action.Cases.search)
-    private func _search(_ query: String) async throws {
-        filterViewModel.currentFilters.query = query.nilIfBlank
+    private func _search(_ filters: ItemFilterCollection) async throws {
+        guard filters.hasQueryableFilters, filters == filterViewModel.currentFilters else { return }
 
-        await cancel()
-    }
+        let results = ContentGroupViewModel(provider: SearchContentGroupProvider(environment: .init(filters: filters)))
+        itemContentGroupViewModel = results
+        await results.refresh()
 
-    @Function(\Action.Cases._actuallySearch)
-    private func __actuallySearch() async throws {
-        guard canSearch else { return }
+        try Task.checkCancellation()
+        guard filters == filterViewModel.currentFilters else { throw CancellationError() }
 
-        let filters = filterViewModel.currentFilters
-
-        itemContentGroupViewModel.provider.environment.filters = filters
-
-        await itemContentGroupViewModel.refresh()
+        if results.state == .error, let error = results.error {
+            throw error
+        }
     }
 
     @Function(\Action.Cases.getSuggestions)
@@ -120,6 +132,10 @@ final class SearchViewModel: ViewModel {
         let request = Paths.getItems(parameters: parameters)
         let response = try await send(request)
 
-        self.suggestions = response.value.items ?? []
+        try Task.checkCancellation()
+
+        withExtendedLifetime(response.items) {
+            suggestionsStorage = .init(value: (response.value.items ?? []).map(ItemEntry.resolve))
+        }
     }
 }

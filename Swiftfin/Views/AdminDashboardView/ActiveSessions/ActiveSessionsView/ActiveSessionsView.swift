@@ -18,8 +18,9 @@ struct ActiveSessionsView: View {
     @Router
     private var router
 
-    @StateObject
+    @State
     private var gridProxy = CollectionVGridProxy()
+
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
 

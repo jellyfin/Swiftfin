@@ -17,14 +17,12 @@ struct ItemSubtitleSearchView: View {
     @AppTheme
     private var theme
 
-    @ObservedObject
+    @Bindable
     var viewModel: ItemSubtitlesViewModel
 
     @Router
     private var router
 
-    @State
-    private var isPerfectMatch = false
     @State
     private var selectedSubtitles: Set<String> = []
 
@@ -42,15 +40,15 @@ struct ItemSubtitleSearchView: View {
         }
         .navigationTitle(L10n.search)
         .toolbarTitleDisplayMode(.inline)
+        .task {
+            await viewModel.observeSearchOptions()
+        }
         .onReceive(viewModel.events) { event in
-            switch event {
-            case .deleted:
-                break
-            case .uploaded:
+            if case .uploaded = event {
                 router.dismiss()
             }
         }
-        .errorMessage($viewModel.error)
+        .errorAlert(viewModel.events)
         .navigationBarCloseButton {
             router.dismiss()
         }
@@ -73,9 +71,6 @@ struct ItemSubtitleSearchView: View {
             }
             #endif
         }
-        .onChange(of: isPerfectMatch) {
-            viewModel.search(isPerfectMatch: isPerfectMatch)
-        }
     }
 
     @ContentBuilder
@@ -84,7 +79,7 @@ struct ItemSubtitleSearchView: View {
             Section(L10n.options) {
                 CulturePicker(L10n.language, threeLetterISOLanguageName: $viewModel.language)
 
-                Toggle(L10n.perfectMatch, isOn: $isPerfectMatch)
+                Toggle(L10n.perfectMatch, isOn: $viewModel.isPerfectMatch)
             }
 
             if viewLayout.isLarge {

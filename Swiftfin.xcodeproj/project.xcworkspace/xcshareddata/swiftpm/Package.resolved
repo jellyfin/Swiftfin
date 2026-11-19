@@ -1,5 +1,5 @@
 {
-  "originHash" : "e930b4eee421af04e4e5bc5144afa95b3ab22fb8ffca8cf44f7fe39ad7562c92",
+  "originHash" : "3c9234adc45a9153cd6788f1e84f15c05006703ed34b49ef4822cd3bdf5ab3f3",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -25,7 +25,7 @@
       "location" : "https://github.com/LePips/CollectionHStack.git",
       "state" : {
         "branch" : "main",
-        "revision" : "628736a349dc086f828674f74e6808ea083a5d95"
+        "revision" : "04fb188c1a4cd570f4eff223e331451c29db2f5b"
       }
     },
     {
@@ -34,7 +34,7 @@
       "location" : "https://github.com/LePips/CollectionVGrid.git",
       "state" : {
         "branch" : "main",
-        "revision" : "48f32f9dd08f7510d618c2a3391564912cf9f708"
+        "revision" : "012cb8862b4003abf4f8d97925b2c8d0b9708073"
       }
     },
     {
@@ -213,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/StatefulMacro",
       "state" : {
-        "revision" : "afb27fb5d49e1ee92097286a712e2f448be28fb2",
-        "version" : "0.2.0"
+        "revision" : "08a70fe6cfb0d1c1f577ad55ad9ee3d2368d78d4",
+        "version" : "0.2.1"
       }
     },
     {
@@ -245,6 +245,15 @@
       }
     },
     {
+      "identity" : "swift-async-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-async-algorithms",
+      "state" : {
+        "revision" : "13713a4ffdee8abd929f92568ee9462a46ae26e0",
+        "version" : "1.1.7"
+      }
+    },
+    {
       "identity" : "swift-atomics",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-atomics.git",
@@ -267,8 +276,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
-        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
-        "version" : "1.6.0"
+        "revision" : "88754449ab766a739610b660e117762115fabc9c",
+        "version" : "1.7.6"
       }
     },
     {
@@ -314,6 +323,15 @@
       "state" : {
         "revision" : "0c0290ff6b24942dadb83a929ffaaa1481df04a2",
         "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "swift-perception",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-perception",
+      "state" : {
+        "revision" : "de219a1cf34e958134e75a9ebb134cf09bf52fc6",
+        "version" : "2.0.11"
       }
     },
     {

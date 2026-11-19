@@ -9,7 +9,6 @@
 import Combine
 import Foundation
 import MPVUI
-import Observation
 
 @MainActor
 @Observable

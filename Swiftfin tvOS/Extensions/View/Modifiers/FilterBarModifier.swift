@@ -20,10 +20,8 @@ struct FilterBarModifier: ViewModifier {
     @FocusState
     private var focusedFilter: FilterTrack.FocusTarget?
 
-    @ObservedObject
-    var viewModel: FilterViewModel
-
     let types: [ItemFilterType]
+    let viewModel: FilterViewModel
 
     private var edge: HorizontalEdge {
         letterPickerOrientation == .trailing ? .leading : .trailing
@@ -39,11 +37,11 @@ struct FilterBarModifier: ViewModifier {
 
         VStack(spacing: 20) {
             ForEach(subviews: FilterTrack(
-                viewModel: viewModel,
-                types: availableTypes,
                 focus: $focusedFilter,
-                style: .compact,
-                iconEdge: edge
+                types: availableTypes,
+                viewModel: viewModel,
+                iconEdge: edge,
+                style: .compact
             )) { button in
                 Color.clear
                     .frame(width: filterDiameter, height: filterDiameter)
