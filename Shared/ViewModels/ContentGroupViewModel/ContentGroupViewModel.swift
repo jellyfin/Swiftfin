@@ -113,18 +113,18 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         refreshIfPendingChanges()
     }
 
-    private func uniqueViewModels(in groups: [any ContentGroup]) -> [any WithRefresh & Sendable] {
+    private func uniqueViewModels(in groups: [any ContentGroup]) -> [any WithRefresh] {
         var seen = Set<ObjectIdentifier>()
-        return groups.map { $0.viewModel as any WithRefresh & Sendable }
+        return groups.map { $0.viewModel as any WithRefresh }
             .filter { seen.insert(ObjectIdentifier($0 as AnyObject)).inserted }
     }
 
     private func refreshViewModels(in groups: [any ContentGroup], inBackground: Bool) async {
         await withTaskGroup(of: Void.self) { group in
             for viewModel in uniqueViewModels(in: groups) {
-                group.addTask {
+                group.addTask { @MainActor @Sendable in
                     if inBackground {
-                        await viewModel.refreshInBackground()
+                        await viewModel.background.refresh()
                     } else {
                         await viewModel.refresh()
                     }
