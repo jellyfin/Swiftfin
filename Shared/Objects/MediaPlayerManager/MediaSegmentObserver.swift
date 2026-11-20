@@ -89,6 +89,7 @@ final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayAction
 
             for await _ in playing {
                 guard !Task.isCancelled else { return }
+
                 self?.updateCountdown()
             }
         }
