@@ -19,7 +19,7 @@ struct ContentGroupParentOption {
 
 struct ContentGroupCustomizationKey: PreferenceKey {
 
-    static var defaultValue: ContentGroupParentOption = []
+    static let defaultValue: ContentGroupParentOption = []
 
     static func reduce(
         value: inout ContentGroupParentOption,

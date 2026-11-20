@@ -222,6 +222,7 @@ struct ItemActionButtons: View {
 
 extension ItemActionButtons {
 
+    @MainActor
     struct Configuration: DynamicProperty {
 
         @StoredValue(.User.enabledTrailers)

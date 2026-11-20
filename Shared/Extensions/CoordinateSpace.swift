@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@MainActor
 extension CoordinateSpace {
 
     static let layoutContainer = CoordinateSpace.named("layoutContainer")

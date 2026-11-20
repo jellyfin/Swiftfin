@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct EasedGradient: View, ShapeStyle {
+nonisolated struct EasedGradient: View, ShapeStyle {
 
     enum Curve {
 

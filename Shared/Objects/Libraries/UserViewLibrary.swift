@@ -61,10 +61,23 @@ struct UserViewLibrary: PagingLibrary {
     }
 }
 
-enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement, SystemImageable {
+@MainActor
+enum UserViewLibraryElement: Hashable, Identifiable {
 
     case favorites
     case userView(ItemEntry)
+
+    nonisolated var id: String {
+        switch self {
+        case .favorites:
+            "favorites"
+        case let .userView(item):
+            item.itemID
+        }
+    }
+}
+
+extension UserViewLibraryElement: @MainActor LibraryElement {
 
     static var supportedLibraryStyleOptions: LibraryStyleOptions {
         BaseItemKind.libraryStyleOptions(for: [.userView])
@@ -76,28 +89,6 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
             L10n.favorites
         case let .userView(item):
             item.displayTitle
-        }
-    }
-
-    var id: String {
-        switch self {
-        case .favorites:
-            "favorites"
-        case let .userView(item):
-            item.itemID
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .favorites:
-            "heart.fill"
-        case let .userView(item):
-            if item.snapshot.collectionType == .livetv {
-                "tv"
-            } else {
-                "folder.fill"
-            }
         }
     }
 
@@ -157,6 +148,22 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         .contextMenu {
             if case let .userView(item) = self {
                 ShuffleButton(item: item.snapshot)
+            }
+        }
+    }
+}
+
+extension UserViewLibraryElement: @MainActor SystemImageable {
+
+    var systemImage: String {
+        switch self {
+        case .favorites:
+            "heart.fill"
+        case let .userView(item):
+            if item.snapshot.collectionType == .livetv {
+                "tv"
+            } else {
+                "folder.fill"
             }
         }
     }

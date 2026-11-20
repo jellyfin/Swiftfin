@@ -39,7 +39,7 @@ extension VideoPlayer {
                         title: "Aspect Fill",
                         input: "f",
                         modifierFlags: .command
-                    ) { @MainActor in
+                    ) {
                         viewState.toggleAspectFillBehavior()
                     }
 

@@ -8,11 +8,13 @@
 
 import SwiftUI
 
+@MainActor
 struct Backport<Content> {
 
     let content: Content
 }
 
+@MainActor
 extension Backport where Content: View {
 
     @ContentBuilder

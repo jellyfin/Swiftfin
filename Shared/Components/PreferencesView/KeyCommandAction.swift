@@ -14,14 +14,14 @@ struct KeyCommandAction {
     let subtitle: String?
     let input: String
     let modifierFlags: UIKeyModifierFlags
-    let action: () -> Void
+    let action: @MainActor () -> Void
 
     init(
         title: String,
         subtitle: String? = nil,
         input: String,
         modifierFlags: UIKeyModifierFlags = [],
-        action: @escaping () -> Void
+        action: @escaping @MainActor () -> Void
     ) {
         self.title = title
         self.subtitle = subtitle

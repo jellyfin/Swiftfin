@@ -15,9 +15,9 @@ struct AppPermission: CaseIterable, Displayable, Identifiable, Hashable {
     let displayTitle: String
     let privacyDescription: String
 
-    private let canRequestProvider: () -> Bool
-    private let requestAction: (String?) async throws -> PermissionStatus
-    private let statusProvider: () -> PermissionStatus
+    private let canRequestProvider: @Sendable () -> Bool
+    private let requestAction: @Sendable (String?) async throws -> PermissionStatus
+    private let statusProvider: @Sendable () -> PermissionStatus
 
     var status: PermissionStatus {
         statusProvider()
@@ -36,9 +36,9 @@ struct AppPermission: CaseIterable, Displayable, Identifiable, Hashable {
         id: String,
         displayTitle: String,
         privacyDescriptionKey: String,
-        canRequest: @escaping () -> Bool,
-        request: @escaping (String?) async throws -> PermissionStatus,
-        status: @escaping () -> PermissionStatus
+        canRequest: @escaping @Sendable () -> Bool,
+        request: @escaping @Sendable (String?) async throws -> PermissionStatus,
+        status: @escaping @Sendable () -> PermissionStatus
     ) {
         self.id = id
         self.displayTitle = displayTitle
