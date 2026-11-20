@@ -79,7 +79,26 @@ extension VideoPlayer {
                     Button {
                         viewState.performOverlayAction(action.id)
                     } label: {
-                        if let systemImage = action.button.systemImage {
+                        if let countdown = action.button.countdown {
+                            Label {
+                                Text(action.button.title)
+                            } icon: {
+                                AlternateLayoutView {
+                                    Image(systemName: "circle")
+                                } content: {
+                                    TimelineView(.animation(paused: countdown.deadline == nil)) { context in
+                                        let remaining = max(countdown.deadline?.timeIntervalSince(context.date) ?? countdown.remaining, 0)
+
+                                        ProgressView(value: min(max(1 - remaining / countdown.duration, 0), 1)) {
+                                            EmptyView()
+                                        } currentValueLabel: {
+                                            Text(Int(remaining.rounded(.up)), format: .number)
+                                        }
+                                        .progressViewStyle(.countdown)
+                                    }
+                                }
+                            }
+                        } else if let systemImage = action.button.systemImage {
                             Label(action.button.title, systemImage: systemImage)
                         } else {
                             Text(action.button.title)

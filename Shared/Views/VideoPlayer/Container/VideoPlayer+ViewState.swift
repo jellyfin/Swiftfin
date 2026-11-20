@@ -98,22 +98,21 @@ extension VideoPlayer {
             let button: VideoPlayerOverlayAction
         }
 
-        var overlayActions: [OverlayAction] {
-            let providers: [any VideoPlayerOverlayActionProviding] = (mediaSession?.playbackItem?
+        private var overlayActionProviders: [any VideoPlayerOverlayActionProviding] {
+            (mediaSession?.playbackItem?
                 .segments
                 .map { [$0 as any VideoPlayerOverlayActionProviding] } ?? []) +
                 supplements
                 .compactMap { $0 as? any VideoPlayerOverlayActionProviding }
+        }
 
-            return providers.flatMap { provider in
+        var overlayActions: [OverlayAction] {
+            overlayActionProviders.flatMap { provider in
                 provider.overlayActions.map {
                     OverlayAction(id: .init(providerID: provider.id, actionID: $0.id), button: $0)
                 }
             }
-            .filter { !dismissedOverlayActions.contains($0.id) }
         }
-
-        private var dismissedOverlayActions: Set<OverlayAction.ID> = []
 
         var isPresentingOverlayActions: Bool {
             visibleElements.contains(.overlayActions)
@@ -133,7 +132,7 @@ extension VideoPlayer {
         }
 
         func dismissOverlayAction(_ id: OverlayAction.ID) {
-            dismissedOverlayActions.insert(id)
+            overlayActionProviders.first { $0.id == id.providerID }?.dismissOverlayAction(id.actionID)
         }
 
         #if os(tvOS)
@@ -576,8 +575,6 @@ extension VideoPlayer {
         }
 
         private func playbackItemDidChange() {
-            dismissedOverlayActions.removeAll()
-
             if let selectedSupplementID {
                 if supplements.contains(where: { $0.id == selectedSupplementID }) {
                     transition(to: presentation)
