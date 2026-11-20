@@ -81,37 +81,51 @@ extension VideoPlayer.PlaybackControls {
         }
 
         @ContentBuilder
-        private var leadingTimestamp: some View {
-            HStack(spacing: 2) {
-                Text(scrubbedSeconds, format: .runtime)
-                    .accessibilityIdentifier("playbackElapsedTime")
-
-                Group {
-                    // swiftlint:disable:next hard_coded_display_string
-                    Text("/")
-
-                    Text(viewState.playbackSeconds, format: .runtime)
-                }
-                .foregroundStyle(.secondary)
-                .isVisible(isScrubbing)
+        private func timestampLabel(alignment: Alignment, @ContentBuilder content: @escaping (Bool) -> some View) -> some View {
+            AlternateLayoutView(alignment: alignment) {
+                content(isScrubbing)
+            } content: {
+                content(true)
+                    .fixedSize(horizontal: !isScrubbing, vertical: false)
             }
         }
 
         @ContentBuilder
-        private var trailingTimestamp: some View {
+        private func leadingTimestamp(includesDetail: Bool) -> some View {
             HStack(spacing: 2) {
-                Group {
-                    if let runtime = mediaSession.item.runtime {
-                        Text(runtime - viewState.playbackSeconds, format: .runtime)
-                    } else {
-                        Text(verbatim: .emptyRuntime)
-                    }
+                Text(scrubbedSeconds, format: .runtime)
+                    .accessibilityIdentifier("playbackElapsedTime")
 
-                    // swiftlint:disable:next hard_coded_display_string
-                    Text("/")
+                if includesDetail {
+                    Group {
+                        // swiftlint:disable:next hard_coded_display_string
+                        Text("/")
+
+                        Text(viewState.playbackSeconds, format: .runtime)
+                    }
+                    .foregroundStyle(.secondary)
+                    .isVisible(isScrubbing)
                 }
-                .foregroundStyle(.secondary)
-                .isVisible(isScrubbing)
+            }
+        }
+
+        @ContentBuilder
+        private func trailingTimestamp(includesDetail: Bool) -> some View {
+            HStack(spacing: 2) {
+                if includesDetail {
+                    Group {
+                        if let runtime = mediaSession.item.runtime {
+                            Text(runtime - viewState.playbackSeconds, format: .runtime)
+                        } else {
+                            Text(verbatim: .emptyRuntime)
+                        }
+
+                        // swiftlint:disable:next hard_coded_display_string
+                        Text("/")
+                    }
+                    .foregroundStyle(.secondary)
+                    .isVisible(isScrubbing)
+                }
 
                 if let runtime = mediaSession.item.runtime {
                     switch trailingTimestampType {
@@ -155,7 +169,7 @@ extension VideoPlayer.PlaybackControls {
                         trailingTimestampType = .timeLeft
                     }
                 } label: {
-                    leadingTimestamp
+                    timestampLabel(alignment: .leading, content: leadingTimestamp)
                 }
                 .foregroundStyle(.primary, .secondary)
                 .accessibilityLabel(L10n.timeElapsed)
@@ -172,7 +186,7 @@ extension VideoPlayer.PlaybackControls {
                         trailingTimestampType = .timeLeft
                     }
                 } label: {
-                    trailingTimestamp
+                    timestampLabel(alignment: .trailing, content: trailingTimestamp)
                 }
                 .foregroundStyle(.primary, .secondary)
                 .accessibilityLabel(trailingAccessibilityLabel)
