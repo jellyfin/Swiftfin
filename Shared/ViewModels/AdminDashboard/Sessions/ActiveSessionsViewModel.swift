@@ -12,7 +12,6 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-@MainActor
 @Stateful
 final class ActiveSessionsViewModel: ViewModel {
 
@@ -77,7 +76,7 @@ final class ActiveSessionsViewModel: ViewModel {
             .serverSocketManager
             .sessions()
             .sink { [weak self] sessions in
-                Task { @MainActor in
+                Task {
                     self?.updateSessions(sessions)
                 }
             }

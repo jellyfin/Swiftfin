@@ -11,7 +11,6 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-@MainActor
 @Stateful
 final class PluginsViewModel: ViewModel {
 

@@ -16,11 +16,11 @@ extension FocusedValues {
 
 // MARK: - Form Overloads
 
-@ContentBuilder
 @MainActor
+@ContentBuilder
 func Form(
     systemImage: String,
-    @ContentBuilder content: @escaping @MainActor () -> some View
+    @ContentBuilder content: @MainActor @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content) {
         Image(systemName: systemImage)
@@ -30,11 +30,11 @@ func Form(
     }
 }
 
-@ContentBuilder
 @MainActor
+@ContentBuilder
 func Form(
     image: ImageResource,
-    @ContentBuilder content: @escaping @MainActor () -> some View
+    @ContentBuilder content: @MainActor @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content) {
         Image(image)
@@ -44,11 +44,11 @@ func Form(
     }
 }
 
-@ContentBuilder
 @MainActor
+@ContentBuilder
 func Form(
-    @ContentBuilder content: @escaping @MainActor () -> some View,
-    @ContentBuilder image: @escaping @MainActor () -> some View
+    @ContentBuilder content: @MainActor @escaping () -> some View,
+    @ContentBuilder image: @MainActor @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content, image: image)
 }
@@ -75,8 +75,8 @@ private struct PlatformForm<Image: View, Content: View>: PresentationView {
     private let image: Image
 
     init(
-        @ContentBuilder content: @escaping @MainActor () -> Content,
-        @ContentBuilder image: @escaping @MainActor () -> Image
+        @ContentBuilder content: () -> Content,
+        @ContentBuilder image: () -> Image
     ) {
         self.content = content()
         self.image = image()

@@ -57,4 +57,55 @@ extension BaseItemDto {
             return false
         }
     }
+
+    /// Can this `BaseItemDto` be played
+    var presentPlayButton: Bool {
+        guard Container.shared.currentUserSession()?.userData.policy?.enableMediaPlayback == true else { return false }
+
+        switch type {
+        case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
+             .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist,
+             .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var canShuffle: Bool {
+        guard id?.nilIfBlank != nil,
+              !isMissing,
+              Container.shared.currentUserSession()?.userData.policy?.enableMediaPlayback == true
+        else { return false }
+
+        switch type {
+        case .series, .season, .boxSet:
+            return true
+
+        case .collectionFolder, .userView, .folder:
+            switch collectionType {
+            case .none, .movies, .tvshows, .boxsets, .homevideos, .musicvideos, .folders:
+                return true
+            default:
+                return false
+            }
+
+        default:
+            return false
+        }
+    }
+
+    /// Can this `BaseItemDto` be recorded
+    var canBeRecorded: Bool {
+        guard Container.shared.currentUserSession()?.userData.policy?.enableLiveTvManagement == true else { return false }
+
+        switch type {
+        case .channel, .liveTvChannel, .tvChannel:
+            return true
+        case .program, .liveTvProgram, .tvProgram:
+            return (endDate ?? .distantPast) > Date()
+        default:
+            return false
+        }
+    }
 }

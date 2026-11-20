@@ -101,7 +101,7 @@ final class PlaybackTemporaryFiles {
             request.setValue("MediaBrowser Token=\"\(accessToken)\"", forHTTPHeaderField: "Authorization")
         }
 
-        let file = Task { @MainActor [session, directoryPath] () -> URL? in
+        let file = Task { [session, directoryPath] () -> URL? in
             guard let (location, response) = try? await session.download(for: request),
                   let downloadedFile = try? File(path: location.path)
             else { return nil }

@@ -21,7 +21,7 @@ struct KeyCommandAction {
         subtitle: String? = nil,
         input: String,
         modifierFlags: UIKeyModifierFlags = [],
-        action: @escaping @MainActor () -> Void
+        action: @MainActor @escaping () -> Void
     ) {
         self.title = title
         self.subtitle = subtitle

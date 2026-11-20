@@ -138,7 +138,6 @@ private struct SessionPosterContextMenu: View {
         }
     }
 
-    @MainActor
     private func sendPlaystateCommand(_ command: PlaystateCommand) async {
         guard let userSession = Container.shared.currentUserSession(), let id = session.id else { return }
 

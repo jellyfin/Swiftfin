@@ -11,7 +11,6 @@ import JellyfinAPI
 import Nuke
 import UIKit
 
-@MainActor
 @Stateful
 final class UserImageViewModel: ViewModel {
 

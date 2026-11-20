@@ -12,7 +12,6 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-@MainActor
 @Stateful
 final class DevicesViewModel: ViewModel {
 

@@ -92,7 +92,7 @@ struct UserSignInView: View {
             }
 
         case let .saved(user):
-            Task { @MainActor in
+            Task {
                 do {
                     try await userSessionManager.signIn(userID: user.id)
                     UIDevice.feedback(.success)

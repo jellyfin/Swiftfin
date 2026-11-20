@@ -9,7 +9,6 @@
 import Combine
 import Foundation
 
-@MainActor
 @Stateful
 class BaseFetchViewModel<Value: Codable>: ViewModel {
 

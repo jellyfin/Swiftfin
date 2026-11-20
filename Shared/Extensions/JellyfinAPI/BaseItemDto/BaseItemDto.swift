@@ -9,7 +9,6 @@
 import Algorithms
 import AVKit
 import Defaults
-import FactoryKit
 import Foundation
 import JellyfinAPI
 import MediaPlayer
@@ -163,8 +162,11 @@ extension BaseItemDto {
             true
         }
     }
+}
 
-    @MainActor
+@MainActor
+extension BaseItemDto {
+
     var nowPlayingImageSources: [ImageSource] {
         let content = currentProgram ?? self
 
@@ -231,7 +233,6 @@ extension BaseItemDto {
         return Array((portraitSources + sources + fallback).uniqued())
     }
 
-    @MainActor
     func getNowPlayingImage() async -> UIImage? {
         let content = currentProgram ?? self
 
@@ -262,12 +263,10 @@ extension BaseItemDto {
         return ImageRenderer(content: transformedImage).uiImage
     }
 
-    @MainActor
     func getPlaybackIntent(userSession: UserSession?) -> PlaybackIntent? {
         getPlaybackIntent(userSession: userSession, configuration: .init())
     }
 
-    @MainActor
     func getPlaybackIntent(
         userSession: UserSession?,
         configuration: MediaPlaybackConfiguration
@@ -279,7 +278,6 @@ extension BaseItemDto {
         return PlaybackIntent(item: self, configuration: configuration)
     }
 
-    @MainActor
     func getChannel(
         for program: BaseItemDto,
         userSession: UserSession
@@ -294,6 +292,9 @@ extension BaseItemDto {
 
         return response.value.items?.first
     }
+}
+
+extension BaseItemDto {
 
     var runtime: Duration? {
         guard let ticks = runTimeTicks, ticks > 0 else { return nil }
@@ -520,45 +521,6 @@ extension BaseItemDto {
         originalTitle != displayTitle ? originalTitle : nil
     }
 
-    /// Can this `BaseItemDto` be played
-    @MainActor
-    var presentPlayButton: Bool {
-        guard Container.shared.currentUserSession()?.userData.policy?.enableMediaPlayback == true else { return false }
-
-        switch type {
-        case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
-             .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist,
-             .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
-            return true
-        default:
-            return false
-        }
-    }
-
-    @MainActor
-    var canShuffle: Bool {
-        guard id?.nilIfBlank != nil,
-              !isMissing,
-              Container.shared.currentUserSession()?.userData.policy?.enableMediaPlayback == true
-        else { return false }
-
-        switch type {
-        case .series, .season, .boxSet:
-            return true
-
-        case .collectionFolder, .userView, .folder:
-            switch collectionType {
-            case .none, .movies, .tvshows, .boxsets, .homevideos, .musicvideos, .folders:
-                return true
-            default:
-                return false
-            }
-
-        default:
-            return false
-        }
-    }
-
     /// Can this `BaseItemDto` be favorited
     var canBeFavorited: Bool {
         switch type {
@@ -578,21 +540,6 @@ extension BaseItemDto {
             true
         default:
             false
-        }
-    }
-
-    /// Can this `BaseItemDto` be recorded
-    @MainActor
-    var canBeRecorded: Bool {
-        guard Container.shared.currentUserSession()?.userData.policy?.enableLiveTvManagement == true else { return false }
-
-        switch type {
-        case .channel, .liveTvChannel, .tvChannel:
-            return true
-        case .program, .liveTvProgram, .tvProgram:
-            return (endDate ?? .distantPast) > Date()
-        default:
-            return false
         }
     }
 

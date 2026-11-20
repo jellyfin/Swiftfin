@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-@ContentBuilder
 @MainActor
+@ContentBuilder
 func BulletedList(
     spacing: CGFloat = 8,
     @ContentBuilder content: @escaping () -> some View

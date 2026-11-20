@@ -10,7 +10,6 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-@MainActor
 @Observable
 final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayActionProviding {
 

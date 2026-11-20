@@ -213,7 +213,7 @@ private final class NotchProbe: UIView {
 
         // A flip changes geometry without changing view size or safe insets.
         geometryObservation = window?.windowScene?.observe(\.effectiveGeometry, options: [.new]) { [weak self] _, _ in
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
                 self?.onLayout?()
             }
         }

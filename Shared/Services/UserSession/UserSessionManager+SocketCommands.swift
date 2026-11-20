@@ -21,7 +21,7 @@ extension UserSessionManager {
             }
             .switchToLatest()
             .sink { [weak self] command in
-                Task { @MainActor in
+                Task {
                     self?.onReceive(playCommand: command)
                 }
             }
@@ -33,7 +33,7 @@ extension UserSessionManager {
             }
             .switchToLatest()
             .sink { [weak self] command in
-                Task { @MainActor in
+                Task {
                     self?.onReceive(playstateCommand: command)
                 }
             }
@@ -45,14 +45,13 @@ extension UserSessionManager {
             }
             .switchToLatest()
             .sink { [weak self] command in
-                Task { @MainActor in
+                Task {
                     self?.onReceive(generalCommand: command)
                 }
             }
             .store(in: &cancellables)
     }
 
-    @MainActor
     private func onReceive(playCommand: PlayRequest) {
         guard let currentSession else { return }
 
@@ -84,7 +83,6 @@ extension UserSessionManager {
         }
     }
 
-    @MainActor
     private func onReceive(playstateCommand: PlaystateRequest) {
         guard let mediaSession = mediaPlayerManager.currentSession else { return }
 
@@ -127,7 +125,6 @@ extension UserSessionManager {
         }
     }
 
-    @MainActor
     private func onReceive(generalCommand: GeneralCommand) {
         guard let currentSession else { return }
 
@@ -184,14 +181,13 @@ extension UserSessionManager {
         }
     }
 
-    @MainActor
     private func playItem(
         id: String,
         mediaSourceID: String? = nil,
         startPositionTicks: Int? = nil,
         userSession: UserSession
     ) {
-        Task { @MainActor in
+        Task {
             do {
                 let entry = try await userSession.getFullItem(id: id)
 
@@ -229,9 +225,8 @@ extension UserSessionManager {
         }
     }
 
-    @MainActor
     private func playTrailers(itemID: String, userSession: UserSession) {
-        Task { @MainActor in
+        Task {
             do {
                 let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
                 let response = try await userSession.send(request)

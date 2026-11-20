@@ -63,7 +63,6 @@ struct PhotoPickerModifier: ViewModifier {
             }
     }
 
-    @MainActor
     private func loadImage(from item: PhotosPickerItem?) {
         guard let item else {
             selectedImage = nil

@@ -12,7 +12,6 @@ import JellyfinAPI
 @MainActor
 protocol MediaLibrary: PagingLibrary where Element == ItemEntry, PageElement == ItemPatch {}
 
-@MainActor
 extension MediaLibrary {
 
     func materialize(_ page: [ItemPatch], pageState: LibraryPageState) throws -> [ItemEntry] {

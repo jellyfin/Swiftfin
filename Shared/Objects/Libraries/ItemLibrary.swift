@@ -10,7 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-@MainActor
 struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibrary {
 
     struct Environment: WithDefaultValue {

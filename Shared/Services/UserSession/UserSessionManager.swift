@@ -17,16 +17,17 @@ import Logging
 extension Container {
 
     var userSessionManager: Factory<UserSessionManager> {
-        self { UserSessionManager() }
+        self { MainActor.assumeIsolated { UserSessionManager() } }
             .singleton
     }
 
     var currentUserSession: Factory<UserSession?> {
-        self { self.userSessionManager().currentSession }
+        self { MainActor.assumeIsolated { self.userSessionManager().currentSession } }
             .cached
     }
 }
 
+@MainActor
 final class UserSessionManager: ObservableObject {
 
     enum State: Equatable {
@@ -79,13 +80,10 @@ final class UserSessionManager: ObservableObject {
     @Injected(\.mediaPlayerManager)
     private(set) var mediaPlayerManager
 
-    @MainActor
     private var sessionTransition: (id: UUID, task: Task<Void, Never>)?
 
-    @MainActor
     private var currentUserChanges: AnyCancellable?
 
-    @MainActor
     var hasActivePlayback: Bool {
         mediaPlayerManager.hasActivePlayback
     }
@@ -94,7 +92,6 @@ final class UserSessionManager: ObservableObject {
         setupObservations()
     }
 
-    @MainActor
     func start() async {
         guard state == .initial else { return }
 
@@ -114,7 +111,6 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    @MainActor
     func signIn(userID: String) async throws {
         reauthenticationRequest = nil
         Defaults[.lastSignedInUserID] = .signedIn(userID: userID)
@@ -125,7 +121,6 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    @MainActor
     func signOut(reason: SignOutReason) async {
         guard currentSession != nil || sessionTransition != nil else { return }
 
@@ -142,23 +137,19 @@ final class UserSessionManager: ObservableObject {
         )
     }
 
-    @MainActor
     func consumeReauthenticationRequest() -> ReauthenticationRequest? {
         defer { reauthenticationRequest = nil }
         return reauthenticationRequest
     }
 
-    @MainActor
     private func stopActivePlayback() async {
         mediaPlayerManager.stop()
     }
 
-    @MainActor
     func scheduleServerConnectionResolution() {
         currentSession?.serverConnectionManager.scheduleConnectionResolution()
     }
 
-    @MainActor
     func handleOpenURL(
         _ url: URL,
         authenticationAction: LocalUserAuthenticationAction
@@ -189,7 +180,6 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    @MainActor
     func consumePendingDeepLink() -> DeepLink? {
         defer {
             pendingDeepLink = nil
@@ -198,12 +188,10 @@ final class UserSessionManager: ObservableObject {
         return pendingDeepLink
     }
 
-    @MainActor
     func appDidEnterBackground() {
         Defaults[.backgroundTimeStamp] = Date.now
     }
 
-    @MainActor
     func appWillEnterForeground() async {
         scheduleServerConnectionResolution()
 
@@ -257,7 +245,6 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    @MainActor
     private func refreshServerInformationIfNeeded(reason: ServerInformationRefreshReason) async {
         guard let currentSession else { return }
 
@@ -285,7 +272,7 @@ final class UserSessionManager: ObservableObject {
         Notifications[.applicationDidEnterBackground]
             .publisher
             .sink { [weak self] in
-                Task { @MainActor in
+                Task {
                     self?.appDidEnterBackground()
                 }
             }
@@ -294,7 +281,7 @@ final class UserSessionManager: ObservableObject {
         Notifications[.applicationWillEnterForeground]
             .publisher
             .sink { [weak self] in
-                Task { @MainActor in
+                Task {
                     await self?.appWillEnterForeground()
                 }
             }
@@ -303,7 +290,6 @@ final class UserSessionManager: ObservableObject {
         observeSocketCommands()
     }
 
-    @MainActor
     private func updateCurrentSession(with newSession: UserSession?) async {
         let previous = sessionTransition?.task
         let id = UUID()
@@ -322,7 +308,6 @@ final class UserSessionManager: ObservableObject {
     }
 
     /// Serialize transitions because starting and stopping session services can suspend
-    @MainActor
     private func applyCurrentSession(_ newSession: UserSession?) async {
         let previousSession = currentSession
 
@@ -353,7 +338,7 @@ final class UserSessionManager: ObservableObject {
                     guard id == session.user.id else { return }
                 }
 
-                Task { @MainActor [weak self, weak session] in
+                Task { [weak self, weak session] in
                     guard let self, let session, self.currentSession === session else { return }
 
                     await self.signOut(reason: .accountUnavailable)

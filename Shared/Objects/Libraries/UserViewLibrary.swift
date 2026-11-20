@@ -256,7 +256,7 @@ private struct UserViewLibraryGridElement: View {
     }
 
     private func setImageSources() {
-        Task { @MainActor in
+        Task {
             imageSources = await element.libraryImageSources(useRandomImage: useRandomImage)
         }
     }
@@ -327,13 +327,12 @@ private struct UserViewLibraryListElement: View {
     }
 
     private func setImageSources() {
-        Task { @MainActor in
+        Task {
             imageSources = await element.libraryImageSources(useRandomImage: useRandomImage)
         }
     }
 }
 
-@MainActor
 private extension UserViewLibraryElement {
 
     func libraryImageSources(useRandomImage: Bool) async -> [ImageSource] {

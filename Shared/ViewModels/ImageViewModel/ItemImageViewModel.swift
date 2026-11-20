@@ -10,7 +10,6 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-@MainActor
 @Stateful
 final class ItemImageViewModel: ViewModel {
 

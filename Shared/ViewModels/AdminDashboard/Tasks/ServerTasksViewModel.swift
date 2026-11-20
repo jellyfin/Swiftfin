@@ -16,7 +16,6 @@ import SwiftUI
 // TODO: do something for errors from restart/shutdown
 //       - toast?
 
-@MainActor
 @Stateful
 final class ServerTasksViewModel: ViewModel {
 
@@ -62,7 +61,7 @@ final class ServerTasksViewModel: ViewModel {
             .compactMap { $0?.serverSocketManager.scheduledTasks(interval: .seconds(2)) }
             .switchToLatest()
             .sink { [weak self] tasks in
-                Task { @MainActor in
+                Task {
                     self?.updateTasks(tasks)
                 }
             }
