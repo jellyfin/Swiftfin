@@ -10,7 +10,6 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-@MainActor
 @Stateful
 final class ServerLogsViewModel: ViewModel {
 

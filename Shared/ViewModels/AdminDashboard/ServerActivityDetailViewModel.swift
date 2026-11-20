@@ -10,7 +10,6 @@ import Combine
 import Dispatch
 import JellyfinAPI
 
-@MainActor
 @Stateful
 final class ServerActivityDetailViewModel: ViewModel {
 

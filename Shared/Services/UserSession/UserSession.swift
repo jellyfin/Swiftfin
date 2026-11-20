@@ -11,18 +11,16 @@ import Foundation
 import JellyfinAPI
 import Pulse
 
+@MainActor
 final class UserSession {
 
     let server: ServerState
     let user: UserState
 
-    @MainActor
     private(set) lazy var items = ItemStore()
 
-    @MainActor
     private(set) lazy var users = UserStore()
 
-    @MainActor
     private(set) lazy var currentUser: UserRecord = {
         var data = user.data
         data.id = user.id
@@ -30,22 +28,16 @@ final class UserSession {
         return (try? users.record(for: data)) ?? UserRecord(id: user.id, value: nil)
     }()
 
-    @MainActor
     var userChanges = Set<AnyCancellable>()
 
-    @MainActor
     var userRefresh: Task<Void, Never>?
 
-    @MainActor
     var itemActionErrors = PassthroughSubject<Error, Never>()
 
-    @MainActor
     var itemChanges: AnyCancellable?
 
-    @MainActor
     private var cachedClient: JellyfinClient?
 
-    @MainActor
     var client: JellyfinClient {
         let url = server.effectiveServerURL
 
@@ -66,12 +58,10 @@ final class UserSession {
         return client
     }
 
-    @MainActor
     lazy var serverConnectionManager = ServerConnectionManager()
 
     lazy var serverSocketManager = ServerSocketManager()
 
-    @MainActor
     private lazy var services: [any UserSessionService] = [
         serverConnectionManager,
         serverSocketManager,
@@ -85,7 +75,6 @@ final class UserSession {
         self.user = user
     }
 
-    @MainActor
     func willStart() async {
         observeItemChanges()
         observeUserChanges()
@@ -95,14 +84,12 @@ final class UserSession {
         }
     }
 
-    @MainActor
     func didStart() {
         for service in services {
             service.didStart(userSession: self)
         }
     }
 
-    @MainActor
     func willStop() {
         itemChanges = nil
         userChanges.removeAll()

@@ -133,8 +133,8 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
         }
 
         func refresh() async {
-            async let resume: Void = viewModel.resumeViewModel.background.refresh()
-            async let recentlyAdded: Void = viewModel.recentlyAddedViewModel.background.refresh()
+            async let resume: Void = viewModel.resumeViewModel.refreshInBackground()
+            async let recentlyAdded: Void = viewModel.recentlyAddedViewModel.refreshInBackground()
             _ = await (resume, recentlyAdded)
         }
     }

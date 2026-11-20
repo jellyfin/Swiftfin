@@ -12,7 +12,6 @@ import Transmission
 
 extension NavigationRoute {
 
-    @MainActor
     static var liveGuide: NavigationRoute {
         NavigationRoute(
             id: "liveGuide"
@@ -21,7 +20,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static var liveTV: NavigationRoute {
         NavigationRoute(
             id: "liveTV",
@@ -46,7 +44,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func videoPlayer(session: MediaSession) -> NavigationRoute {
         NavigationRoute(
             id: "videoPlayer",

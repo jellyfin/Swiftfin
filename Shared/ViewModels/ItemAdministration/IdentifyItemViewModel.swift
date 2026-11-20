@@ -12,7 +12,6 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
-@MainActor
 @Stateful
 final class IdentifyItemViewModel: ViewModel {
 

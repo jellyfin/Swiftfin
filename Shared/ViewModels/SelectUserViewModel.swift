@@ -11,7 +11,6 @@ import Foundation
 import KeychainSwift
 import OrderedCollections
 
-@MainActor
 @Stateful
 final class SelectUserViewModel: ViewModel {
 

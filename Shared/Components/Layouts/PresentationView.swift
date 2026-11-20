@@ -8,20 +8,18 @@
 
 import SwiftUI
 
+@MainActor
 protocol PresentationView: View {
 
     associatedtype StandardBody: View
     associatedtype LargeBody: View
 
     @ContentBuilder
-    @MainActor
     var standardView: Self.StandardBody { get }
     @ContentBuilder
-    @MainActor
     var largeView: Self.LargeBody { get }
 }
 
-@MainActor
 extension PresentationView {
 
     @ContentBuilder

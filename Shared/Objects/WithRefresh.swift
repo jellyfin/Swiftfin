@@ -17,6 +17,13 @@ protocol WithRefresh {
     func refresh() async
 }
 
+extension WithRefresh {
+
+    func refreshInBackground() async {
+        await background.refresh()
+    }
+}
+
 extension WithRefresh where Background == Empty {
 
     var background: Empty {

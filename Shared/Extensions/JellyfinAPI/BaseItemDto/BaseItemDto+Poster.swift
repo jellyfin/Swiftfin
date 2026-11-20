@@ -266,7 +266,6 @@ private struct BaseItemDtoPosterContextMenu: View {
         }
     }
 
-    @MainActor
     private func toggleIsPlayed() async {
         guard let session = Container.shared.currentUserSession() else { return }
 
@@ -277,7 +276,6 @@ private struct BaseItemDtoPosterContextMenu: View {
         }
     }
 
-    @MainActor
     private func toggleIsFavorite() async {
         guard let session = Container.shared.currentUserSession() else { return }
 

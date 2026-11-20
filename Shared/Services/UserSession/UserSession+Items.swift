@@ -10,7 +10,6 @@ import Foundation
 import Get
 import JellyfinAPI
 
-@MainActor
 extension UserSession {
 
     func send<Value: Decodable & Sendable>(

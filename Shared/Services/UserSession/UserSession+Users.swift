@@ -11,7 +11,6 @@ import Foundation
 import JellyfinAPI
 import Logging
 
-@MainActor
 extension UserSession {
 
     var userData: UserDto {
@@ -86,7 +85,7 @@ extension UserSession {
                 case .connected:
                     // Recover account changes missed while disconnected or backgrounded.
                     self.userRefresh?.cancel()
-                    self.userRefresh = Task { @MainActor [weak self] in
+                    self.userRefresh = Task { [weak self] in
                         guard let self else { return }
 
                         do {

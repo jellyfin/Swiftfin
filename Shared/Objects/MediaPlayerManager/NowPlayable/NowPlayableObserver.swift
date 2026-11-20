@@ -13,7 +13,6 @@ import Logging
 import MediaPlayer
 import UIKit
 
-@MainActor
 final class NowPlayableObserver: MediaSessionObserver {
 
     private var isActive = false

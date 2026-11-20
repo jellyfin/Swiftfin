@@ -135,7 +135,7 @@ struct SelectUserView: View {
     }
 
     private func select(user: UserState) {
-        Task { @MainActor in
+        Task {
             do {
                 guard let authenticationAction else { return }
 
@@ -320,7 +320,7 @@ struct SelectUserView: View {
         .onReceive(userSessionManager.$reauthenticationRequest) { request in
             guard request != nil else { return }
 
-            Task { @MainActor in
+            Task {
                 guard let request = userSessionManager.consumeReauthenticationRequest() else { return }
 
                 router.route(to: .userSignIn(server: request.server, user: request.user))
@@ -430,7 +430,7 @@ struct SelectUserView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case let .signedIn(user):
-                Task { @MainActor in
+                Task {
                     do {
                         try await userSessionManager.signIn(userID: user.id)
                         UIDevice.feedback(.success)

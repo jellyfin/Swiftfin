@@ -63,7 +63,7 @@ struct MainTabView: View {
     private func routePendingDeepLink(_ deepLink: DeepLink?) {
         guard let deepLink else { return }
 
-        Task { @MainActor in
+        Task {
             let route = deepLink.route()
             await tabCoordinator.route(to: route)
         }
@@ -136,7 +136,7 @@ struct MainTabView: View {
                 routePendingDeepLink(userSessionManager.consumePendingDeepLink())
             }
             .onReceive(userSessionManager.routePublisher) { route in
-                Task { @MainActor in
+                Task {
                     await tabCoordinator.route(to: route)
                 }
             }

@@ -293,7 +293,7 @@ final class PlaybackInformationProvider {
             }
             .switchToLatest()
             .sink { [weak self] sessions in
-                Task { @MainActor in
+                Task {
                     guard let self else { return }
 
                     let deviceID = Container.shared.currentUserSession()?.client.configuration.deviceID

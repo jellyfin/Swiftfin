@@ -93,7 +93,7 @@ struct SettingsView: View {
 
         Section {
             Button {
-                Task { @MainActor in
+                Task {
                     UIDevice.impact(.medium)
                     await userSessionManager.signOut(reason: .explicit)
                     router.dismiss()

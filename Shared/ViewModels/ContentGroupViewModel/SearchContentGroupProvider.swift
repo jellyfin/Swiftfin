@@ -9,7 +9,6 @@
 import Foundation
 import JellyfinAPI
 
-@MainActor
 struct SearchContentGroupProvider: ContentGroupProvider {
 
     struct Environment: WithDefaultValue {

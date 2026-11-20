@@ -16,7 +16,7 @@ typealias ContentGroupBuilder = ArrayBuilder<any ContentGroup>
 protocol ContentGroup<ViewModel>: Identifiable {
 
     associatedtype Body: View
-    associatedtype ViewModel: WithRefresh
+    associatedtype ViewModel: WithRefresh & Sendable
 
     var id: String { get }
     var viewModel: ViewModel { get }

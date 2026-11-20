@@ -166,10 +166,13 @@ extension MediaPlayerType {
             SubtitleFormat.vtt
         }
     }
+}
 
-    // MARK: - Codec Profiles
+// MARK: - Codec Profiles
 
-    @MainActor
+@MainActor
+extension MediaPlayerType {
+
     @ArrayBuilder<CodecProfile>
     static func _avPlayerCodecProfiles(configuration: MediaPlaybackConfiguration) -> [CodecProfile] {
         CodecProfile(
@@ -257,7 +260,6 @@ extension MediaPlayerType {
         )
     }
 
-    @MainActor
     @ArrayBuilder<VideoRangeType>
     private static func avPlayerHDRProfiles(configuration: MediaPlaybackConfiguration) -> [VideoRangeType] {
         let supportsHDR = UIDevice.PlaybackCapabilities.supportsHEVC && !configuration.forceHDRTranscode

@@ -144,10 +144,13 @@ extension MediaPlayerType {
             SubtitleFormat.xsub
         }
     }
+}
 
-    // MARK: - Codec Profiles
+// MARK: - Codec Profiles
 
-    @MainActor
+@MainActor
+extension MediaPlayerType {
+
     @ArrayBuilder<CodecProfile>
     static func _mpvCodecProfiles(configuration: MediaPlaybackConfiguration) -> [CodecProfile] {
         CodecProfile(
@@ -286,7 +289,6 @@ extension MediaPlayerType {
 
     /// MPVUI uses AVFoundation sample buffers by default, not `gpu-next`.
     /// HDR output depends on the display route. Accepting a source does not guarantee native HDR presentation.
-    @MainActor
     @ArrayBuilder<VideoRangeType>
     private static func mpvHDRProfiles(configuration: MediaPlaybackConfiguration) -> [VideoRangeType] {
         VideoRangeType.sdr
@@ -300,7 +302,6 @@ extension MediaPlayerType {
 
     /// Native Dolby Vision in MPVUI's strict policy supports HEVC Profile 5 and Profile 8 HDR10/HLG bases.
     /// Profile 7 enhancement layers, SDR bases, and software Dolby Vision require a different rendering policy.
-    @MainActor
     @ArrayBuilder<VideoRangeType>
     private static func mpvHEVCHDRProfiles(configuration: MediaPlaybackConfiguration) -> [VideoRangeType] {
         mpvHDRProfiles(configuration: configuration)
@@ -312,9 +313,12 @@ extension MediaPlayerType {
             VideoRangeType.doviWithHDR10Plus
         }
     }
+}
+
+private extension MediaPlayerType {
 
     @ArrayBuilder<AudioCodec>
-    private static var mpvAudioCodecs: [AudioCodec] {
+    static var mpvAudioCodecs: [AudioCodec] {
         AudioCodec.aac
         AudioCodec.ac3
         AudioCodec.alac

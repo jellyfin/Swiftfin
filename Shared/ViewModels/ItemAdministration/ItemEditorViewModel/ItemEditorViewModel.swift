@@ -11,7 +11,6 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-@MainActor
 @Stateful
 class ItemEditorViewModel: ViewModel {
 

@@ -142,7 +142,7 @@ final class EPGViewModel: ViewModel {
         Timer.publish(every: 60, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] date in
-                Task { @MainActor in
+                Task {
                     self?.updateCurrentTime(date)
                 }
             }

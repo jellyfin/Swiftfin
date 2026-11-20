@@ -30,7 +30,6 @@ struct LocalUserSecurityView: View {
     @StateObject
     private var viewModel = LocalUserSecurityViewModel()
 
-    @MainActor
     private func performSaveSecurityPolicy() async {
         guard let authenticationAction else {
             return
@@ -116,7 +115,7 @@ struct LocalUserSecurityView: View {
                 let isChangingPIN = signInPolicy == .requirePin && signInPolicy == user.accessPolicy
 
                 let saveAction: () -> Void = {
-                    Task { @MainActor in
+                    Task {
                         await performSaveSecurityPolicy()
                     }
                 }

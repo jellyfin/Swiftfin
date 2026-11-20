@@ -98,7 +98,6 @@ final class ServerConnectionManager: ObservableObject {
         return publicInfo
     }
 
-    @MainActor
     static func evaluate(
         server: ServerState,
         accessToken: String?,

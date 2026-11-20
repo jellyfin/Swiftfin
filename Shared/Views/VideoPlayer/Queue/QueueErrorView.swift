@@ -8,7 +8,6 @@
 
 import SwiftUI
 
-@MainActor
 struct QueueErrorView: PresentationView {
 
     @AdaptiveLayout

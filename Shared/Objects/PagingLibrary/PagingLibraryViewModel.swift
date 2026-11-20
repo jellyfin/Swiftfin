@@ -16,7 +16,7 @@ let defaultPagingLibraryPageSize = 50
 
 @Observable
 @StatefulObservable(conformances: [WithRefresh.self])
-class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
+class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable, WithRefresh {
 
     typealias Background = _BackgroundActions
     typealias Element = Library.Element

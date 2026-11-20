@@ -52,7 +52,6 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     func posterOverlay(for displayType: PosterDisplayType) -> OverlayBody
 }
 
-@MainActor
 extension Poster where ImageBody == Image {
 
     func transform(image: Image) -> Image {
@@ -64,7 +63,6 @@ extension Poster where ImageBody == Image {
     }
 }
 
-@MainActor
 extension Poster where LabelBody == EmptyView {
 
     var posterLabel: LabelBody {
@@ -72,7 +70,6 @@ extension Poster where LabelBody == EmptyView {
     }
 }
 
-@MainActor
 extension Poster where ContextMenuBody == EmptyView {
 
     var posterContextMenu: ContextMenuBody {
@@ -80,7 +77,6 @@ extension Poster where ContextMenuBody == EmptyView {
     }
 }
 
-@MainActor
 extension Poster where OverlayBody == EmptyView {
 
     func posterOverlay(for displayType: PosterDisplayType) -> OverlayBody {
@@ -128,7 +124,6 @@ extension Poster {
     }
 }
 
-@MainActor
 extension View {
 
     @ContentBuilder

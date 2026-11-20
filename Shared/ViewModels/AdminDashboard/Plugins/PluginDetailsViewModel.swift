@@ -9,7 +9,6 @@
 import Foundation
 import JellyfinAPI
 
-@MainActor
 @Stateful
 final class PluginDetailsViewModel: ViewModel, @MainActor Identifiable {
 
