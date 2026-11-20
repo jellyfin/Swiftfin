@@ -192,6 +192,14 @@ extension NavigationRoute {
     }
     #endif
 
+    static var homeSettings: NavigationRoute {
+        NavigationRoute(
+            id: "homeSettings"
+        ) {
+            CustomizeSettingsView.HomeSection()
+        }
+    }
+
     static var itemSettings: NavigationRoute {
         NavigationRoute(
             id: "itemSettings"

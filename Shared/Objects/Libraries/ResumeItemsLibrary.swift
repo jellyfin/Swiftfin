@@ -6,9 +6,19 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 
 struct ResumeItemsLibrary: BaseItemKindLibrary {
+
+    struct Environment: WithDefaultValue {
+
+        var enableRewatching: Bool
+
+        static let `default`: Self = .init(
+            enableRewatching: Defaults[.Customization.Home.Rewatching.configuration].resume
+        )
+    }
 
     let mediaTypes: [MediaType]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.continue, id: "continue-watching")
@@ -21,12 +31,12 @@ struct ResumeItemsLibrary: BaseItemKindLibrary {
         self.mediaTypes = mediaTypes
     }
 
-    func shouldRefreshForUserDataChange(environment: Empty) -> Bool {
+    func shouldRefreshForUserDataChange(environment: Environment) -> Bool {
         true
     }
 
     func retrievePage(
-        environment: Empty,
+        environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [ItemPatch] {
         var parameters = Paths.GetResumeItemsParameters()
@@ -43,8 +53,14 @@ struct ResumeItemsLibrary: BaseItemKindLibrary {
         return try pageState.items(from: response)
     }
 
-    func includes(_ element: ItemEntry, environment: Empty) -> Bool {
-        element.item.confirmedUserData?.matches([.isResumable]) != false
+    func includes(_ element: ItemEntry, environment: Environment) -> Bool {
+        guard let userData = element.item.confirmedUserData else { return true }
+
+        if environment.enableRewatching {
+            return userData.playbackPositionTicks != 0
+        }
+
+        return userData.matches([.isResumable])
     }
 }
 

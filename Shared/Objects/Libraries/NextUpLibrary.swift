@@ -18,7 +18,7 @@ struct NextUpLibrary: BaseItemKindLibrary {
         var maxNextUp: TimeInterval
 
         static let `default`: Self = .init(
-            enableRewatching: Defaults[.Customization.Home.resumeNextUp],
+            enableRewatching: Defaults[.Customization.Home.Rewatching.configuration].nextUp,
             maxNextUp: Defaults[.Customization.Home.maxNextUp]
         )
     }

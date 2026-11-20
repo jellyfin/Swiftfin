@@ -40,6 +40,10 @@ struct CustomizeSettingsView: View {
                 Text(L10n.filters)
             }
 
+            ChevronButton(L10n.home) {
+                router.route(to: .homeSettings)
+            }
+
             ChevronButton(L10n.items) {
                 router.route(to: .itemSettings)
             }
@@ -55,8 +59,6 @@ struct CustomizeSettingsView: View {
             ChevronButton(L10n.videoPlayer) {
                 router.route(to: .videoPlayerSettings)
             }
-
-            HomeSection()
         }
         .navigationTitle(L10n.advanced)
     }
