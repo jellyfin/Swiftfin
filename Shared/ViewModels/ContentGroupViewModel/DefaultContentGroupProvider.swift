@@ -17,6 +17,9 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
     @Injected(\.currentUserSession)
     var userSession: UserSession?
 
+    @Default(.Customization.Library.style)
+    private var libraryStyle
+
     let displayTitle: String = L10n.home
     let id: String = "default-content-group-provider"
 
@@ -61,14 +64,15 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
         #else
         PosterGroup(
             library: ResumeItemsLibrary(mediaTypes: [.video]),
-            posterDisplayType: .landscape,
+            posterDisplayType: libraryStyle.posterDisplayType,
             posterSize: .medium,
             _viewContext: .isInResume
         )
         #endif
 
         PosterGroup(
-            library: NextUpLibrary()
+            library: NextUpLibrary(),
+            posterDisplayType: libraryStyle.posterDisplayType,
         )
 
         if Defaults[.Customization.Home.showRecentlyAdded] {
@@ -85,7 +89,8 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
                         sortBy: [.dateCreated],
                         sortOrder: [.descending]
                     )
-                )
+                ),
+                posterDisplayType: libraryStyle.posterDisplayType,
             )
             #endif
         }
@@ -100,14 +105,15 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
                         sortOrder: [.descending],
                         traits: [.isPlayed]
                     )
-                )
+                ),
+                posterDisplayType: libraryStyle.posterDisplayType,
             )
         }
 
         PosterGroup(
             id: "programs-recommended",
             library: RecommendedProgramsLibrary(),
-            posterDisplayType: .landscape,
+            posterDisplayType: libraryStyle.posterDisplayType,
             posterSize: .small
         )
 
@@ -116,7 +122,7 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
             .map {
                 PosterGroup(
                     library: $0,
-                    posterDisplayType: .landscape
+                    posterDisplayType: libraryStyle.posterDisplayType
                 )
             }
     }

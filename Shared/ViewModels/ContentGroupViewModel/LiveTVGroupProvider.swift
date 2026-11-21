@@ -6,9 +6,13 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 
 struct LiveTVGroupProvider: ContentGroupProvider {
+
+    @Default(.Customization.Library.style)
+    private var libraryStyle
 
     private enum LiveTVPill: Displayable, SystemImageable {
 
@@ -82,7 +86,7 @@ struct LiveTVGroupProvider: ContentGroupProvider {
         PosterGroup(
             id: "programs-recommended",
             library: RecommendedProgramsLibrary(),
-            posterDisplayType: .landscape,
+            posterDisplayType: libraryStyle.posterDisplayType,
             posterSize: .small
         )
 
@@ -97,7 +101,7 @@ struct LiveTVGroupProvider: ContentGroupProvider {
                 PosterGroup(
                     id: "programs-\(section.rawValue)",
                     library: ProgramsLibrary(section: section),
-                    posterDisplayType: .landscape,
+                    posterDisplayType: libraryStyle.posterDisplayType,
                     posterSize: .small
                 )
             }
@@ -105,7 +109,7 @@ struct LiveTVGroupProvider: ContentGroupProvider {
         PosterGroup(
             id: "recordings",
             library: RecordingsLibrary(),
-            posterDisplayType: .landscape,
+            posterDisplayType: libraryStyle.posterDisplayType,
             posterSize: .small
         )
     }
