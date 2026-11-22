@@ -26,12 +26,10 @@ struct SearchView: View {
     #endif
 
     @State
-    private var searchQuery = ""
+    private var viewModel = SearchViewModel()
 
     @StateObject
     private var focusCoordinator: FocusCoordinator = .init()
-    @StateObject
-    private var viewModel = SearchViewModel()
 
     @TabItemSelected
     private var tabItemSelected
@@ -41,7 +39,7 @@ struct SearchView: View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions) { item in
                 Button(item.displayTitle) {
-                    searchQuery = item.displayTitle
+                    viewModel.query = item.displayTitle
                 }
                 #if os(tvOS)
                 .buttonStyle(.plain)
@@ -53,7 +51,7 @@ struct SearchView: View {
     }
 
     @ContentBuilder
-    var body: some View {
+    private var contentView: some View {
         ScrollView {
             VStack(spacing: 0) {
                 #if os(tvOS)
@@ -62,7 +60,7 @@ struct SearchView: View {
 
                     ScrollView(.horizontal) {
                         HStack(spacing: 20) {
-                            FilterTrack(viewModel: viewModel.filterViewModel, types: availableTypes, focus: $focusedFilter)
+                            FilterTrack(focus: $focusedFilter, types: availableTypes, viewModel: viewModel.filterViewModel)
                         }
                     }
                     .scrollClipDisabled()
@@ -78,26 +76,17 @@ struct SearchView: View {
                 }
                 #endif
 
-                ZStack {
-                    switch viewModel.state {
-                    case .error:
-                        viewModel.error.map(ErrorView.init)
-
-                    case .initial:
-                        if viewModel.canSearch {
-                            if viewModel.isEmpty {
-                                Text(L10n.noResults)
-                            } else {
-                                ContentGroupVStack(
-                                    groups: viewModel.itemContentGroupViewModel.groups
-                                )
-                            }
+                Group {
+                    if viewModel.canSearch {
+                        if viewModel.isEmpty {
+                            Text(L10n.noResults)
                         } else {
-                            suggestionsView
+                            ContentGroupVStack(
+                                groups: viewModel.itemContentGroupViewModel.groups
+                            )
                         }
-
-                    case .searching:
-                        ProgressView()
+                    } else {
+                        suggestionsView
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -107,11 +96,27 @@ struct SearchView: View {
         .ignoresSafeArea(edges: viewLayout.scrollContentEdges(extendsTop: false))
         .defaultScrollAnchor(viewLayout.isLarge || viewModel.canSearch ? .top : .center, for: .alignment)
         .scrollIndicators(.hidden)
+    }
+
+    @ContentBuilder
+    var body: some View {
+        ZStack {
+            switch viewModel.state {
+            case .error:
+                viewModel.error.map(ErrorView.init)
+
+            case .initial:
+                contentView
+
+            case .searching:
+                ProgressView()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard)
         .navigationTitle(L10n.search)
         .toolbarTitleDisplayMode(.inline)
-        .searchFocused($isSearchFocused)
         .onReceive(tabItemSelected) { event in
             if event.isRepeat, event.isRoot {
                 isSearchFocused = true
@@ -120,19 +125,14 @@ struct SearchView: View {
         .onFirstAppear {
             viewModel.getSuggestions()
         }
-        .onChange(of: searchQuery) {
-            viewModel.search(query: searchQuery)
-        }
         .searchable(
-            text: $searchQuery,
+            text: $viewModel.query,
             prompt: L10n.search
         )
+        .searchFocused($isSearchFocused)
         .environmentObject(focusCoordinator)
         #if os(tvOS)
         .modifier(SearchSafeAreaModifier())
-        .onReceive(viewModel.filterViewModel.$currentFilters) { filters in
-            searchQuery = filters.query ?? ""
-        }
         #endif
         #if os(iOS)
         .navigationBarFilterDrawer(

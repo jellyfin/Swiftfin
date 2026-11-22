@@ -7,16 +7,16 @@
 //
 
 import Foundation
+import Synchronization
 
 enum SwizzleDefaults {
 
-    private static var overrides: [String: Any] = [:]
-    private static let overridesQueue = DispatchQueue(label: "SwizzleDefaults.overrides", attributes: .concurrent)
+    private static let overrides = Mutex<[String: any Sendable]>([:])
 
-    private static func set(_ override: Any?, for key: String) {
+    private static func set(_ override: any Sendable?, for key: String) {
         _ = swizzle
 
-        overridesQueue.sync(flags: .barrier) {
+        overrides.withLock { overrides in
             overrides[key] = override
         }
     }
@@ -26,7 +26,7 @@ enum SwizzleDefaults {
     }
 
     static func set(_ value: String, for key: String) {
-        set(value as NSString, for: key)
+        set(value as any Sendable, for: key)
     }
 
     static func set(_ value: Int, for key: String) {
@@ -41,8 +41,8 @@ enum SwizzleDefaults {
         set(nil, for: key)
     }
 
-    fileprivate static func resolve(_ key: String) -> Any? {
-        overridesQueue.sync {
+    fileprivate static func resolve(_ key: String) -> (any Sendable)? {
+        overrides.withLock { overrides in
             overrides[key]
         }
     }

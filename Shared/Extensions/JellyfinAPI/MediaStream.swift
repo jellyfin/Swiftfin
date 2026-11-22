@@ -14,7 +14,7 @@ extension MediaStream {
 
     typealias Property = (label: String, value: String)
 
-    static var none: MediaStream = .init(displayTitle: L10n.none, index: -1)
+    static let none: MediaStream = .init(displayTitle: L10n.none, index: -1)
 
     /// Delivery describes what the player receives, while `isExternal` describes only the source file.
     var isSidecarSubtitle: Bool {

@@ -10,21 +10,10 @@ import Combine
 import Defaults
 import Foundation
 import JellyfinAPI
-import Observation
 
 @MainActor
 @Observable
 final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
-
-    private weak var mediaSession: MediaSession?
-    private(set) var state: MediaPlayerQueueState = .initial
-    private(set) var items: [ItemEntry] = []
-    var nextItem: PlaybackIntent?
-    var previousItem: PlaybackIntent?
-
-    var currentEntryID: ItemEntry.ID? {
-        mediaSession?.item.id.map { ItemEntry.ID(itemID: $0, occurrence: nil) }
-    }
 
     @ObservationIgnored
     private var currentAdjacentEpisodesTask: Task<Void, Error>? {
@@ -34,15 +23,40 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
     @ObservationIgnored
     private var seasonLibrary: PagingLibraryViewModel<EpisodeLibrary>?
     @ObservationIgnored
-    private var seasonObservations: Set<AnyCancellable> = []
+    private var seasonObservation: AnyCancellable?
+
+    private var itemsStorage = ValueBox<[ItemEntry]>(value: [])
+    private weak var mediaSession: MediaSession?
+    var nextItem: PlaybackIntent?
+    var previousItem: PlaybackIntent?
+    private(set) var state: MediaPlayerQueueState = .initial
+
+    var currentEntryID: ItemEntry.ID? {
+        mediaSession?.item.id.map { ItemEntry.ID(itemID: $0, occurrence: nil) }
+    }
+
+    var items: [ItemEntry] {
+        itemsStorage.value
+    }
 
     func observe(_ mediaSession: MediaSession) -> AnyCancellable {
         self.mediaSession = mediaSession
 
-        let observation = ObservationToken { [weak mediaSession] in
-            mediaSession?.playbackItem
-        } onChange: { [weak self] item in
-            self?.didReceive(newItem: item)
+        var previousItem = mediaSession.playbackItem
+        didReceive(newItem: previousItem)
+
+        let observation = Task { [weak self, weak mediaSession] in
+            let items = ObservableValues { [weak mediaSession] in
+                mediaSession?.playbackItem
+            }
+
+            for await item in items {
+                guard !Task.isCancelled else { return }
+                guard item === mediaSession?.playbackItem, item !== previousItem else { continue }
+
+                previousItem = item
+                self?.didReceive(newItem: item)
+            }
         }
 
         return AnyCancellable { [self, observation] in
@@ -104,16 +118,16 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
         let library = PagingLibraryViewModel(library: EpisodeLibrary(season: season), userSession: mediaSession.userSession)
         seasonLibrary = library
 
-        library.$elements
-            .sink { [weak self] elements in
-                self?.items = Array(elements)
+        seasonObservation = Task { [weak self] in
+            let snapshots = ObservableValues {
+                (elements: library.elements, state: library.state)
             }
-            .store(in: &seasonObservations)
 
-        library.core
-            .statePublisher
-            .sink { [weak self] state in
-                self?.state = switch state {
+            for await snapshot in snapshots {
+                guard !Task.isCancelled, let self else { return }
+
+                itemsStorage = .init(value: Array(snapshot.elements))
+                state = switch snapshot.state {
                 case .initial:
                     .initial
                 case .refreshing:
@@ -124,16 +138,17 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
                     .error
                 }
             }
-            .store(in: &seasonObservations)
+        }
+        .asAnyCancellable()
 
         refresh()
     }
 
     private func resetSeason() {
-        seasonObservations.removeAll()
+        seasonObservation = nil
         seasonLibrary?.core.cancelAll()
         seasonLibrary = nil
-        items = []
+        itemsStorage = .init(value: [])
         state = .initial
     }
 

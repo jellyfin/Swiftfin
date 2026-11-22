@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import FactoryKit
 import SwiftUI
 
 struct RootView: View {
@@ -30,5 +29,30 @@ struct RootView: View {
         .task {
             rootCoordinator.start()
         }
+        .modifier(RootContainerModifier())
+    }
+}
+
+private struct RootContainerModifier: ViewModifier {
+
+    @ContentBuilder
+    func body(content: Content) -> some View {
+        Group {
+            #if os(iOS)
+            PreferencesView {
+                content
+                    .supportedOrientations(UIDevice.isPhone ? .portrait : .all)
+                    .modifier(LocalUserAuthenticationModifier())
+            }
+            .ignoresSafeArea()
+            .modifier(OverlayToastModifier())
+            .trackingFrame(for: .layoutContainer)
+            #else
+            content
+                .modifier(LocalUserAuthenticationModifier())
+                .modifier(OverlayToastModifier())
+            #endif
+        }
+        .modifier(ThemePreferencesModifier())
     }
 }

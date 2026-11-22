@@ -11,8 +11,8 @@ import Foundation
 import IdentifiedCollections
 import JellyfinAPI
 
-@MainActor
-@Stateful
+@Observable
+@StatefulObservable
 final class EPGViewModel: ViewModel {
 
     @CasePathable
@@ -58,34 +58,34 @@ final class EPGViewModel: ViewModel {
     private struct ChannelPage {
 
         let channels: [ItemPatch]
-        let pageState: LibraryPageState
-        let nextOffset: Int
         let hasNextPage: Bool
+        let nextOffset: Int
+        let pageState: LibraryPageState
     }
-
-    @Published
-    private(set) var channels: IdentifiedArrayOf<ItemEntry> = IdentifiedArray(
-        [],
-        uniquingIDsWith: { existing, _ in existing }
-    )
-    @Published
-    private(set) var now: Date = .now
-    @Published
-    private(set) var programs: [String: [ProgramBlock]] = [:]
-    private(set) var programsRevision = 0
-    @Published
-    private(set) var startDate: Date
 
     private let channelPageSize = defaultPagingLibraryPageSize
     private let channelsLibrary = EPGChannelsLibrary()
     private let minimumDuration: Duration
 
+    private(set) var channels: IdentifiedArrayOf<ItemEntry> = IdentifiedArray(
+        [],
+        uniquingIDsWith: { existing, _ in existing }
+    )
     private var hasNextChannelPage = true
+    private var isInvalidated = false
     private var nextChannelOffset = 0
+    private(set) var now: Date = .now
+
+    private(set) var programs: [String: [ProgramBlock]] = [:] {
+        didSet { programsRevision &+= 1 }
+    }
+
+    private(set) var programsRevision = 0
     private var requestGeneration = 0
+    private(set) var startDate: Date
 
     var availableDates: [Date] {
-        let today = Calendar.current.startOfDay(for: .now)
+        let today = Calendar.current.startOfDay(for: now)
 
         return (0 ..< 7).compactMap {
             Calendar.current.date(byAdding: .day, value: $0, to: today)
@@ -94,6 +94,10 @@ final class EPGViewModel: ViewModel {
 
     var endDate: Date {
         endDate(startingAt: startDate)
+    }
+
+    var selectedDate: Date {
+        max(Calendar.current.startOfDay(for: startDate), Calendar.current.startOfDay(for: now))
     }
 
     init(minimumDuration: Duration = .hours(12)) {
@@ -120,14 +124,14 @@ final class EPGViewModel: ViewModel {
                             endDate: self.endDate
                         )
                     }
-                    self.programsRevision &+= 1
 
                 case .invalidated:
                     self.requestGeneration += 1
+                    self.isInvalidated = true
+                    self.core.cancelAll()
                     self.channels.removeAll()
                     self.programs.removeAll()
                     self.hasNextChannelPage = false
-                    self.programsRevision &+= 1
 
                 case .updated, .libraryChanged:
                     break
@@ -139,19 +143,21 @@ final class EPGViewModel: ViewModel {
             .autoconnect()
             .sink { [weak self] date in
                 Task { @MainActor in
-                    guard let self else { return }
-
-                    self.now = date
-
-                    let startOfToday = Calendar.current.startOfDay(for: date)
-                    let guideNeedsRebase = date >= self.endDate || self.startDate < startOfToday
-
-                    if guideNeedsRebase, self.state == .content {
-                        self.refresh(startDate: nil)
-                    }
+                    self?.updateCurrentTime(date)
                 }
             }
             .store(in: &cancellables)
+    }
+
+    private func updateCurrentTime(_ date: Date) {
+        now = date
+
+        let startOfToday = Calendar.current.startOfDay(for: date)
+        let guideNeedsRebase = date >= endDate || startDate < startOfToday
+
+        if guideNeedsRebase, !isInvalidated, state == .content {
+            refresh(startDate: nil)
+        }
     }
 
     @Function(\Action.Cases.getNextPage)
@@ -171,20 +177,24 @@ final class EPGViewModel: ViewModel {
             ? defaultStartDate()
             : calendar.startOfDay(for: date)
 
-        guard newStartDate != startDate else { return }
+        guard newStartDate != startDate || state == .refreshing else { return }
 
         await refresh(startDate: newStartDate)
     }
 
     @Function(\Action.Cases._actuallyGetNextPage)
     private func __actuallyGetNextPage() async throws {
-        guard hasNextChannelPage else { return }
+        guard !isInvalidated, state == .content, hasNextChannelPage else { return }
 
         try await loadChannels(replacing: false, from: startDate)
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh(_ requestedStartDate: Date?) async throws {
+        guard !isInvalidated else { return }
+
+        core.cancel(action: \.getNextPage)
+        core.cancel(action: \._actuallyGetNextPage)
         requestGeneration += 1
         try await loadChannels(replacing: true, from: requestedStartDate ?? refreshedStartDate())
     }
@@ -194,6 +204,8 @@ final class EPGViewModel: ViewModel {
         let offset = replacing ? 0 : nextChannelOffset
         let end = endDate(startingAt: date)
         let page = try await getChannelPage(offset: offset)
+        guard !Task.isCancelled, generation == requestGeneration else { return }
+
         let existingIDs = replacing ? Set<String>() : Set(channels.map(\.itemID))
         let patches = page.channels.filter { !existingIDs.contains($0.value.id ?? "") }
         let programPatches = try await getPrograms(
@@ -220,7 +232,6 @@ final class EPGViewModel: ViewModel {
             }
             programs.merge(newPrograms) { _, new in new }
         }
-        programsRevision &+= 1
         nextChannelOffset = page.nextOffset
         hasNextChannelPage = page.hasNextPage
     }
@@ -231,9 +242,9 @@ final class EPGViewModel: ViewModel {
         let progress = pageState.progress(returnedCount: patches.count)
         return ChannelPage(
             channels: patches.filter { $0.value.id?.nilIfBlank != nil },
-            pageState: pageState,
+            hasNextPage: progress.hasNextPage,
             nextOffset: progress.nextOffset,
-            hasNextPage: progress.hasNextPage
+            pageState: pageState
         )
     }
 

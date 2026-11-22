@@ -9,6 +9,7 @@
 import SwiftUI
 
 @ContentBuilder
+@MainActor
 func SecureField(
     _ title: String,
     text: Binding<String>,

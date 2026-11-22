@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -318,11 +317,9 @@ private struct ItemLibraryBody<Content: View>: View {
     @Router
     private var router
 
-    @ObservedObject
-    private var viewModel: PagingLibraryViewModel<ItemLibrary>
-
     private let content: Content
     private let filterViewModel: FilterViewModel
+    private let viewModel: PagingLibraryViewModel<ItemLibrary>
 
     private var filterTypes: [ItemFilterType] {
         enabledDrawerFilters.filter { !filterViewModel.staticFilters.containsFilters(ofType: $0) }
@@ -349,15 +346,17 @@ private struct ItemLibraryBody<Content: View>: View {
             .onChange(of: filterViewModel.currentFilters) {
                 rememberFilters(from: filterViewModel.currentFilters)
             }
-            .onReceive(
-                filterViewModel.$currentFilters
-                    .map { filterViewModel.staticFilters.union($0) }
-                    .removeDuplicates()
-                    .debounce(for: 1, scheduler: RunLoop.main)
-            ) { filters in
-                guard viewModel.environment.filters != filters else { return }
+            .task {
+                await DebouncedObservation.run(
+                    { [filterViewModel] in
+                        filterViewModel.staticFilters.union(filterViewModel.currentFilters)
+                    },
+                    for: .seconds(1)
+                ) { [viewModel] filters in
+                    guard viewModel.environment.filters != filters else { return }
 
-                viewModel.environment.filters = filters
+                    viewModel.environment.filters = filters
+                }
             }
             .onChange(of: viewModel.environment.grouping) { _, grouping in
                 guard let grouping, Defaults[.Customization.Library.rememberLayout] else { return }

@@ -13,19 +13,17 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
     @FocusState
     private var focusedFilter: FilterTrack.FocusTarget?
 
-    @ObservedObject
-    var viewModel: FilterViewModel
-
     let types: [ItemFilterType]
+    let viewModel: FilterViewModel
 
     @ContentBuilder
     private var drawer: some View {
         ScrollView(.horizontal) {
             HStack {
                 FilterTrack(
-                    viewModel: viewModel,
+                    focus: $focusedFilter,
                     types: viewModel.availableFilterTypes(from: types),
-                    focus: $focusedFilter
+                    viewModel: viewModel
                 )
             }
         }

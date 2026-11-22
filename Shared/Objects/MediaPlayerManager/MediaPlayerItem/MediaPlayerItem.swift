@@ -8,7 +8,6 @@
 
 import Combine
 import JellyfinAPI
-import Observation
 import SwiftUI
 
 @MainActor

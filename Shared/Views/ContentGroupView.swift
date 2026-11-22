@@ -30,17 +30,17 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
     @State
     private var contentGroupOptions: ContentGroupParentOption = .init()
+    @State
+    private var viewModel: ContentGroupViewModel<Provider>
 
     @StateObject
     private var focusCoordinator = FocusCoordinator(waitingFor: Focus.content.rawValue, focusPlaceholder: true)
-    @StateObject
-    private var viewModel: ContentGroupViewModel<Provider>
 
     @TabItemSelected
     private var tabItemSelected
 
     init(provider: Provider) {
-        _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
+        _viewModel = State(initialValue: ContentGroupViewModel(provider: provider))
     }
 
     @ContentBuilder

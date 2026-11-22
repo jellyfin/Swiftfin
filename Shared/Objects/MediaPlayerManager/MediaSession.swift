@@ -11,7 +11,6 @@ import Defaults
 import Foundation
 import JellyfinAPI
 import Logging
-import StatefulMacros
 
 @MainActor
 @Observable

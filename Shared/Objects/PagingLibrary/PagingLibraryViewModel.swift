@@ -14,8 +14,8 @@ import JellyfinAPI
 
 let defaultPagingLibraryPageSize = 50
 
-@MainActor
-@Stateful(conformances: [WithRefresh.self])
+@Observable
+@StatefulObservable(conformances: [WithRefresh.self])
 class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     typealias Background = _BackgroundActions
@@ -70,6 +70,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     enum Event {
 
+        case error
         case gotRandomItem(Element)
     }
 
@@ -81,17 +82,27 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         case refreshing
     }
 
-    /// Collections retain records that the session store holds weakly
-    @Published
+    @ObservationIgnored
+    private var storeRefreshTask: AnyCancellable?
+
+    nonisolated let id: String
+    let library: Library
+    let pageSize: Int
+    private let refreshesForStoreChanges: Bool
+
+    /// Retains records held weakly by the session store.
     private(set) var elements: IdentifiedArrayOf<Element>
 
-    @Published
     var environment: Environment {
         didSet {
             guard environment != oldValue else { return }
 
             generation += 1
             searchGeneration += 1
+            storeRefreshTask?.cancel()
+            storeRefreshTask = nil
+            hasPendingStoreRefresh = false
+            core.cancelAll()
             elements.removeAll()
             searchElements.removeAll()
             nextOffset = 0
@@ -101,41 +112,36 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         }
     }
 
-    @Published
+    private var generation = 0
+    private var hasNextPage: Bool
+    private var hasNextSearchPage: Bool
+    private var hasPendingStoreRefresh = false
+    private var isInvalidated = false
+    private var lastStoreRefresh = Date.distantPast
+    private var nextOffset = 0
+    private var nextSearchOffset = 0
     private(set) var searchElements: IdentifiedArrayOf<Element>
+    private var searchGeneration = 0
 
-    @Published
     var searchQuery: String = "" {
         didSet {
-            guard searchQuery.nilIfBlank != oldValue.nilIfBlank
+            guard searchQuery.nilIfBlank != oldValue.nilIfBlank,
+                  !isInvalidated
             else { return }
 
             searchGeneration += 1
             hasNextSearchPage = false
             searchElements.removeAll()
             nextSearchOffset = 0
+
+            core.cancel(action: \.search)
+            core.cancel(action: \.getNextSearchPage)
         }
     }
 
-    let library: Library
-    let pageSize: Int
-
-    private let refreshesForStoreChanges: Bool
-    private var nextOffset = 0
-    private var nextSearchOffset = 0
-
-    // Generations prevent responses for replaced collections from updating the store
-    private var generation = 0
-    private var searchGeneration = 0
-    private var isInvalidated = false
-
-    private var hasNextPage: Bool
-    private var hasNextSearchPage: Bool
-    private var storeRefreshTask: AnyCancellable?
-    private var hasPendingStoreRefresh = false
-    private var lastStoreRefresh = Date.distantPast
-
-    nonisolated let id: String
+    var displayedElements: IdentifiedArrayOf<Element> {
+        isSearchActive ? searchElements : elements
+    }
 
     var isSearchActive: Bool {
         normalizedSearchQuery.isNotEmpty
@@ -143,10 +149,6 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     var isSearchSupported: Bool {
         searchableLibrary != nil
-    }
-
-    var displayedElements: IdentifiedArrayOf<Element> {
-        isSearchActive ? searchElements : elements
     }
 
     private var normalizedSearchQuery: String {
@@ -163,15 +165,15 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         refreshesForStoreChanges: Bool = true,
         userSession: UserSession? = Container.shared.currentUserSession()
     ) {
-        self.id = library.parent.pagingLibraryID
         self.elements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
         self.environment = library.environment ?? .default
-        self.searchElements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
         self.hasNextPage = library.hasNextPage
         self.hasNextSearchPage = false
+        self.id = library.parent.pagingLibraryID
         self.library = library
         self.pageSize = pageSize
         self.refreshesForStoreChanges = refreshesForStoreChanges
+        self.searchElements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
 
         super.init()
         self.userSession = userSession
@@ -191,7 +193,6 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
                     }
 
                 case .libraryChanged:
-                    // TODO: determine if always safe
                     self.scheduleRefreshForStoreChange()
 
                 case let .deleted(id):
@@ -208,23 +209,25 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             }
             .store(in: &cancellables)
 
-        $searchQuery
-            .dropFirst()
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .removeDuplicates()
-            .debounce(for: .milliseconds(350), scheduler: RunLoop.main)
-            .sink { [weak self] query in
-                guard let self, !self.isInvalidated else { return }
+        DebouncedObservation.observe(
+            { [weak self] in
+                self?.normalizedSearchQuery
+            },
+            for: .milliseconds(350)
+        ) { [weak self] query in
+            guard let self, let query, !isInvalidated, query.isNotEmpty else { return }
 
-                self.search(query: query)
-            }
-            .store(in: &cancellables)
+            core.cancel(action: \.search)
+            search(query: query)
+        }
+        .store(in: &cancellables)
     }
 
     func refreshForEnvironmentChange() {
         refresh()
 
         if isSearchActive {
+            core.cancel(action: \.search)
             search(query: normalizedSearchQuery)
         }
     }
@@ -286,7 +289,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         // Coalesce store changes and space automatic refreshes at least five seconds apart
         let delay = max(0.35, 5 - Date.now.timeIntervalSince(lastStoreRefresh))
 
-        storeRefreshTask = Task { @MainActor [weak self] in
+        storeRefreshTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(delay))
 
             guard !Task.isCancelled, let self, !self.isInvalidated else { return }
@@ -298,6 +301,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             guard !Task.isCancelled else { return }
 
             if self.isSearchActive {
+                self.core.cancel(action: \.search)
                 await self.search(query: self.normalizedSearchQuery)
             }
 
@@ -318,6 +322,8 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     private func _refresh() async throws {
         guard !isInvalidated else { return }
 
+        core.cancel(action: \.getNextPage)
+        core.cancel(action: \._actuallyGetNextPage)
         generation += 1
         hasNextPage = true
         nextOffset = 0
@@ -384,8 +390,9 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     @Function(\Action.Cases.search)
     private func _search(_ query: String) async throws {
-        guard !isInvalidated else { return }
+        guard !isInvalidated, query == normalizedSearchQuery else { return }
 
+        core.cancel(action: \.getNextSearchPage)
         nextSearchOffset = 0
         searchElements.removeAll()
 

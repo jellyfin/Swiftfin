@@ -19,13 +19,7 @@ struct SwiftfinApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ThemePreferencesEnvironment {
-                OverlayToastView {
-                    WithLocalUserAuthentication {
-                        RootView()
-                    }
-                }
-            }
+            RootView()
         }
     }
 }

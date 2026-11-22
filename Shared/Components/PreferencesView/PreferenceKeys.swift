@@ -11,7 +11,7 @@ import SwiftUI
 #if os(iOS)
 struct KeyCommandsPreferenceKey: PreferenceKey {
 
-    static var defaultValue: [KeyCommandAction] = []
+    static let defaultValue: [KeyCommandAction] = []
 
     static func reduce(value: inout [KeyCommandAction], nextValue: () -> [KeyCommandAction]) {
         value.append(contentsOf: nextValue())
@@ -20,7 +20,7 @@ struct KeyCommandsPreferenceKey: PreferenceKey {
 
 struct PreferredScreenEdgesDeferringSystemGesturesPreferenceKey: PreferenceKey {
 
-    static var defaultValue: UIRectEdge = [.left, .right]
+    static let defaultValue: UIRectEdge = [.left, .right]
 
     static func reduce(value: inout UIRectEdge, nextValue: () -> UIRectEdge) {
         value = nextValue()
@@ -29,7 +29,7 @@ struct PreferredScreenEdgesDeferringSystemGesturesPreferenceKey: PreferenceKey {
 
 struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
 
-    static var defaultValue: Bool = false
+    static let defaultValue: Bool = false
 
     static func reduce(value: inout Bool, nextValue: () -> Bool) {
         value = nextValue()
@@ -38,7 +38,7 @@ struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
 
 struct SupportedOrientationsPreferenceKey: PreferenceKey {
 
-    static var defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
+    static let defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
 
     static func reduce(value: inout UIInterfaceOrientationMask, nextValue: () -> UIInterfaceOrientationMask) {
         value = nextValue()

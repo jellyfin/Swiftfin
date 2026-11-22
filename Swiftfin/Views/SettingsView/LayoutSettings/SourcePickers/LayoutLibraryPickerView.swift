@@ -14,7 +14,7 @@ struct LayoutLibraryPickerView: View {
     @Router
     private var router
 
-    @StateObject
+    @State
     private var viewModel = PagingLibraryViewModel(library: UserViewLibrary())
 
     private let selectionID: String?
@@ -60,7 +60,6 @@ struct LayoutLibraryPickerView: View {
         }
         .navigationTitle(L10n.libraries)
         .refreshable {
-            viewModel.error = nil
             await viewModel.refresh()
         }
         .onFirstAppear {

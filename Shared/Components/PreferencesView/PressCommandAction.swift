@@ -12,7 +12,7 @@ struct PressCommandAction {
 
     let title: String
     let press: UIPress.PressType
-    let action: () -> Void
+    let action: @MainActor () -> Void
 }
 
 extension PressCommandAction: Equatable {

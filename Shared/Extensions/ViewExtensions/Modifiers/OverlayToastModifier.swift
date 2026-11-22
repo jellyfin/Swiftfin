@@ -17,9 +17,7 @@ import SwiftUI
 // TODO: fix rapid fire animations
 //       - have one that's presentation based, one just basic overlay?
 
-/// A basic toasting container view that will present
-/// given toasts on top of the given content.
-struct OverlayToastView<Content: View>: View {
+struct OverlayToastModifier: ViewModifier {
 
     @AdaptiveLayout
     private var viewLayout
@@ -27,29 +25,20 @@ struct OverlayToastView<Content: View>: View {
     @StateObject
     private var toastProxy: ToastProxy
 
-    private let content: Content
-
     private var topPadding: CGFloat {
         viewLayout.value(standard: 10, large: 60)
     }
 
-    init(
-        @ContentBuilder content: () -> Content
-    ) {
+    init() {
         self._toastProxy = StateObject(wrappedValue: .init())
-        self.content = content()
     }
 
-    init(
-        proxy: ToastProxy,
-        @ContentBuilder content: () -> Content
-    ) {
+    init(proxy: ToastProxy) {
         self._toastProxy = StateObject(wrappedValue: proxy)
-        self.content = content()
     }
 
     @ContentBuilder
-    var body: some View {
+    func body(content: Content) -> some View {
         ZStack(alignment: .top) {
             content
                 .environmentObject(toastProxy)

@@ -9,6 +9,7 @@
 import SwiftUI
 
 @ContentBuilder
+@MainActor
 func BulletedList(
     spacing: CGFloat = 8,
     @ContentBuilder content: @escaping () -> some View

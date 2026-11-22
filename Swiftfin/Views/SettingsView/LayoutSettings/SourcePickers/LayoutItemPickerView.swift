@@ -14,11 +14,12 @@ struct LayoutItemPickerView: View {
     @Router
     private var router
 
-    @StateObject
-    private var viewModel: PagingLibraryViewModel<ItemLibrary>
-
     @State
     private var isSearchPresented = false
+    @State
+    private var searchError: Error?
+    @State
+    private var viewModel: PagingLibraryViewModel<ItemLibrary>
 
     private let selectionID: String?
     private let nilSelectionTitle: String?
@@ -37,7 +38,7 @@ struct LayoutItemPickerView: View {
         onSelect: @escaping (BaseItemDto?) -> Void
     ) {
         self.selectionID = selectionID
-        self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(
+        self._viewModel = State(initialValue: PagingLibraryViewModel(
             library: ItemLibrary(
                 parent: BaseItemDto(),
                 filters: .init(itemTypes: includedItemTypes, sortBy: [.name]),
@@ -70,7 +71,7 @@ struct LayoutItemPickerView: View {
             if viewModel.background.is(.searching) {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let error = viewModel.error, viewModel.searchElements.isEmpty, viewModel.isSearchActive {
+            } else if let error = searchError, viewModel.searchElements.isEmpty, viewModel.isSearchActive {
                 ErrorView(error: error)
             } else {
                 itemList
@@ -78,11 +79,14 @@ struct LayoutItemPickerView: View {
         }
         .navigationTitle(title)
         .searchable(text: $viewModel.searchQuery, isPresented: $isSearchPresented)
+        .onReceive(viewModel.events.compactMap(\.error)) { error in
+            searchError = error
+        }
         .onChange(of: viewModel.searchQuery) {
-            viewModel.error = nil
+            searchError = nil
         }
         .refreshable {
-            viewModel.error = nil
+            searchError = nil
             await viewModel.search(query: viewModel.searchQuery.nilIfBlank ?? "")
         }
     }
@@ -130,14 +134,14 @@ struct LayoutItemPickerView: View {
                     }
             }
 
-            if let error = viewModel.error, !viewModel.searchElements.isEmpty {
+            if let error = searchError, !viewModel.searchElements.isEmpty {
                 VStack {
                     Text(error.localizedDescription)
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
                     Button(L10n.retry) {
-                        viewModel.error = nil
+                        searchError = nil
                         viewModel.getNextSearchPage()
                     }
                 }

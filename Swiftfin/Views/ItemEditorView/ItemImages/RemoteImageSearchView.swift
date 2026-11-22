@@ -54,10 +54,10 @@ struct RemoteImageSearchView: View {
     @ContentBuilder
     var body: some View {
         ImageElementsView(
-            viewModel: remoteImageInfoViewModel.remoteImageLibrary,
             itemImageViewModel: viewModel,
             layout: layout,
-            posterType: posterType
+            posterType: posterType,
+            viewModel: remoteImageInfoViewModel.remoteImageLibrary
         )
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(imageType.displayTitle.localizedCapitalized)
@@ -89,26 +89,24 @@ extension RemoteImageSearchView {
 
     private struct ImageElementsView: View {
 
-        @ObservedObject
-        private var viewModel: PagingLibraryViewModel<RemoteImageLibrary>
-
         @Router
         private var router
 
         private let itemImageViewModel: ItemImageViewModel
         private let layout: CollectionVGridLayout
         private let posterType: PosterDisplayType
+        private let viewModel: PagingLibraryViewModel<RemoteImageLibrary>
 
         init(
-            viewModel: PagingLibraryViewModel<RemoteImageLibrary>,
             itemImageViewModel: ItemImageViewModel,
             layout: CollectionVGridLayout,
-            posterType: PosterDisplayType
+            posterType: PosterDisplayType,
+            viewModel: PagingLibraryViewModel<RemoteImageLibrary>
         ) {
-            self.viewModel = viewModel
             self.itemImageViewModel = itemImageViewModel
             self.layout = layout
             self.posterType = posterType
+            self.viewModel = viewModel
         }
 
         @ContentBuilder
@@ -165,10 +163,10 @@ extension RemoteImageSearchView {
 
     private struct ImageProvidersMenuContent: View {
 
-        @ObservedObject
+        @Bindable
         private var remoteImagesViewModel: PagingLibraryViewModel<RemoteImageLibrary>
-        @ObservedObject
-        private var providersViewModel: PagingLibraryViewModel<RemoteImageProvidersLibrary>
+
+        private let providersViewModel: PagingLibraryViewModel<RemoteImageProvidersLibrary>
 
         init(viewModel: RemoteImageInfoViewModel) {
             self.remoteImagesViewModel = viewModel.remoteImageLibrary

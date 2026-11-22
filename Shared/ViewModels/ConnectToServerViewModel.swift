@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import FactoryKit
 import Foundation
 import Get
@@ -16,8 +15,9 @@ import OrderedCollections
 import Pulse
 
 @MainActor
-@Stateful
-final class ConnectToServerViewModel: ObservableObject {
+@Observable
+@StatefulObservable
+final class ConnectToServerViewModel {
 
     @CasePathable
     enum Action {
@@ -49,12 +49,9 @@ final class ConnectToServerViewModel: ObservableObject {
         case initial
     }
 
-    /// no longer-found servers are not cleared, but not an issue
-    @Published
-    var localServers: OrderedSet<ServerState> = []
-
     let logger = Logger.swiftfin()
-    var cancellables = Set<AnyCancellable>()
+
+    private(set) var localServers: OrderedSet<ServerState> = []
 
     @Function(\Action.Cases.connect)
     private func connectToServer(_ url: String) async throws {
@@ -80,6 +77,7 @@ final class ConnectToServerViewModel: ObservableObject {
         )
 
         let response = try await client.send(Paths.getPublicSystemInfo)
+        try Task.checkCancellation()
 
         guard let name = response.value.serverName,
               let id = response.value.id
@@ -105,16 +103,16 @@ final class ConnectToServerViewModel: ObservableObject {
             .contains { $0.id == newServerState.id }
 
         guard !isDuplicateServer else {
-            // server has same id, but (possible) new connection URL
             events.send(.duplicateServer(newServerState))
             return
         }
 
         try await save(server: newServerState)
+        try Task.checkCancellation()
+
         events.send(.connected(newServerState))
     }
 
-    /// In the event of redirects, get the new host URL from response
     private func processConnectionURL(initial url: URL, response: URL?) -> URL {
         let normalizedURL = url.normalizedServerConnectionURL ?? url
 
@@ -133,6 +131,7 @@ final class ConnectToServerViewModel: ObservableObject {
 
     private func save(server: ServerState) async throws {
         let publicInfo = try await server.getPublicSystemInfo()
+        try Task.checkCancellation()
 
         let newServers = StoredValues[.Server.servers]
             .appending(server)
@@ -141,7 +140,6 @@ final class ConnectToServerViewModel: ObservableObject {
         StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
     }
 
-    /// server has same id, but (possible) new connection URL
     @Function(\Action.Cases.addConnection)
     private func _addConnection(_ server: ServerState) throws {
         guard let existingServer = StoredValues[.Server.servers].first(where: { $0.id == server.id }) else {
@@ -175,6 +173,8 @@ final class ConnectToServerViewModel: ObservableObject {
     private func _searchForServers() async {
         do {
             for try await server in JellyfinClient.discover() {
+                guard !Task.isCancelled else { return }
+
                 localServers.append(
                     ServerState(
                         urls: [server.url],
@@ -186,6 +186,8 @@ final class ConnectToServerViewModel: ObservableObject {
                 )
             }
         } catch {
+            guard !Task.isCancelled else { return }
+
             logger.error("Local server discovery failed: \(error.localizedDescription)")
         }
     }

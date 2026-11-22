@@ -20,25 +20,14 @@ struct SwiftfinApp: App {
         // Sometimes the tab bar won't appear properly on push, always have material background.
         UITabBar.appearance().scrollEdgeAppearance = UITabBarAppearance(idiom: .unspecified)
 
-        SwiftfinSpotlight().addSwiftfinToSpotlight()
+        Task {
+            await SwiftfinSpotlight.addSwiftfinToSpotlight()
+        }
     }
-
-    // TODO: move all these to single view and ViewModifiers
 
     var body: some Scene {
         WindowGroup {
-            ThemePreferencesEnvironment {
-                OverlayToastView {
-                    PreferencesView {
-                        WithLocalUserAuthentication {
-                            RootView()
-                                .supportedOrientations(UIDevice.isPhone ? .portrait : .all)
-                        }
-                    }
-                    .ignoresSafeArea(.container)
-                }
-                .trackingFrame(for: .layoutContainer)
-            }
+            RootView()
         }
     }
 }

@@ -98,6 +98,7 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static var homeLayoutSettings: NavigationRoute {
         NavigationRoute(id: "homeLayoutSettings") {
             Form(systemImage: "house.fill") {
@@ -108,6 +109,7 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static var searchLayoutSettings: NavigationRoute {
         NavigationRoute(id: "searchLayoutSettings") {
             Form(systemImage: "magnifyingglass") {
@@ -275,9 +277,8 @@ extension NavigationRoute {
         NavigationRoute(
             id: "localUserSecurity"
         ) {
-            WithLocalUserAuthentication {
-                LocalUserSecurityView()
-            }
+            LocalUserSecurityView()
+                .modifier(LocalUserAuthenticationModifier())
         }
     }
 

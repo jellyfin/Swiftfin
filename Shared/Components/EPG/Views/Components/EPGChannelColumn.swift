@@ -18,12 +18,10 @@ struct EPGChannelColumn: View {
     @AppTheme
     private var theme
 
-    @ObservedObject
-    var viewModel: EPGViewModel
-
+    let bottomInset: CGFloat
     let proxy: EPGScrollProxy
     let selectedChannelID: String?
-    let bottomInset: CGFloat
+    let viewModel: EPGViewModel
     let action: (BaseItemDto) -> Void
 
     @ContentBuilder

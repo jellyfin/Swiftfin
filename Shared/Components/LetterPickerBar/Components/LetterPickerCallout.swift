@@ -10,7 +10,7 @@ import SwiftUI
 
 struct LetterPickerActiveLetterKey: PreferenceKey {
 
-    static var defaultValue: ItemLetter?
+    static let defaultValue: ItemLetter? = nil
 
     static func reduce(value: inout ItemLetter?, nextValue: () -> ItemLetter?) {
         value = nextValue() ?? value

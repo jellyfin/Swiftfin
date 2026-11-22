@@ -10,10 +10,9 @@ import Combine
 import Foundation
 import JellyfinAPI
 import OrderedCollections
-import SwiftUI
 
-@MainActor
-@Stateful
+@Observable
+@StatefulObservable
 final class FilterViewModel: ViewModel {
 
     @CasePathable
@@ -38,20 +37,16 @@ final class FilterViewModel: ViewModel {
         case retrievingQueryFilters
     }
 
-    @Published
-    private(set) var allFilters: ItemFilterCollection = .all
-    @Published
-    var currentFilters: ItemFilterCollection
-    @Published
-    private(set) var savedFilters: [StoredItemFilter] = []
-    @Published
-    private var selectedSavedFilterID: String?
+    let libraryItemTypes: [BaseItemKind]
+    private let parent: any LibraryParent?
 
-    /// Fixed filters, excluded from selection state and reset actions
+    /// Filters excluded from selection and reset.
     let staticFilters: ItemFilterCollection
 
-    private let parent: any LibraryParent?
-    let libraryItemTypes: [BaseItemKind]
+    private(set) var allFilters: ItemFilterCollection = .all
+    var currentFilters: ItemFilterCollection
+    private(set) var savedFilters: [StoredItemFilter] = []
+    private var selectedSavedFilterID: String?
 
     var savableFilters: ItemFilterCollection {
         currentFilters
@@ -92,10 +87,10 @@ final class FilterViewModel: ViewModel {
         currentFilters: ItemFilterCollection = .default,
         staticFilters: ItemFilterCollection = .default
     ) {
-        self.parent = parent
         self.currentFilters = currentFilters
-        self.staticFilters = staticFilters
         self.libraryItemTypes = staticFilters.union(currentFilters).itemTypes
+        self.parent = parent
+        self.staticFilters = staticFilters
 
         super.init()
 
@@ -189,7 +184,6 @@ final class FilterViewModel: ViewModel {
         let officialRatings = (response.value.officialRatings ?? [])
             .map(ItemOfficialRating.init)
 
-        // Manually sort so that most recent years are "first"
         let years = (response.value.years ?? [])
             .sorted(by: >)
             .map(ItemYear.init)

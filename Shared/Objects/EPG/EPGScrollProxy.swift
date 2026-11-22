@@ -8,6 +8,7 @@
 
 import UIKit
 
+@MainActor
 final class EPGScrollProxy: ObservableObject {
 
     private weak var contentScrollView: UIScrollView?
@@ -53,7 +54,9 @@ final class EPGScrollProxy: ObservableObject {
         guard isConnected, horizontalObservations.object(forKey: scrollView) == nil else { return }
 
         let observation = scrollView.observe(\.contentOffset) { [weak self] scrollView, _ in
-            self?.horizontalOffsetDidChange(scrollView)
+            MainActor.assumeIsolated {
+                self?.horizontalOffsetDidChange(scrollView)
+            }
         }
 
         horizontalObservations.setObject(observation, forKey: scrollView)
@@ -65,7 +68,9 @@ final class EPGScrollProxy: ObservableObject {
         guard isConnected, verticalObservations.object(forKey: scrollView) == nil else { return }
 
         let observation = scrollView.observe(\.contentOffset) { [weak self] scrollView, _ in
-            self?.verticalOffsetDidChange(scrollView)
+            MainActor.assumeIsolated {
+                self?.verticalOffsetDidChange(scrollView)
+            }
         }
 
         verticalObservations.setObject(observation, forKey: scrollView)

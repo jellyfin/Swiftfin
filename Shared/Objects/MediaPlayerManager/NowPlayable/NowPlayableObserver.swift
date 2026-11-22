@@ -82,18 +82,38 @@ final class NowPlayableObserver: MediaSessionObserver {
             }
         }
 
-        let observations = [
-            ObservationToken { [weak mediaSession] in
+        playbackItemDidChange(mediaSession?.playbackItem)
+
+        Task { [weak self, weak mediaSession] in
+            let items = ObservableValues { [weak mediaSession] in
                 mediaSession?.playbackItem
-            } onChange: { [weak self] item in
+            }
+
+            for await item in items {
+                guard !Task.isCancelled else { return }
+                guard item === mediaSession?.playbackItem else { continue }
+
                 self?.playbackItemDidChange(item)
-            },
-            ObservationToken { [weak mediaSession] in
+            }
+        }
+        .store(in: &cancellables)
+
+        Task { [weak self, weak mediaSession] in
+            let metadata = ObservableValues { [weak mediaSession] in
                 mediaSession?.playbackItem?.baseItem
-            } onChange: { [weak self] _ in
+            }
+
+            for await _ in metadata {
+                guard !Task.isCancelled else { return }
+
+                self?.playbackItemDidChange(mediaSession?.playbackItem)
                 self?.metadataDidChange()
-            },
-            ObservationToken { [weak mediaSession] in
+            }
+        }
+        .store(in: &cancellables)
+
+        Task { [weak self, weak mediaSession] in
+            let playback = ObservableValues { [weak mediaSession] in
                 (
                     mediaSession?.state,
                     mediaSession?.playbackRequestStatus,
@@ -101,38 +121,62 @@ final class NowPlayableObserver: MediaSessionObserver {
                     mediaSession?.isSeeking,
                     mediaSession?.rate
                 )
-            } onChange: { [weak self] _ in
+            }
+
+            for await _ in playback {
+                guard !Task.isCancelled else { return }
+
                 self?.updatePlaybackInfo()
                 self?.updateRemoteCommands()
-            },
-            ObservationToken { [weak mediaSession] in
+            }
+        }
+        .store(in: &cancellables)
+
+        Task { [weak self, weak mediaSession] in
+            let languages = ObservableValues { [weak mediaSession] in
                 (
                     mediaSession?.playbackItem?.effectiveSubtitleStreamIndex,
                     mediaSession?.playbackItem?.effectiveSecondarySubtitleStreamIndex,
                     mediaSession?.playbackItem?.selectedAudioStreamIndex
                 )
-            } onChange: { [weak self] _ in
+            }
+
+            for await _ in languages {
+                guard !Task.isCancelled else { return }
+
                 self?.updateLanguageOptions()
-            },
-            ObservationToken { [weak mediaSession] in
+            }
+        }
+        .store(in: &cancellables)
+
+        Task { [weak self, weak mediaSession] in
+            let adjacentItems = ObservableValues { [weak mediaSession] in
                 (mediaSession?.queue?.nextItem, mediaSession?.queue?.previousItem)
-            } onChange: { [weak self] _ in
+            }
+
+            for await _ in adjacentItems {
+                guard !Task.isCancelled else { return }
+
                 self?.updateRemoteCommands()
-            },
-            ObservationToken { [weak mediaSession] in
+            }
+        }
+        .store(in: &cancellables)
+
+        Task { [weak self, weak mediaSession] in
+            let seconds = ObservableValues { [weak mediaSession] in
                 mediaSession?.observedSeconds.components.seconds
-            } onChange: { [weak self] second in
-                guard let self, second != publishedPositionSecond else {
-                    return
-                }
+            }
+
+            for await second in seconds {
+                guard !Task.isCancelled, let self else { return }
+                guard second != publishedPositionSecond else { continue }
 
                 // Now Playing extrapolates between positions using the published rate.
                 // State, rate, and seek changes still publish immediately above.
                 updatePlaybackInfo()
-            },
-        ]
-
-        observations.forEach { $0.store(in: &cancellables) }
+            }
+        }
+        .store(in: &cancellables)
 
         Defaults.publisher(.VideoPlayer.Playback.rates)
             .receive(on: DispatchQueue.main)

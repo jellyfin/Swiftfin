@@ -11,9 +11,6 @@ import SwiftUI
 struct PosterHStackLibrarySection<Library: PagingLibrary>: View
 where Library.Element: LibraryElement, Library.Element: Poster {
 
-    @AdaptiveLayout
-    private var viewLayout
-
     private enum FocusSection {
 
         case header
@@ -31,11 +28,11 @@ where Library.Element: LibraryElement, Library.Element: Poster {
         }
     }
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @FocusState
     private var focusedSection: FocusSection?
-
-    @ObservedObject
-    var viewModel: PagingLibraryViewModel<Library>
 
     @Router
     private var router
@@ -44,10 +41,11 @@ where Library.Element: LibraryElement, Library.Element: Poster {
     private var libraryStyle: LibraryStyle
 
     let group: PosterGroup<Library>
+    let viewModel: PagingLibraryViewModel<Library>
 
-    init(viewModel: PagingLibraryViewModel<Library>, group: PosterGroup<Library>) {
-        self.viewModel = viewModel
+    init(group: PosterGroup<Library>, viewModel: PagingLibraryViewModel<Library>) {
         self.group = group
+        self.viewModel = viewModel
         self._libraryStyle = StoredValue(group.libraryStyleKey ?? .init(always: LibraryStyle(
             displayType: .grid,
             posterDisplayType: group.posterDisplayType,
