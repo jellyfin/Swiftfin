@@ -14,42 +14,24 @@ import UIKit
 
 extension UserSessionManager {
 
-    func observeSocketCommands() {
-        $currentSession
-            .map { session -> AnyPublisher<PlayRequest, Never> in
-                session?.serverSocketManager.playCommands ?? Combine.Empty<PlayRequest, Never>().eraseToAnyPublisher()
-            }
-            .switchToLatest()
+    func observeSocketCommands(on socket: ServerSocketManager) {
+        socket.playCommands
             .sink { [weak self] command in
-                Task {
-                    self?.onReceive(playCommand: command)
-                }
+                self?.onReceive(playCommand: command)
             }
-            .store(in: &cancellables)
+            .store(in: &sessionCancellables)
 
-        $currentSession
-            .map { session -> AnyPublisher<PlaystateRequest, Never> in
-                session?.serverSocketManager.playstateCommands ?? Combine.Empty<PlaystateRequest, Never>().eraseToAnyPublisher()
-            }
-            .switchToLatest()
+        socket.playstateCommands
             .sink { [weak self] command in
-                Task {
-                    self?.onReceive(playstateCommand: command)
-                }
+                self?.onReceive(playstateCommand: command)
             }
-            .store(in: &cancellables)
+            .store(in: &sessionCancellables)
 
-        $currentSession
-            .map { session -> AnyPublisher<GeneralCommand, Never> in
-                session?.serverSocketManager.generalCommands ?? Combine.Empty<GeneralCommand, Never>().eraseToAnyPublisher()
-            }
-            .switchToLatest()
+        socket.generalCommands
             .sink { [weak self] command in
-                Task {
-                    self?.onReceive(generalCommand: command)
-                }
+                self?.onReceive(generalCommand: command)
             }
-            .store(in: &cancellables)
+            .store(in: &sessionCancellables)
     }
 
     private func onReceive(playCommand: PlayRequest) {
@@ -237,7 +219,7 @@ extension UserSessionManager {
                 }
 
                 let entry = try await userSession.getFullItem(id: itemID)
-                guard let urlString = entry.value?.remoteTrailers?.first?.url else { return }
+                guard currentSession === userSession, let urlString = entry.value?.remoteTrailers?.first?.url else { return }
 
                 #if os(tvOS)
                 guard let externalURL = ExternalTrailerURL(string: urlString),

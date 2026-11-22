@@ -12,21 +12,16 @@ import Foundation
 extension AnyStoredData {
 
     static func fetch<Value: Codable>(ownerID: String, field: String, key: String) throws -> Value? {
-        let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == ownerID)
-        let keyFilter: Where<AnyStoredData> = Where(\.$key == key)
-        let fieldFilter: Where<AnyStoredData> = Where(\.$field == field)
-
-        let clause = From<AnyStoredData>()
-            .where(ownerFilter && keyFilter && fieldFilter)
-
-        let values = try SwiftfinStore.dataStack
-            .fetchAll(
-                clause
-            )
-            .compactMap(\.data)
-            .compactMap {
-                try JSONDecoder().decode(Value.self, from: $0)
+        let clause = fetchClause(ownerID: ownerID, field: field, key: key)
+        let stack = SwiftfinStore.dataStack
+        let data: [Data] = if Thread.isMainThread {
+            try stack.fetchAll(clause).compactMap(\.data)
+        } else {
+            try stack.perform { transaction in
+                try transaction.fetchAll(clause).compactMap(\.data)
             }
+        }
+        let values = try data.compactMap { try JSONDecoder().decode(Value.self, from: $0) }
 
         assert(values.count < 2, "More than one stored object for same name, id, and field!")
 

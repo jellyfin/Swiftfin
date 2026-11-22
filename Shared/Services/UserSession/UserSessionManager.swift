@@ -11,19 +11,17 @@ import Defaults
 import FactoryKit
 import Foundation
 import JellyfinAPI
-import KeychainSwift
 import Logging
+import Synchronization
 
 extension Container {
 
     var userSessionManager: Factory<UserSessionManager> {
-        self { MainActor.assumeIsolated { UserSessionManager() } }
-            .singleton
+        self { UserSessionManager() }.singleton
     }
 
     var currentUserSession: Factory<UserSession?> {
-        self { MainActor.assumeIsolated { self.userSessionManager().currentSession } }
-            .cached
+        self { self.userSessionManager().currentSession }
     }
 }
 
@@ -50,14 +48,14 @@ final class UserSessionManager: ObservableObject {
         case missingAuthenticationAction
     }
 
-    @Injected(\.keychainService)
-    private var keychain: KeychainSwift
-
     @Published
     private(set) var state: State = .initial
 
-    @Published
-    private(set) var currentSession: UserSession?
+    private let session = Mutex<UserSession?>(nil)
+
+    nonisolated var currentSession: UserSession? {
+        session.withLock { $0 }
+    }
 
     struct ReauthenticationRequest {
 
@@ -73,50 +71,50 @@ final class UserSessionManager: ObservableObject {
 
     let routePublisher = PassthroughSubject<NavigationRoute, Never>()
 
-    var cancellables = Set<AnyCancellable>()
+    private var lifecycleCancellables = Set<AnyCancellable>()
+    var sessionCancellables = Set<AnyCancellable>()
 
     let logger = Logger.swiftfin()
 
-    @Injected(\.mediaPlayerManager)
+    @LazyInjected(\.mediaPlayerManager)
     private(set) var mediaPlayerManager
 
-    private var sessionTransition: (id: UUID, task: Task<Void, Never>)?
-
-    private var currentUserChanges: AnyCancellable?
+    private var sessionTransition: Task<Void, Never>?
 
     var hasActivePlayback: Bool {
         mediaPlayerManager.hasActivePlayback
     }
 
-    init() {
-        setupObservations()
-    }
+    nonisolated init() {}
 
     func start() async {
         guard state == .initial else { return }
 
-        do {
-            if Defaults[.signOutOnClose] {
-                Defaults[.lastSignedInUserID] = .signedOut
-            }
-
-            try await updateCurrentSession(with: resolveStoredSession())
-        } catch {
-            logger.error(
-                "Unable to restore launch session",
-                metadata: ["error": .string(error.localizedDescription)]
-            )
-
-            await updateCurrentSession(with: nil)
+        if let sessionTransition {
+            await sessionTransition.value
+            return
         }
+
+        var session: UserSession?
+        if !Defaults[.signOutOnClose], case let .signedIn(userID) = Defaults[.lastSignedInUserID] {
+            do {
+                session = try storedSession(for: userID)
+            } catch {
+                logger.error("Unable to restore launch session", metadata: ["error": .string(error.localizedDescription)])
+            }
+        }
+
+        await updateCurrentSession(with: session)
     }
 
     func signIn(userID: String) async throws {
+        let session = try storedSession(for: userID)
         reauthenticationRequest = nil
-        Defaults[.lastSignedInUserID] = .signedIn(userID: userID)
-        try await updateCurrentSession(with: resolveStoredSession())
+        await updateCurrentSession(with: session)
 
         Task {
+            guard currentSession === session else { return }
+
             await refreshServerInformationIfNeeded(reason: .explicitSignIn)
         }
     }
@@ -125,9 +123,8 @@ final class UserSessionManager: ObservableObject {
         guard currentSession != nil || sessionTransition != nil else { return }
 
         let expiredSession = reason == .authenticationExpired ? currentSession : nil
-        Defaults[.lastSignedInUserID] = .signedOut
         await updateCurrentSession(with: nil)
-        if let expiredSession, currentSession == nil, Defaults[.lastSignedInUserID] == .signedOut {
+        if let expiredSession, currentSession == nil, sessionTransition == nil {
             reauthenticationRequest = .init(server: expiredSession.server, user: expiredSession.user)
         }
 
@@ -140,10 +137,6 @@ final class UserSessionManager: ObservableObject {
     func consumeReauthenticationRequest() -> ReauthenticationRequest? {
         defer { reauthenticationRequest = nil }
         return reauthenticationRequest
-    }
-
-    private func stopActivePlayback() async {
-        mediaPlayerManager.stop()
     }
 
     func scheduleServerConnectionResolution() {
@@ -238,7 +231,7 @@ final class UserSessionManager: ObservableObject {
 
         guard let pinPolicy = evaluatedPolicy as? PinEvaluatedUserAccessPolicy else { return }
 
-        if let storedPin = keychain.get("\(user.id)-pin") {
+        if let storedPin = dependency(\.keychainService).get("\(user.id)-pin") {
             guard pinPolicy.pin == storedPin else {
                 throw ErrorMessage(L10n.incorrectPinForUser(user.username))
             }
@@ -259,6 +252,8 @@ final class UserSessionManager: ObservableObject {
             try await currentSession.server.updateServerInfo()
             _ = try await currentSession.getUser(id: currentSession.user.id)
 
+            guard self.currentSession === currentSession else { return }
+
             Defaults[.lastServerInformationRefreshDate] = Date.now
         } catch {
             logger.error(
@@ -268,7 +263,7 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    private func setupObservations() {
+    private func observeAppLifecycle() {
         Notifications[.applicationDidEnterBackground]
             .publisher
             .sink { [weak self] in
@@ -276,7 +271,7 @@ final class UserSessionManager: ObservableObject {
                     self?.appDidEnterBackground()
                 }
             }
-            .store(in: &cancellables)
+            .store(in: &lifecycleCancellables)
 
         Notifications[.applicationWillEnterForeground]
             .publisher
@@ -285,47 +280,43 @@ final class UserSessionManager: ObservableObject {
                     await self?.appWillEnterForeground()
                 }
             }
-            .store(in: &cancellables)
-
-        observeSocketCommands()
+            .store(in: &lifecycleCancellables)
     }
 
     private func updateCurrentSession(with newSession: UserSession?) async {
-        let previous = sessionTransition?.task
-        let id = UUID()
-
+        let previous = sessionTransition
         let task = Task {
             await previous?.value
             await applyCurrentSession(newSession)
         }
 
-        sessionTransition = (id, task)
+        sessionTransition = task
         await task.value
 
-        if sessionTransition?.id == id {
+        if sessionTransition == task {
             sessionTransition = nil
         }
     }
 
     /// Serialize transitions because starting and stopping session services can suspend
     private func applyCurrentSession(_ newSession: UserSession?) async {
-        let previousSession = currentSession
-
-        currentUserChanges = nil
-        await stopActivePlayback()
-        previousSession?.willStop()
-        await newSession?.willStart()
-
-        currentSession = newSession
-        Container.shared.currentUserSession.reset()
-
-        if newSession == nil {
-            state = .signedOut
-        } else {
-            state = .signedIn
+        if state == .initial {
+            observeAppLifecycle()
         }
 
-        currentUserChanges = newSession?.users
+        sessionCancellables.removeAll()
+        mediaPlayerManager.stop()
+        currentSession?.willStop()
+        Defaults[.lastSignedInUserID] = newSession.map { .signedIn(userID: $0.user.id) } ?? .signedOut
+        await newSession?.willStart()
+
+        session.withLock { $0 = newSession }
+        state = newSession == nil ? .signedOut : .signedIn
+
+        guard let newSession else { return }
+
+        observeSocketCommands(on: newSession.serverSocketManager)
+        newSession.users
             .changes
             .sink { [weak self, weak newSession] change in
                 guard let session = newSession else { return }
@@ -344,17 +335,16 @@ final class UserSessionManager: ObservableObject {
                     await self.signOut(reason: .accountUnavailable)
                 }
             }
+            .store(in: &sessionCancellables)
 
-        newSession?.didStart()
+        newSession.didStart()
     }
 
-    private func resolveStoredSession() throws -> UserSession? {
-        guard case let .signedIn(userId) = Defaults[.lastSignedInUserID] else { return nil }
-        guard let user = StoredValues[.User.users].first(property: \.id, equalTo: userId),
+    private func storedSession(for userID: String) throws -> UserSession {
+        guard let user = StoredValues[.User.users].first(property: \.id, equalTo: userID),
               let server = StoredValues[.Server.servers].first(property: \.id, equalTo: user.serverID)
         else {
-            Defaults[.lastSignedInUserID] = .signedOut
-            throw UserSessionError.invalidStoredSession(userID: userId)
+            throw UserSessionError.invalidStoredSession(userID: userID)
         }
 
         return .init(

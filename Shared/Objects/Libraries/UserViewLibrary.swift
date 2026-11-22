@@ -350,7 +350,7 @@ private extension UserViewLibraryElement {
     }
 
     func randomItemImageSources() async throws -> [ImageSource] {
-        guard let userSession = Container.shared.currentUserSession() else {
+        guard let userSession = dependency(\.currentUserSession) else {
             throw UserSessionError.missingCurrentSession
         }
 

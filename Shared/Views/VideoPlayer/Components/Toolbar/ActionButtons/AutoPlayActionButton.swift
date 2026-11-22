@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -26,7 +25,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         private var mediaSession
 
         @StateObject
-        private var viewModel: ServerUserAdminViewModel
+        private var viewModel = ServerUserAdminViewModel()
 
         @Toaster
         private var toaster
@@ -41,12 +40,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             } else {
                 VideoPlayerActionButton.autoPlay.secondarySystemImage
             }
-        }
-
-        init() {
-            let user = Container.shared.currentUserSession()?.userData ?? UserDto()
-
-            self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
         }
 
         @ContentBuilder

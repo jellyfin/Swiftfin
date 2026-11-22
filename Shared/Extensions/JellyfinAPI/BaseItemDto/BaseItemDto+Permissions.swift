@@ -15,14 +15,14 @@ extension BaseItemDto {
 
     /// Indicates whether the item can be downloaded by the current user
     var canBeDownloaded: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.userData.policy else { return false }
+        guard let userPolicy = dependency(\.currentUserSession)?.userData.policy else { return false }
 
         return userPolicy.enableContentDownloading == true && canDownload == true
     }
 
     /// Indicates whether the item's metadata can be edited by the current user
     var canEditMetadata: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.userData.policy else { return false }
+        guard let userPolicy = dependency(\.currentUserSession)?.userData.policy else { return false }
 
         switch type {
         case .playlist:
@@ -36,7 +36,7 @@ extension BaseItemDto {
 
     /// Indicates whether the item's lyrics can be edited by the current user
     var canEditLyrics: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.userData.policy else { return false }
+        guard let userPolicy = dependency(\.currentUserSession)?.userData.policy else { return false }
 
         switch type {
         case .audio:
@@ -48,7 +48,7 @@ extension BaseItemDto {
 
     /// Indicates whether the item's subtitles can be edited by the current user
     var canEditSubtitles: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.userData.policy else { return false }
+        guard let userPolicy = dependency(\.currentUserSession)?.userData.policy else { return false }
 
         switch type {
         case .episode, .movie, .musicVideo, .trailer, .video:
@@ -60,7 +60,7 @@ extension BaseItemDto {
 
     /// Can this `BaseItemDto` be played
     var presentPlayButton: Bool {
-        guard Container.shared.currentUserSession()?.userData.policy?.enableMediaPlayback == true else { return false }
+        guard dependency(\.currentUserSession)?.userData.policy?.enableMediaPlayback == true else { return false }
 
         switch type {
         case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
@@ -75,7 +75,7 @@ extension BaseItemDto {
     var canShuffle: Bool {
         guard id?.nilIfBlank != nil,
               !isMissing,
-              Container.shared.currentUserSession()?.userData.policy?.enableMediaPlayback == true
+              dependency(\.currentUserSession)?.userData.policy?.enableMediaPlayback == true
         else { return false }
 
         switch type {
@@ -97,7 +97,7 @@ extension BaseItemDto {
 
     /// Can this `BaseItemDto` be recorded
     var canBeRecorded: Bool {
-        guard Container.shared.currentUserSession()?.userData.policy?.enableLiveTvManagement == true else { return false }
+        guard dependency(\.currentUserSession)?.userData.policy?.enableLiveTvManagement == true else { return false }
 
         switch type {
         case .channel, .liveTvChannel, .tvChannel:

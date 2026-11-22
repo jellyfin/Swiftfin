@@ -170,11 +170,15 @@ final class ServerSocketManager {
                         logger.info("Socket disconnected")
                         isConnected.send(false)
 
-                    case let .message(message):
-                        logger.debug("Socket message", metadata: ["message": .string("\(message)")])
+                    case .message:
+                        break
                     }
 
                     allEvents.send(event)
+
+                    if case let .message(message) = event {
+                        await logMessage(message)
+                    }
                 }
             } catch {
                 if let socketError = error as? JellyfinSocket.Session.SocketError,
@@ -206,6 +210,11 @@ final class ServerSocketManager {
                 _ = await wakeIterator.next()
             }
         }
+    }
+
+    @concurrent
+    private func logMessage(_ message: OutboundWebSocketMessage) async {
+        logger.debug("Socket message", metadata: ["message": .string("\(message)")])
     }
 
     private func observeServerConnectionChange() async {

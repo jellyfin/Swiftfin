@@ -215,6 +215,9 @@ extension BaseItemDto: Poster {
 
 private struct BaseItemDtoPosterContextMenu: View {
 
+    @DynamicInjected(\.currentUserSession)
+    private var session
+
     @Router
     private var router
 
@@ -267,7 +270,7 @@ private struct BaseItemDtoPosterContextMenu: View {
     }
 
     private func toggleIsPlayed() async {
-        guard let session = Container.shared.currentUserSession() else { return }
+        guard let session else { return }
 
         do {
             try await session.setPlayed($item, to: !isPlayed)
@@ -277,7 +280,7 @@ private struct BaseItemDtoPosterContextMenu: View {
     }
 
     private func toggleIsFavorite() async {
-        guard let session = Container.shared.currentUserSession() else { return }
+        guard let session else { return }
 
         do {
             try await session.setFavorite($item, to: !isFavorite)

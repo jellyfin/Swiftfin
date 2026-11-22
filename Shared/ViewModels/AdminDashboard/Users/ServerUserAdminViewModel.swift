@@ -7,6 +7,7 @@
 //
 
 import Combine
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -62,7 +63,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
     @SharedBaseItems
     var libraries: [BaseItemDto] = []
 
-    init(user: UserDto) {
+    init(user: UserDto = dependency(\.currentUserSession)?.userData ?? UserDto()) {
         self.user = user
 
         super.init()

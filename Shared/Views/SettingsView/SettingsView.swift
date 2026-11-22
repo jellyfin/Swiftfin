@@ -31,7 +31,7 @@ struct SettingsView: View {
     private var router
 
     init() {
-        let userID = Container.shared.userSessionManager().currentSession?.user.id ?? "default"
+        let userID = dependency(\.currentUserSession)?.user.id ?? "default"
         #if os(iOS)
         _appearance = Default(.userAppearance(userID: userID))
         #endif

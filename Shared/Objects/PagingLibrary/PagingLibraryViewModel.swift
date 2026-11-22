@@ -161,7 +161,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable, W
     init(
         library: Library,
         pageSize: Int = defaultPagingLibraryPageSize,
-        userSession: UserSession? = Container.shared.currentUserSession()
+        userSession: UserSession? = dependency(\.currentUserSession)
     ) {
         self.elements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
         self.environment = library.environment ?? .default

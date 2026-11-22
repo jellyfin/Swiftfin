@@ -33,7 +33,7 @@ extension BaseItemDto {
               itemID.isNotEmpty,
               let tag = tag ?? (itemID == id ? imageTag : nil),
               tag.isNotEmpty,
-              let client = Container.shared.currentUserSession()?.client
+              let client = dependency(\.currentUserSession)?.client
         else { return nil }
 
         // TODO: put into environment?

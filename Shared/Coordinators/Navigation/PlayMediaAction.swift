@@ -19,9 +19,9 @@ struct PlayMediaAction {
     let present: @MainActor (NavigationRoute) -> Void
 
     func callAsFunction(intent: PlaybackIntent) {
-        guard let userSession = Container.shared.currentUserSession() else { return }
+        guard let userSession = dependency(\.currentUserSession) else { return }
 
-        let session = Container.shared.mediaPlayerManager().play(
+        let session = dependency(\.mediaPlayerManager).play(
             intent: intent,
             userSession: userSession
         )
