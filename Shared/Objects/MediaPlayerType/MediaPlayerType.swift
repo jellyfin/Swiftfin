@@ -51,12 +51,17 @@ enum MediaPlayerType: String, CaseIterable, Displayable, Storable {
     }
 
     @MainActor
-    func makePlayer() -> any MediaPlayer {
+    func makePlayer(for item: BaseItemDto) -> any MediaPlayer {
         switch self {
         case .avPlayer:
-            AVMediaPlayer()
+            return AVMediaPlayer()
         case .mpv:
-            MPVMediaPlayer()
+            let isLive = switch item.type {
+            case .liveTvChannel, .liveTvProgram, .program, .tvChannel, .tvProgram: true
+            default: item.isLiveStream
+            }
+            let upscaler: MPVMediaPlayer.Upscaler = !isLive && Defaults[.VideoPlayer.anime4KEnabled] ? .preferredAnime4K : .off
+            return MPVMediaPlayer(upscaler: upscaler)
         }
     }
 }

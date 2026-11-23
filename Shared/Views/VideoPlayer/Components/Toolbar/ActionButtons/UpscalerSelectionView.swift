@@ -25,13 +25,13 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             #endif
         }
 
-        private var active: MPVMediaPlayer.Upscaler {
-            (mediaSession.player as? MPVMediaPlayer)?.upscaler ?? .off
+        private var active: MPVMediaPlayer.Upscaler? {
+            (mediaSession.player as? MPVMediaPlayer)?.upscaler
         }
 
         private var profileTip: String? {
             switch active {
-            case .off: nil
+            case nil, .off: nil
             case let .anime4K(profile): profile.description
             case let .artCNN(profile): profile.description
             }
@@ -79,10 +79,14 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     row
                 }
                 .onAppear {
-                    scroll.scrollTo(active)
+                    if let active {
+                        scroll.scrollTo(active)
+                    }
                 }
                 .onChange(of: active) {
-                    scroll.scrollTo(active)
+                    if let active {
+                        scroll.scrollTo(active)
+                    }
                 }
             }
         }
@@ -111,7 +115,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
                     options {
                         switch active {
-                        case .off:
+                        case nil, .off:
                             EmptyView()
 
                         case .anime4K:
@@ -167,7 +171,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         #endif
 
         private var anime4KSelection: MPVMediaPlayer.Upscaler {
-            if case .anime4K = active {
+            if let active, case .anime4K = active {
                 active
             } else {
                 .preferredAnime4K
@@ -175,7 +179,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         }
 
         private var artCNNSelection: MPVMediaPlayer.Upscaler {
-            if case .artCNN = active {
+            if let active, case .artCNN = active {
                 active
             } else {
                 .preferredArtCNN

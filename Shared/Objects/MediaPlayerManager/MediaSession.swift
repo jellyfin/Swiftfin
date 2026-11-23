@@ -282,17 +282,20 @@ final class MediaSession {
     func setUpscaler(_ upscaler: MPVMediaPlayer.Upscaler) {
         guard canControlPlayback,
               playbackItem?.baseItem.mediaType == .video,
-              let player = player as? MPVMediaPlayer,
-              player.upscaler != upscaler
+              !item.isLiveStream,
+              let player = player as? MPVMediaPlayer
         else { return }
 
-        if player.upscaler != .off, upscaler != .off {
-            player.setGPUUpscaler(upscaler)
+        let needsGPUOutput = upscaler != .off
+        if player.usesGPUOutput == needsGPUOutput {
+            if needsGPUOutput, player.upscaler != upscaler {
+                player.setGPUUpscaler(upscaler)
+            }
             return
         }
 
         let replacement = MPVMediaPlayer(upscaler: upscaler)
-        guard replacement.upscaler == upscaler else { return }
+        guard replacement.usesGPUOutput == needsGPUOutput else { return }
 
         transfer(to: replacement)
     }

@@ -9,7 +9,7 @@ Swiftfin offers two player engines: **MPV** and **AVPlayer**. MPV is the default
 
 ## Upscalers
 
-Enable **Anime4K by Default** under **Settings → Advanced → Video Player → Playback** to use Anime4K for new MPV playback sessions on iPhone, iPad, and Apple TV. It starts off. Upscaling can increase GPU load.
+Enable **Anime4K by Default** under **Settings → Advanced → Video Player → Playback** to use Anime4K for new MPV playback sessions on iPhone, iPad, and Apple TV. Live TV uses the native renderer. The setting starts off. Upscaling can increase GPU load.
 
 Both upscalers use MPV's GPU renderer. Choose **Off** for native Dolby Vision or for Picture in Picture on iPhone and iPad.
 
