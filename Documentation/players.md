@@ -7,6 +7,20 @@ Swiftfin offers two player engines: **MPV** and **AVPlayer**. MPV is the default
 - If transcoding is enabled on your server, any unsupported formats will be converted automatically.
 - Your device's hardware and your **Playback Quality** settings also affect what is directly played.
 
+## Upscalers
+
+Enable **Anime4K by Default** under **Settings → Advanced → Video Player → Playback** to use Anime4K for new MPV playback sessions on iPhone, iPad, and Apple TV. It starts off. Upscaling can increase GPU load.
+
+Both upscalers use MPV's GPU renderer. Choose **Off** for native Dolby Vision or for Picture in Picture on iPhone and iPad.
+
+During MPV playback, tap the **Upscalers** button (sparkles) in the player toolbar. Choose **Off**, **Anime4K**, or **ArtCNN C4F16**, then pick a profile in the overlay above the progress bar. The video stays undimmed so you can compare profiles as it plays. The overlay explains when to use each profile, including the Anime4K combinations A+A, B+B, and C+A. Switching between Off and an upscaler reloads the video at the current position. Switching upscalers or profiles while the GPU renderer is active updates the shaders in place. Swiftfin remembers the last profile selected for each upscaler.
+
+Under **Settings → Advanced → Video Player**, choose a profile in the **Anime4K** or **ArtCNN C4F16** section. Each section's **Learn more** explains its profiles. The saved profile is used when that upscaler is enabled. Anime4K defaults to **Mode A (Fast)** and ArtCNN defaults to **Standard**.
+
+The Anime4K shaders retain their original license notices. Swiftfin sources them from Anime4K Metal v0.1.4. [Anime4K](https://github.com/bloc97/Anime4K) · [Anime4K Metal v0.1.4](https://github.com/cinemore/anime4k-metal/tree/v0.1.4)
+
+ArtCNN C4F16 is a lightweight 2× luma upscaler designed for anime. Each bundled variant retains its MIT license notice. [ArtCNN source](https://github.com/Artoriuz/ArtCNN/tree/0837e5326e710f49e2ab0a8d995da0708047442e/GLSL)
+
 ---
 
 ## Feature Support

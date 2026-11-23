@@ -265,7 +265,7 @@ final class MediaSession {
         return resolve(nextIntent)
     }
 
-    /// Re-negotiate for each destination, retaining the local engine and desired transport state.
+    /// Re-negotiate for each destination, preserving the playback position and desired transport state.
     @discardableResult
     func transfer(to destination: any MediaPlayer) -> Task<Void, Never>? {
         guard let player,
@@ -276,10 +276,25 @@ final class MediaSession {
 
         let snapshot = currentIntent()
         handoffRecovery ?= (player, snapshot)
-        if player.playbackLocation == .local {
-            localPlayer = player
-        }
         return resolve(snapshot, using: destination)
+    }
+
+    func setUpscaler(_ upscaler: MPVMediaPlayer.Upscaler) {
+        guard canControlPlayback,
+              playbackItem?.baseItem.mediaType == .video,
+              let player = player as? MPVMediaPlayer,
+              player.upscaler != upscaler
+        else { return }
+
+        if player.upscaler != .off, upscaler != .off {
+            player.setGPUUpscaler(upscaler)
+            return
+        }
+
+        let replacement = MPVMediaPlayer(upscaler: upscaler)
+        guard replacement.upscaler == upscaler else { return }
+
+        transfer(to: replacement)
     }
 
     @discardableResult
@@ -339,6 +354,9 @@ final class MediaSession {
                 }
             }
             self.player = destination
+            if destination.playbackLocation == .local {
+                localPlayer = destination
+            }
             destination.mediaSession = self
         }
         let destinationPlayer = destination ?? player

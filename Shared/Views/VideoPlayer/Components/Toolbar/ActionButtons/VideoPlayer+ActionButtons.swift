@@ -38,6 +38,22 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         @FocusState
         private var focusedButton: String?
 
+        @ContentBuilder
+        private var upscalersButton: some View {
+            if mediaSession.player is MPVMediaPlayer,
+               mediaSession.item.mediaType == .video,
+               !mediaSession.item.isLiveStream {
+                Button {
+                    viewState.isPresentingUpscalers.toggle()
+                } label: {
+                    Label(L10n.upscalers, systemImage: "sparkles")
+                }
+                .frame(width: viewLayout.toolbarButtonSize, height: viewLayout.toolbarButtonSize)
+                .disabled(!mediaSession.canControlPlayback)
+                .coordinatedFocus(ViewState.Focus.action("upscalers"), selection: $focusedButton)
+            }
+        }
+
         private func resolvedActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
             var filteredButtons = rawButtons
 
@@ -160,30 +176,36 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             let barButtons = barActionButtons
             let menuButtons = menuActionButtons.subtracting(barActionButtons)
 
-            Menu {
-                ForEach(
-                    barButtons,
-                    content: view(for:)
-                )
+            HStack(spacing: viewLayout.toolbarButtonSpacing) {
+                upscalersButton
 
-                if barButtons.isNotEmpty, menuButtons.isNotEmpty {
-                    Divider()
+                Menu {
+                    ForEach(
+                        barButtons,
+                        content: view(for:)
+                    )
+
+                    if barButtons.isNotEmpty, menuButtons.isNotEmpty {
+                        Divider()
+                    }
+
+                    ForEach(
+                        menuButtons,
+                        content: view(for:)
+                    )
+                } label: {
+                    menuLabel
                 }
-
-                ForEach(
-                    menuButtons,
-                    content: view(for:)
-                )
-            } label: {
-                menuLabel
+                .frame(width: viewLayout.toolbarButtonSize, height: viewLayout.toolbarButtonSize)
+                .withViewContext(.isInMenu)
             }
-            .frame(width: viewLayout.toolbarButtonSize, height: viewLayout.toolbarButtonSize)
-            .withViewContext(.isInMenu)
         }
 
         @ContentBuilder
         private var regularView: some View {
             HStack(spacing: viewLayout.toolbarButtonSpacing) {
+                upscalersButton
+
                 ForEach(barActionButtons) { button in
                     view(for: button)
                         .frame(width: viewLayout.toolbarButtonSize, height: viewLayout.toolbarButtonSize)
@@ -206,7 +228,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             }
             .defaultFocus(
                 $focusedButton,
-                ViewState.Focus.action(barActionButtons.first?.rawValue ?? "menu"),
+                ViewState.Focus.action(barActionButtons.first?.rawValue ?? (menuActionButtons.isEmpty ? "upscalers" : "menu")),
                 priority: .userInitiated
             )
             .focusSection()

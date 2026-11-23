@@ -21,6 +21,12 @@ struct VideoPlayerSettingsView: View {
 
     @Default(.VideoPlayer.mediaPlayerType)
     private var mediaPlayerType
+    @Default(.VideoPlayer.anime4KEnabled)
+    private var anime4KEnabled
+    @Default(.VideoPlayer.anime4KProfile)
+    private var anime4KProfile
+    @Default(.VideoPlayer.artCNNProfile)
+    private var artCNNProfile
 
     // MARK: - Button Defaults
 
@@ -95,6 +101,10 @@ struct VideoPlayerSettingsView: View {
         Form(systemImage: "tv") {
             playbackSettings
 
+            if mediaPlayerType == .mpv {
+                upscalerSettings
+            }
+
             #if os(iOS)
             gestureSettings
             #endif
@@ -131,16 +141,52 @@ struct VideoPlayerSettingsView: View {
 
     @ContentBuilder
     private var playbackSettings: some View {
-        Section(L10n.playback) {
+        Section {
             PlatformPicker(L10n.player, selection: $mediaPlayerType)
 
             ChevronButton(L10n.playbackQuality) {
                 router.route(to: .playbackQualitySettings)
             }
 
+            if mediaPlayerType == .mpv {
+                Toggle(L10n.anime4KByDefault, isOn: $anime4KEnabled)
+            }
+
             #if os(iOS)
             Toggle(L10n.automaticPictureInPicture, isOn: $automaticPictureInPicture)
+                .disabled(mediaPlayerType == .mpv && anime4KEnabled)
             #endif
+        } header: {
+            Text(L10n.playback)
+        } footer: {
+            if mediaPlayerType == .mpv {
+                #if os(iOS)
+                Text(L10n.anime4KDescriptionIOS)
+                #else
+                Text(L10n.anime4KDescription)
+                #endif
+            }
+        }
+    }
+
+    // MARK: - Upscaler Settings
+
+    @ContentBuilder
+    private var upscalerSettings: some View {
+        Section(L10n.anime4K) {
+            PlatformPicker(L10n.profile, selection: $anime4KProfile)
+        } learnMore: {
+            ForEach(Anime4KProfile.allCases, id: \.self) { profile -> LabeledContent<Text, Text>? in
+                LabeledContent(profile.displayTitle, value: profile.description)
+            }
+        }
+
+        Section(L10n.artCNNC4F16) {
+            PlatformPicker(L10n.profile, selection: $artCNNProfile)
+        } learnMore: {
+            ForEach(ArtCNNProfile.allCases, id: \.self) { profile -> LabeledContent<Text, Text>? in
+                LabeledContent(profile.displayTitle, value: profile.description)
+            }
         }
     }
 

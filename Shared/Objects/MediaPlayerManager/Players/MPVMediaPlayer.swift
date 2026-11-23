@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import JellyfinAPI
 import Logging
 import MPVUI
@@ -16,10 +17,55 @@ import SwiftUI
 @Observable
 final class MPVMediaPlayer {
 
+    enum Upscaler: Hashable {
+
+        case off
+        case anime4K(Anime4KProfile)
+        case artCNN(ArtCNNProfile)
+
+        static var preferredAnime4K: Self {
+            .anime4K(Defaults[.VideoPlayer.anime4KProfile])
+        }
+
+        static var preferredArtCNN: Self {
+            .artCNN(Defaults[.VideoPlayer.artCNNProfile])
+        }
+
+        func shaderURLs() -> [URL]? {
+            let folder: String
+            let names: [String]
+
+            switch self {
+            case .off:
+                return []
+
+            case let .anime4K(profile):
+                folder = "Anime4K"
+                names = profile.shaderNames
+
+            case let .artCNN(profile):
+                folder = "ArtCNN"
+                names = [profile.shaderName]
+            }
+
+            let urls = names.compactMap { Bundle.main.url(forResource: $0, withExtension: "glsl", subdirectory: "Upscalers/\(folder)") }
+            guard urls.count == names.count else {
+                Logger.swiftfin().error("Missing shader resources for \(folder)")
+                return nil
+            }
+
+            return urls
+        }
+    }
+
     let displayTitle = MediaPlayerType.mpv.displayTitle
     let playbackProfile = PlaybackProfile.local(.mpv)
 
-    let player = MPVPlayer(configuration: .init(audio: .init(audioSession: .hostManaged)))
+    let player: MPVPlayer
+    private(set) var upscaler: Upscaler
+
+    @ObservationIgnored
+    private var upscalerShaders: [URL]
     private let textSubtitles = TextSubtitlePresentation()
 
     @ObservationIgnored
@@ -68,8 +114,16 @@ final class MPVMediaPlayer {
     private var automaticPiPObservation: AnyCancellable?
     #endif
 
-    init() {
+    init(upscaler: Upscaler = Defaults[.VideoPlayer.anime4KEnabled] ? .preferredAnime4K : .off) {
         let logger = Logger.swiftfin()
+        let shaders = upscaler.shaderURLs()
+        self.upscaler = shaders == nil ? .off : upscaler
+        upscalerShaders = shaders ?? []
+
+        player = MPVPlayer(configuration: .init(
+            audio: .init(audioSession: .hostManaged),
+            videoOutput: shaders?.isEmpty == false ? .metal : .sampleBuffer
+        ))
 
         player.logHandler = { message in
             let level: Logger.Level
@@ -91,6 +145,34 @@ final class MPVMediaPlayer {
         #if os(iOS)
         automaticPiPObservation = observeAutomaticPictureInPicture()
         #endif
+    }
+
+    /// Switches shaders while the existing GPU renderer is active.
+    func setGPUUpscaler(_ upscaler: Upscaler) {
+        guard let shaders = upscaler.shaderURLs() else { return }
+
+        self.upscaler = upscaler
+        upscalerShaders = shaders
+        applyUpscalerShaders()
+
+        switch upscaler {
+        case .off:
+            break
+        case let .anime4K(profile):
+            Defaults[.VideoPlayer.anime4KProfile] = profile
+        case let .artCNN(profile):
+            Defaults[.VideoPlayer.artCNNProfile] = profile
+        }
+    }
+
+    private func applyUpscalerShaders() {
+        guard !upscalerShaders.isEmpty else { return }
+
+        // libmpv rejects the shader list's CLI append option during initialization.
+        player.executeCommand("change-list", arguments: ["glsl-shaders", "clr", ""])
+        for shader in upscalerShaders {
+            player.executeCommand("change-list", arguments: ["glsl-shaders", "append", shader.path])
+        }
     }
 
     isolated deinit {
@@ -296,6 +378,10 @@ extension MPVMediaPlayer: VideoMediaPlayer {
             observedPaused = snapshot.isPaused
             observedPlayback.isReady = snapshot.isPlaybackReady
 
+            if snapshot.isPlaybackReady {
+                applyUpscalerShaders()
+            }
+
             updateTiming(
                 position: snapshot.position,
                 duration: snapshot.duration,
@@ -315,6 +401,7 @@ extension MPVMediaPlayer: VideoMediaPlayer {
             publishPlaybackState()
 
             if ready, loadedItem === item {
+                applyUpscalerShaders()
                 updateTracks(for: item)
             }
 

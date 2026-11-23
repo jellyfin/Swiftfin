@@ -245,6 +245,18 @@ extension Defaults.Keys {
 
     enum VideoPlayer {
 
+        static var anime4KEnabled: Key<Bool> {
+            UserKey("anime4KEnabled", default: false)
+        }
+
+        static var anime4KProfile: Key<Anime4KProfile> {
+            UserKey("anime4KProfile", default: .modeAFast)
+        }
+
+        static var artCNNProfile: Key<ArtCNNProfile> {
+            UserKey("artCNNProfile", default: .standard)
+        }
+
         static var autoPlayEnabled: Key<Bool> {
             UserKey("autoPlayEnabled", default: true)
         }

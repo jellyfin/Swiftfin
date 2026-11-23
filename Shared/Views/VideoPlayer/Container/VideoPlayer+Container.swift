@@ -147,7 +147,7 @@ extension VideoPlayer {
             let videoSize: () -> CGSize
 
             private var shouldPresentDimOverlay: Bool {
-                !viewState.isTabletop && viewState.visibleElements.contains(.dimming)
+                !viewState.isTabletop && !viewState.isPresentingUpscalers && viewState.visibleElements.contains(.dimming)
             }
 
             #if os(iOS)
@@ -1343,6 +1343,11 @@ extension VideoPlayer {
 
         @objc
         private func handleMenuEnded() {
+            if viewState.isPresentingUpscalers {
+                viewState.isPresentingUpscalers = false
+                return
+            }
+
             // Let a system menu or alert consume Back before dismissing player UI.
             guard !viewState.isFocusOutsidePlayer ||
                 viewState.presentation == .hidden ||

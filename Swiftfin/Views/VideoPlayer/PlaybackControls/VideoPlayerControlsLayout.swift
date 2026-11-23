@@ -14,6 +14,7 @@ struct VideoPlayerControlsLayout<
     Progress: View,
     ProgressBackground: View,
     Actions: View,
+    Upscalers: View,
     Supplements: View,
     Toast: View
 >: View {
@@ -43,6 +44,8 @@ struct VideoPlayerControlsLayout<
     var progressBackground: ProgressBackground
     @ContentBuilder
     var actions: Actions
+    @ContentBuilder
+    var upscalers: Upscalers
     @ContentBuilder
     var supplements: Supplements
     @ContentBuilder
@@ -98,6 +101,12 @@ struct VideoPlayerControlsLayout<
             SafeRegionItem(Region.self, alignment: .bottomTrailing, clipsContent: false) {
                 actions
                     .padding(.bottom, edgePadding)
+            }
+            .ignoresSafeRegion(.system, edges: .top)
+            .observingSafeRegion(actionRegions)
+
+            SafeRegionItem(Region.self, alignment: .bottom, clipsContent: false) {
+                upscalers
             }
             .ignoresSafeRegion(.system, edges: .top)
             .observingSafeRegion(actionRegions)

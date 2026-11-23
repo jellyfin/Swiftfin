@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A4A4A4000000000000000002 /* Upscalers in Resources */ = {isa = PBXBuildFile; fileRef = A4A4A4000000000000000001 /* Upscalers */; };
+		A4A4A4000000000000000003 /* Upscalers in Resources */ = {isa = PBXBuildFile; fileRef = A4A4A4000000000000000001 /* Upscalers */; };
 		53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABFDDB267972BF00886593 /* TVServices.framework */; };
 		62666DFD27E5014F00EC0ECD /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */; };
 		62666DFE27E5015700EC0ECD /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4AA267D40AD000E2F71 /* AVFoundation.framework */; };
@@ -143,6 +145,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A4A4A4000000000000000001 /* Upscalers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Upscalers; path = Resources/Upscalers; sourceTree = "<group>"; };
 		535870602669D21600D05A09 /* Swiftfin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swiftfin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5362E4AA267D40AD000E2F71 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5362E4AC267D40B1000E2F71 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -438,6 +441,7 @@
 				E14560852DFCAE51008FF700 /* Swiftfin */,
 				E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */,
 				E14563272DFCAE6E008FF700 /* Shared */,
+				A4A4A4000000000000000001 /* Upscalers */,
 				E1456FC82DFCB323008FF700 /* Translations */,
 				5377CBF2263B596A003A4E83 /* Products */,
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
@@ -868,6 +872,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4A4A4000000000000000003 /* Upscalers in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -875,6 +880,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4A4A4000000000000000002 /* Upscalers in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

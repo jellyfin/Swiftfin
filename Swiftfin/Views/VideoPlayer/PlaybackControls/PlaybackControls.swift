@@ -77,6 +77,8 @@ extension VideoPlayer {
                     .isVisible(isScrubbing)
             } actions: {
                 OverlayActions()
+            } upscalers: {
+                UpscalerOverlay()
             } supplements: {
                 supplementContent
             } toast: {

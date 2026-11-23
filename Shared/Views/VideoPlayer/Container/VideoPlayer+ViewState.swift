@@ -18,6 +18,10 @@ extension VideoPlayer {
     final class ViewState {
 
         var layoutSize: CGSize = .zero
+        var isPresentingUpscalers = false {
+            didSet { setInteraction(.upscalers, active: isPresentingUpscalers) }
+        }
+
         var systemInsets: EdgeInsets = .zero
 
         var supplementInsets: EdgeInsets {
@@ -63,6 +67,7 @@ extension VideoPlayer {
             case pan
             case pinch
             case speedBoost
+            case upscalers
             case button(UUID)
             case menu(UUID)
         }
@@ -758,6 +763,10 @@ extension VideoPlayer {
         }
 
         private func transition(to presentation: Presentation) {
+            if presentation != .controls, isPresentingUpscalers {
+                isPresentingUpscalers = false
+            }
+
             #if os(iOS)
             // A presentation change outside the tap handler ends the tap sequence.
             if self.presentation != presentation {

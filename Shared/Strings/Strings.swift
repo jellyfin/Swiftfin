@@ -118,6 +118,38 @@ internal enum L10n {
   internal static let anamorphicVideoNotSupported = L10n.tr("Localizable", "anamorphicVideoNotSupported", fallback: "Anamorphic video is not supported")
   /// Anime
   internal static let anime = L10n.tr("Localizable", "anime", fallback: "Anime")
+  /// Anime4K
+  internal static let anime4K = L10n.tr("Localizable", "anime4K", fallback: "Anime4K")
+  /// Anime4K by Default
+  internal static let anime4KByDefault = L10n.tr("Localizable", "anime4KByDefault", fallback: "Anime4K by Default")
+  /// Enhances animation in new MPV playback sessions. Turn off Anime4K for native Dolby Vision.
+  internal static let anime4KDescription = L10n.tr("Localizable", "anime4KDescription", fallback: "Enhances animation in new MPV playback sessions. Turn off Anime4K for native Dolby Vision.")
+  /// Enhances animation in new MPV playback sessions. Turn off Anime4K for native Dolby Vision or Picture in Picture.
+  internal static let anime4KDescriptionIOS = L10n.tr("Localizable", "anime4KDescriptionIOS", fallback: "Enhances animation in new MPV playback sessions. Turn off Anime4K for native Dolby Vision or Picture in Picture.")
+  /// Mode A+A (Fast)
+  internal static let anime4KModeAAFast = L10n.tr("Localizable", "anime4KModeAAFast", fallback: "Mode A+A (Fast)")
+  /// For badly blurred Mode A sources. Extra detail, with more risk of halos.
+  internal static let anime4KModeAAFastDescription = L10n.tr("Localizable", "anime4KModeAAFastDescription", fallback: "For badly blurred Mode A sources. Extra detail, with more risk of halos.")
+  /// Mode A (Fast)
+  internal static let anime4KModeAFast = L10n.tr("Localizable", "anime4KModeAFast", fallback: "Mode A (Fast)")
+  /// For most 1080p anime or blurry SD. Restores lines and reduces noise.
+  internal static let anime4KModeAFastDescription = L10n.tr("Localizable", "anime4KModeAFastDescription", fallback: "For most 1080p anime or blurry SD. Restores lines and reduces noise.")
+  /// Mode B+B (Fast)
+  internal static let anime4KModeBBFast = L10n.tr("Localizable", "anime4KModeBBFast", fallback: "Mode B+B (Fast)")
+  /// For Mode B sources with stubborn artifacts. Adds a soft restoration pass.
+  internal static let anime4KModeBBFastDescription = L10n.tr("Localizable", "anime4KModeBBFastDescription", fallback: "For Mode B sources with stubborn artifacts. Adds a soft restoration pass.")
+  /// Mode B (Fast)
+  internal static let anime4KModeBFast = L10n.tr("Localizable", "anime4KModeBFast", fallback: "Mode B (Fast)")
+  /// For most 720p anime. Soft restoration reduces ringing and aliasing.
+  internal static let anime4KModeBFastDescription = L10n.tr("Localizable", "anime4KModeBFastDescription", fallback: "For most 720p anime. Soft restoration reduces ringing and aliasing.")
+  /// Mode C+A (Fast)
+  internal static let anime4KModeCAFast = L10n.tr("Localizable", "anime4KModeCAFast", fallback: "Mode C+A (Fast)")
+  /// For clean 480p anime with soft lines. Adds a restoration pass.
+  internal static let anime4KModeCAFastDescription = L10n.tr("Localizable", "anime4KModeCAFastDescription", fallback: "For clean 480p anime with soft lines. Adds a restoration pass.")
+  /// Mode C (Fast)
+  internal static let anime4KModeCFast = L10n.tr("Localizable", "anime4KModeCFast", fallback: "Mode C (Fast)")
+  /// For clean 480p anime. Upscales and reduces noise in one pass.
+  internal static let anime4KModeCFastDescription = L10n.tr("Localizable", "anime4KModeCFastDescription", fallback: "For clean 480p anime. Upscales and reduces noise in one pass.")
   /// Any
   internal static let any = L10n.tr("Localizable", "any", fallback: "Any")
   /// Anytime
@@ -140,6 +172,20 @@ internal enum L10n {
   internal static let arranger = L10n.tr("Localizable", "arranger", fallback: "Arranger")
   /// Art
   internal static let art = L10n.tr("Localizable", "art", fallback: "Art")
+  /// ArtCNN C4F16
+  internal static let artCNNC4F16 = L10n.tr("Localizable", "artCNNC4F16", fallback: "ArtCNN C4F16")
+  /// Denoise + Sharpen (DS)
+  internal static let artCNNProfileDenoiseSharpen = L10n.tr("Localizable", "artCNNProfileDenoiseSharpen", fallback: "Denoise + Sharpen (DS)")
+  /// For noisy anime with soft lines. Reduces noise and sharpens edges.
+  internal static let artCNNProfileDenoiseSharpenDescription = L10n.tr("Localizable", "artCNNProfileDenoiseSharpenDescription", fallback: "For noisy anime with soft lines. Reduces noise and sharpens edges.")
+  /// Denoise + Soften (DN)
+  internal static let artCNNProfileDenoiseSoften = L10n.tr("Localizable", "artCNNProfileDenoiseSoften", fallback: "Denoise + Soften (DN)")
+  /// For grainy anime with harsh edges. Reduces noise and softens edges.
+  internal static let artCNNProfileDenoiseSoftenDescription = L10n.tr("Localizable", "artCNNProfileDenoiseSoftenDescription", fallback: "For grainy anime with harsh edges. Reduces noise and softens edges.")
+  /// Standard
+  internal static let artCNNProfileStandard = L10n.tr("Localizable", "artCNNProfileStandard", fallback: "Standard")
+  /// For clean anime with defined lines. Upscales with a neutral look.
+  internal static let artCNNProfileStandardDescription = L10n.tr("Localizable", "artCNNProfileStandardDescription", fallback: "For clean anime with defined lines. Upscales with a neutral look.")
   /// Clear art or logo-style decorative artwork, often with a transparent background. Typically sourced from fanart providers.
   internal static let artImageDescription = L10n.tr("Localizable", "artImageDescription", fallback: "Clear art or logo-style decorative artwork, often with a transparent background. Typically sourced from fanart providers.")
   /// Artist
@@ -2024,6 +2070,8 @@ internal enum L10n {
   internal static let uploadFile = L10n.tr("Localizable", "uploadFile", fallback: "Upload file")
   /// Upload photo
   internal static let uploadPhoto = L10n.tr("Localizable", "uploadPhoto", fallback: "Upload photo")
+  /// Upscalers
+  internal static let upscalers = L10n.tr("Localizable", "upscalers", fallback: "Upscalers")
   /// URL
   internal static let url = L10n.tr("Localizable", "url", fallback: "URL")
   /// A URL is required

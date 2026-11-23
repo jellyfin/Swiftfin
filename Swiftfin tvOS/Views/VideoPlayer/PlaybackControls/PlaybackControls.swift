@@ -49,6 +49,8 @@ extension VideoPlayer {
                     .enabled(viewState.visibleElements.contains(.toolbar))
                     .padding(.bottom, 30)
 
+                UpscalerOverlay()
+
                 PlaybackProgress()
                     .fixedSize(horizontal: false, vertical: true)
                     .isVisible(viewState.isPresentingProgress)
