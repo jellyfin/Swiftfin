@@ -34,7 +34,7 @@ final class MediaPlayerManager {
     @ObservationIgnored
     private var sessionObservation: AnyCancellable?
     @ObservationIgnored
-    private var nowPlayingObservation: AnyCancellable?
+    private var nowPlayingObservation: (location: MediaPlaybackLocation, token: AnyCancellable)?
     @ObservationIgnored
     private var lifecycleObservations: Set<AnyCancellable> = []
 
@@ -105,9 +105,16 @@ final class MediaPlayerManager {
 
             switch state {
             case .preparing, .playback:
-                nowPlayingObservation ?= nowPlayableObserver.observe(session)
+                if nowPlayingObservation == nil, let player = session.player {
+                    nowPlayingObservation = (player.playbackLocation, nowPlayableObserver.observe(session))
+                }
 
-            case .initial, .loadingItem, .error:
+            case .loadingItem:
+                if nowPlayingObservation?.location != session.player?.playbackLocation {
+                    nowPlayingObservation = nil
+                }
+
+            case .initial, .error:
                 nowPlayingObservation = nil
 
             case .stopped:

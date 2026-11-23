@@ -220,7 +220,7 @@ final class NowPlayableObserver: MediaSessionObserver {
         languageOptions = NowPlayableLanguageOptions(item: item)
 
         guard item != nil else {
-            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+            updatePlaybackInfo()
             updateRemoteCommands()
             return
         }
@@ -340,7 +340,20 @@ final class NowPlayableObserver: MediaSessionObserver {
     }
 
     private func updatePlaybackInfo() {
-        guard isActive, let mediaSession, let item = mediaSession.playbackItem else { return }
+        guard isActive, let mediaSession else { return }
+
+        let center = MPNowPlayingInfoCenter.default()
+        guard let item = mediaSession.playbackItem else {
+            // Keep the last item's metadata while resolution resets the session timeline.
+            guard var info = center.nowPlayingInfo else { return }
+
+            info[MPNowPlayingInfoPropertyPlaybackRate] = 0
+            info[MPNowPlayingInfoPropertyCurrentLanguageOptions] = []
+            info[MPNowPlayingInfoPropertyAvailableLanguageOptions] = []
+            center.nowPlayingInfo = info
+
+            return
+        }
 
         publishedPositionSecond = mediaSession.observedSeconds.components.seconds
 
@@ -357,7 +370,6 @@ final class NowPlayableObserver: MediaSessionObserver {
             availableLanguageOptionGroups: languageOptions.groups
         )
 
-        let center = MPNowPlayingInfoCenter.default()
         var info = center.nowPlayingInfo ?? [:]
         metadata.update(&info)
         center.nowPlayingInfo = info
