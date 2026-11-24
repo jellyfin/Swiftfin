@@ -14,12 +14,11 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
     let id: String
     let type: MediaSegmentType
     let start: Duration
-    let end: Duration
+    private(set) var end: Duration
 
     init?(_ segment: MediaSegmentDto, itemID: String) {
         guard segment.itemID == nil || segment.itemID == itemID,
               let type = segment.type,
-              type != .unknown,
               let start = segment.startTicks,
               let end = segment.endTicks,
               start >= 0,
@@ -34,8 +33,6 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
     }
 
     func skipTarget(at position: Duration, duration: Duration?) -> Duration? {
-        guard type == .intro || type == .outro else { return nil }
-
         let target = duration.map { min(end, $0) } ?? end
         guard position >= start, position < target else { return nil }
 
@@ -46,17 +43,16 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
         var ids: Set<String> = []
 
         return values.compactMap { MediaSegment($0, itemID: itemID) }
-            .sorted {
-                if $0.start != $1.start {
-                    return $0.start < $1.start
-                }
-
-                if $0.end != $1.end {
-                    return $0.end < $1.end
-                }
-
-                return $0.id < $1.id
-            }
+            .sorted { ($0.start, $0.end, $0.id) < ($1.start, $1.end, $1.id) }
             .filter { ids.insert($0.id).inserted }
+            .reduce(into: []) { segments, segment in
+                // Handle back-to-back segments of the same type as a single duration
+                if let index = segments.lastIndex(where: { $0.type == segment.type }),
+                   segments[index].end >= segment.start {
+                    segments[index].end = max(segments[index].end, segment.end)
+                } else {
+                    segments.append(segment)
+                }
+            }
     }
 }

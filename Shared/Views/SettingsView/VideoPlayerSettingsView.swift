@@ -105,6 +105,8 @@ struct VideoPlayerSettingsView: View {
 
             sleepTimerSettings
 
+            mediaSegmentSettings
+
             sliderSettings
 
             supplementSettings
@@ -247,6 +249,17 @@ struct VideoPlayerSettingsView: View {
     private var sleepTimerSettings: some View {
         Section(L10n.sleepTimer) {
             PlatformPicker(L10n.whenTimerEnds, selection: $sleepTimerAction)
+        }
+    }
+
+    // MARK: - Media Segment Settings
+
+    @ContentBuilder
+    private var mediaSegmentSettings: some View {
+        Section(L10n.mediaSegments) {
+            ChevronButton(L10n.mediaSegments) {
+                router.route(to: .mediaSegmentSettings)
+            }
         }
     }
 

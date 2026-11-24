@@ -6,30 +6,30 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-@MainActor
-protocol VideoPlayerOverlayActionProviding {
-
-    var id: String { get }
-    var overlayActions: [VideoPlayerOverlayAction] { get }
-}
+import SwiftUI
 
 @MainActor
 struct VideoPlayerOverlayAction: Identifiable {
 
-    let id: String
-    let title: String
-    let systemImage: String?
+    let id: UUID
+
+    var focusID: String {
+        "player.overlayAction.\(id)"
+    }
+
+    let label: AnyView
     let action: @MainActor () -> Void
+    let onDismiss: @MainActor () -> Void
 
     init(
-        id: String,
-        title: String,
-        systemImage: String? = nil,
-        action: @escaping @MainActor () -> Void
+        id: UUID = UUID(),
+        action: @escaping @MainActor () -> Void,
+        onDismiss: @escaping @MainActor () -> Void = {},
+        @ContentBuilder label: () -> some View
     ) {
         self.id = id
-        self.title = title
-        self.systemImage = systemImage
+        self.label = AnyView(label())
         self.action = action
+        self.onDismiss = onDismiss
     }
 }

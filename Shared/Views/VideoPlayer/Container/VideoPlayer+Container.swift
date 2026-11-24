@@ -1194,7 +1194,7 @@ extension VideoPlayer {
         override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
             super.touchesBegan(touches, with: event)
 
-            guard !(viewState.presentation == .hidden && viewState.isPresentingOverlayActions) else { return }
+            guard viewState.overlayActions.isEmpty else { return }
 
             let now = CACurrentMediaTime()
             guard now - lastTouchPokeTime > 1.0 else { return }

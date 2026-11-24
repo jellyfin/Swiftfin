@@ -30,7 +30,6 @@ final class MediaPlayerItem {
                 mediaPreferences = nil
                 replaySubtitles = nil
                 temporarySubtitleTracks = nil
-                segmentObservation = nil
                 segments = nil
                 temporaryFiles.remove()
             } else if oldValue == nil, let previewImageProvider {
@@ -44,11 +43,11 @@ final class MediaPlayerItem {
     private let runtimeTicks: Int?
 
     var configuration: MediaPlaybackConfiguration
-    private(set) var segments: MediaSegmentObserver?
+    let didSkipMediaSegment = PassthroughSubject<MediaSegmentType, Never>()
+    let overlayActions: VideoPlayerOverlayActionStore
 
     @ObservationIgnored
-    private var segmentObservation: AnyCancellable?
-
+    private var segments: MediaSegmentObserver?
     @ObservationIgnored
     private(set) var mediaPreferences: MediaPlayerItemPreferences?
     @ObservationIgnored
@@ -136,6 +135,7 @@ final class MediaPlayerItem {
 
         self.sharedItem = SharedBaseItem(wrappedValue: baseItem).entry
         self.configuration = configuration
+        self.overlayActions = VideoPlayerOverlayActionStore(itemID: baseItem.id, resuming: configuration.segmentHistory)
         self.runtimeTicks = mediaSource.runTimeTicks ?? baseItem.runTimeTicks
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
@@ -164,6 +164,7 @@ final class MediaPlayerItem {
             for: isTranscoding ? .transcode : .directPlay,
             selectedAudioStreamIndex: audioStreamIndex
         )
+        self.configuration.segmentHistory = overlayActions.segmentHistory
 
         if !secondarySubtitleStreams.contains(where: { $0.index == configuration.secondarySubtitleStreamIndex }) {
             self.configuration.selectTracks(secondary: -1, preservingPreferences: true)
@@ -177,11 +178,7 @@ final class MediaPlayerItem {
     func activate() {
         guard let mediaSession, mediaSession.playbackItem === self else { return }
 
-        if baseItem.mediaType != .audio {
-            let segments = MediaSegmentObserver()
-            self.segments = segments
-            segmentObservation = segments.observe(mediaSession)
-        }
+        segments = MediaSegmentObserver(item: self)
 
         if baseItem.mediaType != .audio, subtitleStreams.isNotEmpty {
             replaySubtitles = MediaPlayerItemReplaySubtitles(item: self, events: mediaSession.playbackEvents)

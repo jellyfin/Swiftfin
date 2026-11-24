@@ -39,6 +39,7 @@ struct MediaPlaybackConfiguration {
     var secondarySubtitleOffset: Duration = .zero
     var disabledSubtitleTracks: SubtitleTrackSelection?
     var continuation: MediaPlaybackContinuation?
+    var segmentHistory: VideoPlayerOverlayActionStore.SegmentHistory?
 
     init() {}
 
@@ -108,6 +109,7 @@ struct MediaPlaybackConfiguration {
         secondarySubtitleOffset = .zero
         disabledSubtitleTracks = nil
         continuation = nil
+        segmentHistory = nil
     }
 
     /// Resolve choices before the server negotiates audio and burned-in subtitles.

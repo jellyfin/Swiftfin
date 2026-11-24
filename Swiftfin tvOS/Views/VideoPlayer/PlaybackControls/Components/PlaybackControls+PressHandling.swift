@@ -13,12 +13,7 @@ extension VideoPlayer.PlaybackControls {
     func handlePressEvent(_ press: VideoPlayer.UIContainerViewController.PressEvent) {
         let isSeekPress = press.type == .leftArrow || press.type == .rightArrow
 
-        if isSeekPress, viewState.isOverlayActionFocused {
-            press.resolve(.fallback)
-            return
-        }
-
-        if viewState.presentation == .hidden, viewState.isPresentingOverlayActions {
+        if !viewState.overlayActions.isEmpty {
             if isSeekPress {
                 press.resolve(.fallback)
                 return
