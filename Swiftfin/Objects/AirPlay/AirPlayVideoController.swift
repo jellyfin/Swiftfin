@@ -45,6 +45,12 @@ final class AirPlayVideoController: MediaSessionObserver {
         }
     }
 
+    private struct RoutePick {
+
+        weak var player: any MediaPlayerExternalVideoProviding?
+        let routeBeforePick: String?
+    }
+
     private(set) var phase = Phase.inactive {
         didSet {
             if phase == .active {
@@ -61,6 +67,10 @@ final class AirPlayVideoController: MediaSessionObserver {
     /// Set when an attempt fails and cleared when one succeeds, so a TV that cannot play the stream is not retried in a loop.
     @ObservationIgnored
     private var isAutomaticAirPlayBlocked = false
+    @ObservationIgnored
+    private var routePick: RoutePick?
+    @ObservationIgnored
+    private var routePickExpiry: AnyCancellable?
     @ObservationIgnored
     private var observations: Set<AnyCancellable> = []
 
@@ -116,6 +126,8 @@ final class AirPlayVideoController: MediaSessionObserver {
 
     private func reset() {
         observations.removeAll()
+        routePick = nil
+        routePickExpiry = nil
         attemptPlayer = nil
         isAutomaticAirPlayBlocked = false
         mediaSession = nil
@@ -146,17 +158,56 @@ final class AirPlayVideoController: MediaSessionObserver {
         if phase == .active, AirPlayVideoRoute.currentID == nil {
             returnToLocal()
         }
+        beginAttemptIfRouted()
     }
 
     private func beginAttemptIfRouted() {
-        guard let mediaSession, isAvailable, isExternalVideoActive else { return }
+        guard let mediaSession, attemptPlayer == nil, isAvailable else { return }
+
+        let routeID = AirPlayVideoRoute.currentID
+        let isNewPick = routePick != nil && routeID != nil && routeID != routePick?.routeBeforePick
+
+        guard isExternalVideoActive || isNewPick else { return }
 
         let player = AVMediaPlayer(playbackProfile: .airPlayVideo)
         player.allowsExternalVideoPlayback = false
         guard mediaSession.transfer(to: player) != nil else { return }
 
+        releaseRoutePick(restoringExternalPlayback: false)
         attemptPlayer = player
         phase = .preparing
+    }
+
+    func routePickerWillPresent() {
+        guard isAvailable, attemptPlayer == nil, !isExternalVideoActive else { return }
+
+        let player = mediaSession?.player as? MediaPlayerExternalVideoProviding
+        routePickExpiry = nil
+        routePick = RoutePick(player: player, routeBeforePick: AirPlayVideoRoute.currentID)
+        player?.allowsExternalVideoPlayback = false
+    }
+
+    func routePickerDidEnd() {
+        beginAttemptIfRouted()
+        guard routePick != nil else { return }
+
+        routePickExpiry = Task { [weak self] in
+            do { try await Task.sleep(for: .seconds(30)) } catch { return }
+            guard let self else { return }
+
+            releaseRoutePick(restoringExternalPlayback: true)
+        }
+        .asAnyCancellable()
+    }
+
+    private func releaseRoutePick(restoringExternalPlayback: Bool) {
+        guard let pick = routePick else { return }
+
+        routePick = nil
+        routePickExpiry = nil
+        if restoringExternalPlayback {
+            pick.player?.allowsExternalVideoPlayback = !isAutomaticAirPlayBlocked
+        }
     }
 
     private func attemptDidChange(_ player: AVMediaPlayer) {
