@@ -19,12 +19,30 @@ final class AirPlayVideoController: MediaSessionObserver {
 
     static let shared = AirPlayVideoController()
 
-    enum Phase {
+    enum Phase: Displayable {
 
         case inactive
         case preparing
         case active
         case restoring
+
+        // swiftlint:disable:next hard_coded_display_string
+        var displayTitle: String {
+            switch self {
+            case .inactive:
+                "On this device"
+            case .preparing:
+                "Preparing AirPlay video"
+            case .active:
+                "AirPlay active"
+            case .restoring:
+                "Returning to this device"
+            }
+        }
+
+        var isTransitioning: Bool {
+            self == .preparing || self == .restoring
+        }
     }
 
     private(set) var phase = Phase.inactive {
