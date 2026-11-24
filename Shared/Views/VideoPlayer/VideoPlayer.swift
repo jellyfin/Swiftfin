@@ -80,6 +80,9 @@ struct VideoPlayer: View {
 
             viewState.toastProxy.present(message, systemName: "exclamationmark.triangle")
         }
+        .onReceive(mediaSession.playbackItem?.didSkipMediaSegment ?? .init()) { type in
+            viewState.toastProxy.present(L10n.skippedSegment(type.displayTitle), systemName: "forward.end.fill")
+        }
         .onChange(of: mediaPlayerManager.sleepTimer.deadline) { oldDeadline, newDeadline in
             guard Defaults[.VideoPlayer.sleepTimerAction] == .pause && newDeadline == nil,
                   let oldDeadline,
