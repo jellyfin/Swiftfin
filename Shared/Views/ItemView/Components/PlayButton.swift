@@ -75,7 +75,7 @@ struct PlayButton: View {
         .accessibilityLabel(L10n.play)
         .accessibilityValue(provider.playbackIntent?.item.playButtonLabel ?? L10n.play)
         .contextMenu {
-            if (provider.playbackIntent?.item.userData?.playbackPositionTicks ?? 0) > 0 {
+            if provider.playbackIntent?.item.userData?.matches([.isResumable]) == true {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
                     play(fromBeginning: true)
                 }
