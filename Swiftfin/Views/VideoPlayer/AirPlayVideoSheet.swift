@@ -36,8 +36,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @ContentBuilder
         var body: some View {
-            // swiftlint:disable:next hard_coded_display_string
-            Button("AirPlay", systemImage: VideoPlayerActionButton.airPlay.systemImage) {
+            Button(L10n.airPlay, systemImage: VideoPlayerActionButton.airPlay.systemImage) {
                 router.route(to: .airPlayVideo)
             }
             .disabled(controller.phase == .inactive && !mediaSession.canControlPlayback)
@@ -55,13 +54,13 @@ struct AirPlayVideoSheet: View {
     private var footer: String {
         switch controller.phase {
         case .inactive:
-            "Choose a TV with the AirPlay button. A stream it can play is prepared once it is selected."
+            L10n.airPlayInactiveDescription
         case .preparing:
-            "Preparing a stream the TV can play."
+            L10n.airPlayPreparingDescription
         case .active:
-            "You can close this and keep using the playback controls. To return, choose this device in the AirPlay picker."
+            L10n.airPlayActiveDescription
         case .restoring:
-            "This device takes over once its stream is ready."
+            L10n.airPlayRestoringDescription
         }
     }
 
@@ -84,7 +83,7 @@ struct AirPlayVideoSheet: View {
                 Text(footer)
             }
         }
-        .navigationTitle("AirPlay")
+        .navigationTitle(L10n.airPlay)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()

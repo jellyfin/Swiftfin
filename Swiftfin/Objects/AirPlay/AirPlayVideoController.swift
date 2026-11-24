@@ -26,17 +26,16 @@ final class AirPlayVideoController: MediaSessionObserver {
         case active
         case restoring
 
-        // swiftlint:disable:next hard_coded_display_string
         var displayTitle: String {
             switch self {
             case .inactive:
-                "On this device"
+                L10n.onThisDevice
             case .preparing:
-                "Preparing AirPlay video"
+                L10n.preparingAirPlayVideo
             case .active:
-                "AirPlay active"
+                L10n.airPlayActive
             case .restoring:
-                "Returning to this device"
+                L10n.returningToThisDevice
             }
         }
 

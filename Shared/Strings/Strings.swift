@@ -74,6 +74,18 @@ internal enum L10n {
   internal static let aired = L10n.tr("Localizable", "aired", fallback: "Aired")
   /// Aired episode order
   internal static let airedEpisodeOrder = L10n.tr("Localizable", "airedEpisodeOrder", fallback: "Aired episode order")
+  /// AirPlay
+  internal static let airPlay = L10n.tr("Localizable", "airPlay", fallback: "AirPlay")
+  /// AirPlay active
+  internal static let airPlayActive = L10n.tr("Localizable", "airPlayActive", fallback: "AirPlay active")
+  /// You can close this and keep using the playback controls. To return, choose this device in the AirPlay picker.
+  internal static let airPlayActiveDescription = L10n.tr("Localizable", "airPlayActiveDescription", fallback: "You can close this and keep using the playback controls. To return, choose this device in the AirPlay picker.")
+  /// Choose a TV with the AirPlay button. A stream it can play is prepared once it is selected.
+  internal static let airPlayInactiveDescription = L10n.tr("Localizable", "airPlayInactiveDescription", fallback: "Choose a TV with the AirPlay button. A stream it can play is prepared once it is selected.")
+  /// Preparing a stream the TV can play.
+  internal static let airPlayPreparingDescription = L10n.tr("Localizable", "airPlayPreparingDescription", fallback: "Preparing a stream the TV can play.")
+  /// This device takes over once its stream is ready.
+  internal static let airPlayRestoringDescription = L10n.tr("Localizable", "airPlayRestoringDescription", fallback: "This device takes over once its stream is ready.")
   /// Air time
   internal static let airTime = L10n.tr("Localizable", "airTime", fallback: "Air time")
   /// Airs %s
@@ -1226,6 +1238,8 @@ internal enum L10n {
   internal static let onlyForced = L10n.tr("Localizable", "onlyForced", fallback: "Only forced")
   /// On Now
   internal static let onNow = L10n.tr("Localizable", "onNow", fallback: "On Now")
+  /// On this device
+  internal static let onThisDevice = L10n.tr("Localizable", "onThisDevice", fallback: "On this device")
   /// Opacity
   internal static let opacity = L10n.tr("Localizable", "opacity", fallback: "Opacity")
   /// Open in Safari
@@ -1420,6 +1434,8 @@ internal enum L10n {
   internal static let preferredLanguage = L10n.tr("Localizable", "preferredLanguage", fallback: "Preferred language")
   /// Premiere date
   internal static let premiereDate = L10n.tr("Localizable", "premiereDate", fallback: "Premiere date")
+  /// Preparing AirPlay video
+  internal static let preparingAirPlayVideo = L10n.tr("Localizable", "preparingAirPlayVideo", fallback: "Preparing AirPlay video")
   /// Press and hold to unlock
   internal static let pressAndHoldToUnlock = L10n.tr("Localizable", "pressAndHoldToUnlock", fallback: "Press and hold to unlock")
   /// Preview
@@ -1628,6 +1644,8 @@ internal enum L10n {
   internal static let retain = L10n.tr("Localizable", "retain", fallback: "Retain")
   /// Retry
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
+  /// Returning to this device
+  internal static let returningToThisDevice = L10n.tr("Localizable", "returningToThisDevice", fallback: "Returning to this device")
   /// Reviews
   internal static let reviews = L10n.tr("Localizable", "reviews", fallback: "Reviews")
   /// Rewatching

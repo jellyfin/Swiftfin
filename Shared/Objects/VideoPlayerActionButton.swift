@@ -30,7 +30,6 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     #endif
     case subtitleOffset
 
-    // swiftlint:disable:next hard_coded_display_string
     var displayTitle: String {
         switch self {
         case .aspectFill:
@@ -61,7 +60,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.subtitles
         #if os(iOS)
         case .airPlay:
-            "AirPlay"
+            L10n.airPlay
         case .gestureLock:
             L10n.gestureLock
         case .playbackDestination:
