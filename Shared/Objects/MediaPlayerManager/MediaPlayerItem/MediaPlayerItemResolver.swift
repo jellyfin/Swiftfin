@@ -66,7 +66,7 @@ enum MediaPlayerItemResolver {
 
         playbackInfo.deviceProfile = deviceProfile
         playbackInfo.liveStreamID = initialMediaSource.liveStreamID
-        playbackInfo.maxStreamingBitrate = maxBitrate
+        playbackInfo.maxStreamingBitrate = deviceProfile.maxStreamingBitrate
         playbackInfo.userID = userSession.user.id
         playbackInfo.audioStreamIndex = configuration.audioStreamIndex
         playbackInfo.subtitleStreamIndex = configuration.subtitleStreamIndex
