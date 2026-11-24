@@ -10,223 +10,244 @@ import Combine
 import Defaults
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
 @MainActor
-@Observable
-final class MediaSegmentObserver: MediaSessionObserver, VideoPlayerOverlayActionProviding {
+final class MediaSegmentObserver {
 
     typealias Loader = @MainActor (String, UserSession) async throws -> [MediaSegmentDto]
 
-    let id = "mediaSegments"
-    private weak var item: MediaPlayerItem?
-    private let load: Loader
-    private weak var mediaSession: MediaSession?
-    private(set) var segments: [MediaSegment] = []
-    private(set) var skippedSegment: MediaSegment?
+    private struct ActiveSegment {
 
-    private var dismissed: Set<String> = []
-    private var suppressed: String?
-    private var countdown: (segmentID: String, remaining: TimeInterval)?
-
-    @ObservationIgnored
-    private let configuration = Defaults[.VideoPlayer.mediaSegments]
-    @ObservationIgnored
-    private var request: AnyCancellable?
-    @ObservationIgnored
-    private var events: AnyCancellable?
-
-    @ObservationIgnored
-    private lazy var countdownTimer = DeadlineTimer { [weak self] in
-        self?.countdown?.remaining = 0
-        self?.updateCountdown()
+        let id = UUID()
+        let segment: MediaSegment
+        let action: MediaSegmentAction
+        var remainingDelay: TimeInterval
+        var deadline: Date?
     }
 
-    init(load: @escaping Loader = { itemID, session in
+    private let configuration = Defaults[.VideoPlayer.mediaSegments]
+    private let store: VideoPlayerOverlayActionStore
+    private weak var item: MediaPlayerItem?
+    private var observations: Set<AnyCancellable> = []
+    private var activeSegment: ActiveSegment?
+    private var publishedButton: (id: UUID, deadline: Date?)?
+    private var requestedSkip: (target: Duration, active: ActiveSegment)?
+    private var pendingSkip: (id: UUID, active: ActiveSegment)?
+
+    init?(item: MediaPlayerItem, load: @escaping Loader = { itemID, session in
         try await session.send(Paths.getItemSegments(itemID: itemID)).value.items ?? []
     }) {
-        self.load = load
-    }
+        guard let mediaSession = item.mediaSession,
+              !item.baseItem.isLiveStream,
+              item.baseItem.mediaType == .video,
+              configuration.actions.values.contains(where: { $0 != .off }),
+              let itemID = item.baseItem.id else { return nil }
 
-    func observe(_ mediaSession: MediaSession) -> AnyCancellable {
-        self.mediaSession = mediaSession
-        item = mediaSession.playbackItem
+        self.item = item
+        self.store = item.overlayActions
 
-        if let item,
-           !item.baseItem.isLiveStream,
-           item.baseItem.mediaType == .video,
-           let type = item.baseItem.type,
-           configuration.itemTypes.contains(type),
-           let itemID = item.baseItem.id {
-            let session = mediaSession.userSession
+        mediaSession.playbackEvents
+            .sink { [weak self] event in
+                self?.receive(event)
+            }
+            .store(in: &observations)
 
-            request = Task { [weak self, weak item, load] in
+        let userSession = mediaSession.userSession
+
+        Task { [weak self] in
+            guard !Task.isCancelled, let history = self?.store.segmentHistory else { return }
+
+            if !history.isLoaded {
                 do {
-                    let values = try await load(itemID, session)
-                    guard !Task.isCancelled, let self, let item, self.mediaSession?.playbackItem === item else { return }
+                    let values = try await load(itemID, userSession)
+                    guard !Task.isCancelled, let item = self?.item, item.mediaSession?.playbackItem === item else { return }
 
-                    segments = MediaSegment.segments(from: values, itemID: itemID)
+                    history.load(values)
                 } catch {
-                    guard !Task.isCancelled else { return }
-
-                    self?.mediaSession?.logger.debug("Media segments unavailable: \(error.localizedDescription)")
+                    if !Task.isCancelled {
+                        self?.item?.mediaSession?.logger.debug("Media segments unavailable: \(error.localizedDescription)")
+                    }
+                    return
                 }
             }
-            .asAnyCancellable()
 
-            events = mediaSession.playbackEvents.sink { [weak self] event in
-                if case .seekRequested = event {
-                    self?.stopCountdown()
-                } else {
-                    self?.updateCountdown()
-                }
-            }
-        }
-
-        let playback = Task { [weak self] in
-            let playing = ObservableValues { [weak self] in
-                self?.isPlaying ?? false
+            let states = ObservableValues { [weak self] in
+                (self?.playbackSession?.canSeek == true, self?.isPlaying == true)
             }
 
-            for await _ in playing {
+            for await _ in states {
                 guard !Task.isCancelled else { return }
 
-                self?.updateCountdown()
+                self?.update()
             }
         }
-
-        return AnyCancellable { [self, playback] in
-            MainActor.assumeIsolated {
-                playback.cancel()
-                request = nil
-                events = nil
-                segments = []
-                skippedSegment = nil
-                dismissed = []
-                suppressed = nil
-                stopCountdown()
-                self.mediaSession = nil
-                item = nil
-            }
-        }
+        .store(in: &observations)
     }
 
-    func dismissOverlayAction(_ id: String) {
-        if configuration.repeatMode == .once {
-            dismissed.insert(id)
-        } else {
-            suppressed = id
-        }
-
-        stopCountdown()
+    isolated deinit {
+        endVisit()
     }
 
     private var isPlaying: Bool {
-        mediaSession?.playbackState.isPlaying == true && mediaSession?.activity == nil
+        guard let session = item?.mediaSession else { return false }
+
+        return session.playbackRequestStatus == .playing && session.playbackState.isPlaying && session.activity == nil
     }
 
-    private var skippableSession: MediaSession? {
-        guard let mediaSession,
-              let item,
-              mediaSession.playbackItem === item,
+    private var playbackSession: MediaSession? {
+        guard let mediaSession = item?.mediaSession,
               mediaSession.state == .playback,
-              mediaSession.canSeek,
+              mediaSession.canControlPlayback,
               !mediaSession.isSeeking else { return nil }
 
         return mediaSession
     }
 
-    private func activeSegment(in mediaSession: MediaSession) -> (segment: MediaSegment, target: Duration)? {
-        for segment in segments
-            where configuration.action(for: segment) != .off && !dismissed.contains(segment.id) && suppressed != segment.id {
-            if let target = segment.skipTarget(at: mediaSession.seconds, duration: mediaSession.duration) {
-                return (segment, target)
+    private func receive(_ event: MediaSession.PlaybackEvent) {
+        guard let item, item.mediaSession?.playbackItem === item else { return }
+
+        switch event {
+        case .positionChanged:
+            update()
+            // Confirm playback is still in this segment before acting on its deadline.
+            if let activeSegment, let deadline = activeSegment.deadline, deadline <= .now {
+                perform(activeSegment.id)
+            }
+
+        case let .seekRequested(request, _):
+            if let requestedSkip, requestedSkip.target == request.target {
+                pendingSkip = (request.id, requestedSkip.active)
+            } else {
+                pendingSkip = nil
+            }
+
+            requestedSkip = nil
+            endVisit()
+
+        case let .seekCompleted(request, position, hasPendingSeek):
+            if let pendingSkip, pendingSkip.id == request.id {
+                self.pendingSkip = nil
+                let active = pendingSkip.active
+
+                if !hasPendingSeek, position != nil {
+                    store.segmentHistory.consume(active.segment, repeatMode: configuration.repeatMode)
+
+                    if active.action == .skip {
+                        item.didSkipMediaSegment.send(active.segment.type)
+                    }
+                } else if active.action == .skip {
+                    store.segmentHistory.consume(active.segment, repeatMode: .everyTime)
+                }
+            }
+
+            update()
+        }
+    }
+
+    private func update() {
+        guard let session = playbackSession else {
+            pauseCountdown()
+            withdrawButton()
+            return
+        }
+
+        let pending = store.segmentHistory.pendingSegment(at: session.seconds, duration: session.duration, for: configuration)
+
+        if let activeSegment, activeSegment.segment.skipTarget(at: session.seconds, duration: session.duration) == nil {
+            endVisit()
+        }
+
+        guard session.canSeek else {
+            pauseCountdown()
+            withdrawButton()
+            return
+        }
+
+        if activeSegment == nil {
+            guard let segment = pending else { return }
+
+            activeSegment = ActiveSegment(
+                segment: segment,
+                action: configuration[segment.type],
+                remainingDelay: TimeInterval(configuration.skipDelay)
+            )
+        }
+
+        if let activeSegment, activeSegment.action == .skip {
+            if configuration.skipDelay == 0 {
+                if isPlaying {
+                    perform(activeSegment.id)
+                }
+                return
+            } else if !isPlaying {
+                pauseCountdown()
+            } else if activeSegment.deadline == nil {
+                self.activeSegment?.deadline = .now.addingTimeInterval(activeSegment.remainingDelay)
             }
         }
 
-        return nil
-    }
-
-    private func updateCountdown() {
-        if let mediaSession,
-           let segment = segments.first(where: { $0.id == suppressed }),
-           segment.skipTarget(at: mediaSession.seconds, duration: mediaSession.duration) == nil {
-            suppressed = nil
-        }
-
-        guard let mediaSession = skippableSession else {
-            pauseCountdown()
-            return
-        }
-        guard let active = activeSegment(in: mediaSession), configuration.action(for: active.segment) == .skip else {
-            stopCountdown()
-            return
-        }
-
-        if countdown?.segmentID != active.segment.id {
-            stopCountdown()
-            countdown = (active.segment.id, TimeInterval(configuration.skipDelay))
-            skippedSegment = nil
-        }
-
-        if let countdown, countdown.remaining <= 0 {
-            skip(active, in: mediaSession)
-        } else if !isPlaying {
-            pauseCountdown()
-        } else if let countdown, countdownTimer.deadline == nil {
-            countdownTimer.start(until: .now.addingTimeInterval(countdown.remaining))
+        if let activeSegment, publishedButton?.id != activeSegment.id || publishedButton?.deadline != activeSegment.deadline {
+            publishButton(for: activeSegment)
         }
     }
 
     private func pauseCountdown() {
-        guard let deadline = countdownTimer.deadline else { return }
+        guard let deadline = activeSegment?.deadline else { return }
 
-        countdown?.remaining = max(deadline.timeIntervalSinceNow, 0)
-        countdownTimer.invalidate()
+        activeSegment?.remainingDelay = max(deadline.timeIntervalSinceNow, 0)
+        activeSegment?.deadline = nil
     }
 
-    private func stopCountdown() {
-        countdown = nil
-        countdownTimer.invalidate()
+    private func endVisit() {
+        withdrawButton()
+        activeSegment = nil
     }
 
-    private func skip(_ active: (segment: MediaSegment, target: Duration), in mediaSession: MediaSession) {
-        if configuration.repeatMode == .once {
-            dismissed.insert(active.segment.id)
-        }
+    private func withdrawButton() {
+        guard let publishedButton else { return }
 
-        stopCountdown()
-        skippedSegment = active.segment
-        mediaSession.seek(to: active.target)
+        self.publishedButton = nil
+        store.withdraw(publishedButton.id)
     }
 
-    var overlayActions: [VideoPlayerOverlayAction] {
-        guard let mediaSession = skippableSession,
-              let segment = activeSegment(in: mediaSession)?.segment else { return [] }
-        guard configuration.action(for: segment) == .ask else {
-            guard let countdown, countdown.segmentID == segment.id else { return [] }
+    private func keep(_ id: UUID) {
+        guard let activeSegment, activeSegment.id == id else { return }
 
-            return [VideoPlayerOverlayAction(
-                id: segment.id,
-                title: L10n.cancel,
-                countdown: .init(
+        store.segmentHistory.consume(activeSegment.segment, repeatMode: configuration.repeatMode)
+        endVisit()
+        update()
+    }
+
+    private func perform(_ id: UUID) {
+        guard let session = playbackSession,
+              let activeSegment,
+              activeSegment.id == id,
+              let target = activeSegment.segment.skipTarget(at: session.seconds, duration: session.duration) else { return }
+
+        requestedSkip = (target, activeSegment)
+        session.seek(to: target)
+        requestedSkip = nil
+    }
+
+    private func publishButton(for active: ActiveSegment) {
+
+        let id = active.id
+        let keep: @MainActor () -> Void = { [weak self] in self?.keep(id) }
+        let perform: @MainActor () -> Void = { [weak self] in self?.perform(id) }
+
+        publishedButton = (id, active.deadline)
+
+        store.publish(.init(id: id, action: active.action == .skip ? keep : perform, onDismiss: keep) {
+            if active.action == .ask {
+                Label(L10n.skip, systemImage: "forward.end.fill")
+            } else {
+                MediaSegmentCountdownLabel(
                     duration: TimeInterval(configuration.skipDelay),
-                    deadline: countdownTimer.deadline,
-                    remaining: countdown.remaining
+                    deadline: active.deadline,
+                    remaining: active.remainingDelay
                 )
-            ) { [weak self] in
-                self?.dismissOverlayAction(segment.id)
-            }]
-        }
-
-        return [VideoPlayerOverlayAction(
-            id: segment.id,
-            title: L10n.skip,
-            systemImage: "forward.end.fill"
-        ) { [weak self] in
-            guard let mediaSession = self?.skippableSession,
-                  let target = segment.skipTarget(at: mediaSession.seconds, duration: mediaSession.duration) else { return }
-
-            mediaSession.seek(to: target)
-        }]
+            }
+        })
     }
 }

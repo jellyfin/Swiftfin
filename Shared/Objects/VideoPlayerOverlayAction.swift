@@ -6,44 +6,30 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
-@MainActor
-protocol VideoPlayerOverlayActionProviding {
-
-    var id: String { get }
-    var overlayActions: [VideoPlayerOverlayAction] { get }
-
-    func dismissOverlayAction(_ id: String)
-}
+import SwiftUI
 
 @MainActor
 struct VideoPlayerOverlayAction: Identifiable {
 
-    struct Countdown {
+    let id: UUID
 
-        let duration: TimeInterval
-        let deadline: Date?
-        let remaining: TimeInterval
+    var focusID: String {
+        "player.overlayAction.\(id)"
     }
 
-    let id: String
-    let title: String
-    let systemImage: String?
-    let countdown: Countdown?
+    let label: AnyView
     let action: @MainActor () -> Void
+    let onDismiss: @MainActor () -> Void
 
     init(
-        id: String,
-        title: String,
-        systemImage: String? = nil,
-        countdown: Countdown? = nil,
-        action: @escaping @MainActor () -> Void
+        id: UUID = UUID(),
+        action: @escaping @MainActor () -> Void,
+        onDismiss: @escaping @MainActor () -> Void = {},
+        @ContentBuilder label: () -> some View
     ) {
         self.id = id
-        self.title = title
-        self.systemImage = systemImage
-        self.countdown = countdown
+        self.label = AnyView(label())
         self.action = action
+        self.onDismiss = onDismiss
     }
 }

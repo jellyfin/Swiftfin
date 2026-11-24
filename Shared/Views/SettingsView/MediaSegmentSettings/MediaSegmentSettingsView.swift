@@ -21,56 +21,30 @@ struct MediaSegmentSettingsView: View {
     @Default(.VideoPlayer.mediaSegments)
     private var configuration
 
-    @Router
-    private var router
-
     @ContentBuilder
     var body: some View {
+        let showsSkipDelay = configuration.actions.values.contains(.skip)
+
         Form(systemImage: "forward.end") {
             Section(L10n.mediaSegments) {
                 ForEach(MediaSegmentType.supportedCases, id: \.self) { type in
                     PlatformPicker(type.displayTitle, selection: $configuration[type])
                 }
             } learnMore: {
-                LabeledContent(
-                    MediaSegmentAction.off.displayTitle,
-                    value: MediaSegmentAction.off.description
-                )
-
-                LabeledContent(
-                    MediaSegmentAction.ask.displayTitle,
-                    value: MediaSegmentAction.ask.description
-                )
-
-                LabeledContent(
-                    MediaSegmentAction.skip.displayTitle,
-                    value: MediaSegmentAction.skip.description
-                )
+                ForEach(MediaSegmentAction.allCases, id: \.self) { option in
+                    LabeledContent(option.displayTitle, value: option.description)
+                }
             }
 
             Section(L10n.configuration) {
                 PlatformPicker(L10n.repeat, selection: $configuration.repeatMode)
             } learnMore: {
-                LabeledContent(
-                    MediaSegmentRepeatMode.once.displayTitle,
-                    value: MediaSegmentRepeatMode.once.description
-                )
-
-                LabeledContent(
-                    MediaSegmentRepeatMode.everyTime.displayTitle,
-                    value: MediaSegmentRepeatMode.everyTime.description
-                )
-            }
-
-            Section {
-                ChevronButton(L10n.mediaTypes) {
-                    router.route(to: .mediaSegmentItemTypes)
+                ForEach(MediaSegmentRepeatMode.allCases, id: \.self) { option in
+                    LabeledContent(option.displayTitle, value: option.description)
                 }
-            } footer: {
-                Text(L10n.mediaSegmentMediaTypesDescription)
             }
 
-            if configuration.actions.values.contains(.skip) {
+            if showsSkipDelay {
                 Section {
                     Stepper(L10n.skipDelay, value: $configuration.skipDelay, in: 0 ... 30, step: 1) {
                         LabeledContent(L10n.skipDelay) {
@@ -81,22 +55,9 @@ struct MediaSegmentSettingsView: View {
                 } footer: {
                     Text(L10n.skipDelayDescription)
                 }
-
-                if configuration.skipDelay > 0 {
-                    Section {
-                        #if os(tvOS)
-                        ListRowMenu(L10n.shortSegments, subtitle: Text(configuration.shortSegmentAction.displayTitle)) {
-                            Picker(L10n.shortSegments, selection: $configuration.shortSegmentAction, onlySupported: true)
-                        }
-                        #else
-                        Picker(L10n.shortSegments, selection: $configuration.shortSegmentAction, onlySupported: true)
-                        #endif
-                    } footer: {
-                        Text(L10n.shortSegmentsDescription)
-                    }
-                }
             }
         }
+        .animation(.linear, value: showsSkipDelay)
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.mediaSegments.localizedCapitalized)
     }

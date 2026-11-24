@@ -1088,8 +1088,6 @@ internal enum L10n {
   internal static let mediaSegmentAskDescription = L10n.tr("Localizable", "mediaSegmentAskDescription", fallback: "Show a skip button.")
   /// Offer or skip a segment every time it plays.
   internal static let mediaSegmentEveryTimeDescription = L10n.tr("Localizable", "mediaSegmentEveryTimeDescription", fallback: "Offer or skip a segment every time it plays.")
-  /// Media types that use media segments.
-  internal static let mediaSegmentMediaTypesDescription = L10n.tr("Localizable", "mediaSegmentMediaTypesDescription", fallback: "Media types that use media segments.")
   /// Ignore the segment.
   internal static let mediaSegmentOffDescription = L10n.tr("Localizable", "mediaSegmentOffDescription", fallback: "Ignore the segment.")
   /// Offer or skip each segment once per item.
@@ -1098,8 +1096,6 @@ internal enum L10n {
   internal static let mediaSegments = L10n.tr("Localizable", "mediaSegments", fallback: "Media segments")
   /// Skip automatically after the delay.
   internal static let mediaSegmentSkipDescription = L10n.tr("Localizable", "mediaSegmentSkipDescription", fallback: "Skip automatically after the delay.")
-  /// Media types
-  internal static let mediaTypes = L10n.tr("Localizable", "mediaTypes", fallback: "Media types")
   /// Mbps
   internal static let megabitsPerSecond = L10n.tr("Localizable", "megabitsPerSecond", fallback: "Mbps")
   /// Menu
@@ -1742,10 +1738,6 @@ internal enum L10n {
   internal static let settings = L10n.tr("Localizable", "settings", fallback: "Settings")
   /// Short
   internal static let short = L10n.tr("Localizable", "short", fallback: "Short")
-  /// Short segments
-  internal static let shortSegments = L10n.tr("Localizable", "shortSegments", fallback: "Short segments")
-  /// For segments shorter than the skip delay.
-  internal static let shortSegmentsDescription = L10n.tr("Localizable", "shortSegmentsDescription", fallback: "For segments shorter than the skip delay.")
   /// Show favorited
   internal static let showFavorited = L10n.tr("Localizable", "showFavorited", fallback: "Show favorited")
   /// Show missing episodes

@@ -18,16 +18,6 @@ extension VideoPlayer {
         @Environment(ViewState.self)
         private var viewState
 
-        @FocusState
-        private var focusedAction: String?
-
-        @State
-        private var offsets: [ViewState.OverlayAction.ID: CGFloat] = [:]
-
-        private var actions: [ViewState.OverlayAction] {
-            viewState.visibleElements.contains(.overlayActions) ? viewState.overlayActions : []
-        }
-
         @ContentBuilder
         var body: some View {
             ViewThatFits(in: .horizontal) {
@@ -46,19 +36,8 @@ extension VideoPlayer {
             .frame(maxWidth: .infinity, alignment: .trailing)
             #if os(tvOS)
             .focusSection()
-            .onMoveCommand { direction in
-                if direction == .left || direction == .right,
-                   let action = actions.first(where: { $0.id.focusID == focusedAction }) {
-                    dismissOverlayAction(action, towards: direction == .left ? .left : .right)
-                } else if viewState.presentation == .hidden, direction == .up || direction == .down {
-                    viewState.showControls()
-                }
-            }
-            .onChange(of: actions.map(\.id), initial: true) { oldIDs, _ in
+            .onChange(of: viewState.overlayActions.map(\.focusID), initial: true) { oldIDs, _ in
                 viewState.updateOverlayActionFocus(previousIDs: oldIDs)
-            }
-            .onChange(of: viewState.presentation) {
-                viewState.updateOverlayActionFocus()
             }
             .onChange(of: viewState.isPresentingCloseConfirmation) {
                 if !viewState.isPresentingCloseConfirmation {
@@ -75,66 +54,68 @@ extension VideoPlayer {
                 : AnyLayout(VStackLayout(alignment: .trailing, spacing: 12))
 
             layout {
-                ForEach(actions) { action in
-                    Button {
-                        viewState.performOverlayAction(action.id)
-                    } label: {
-                        if let countdown = action.button.countdown {
-                            Label {
-                                Text(action.button.title)
-                            } icon: {
-                                AlternateLayoutView {
-                                    Image(systemName: "circle")
-                                } content: {
-                                    TimelineView(.animation(paused: countdown.deadline == nil)) { context in
-                                        let remaining = max(countdown.deadline?.timeIntervalSince(context.date) ?? countdown.remaining, 0)
-
-                                        ProgressView(value: min(max(1 - remaining / countdown.duration, 0), 1)) {
-                                            EmptyView()
-                                        } currentValueLabel: {
-                                            Text(Int(remaining.rounded(.up)), format: .number)
-                                        }
-                                        .progressViewStyle(.countdown)
-                                    }
-                                }
-                            }
-                        } else if let systemImage = action.button.systemImage {
-                            Label(action.button.title, systemImage: systemImage)
-                        } else {
-                            Text(action.button.title)
-                        }
-                    }
-                    .buttonStyle(OverlayActionButtonStyle())
-                    .coordinatedFocus(action.id.focusID, selection: $focusedAction)
-                    .offset(x: offsets[action.id] ?? 0)
-                    .opacity(1 - min(abs(offsets[action.id] ?? 0) / 60, 1))
-                    #if os(iOS)
-                    .highPriorityGesture(
-                        DragGesture(minimumDistance: 10)
-                            .onChanged { value in
-                                offsets[action.id] = value.translation.width
-                            }
-                            .onEnded { value in
-                                if abs(value.predictedEndTranslation.width) > 120 {
-                                    dismissOverlayAction(action, towards: value.predictedEndTranslation.width < 0 ? .left : .right)
-                                } else {
-                                    withAnimation(.spring(duration: 0.3)) {
-                                        offsets[action.id] = 0
-                                    }
-                                }
-                            }
-                    )
-                    #endif
+                ForEach(viewState.overlayActions) { action in
+                    OverlayActionButton(action: action)
                 }
             }
         }
+    }
 
-        private func dismissOverlayAction(_ action: ViewState.OverlayAction, towards direction: Direction) {
+    private struct OverlayActionButton: View {
+
+        @Environment(ViewState.self)
+        private var viewState
+
+        @GestureState(resetTransaction: Transaction(animation: .spring(duration: 0.3)))
+        private var dragOffset: CGFloat = 0
+
+        @State
+        private var dismissalOffset: CGFloat?
+
+        let action: VideoPlayerOverlayAction
+
+        @ContentBuilder
+        var body: some View {
+            let offset = dismissalOffset ?? dragOffset
+
+            Button {
+                viewState.performOverlayAction(action.id)
+            } label: {
+                action.label
+            }
+            .buttonStyle(OverlayActionButtonStyle())
+            .coordinatedFocus(action.focusID)
+            .offset(x: offset)
+            .opacity(1 - min(abs(offset) / 60, 1))
+            #if os(iOS)
+            .highPriorityGesture(
+                DragGesture(minimumDistance: 10)
+                    .updating($dragOffset) { value, offset, _ in
+                        offset = value.translation.width
+                    }
+                    .onEnded { value in
+                        let distance = value.predictedEndTranslation.width
+                        if abs(distance) > 120 {
+                            dismiss(offset: distance < 0 ? -60 : 60)
+                        }
+                    }
+            )
+            #else
+            .onMoveCommand { direction in
+                switch direction {
+                case .left: dismiss(offset: -60)
+                case .right: dismiss(offset: 60)
+                case .up, .down: viewState.showControls()
+                default: break
+                }
+            }
+            #endif
+        }
+
+        private func dismiss(offset: CGFloat) {
             withAnimation(.easeOut(duration: 0.25)) {
-                offsets[action.id] = direction == .left ? -60 : 60
-            } completion: {
+                dismissalOffset = offset
                 viewState.dismissOverlayAction(action.id)
-                offsets[action.id] = nil
             }
         }
     }

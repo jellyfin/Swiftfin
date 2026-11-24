@@ -440,29 +440,4 @@ extension BaseItemKind {
             .default
         }
     }
-
-    var mediaType: MediaType {
-        switch self {
-        case .episode, .liveTvChannel, .liveTvProgram, .movie, .musicVideo, .program,
-             .recording, .trailer, .tvChannel, .tvProgram, .video:
-            .video
-        case .audio, .audioBook:
-            .audio
-        case .photo:
-            .photo
-        case .book:
-            .book
-        default:
-            .unknown
-        }
-    }
-
-    var isLiveStream: Bool {
-        switch self {
-        case .liveTvChannel, .liveTvProgram, .program, .tvChannel, .tvProgram:
-            true
-        default:
-            false
-        }
-    }
 }

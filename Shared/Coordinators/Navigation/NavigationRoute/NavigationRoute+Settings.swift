@@ -267,14 +267,6 @@ extension NavigationRoute {
         }
     }
 
-    static var mediaSegmentItemTypes: NavigationRoute {
-        NavigationRoute(
-            id: "mediaSegmentItemTypes"
-        ) {
-            MediaSegmentItemTypesView()
-        }
-    }
-
     static var mediaSegmentSettings: NavigationRoute {
         NavigationRoute(
             id: "mediaSegmentSettings"

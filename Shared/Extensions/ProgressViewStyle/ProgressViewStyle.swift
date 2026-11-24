@@ -8,13 +8,6 @@
 
 import SwiftUI
 
-extension ProgressViewStyle where Self == CountdownProgressViewStyle {
-
-    static var countdown: CountdownProgressViewStyle {
-        CountdownProgressViewStyle()
-    }
-}
-
 extension ProgressViewStyle where Self == GaugeProgressViewStyle {
 
     static var gauge: GaugeProgressViewStyle {

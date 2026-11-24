@@ -43,17 +43,7 @@ struct MediaSegment: Identifiable, Hashable, Sendable {
         var ids: Set<String> = []
 
         return values.compactMap { MediaSegment($0, itemID: itemID) }
-            .sorted {
-                if $0.start != $1.start {
-                    return $0.start < $1.start
-                }
-
-                if $0.end != $1.end {
-                    return $0.end < $1.end
-                }
-
-                return $0.id < $1.id
-            }
+            .sorted { ($0.start, $0.end, $0.id) < ($1.start, $1.end, $1.id) }
             .filter { ids.insert($0.id).inserted }
             .reduce(into: []) { segments, segment in
                 // Handle back-to-back segments of the same type as a single duration

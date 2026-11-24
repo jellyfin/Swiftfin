@@ -12,10 +12,8 @@ import JellyfinAPI
 struct MediaSegmentConfiguration: Hashable, Storable, WithDefaultValue {
 
     var actions: [MediaSegmentType: MediaSegmentAction] = [.intro: .ask, .outro: .ask]
-    var itemTypes: [BaseItemKind] = BaseItemKind.allCases.filter { $0.mediaType == .video && !$0.isLiveStream }
     var skipDelay: Int = 5
     var repeatMode: MediaSegmentRepeatMode = .once
-    var shortSegmentAction: MediaSegmentAction = .ask
 
     subscript(type: MediaSegmentType) -> MediaSegmentAction {
         get {
@@ -24,14 +22,6 @@ struct MediaSegmentConfiguration: Hashable, Storable, WithDefaultValue {
         set {
             actions[type] = newValue
         }
-    }
-
-    func action(for segment: MediaSegment) -> MediaSegmentAction {
-        let action = self[segment.type]
-
-        guard action == .skip, segment.end - segment.start < .seconds(skipDelay) else { return action }
-
-        return shortSegmentAction
     }
 
     static let `default` = MediaSegmentConfiguration()

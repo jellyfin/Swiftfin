@@ -9,6 +9,7 @@
 import Combine
 import Defaults
 import Foundation
+import IdentifiedCollections
 import SwiftUI
 
 extension VideoPlayer {
@@ -44,7 +45,6 @@ extension VideoPlayer {
 
         enum Element {
 
-            case overlayActions
             case progress
             case toolbar
             case playbackButtons
@@ -82,57 +82,26 @@ extension VideoPlayer {
             }
         }
 
-        struct OverlayAction: Identifiable {
+        private var visibleOverlayActionStore: VideoPlayerOverlayActionStore? {
+            guard presentation == .hidden, !isGestureLocked, !isScrubbing else { return nil }
 
-            struct ID: Hashable {
-
-                let providerID: String
-                let actionID: String
-
-                var focusID: String {
-                    "player.overlayAction.\(providerID.count):\(providerID)\(actionID)"
-                }
-            }
-
-            let id: ID
-            let button: VideoPlayerOverlayAction
+            return mediaSession?.playbackItem?.overlayActions
         }
 
-        private var overlayActionProviders: [any VideoPlayerOverlayActionProviding] {
-            (mediaSession?.playbackItem?
-                .segments
-                .map { [$0 as any VideoPlayerOverlayActionProviding] } ?? []) +
-                supplements
-                .compactMap { $0 as? any VideoPlayerOverlayActionProviding }
-        }
-
-        var overlayActions: [OverlayAction] {
-            overlayActionProviders.flatMap { provider in
-                provider.overlayActions.map {
-                    OverlayAction(id: .init(providerID: provider.id, actionID: $0.id), button: $0)
-                }
-            }
-        }
-
-        var isPresentingOverlayActions: Bool {
-            visibleElements.contains(.overlayActions)
+        var overlayActions: IdentifiedArrayOf<VideoPlayerOverlayAction> {
+            visibleOverlayActionStore?.actions ?? []
         }
 
         var isOverlayActionFocused: Bool {
-            isPresentingOverlayActions && overlayActions.contains { focusCoordinator.focusedIDs.contains($0.id.focusID) }
+            overlayActions.contains { focusCoordinator.focusedIDs.contains($0.focusID) }
         }
 
-        func performOverlayAction(_ id: OverlayAction.ID) {
-            guard isPresentingOverlayActions,
-                  let action = overlayActions.first(where: { $0.id == id })
-            else { return }
-
-            action.button.action()
-            refreshAutoDismiss()
+        func performOverlayAction(_ id: UUID) {
+            overlayActions[id: id]?.action()
         }
 
-        func dismissOverlayAction(_ id: OverlayAction.ID) {
-            overlayActionProviders.first { $0.id == id.providerID }?.dismissOverlayAction(id.actionID)
+        func dismissOverlayAction(_ id: UUID) {
+            visibleOverlayActionStore?.dismiss(id)
         }
 
         #if os(tvOS)
@@ -140,21 +109,18 @@ extension VideoPlayer {
             focusCoordinator.focus(mediaSession?.item.isLiveStream == true ? Focus.controls : Focus.progress)
         }
 
-        func updateOverlayActionFocus(previousIDs: [OverlayAction.ID] = []) {
+        func updateOverlayActionFocus(previousIDs: [String] = []) {
             guard !isPresentingCloseConfirmation,
                   containerView?.presentedViewController == nil
             else { return }
 
-            if presentation == .hidden, isPresentingOverlayActions {
-                if !isOverlayActionFocused, let first = overlayActions.first {
-                    focusCoordinator.focus(first.id.focusID)
+            if let first = overlayActions.first {
+                if !isOverlayActionFocused {
+                    focusCoordinator.focus(first.focusID)
                 }
             } else if isPresentingProgress,
-                      previousIDs.contains(where: {
-                          focusCoordinator.focusedIDs.contains($0.focusID) ||
-                              focusCoordinator.lastFocusedIDs.contains($0.focusID)
-                      }),
-                      !isOverlayActionFocused {
+                      !focusCoordinator.focusedIDs.isDisjoint(with: previousIDs) ||
+                      !focusCoordinator.lastFocusedIDs.isDisjoint(with: previousIDs) {
                 focusPlaybackControls()
             }
         }
@@ -324,19 +290,13 @@ extension VideoPlayer {
 
             switch presentation {
             case .hidden:
-                return overlayActions.isEmpty ? [] : [.overlayActions]
+                return []
 
             case .progress:
-                return overlayActions.isEmpty ? [.progress] : [.progress, .overlayActions]
+                return [.progress]
 
             case .controls:
                 var elements: Set<Element> = [.progress, .toolbar, .playbackButtons, .dimming]
-
-                #if os(iOS)
-                if overlayActions.isNotEmpty {
-                    elements.insert(.overlayActions)
-                }
-                #endif
 
                 if supplements.isNotEmpty {
                     elements.insert(.supplements)

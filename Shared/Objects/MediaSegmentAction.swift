@@ -6,16 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum MediaSegmentAction: String, Displayable, Storable, SupportedCaseIterable {
+enum MediaSegmentAction: String, CaseIterable, Displayable, Storable {
 
     case off
     case ask
     case skip
-
-    /// Actions available to segments that are too short to skip automatically.
-    static var supportedCases: [MediaSegmentAction] {
-        [.off, .ask]
-    }
 
     var displayTitle: String {
         switch self {
