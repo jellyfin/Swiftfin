@@ -44,9 +44,7 @@ struct ResumeItemsLibrary: BaseItemKindLibrary {
     }
 
     func includes(_ element: ItemEntry, environment: Empty) -> Bool {
-        guard let userData = element.item.confirmedUserData else { return true }
-
-        return (userData.playbackPositionTicks ?? 0) > 0
+        element.item.confirmedUserData?.matches([.isResumable]) != false
     }
 }
 
