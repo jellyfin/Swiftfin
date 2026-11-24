@@ -169,7 +169,10 @@ final class AirPlayVideoController: MediaSessionObserver {
     private func updateOutputPolicy() {
         guard let mediaSession else { return }
 
+        let isExternal = attemptPlayer != nil || isExternalVideoActive
         var policy = MediaSession.OutputPolicy()
+        policy.allowsTransfer = !isExternal
+        policy.continuesInBackground = isExternalVideoActive || phase == .preparing
         policy.isChangingRoute = phase == .preparing
         policy.routeSharingPolicy = isAvailable ? .longFormVideo : .default
 

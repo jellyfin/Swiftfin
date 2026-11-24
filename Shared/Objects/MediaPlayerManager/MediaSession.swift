@@ -76,6 +76,8 @@ final class MediaSession {
 
     struct OutputPolicy: Equatable {
 
+        var allowsTransfer = true
+        var continuesInBackground = false
         var isChangingRoute = false
         var routeSharingPolicy = AVAudioSession.RouteSharingPolicy.default
     }

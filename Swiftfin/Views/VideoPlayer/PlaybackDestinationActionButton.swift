@@ -42,7 +42,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                         ) {
                             controller.select(device, for: mediaSession)
                         }
-                        .disabled(!mediaSession.canControlPlayback)
+                        .disabled(!mediaSession.canControlPlayback || !mediaSession.outputPolicy.allowsTransfer)
                     }
                 } else {
                     Text(L10n.noCastDevicesFound)
