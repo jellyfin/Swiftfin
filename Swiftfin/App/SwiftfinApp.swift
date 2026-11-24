@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import FactoryKit
 import SwiftUI
 import UIKit
 
@@ -14,6 +15,10 @@ struct SwiftfinApp: App {
 
     init() {
         Self.configure()
+
+        Container.shared.mediaSessionObservers.register {
+            MainActor.assumeIsolated { [AirPlayVideoController.shared] }
+        }
 
         UIScrollView.appearance().keyboardDismissMode = .onDrag
 

@@ -16,6 +16,11 @@ extension Container {
     var mediaPlayerManager: Factory<MediaPlayerManager> {
         self { MainActor.assumeIsolated { MediaPlayerManager() } }.singleton
     }
+
+    /// Features that follow every playback session for its whole life.
+    var mediaSessionObservers: Factory<[any MediaSessionObserver]> {
+        self { [] }
+    }
 }
 
 /// The app's permanent owner of playback sessions and system playback integration.
@@ -37,6 +42,8 @@ final class MediaPlayerManager {
     private var nowPlayingObservation: (location: MediaPlaybackLocation, token: AnyCancellable)?
     @ObservationIgnored
     private var lifecycleObservations: Set<AnyCancellable> = []
+    @ObservationIgnored
+    private var featureObservations: [AnyCancellable] = []
 
     @ObservationIgnored
     private(set) lazy var sleepTimer = DeadlineTimer { [weak self] in
@@ -99,6 +106,8 @@ final class MediaPlayerManager {
         )
 
         currentSession = session
+        featureObservations.removeAll()
+        featureObservations = Container.shared.mediaSessionObservers().map { $0.observe(session) }
 
         sessionObservation = session.core.statePublisher.sink { [weak self, weak session] state in
             guard let self, let session, currentSession === session else { return }
@@ -119,6 +128,7 @@ final class MediaPlayerManager {
 
             case .stopped:
                 nowPlayingObservation = nil
+                featureObservations = []
                 sessionObservation = nil
                 currentSession = nil
             }

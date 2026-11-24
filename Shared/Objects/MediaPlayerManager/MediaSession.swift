@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import AVFoundation
 import Combine
 import Defaults
 import Foundation
@@ -73,6 +74,12 @@ final class MediaSession {
         case paused
     }
 
+    struct OutputPolicy: Equatable {
+
+        var isChangingRoute = false
+        var routeSharingPolicy = AVAudioSession.RouteSharingPolicy.default
+    }
+
     let id = UUID()
     var commandError: String?
     private(set) var intent: PlaybackIntent
@@ -85,6 +92,7 @@ final class MediaSession {
     private(set) var player: any MediaPlayer?
     private let progressReporter: MediaProgressReporter
     let queue: any MediaPlayerQueue?
+    var outputPolicy = OutputPolicy()
 
     var rate: Double = Defaults[.VideoPlayer.Playback.playbackRate] {
         didSet {
@@ -103,7 +111,7 @@ final class MediaSession {
     }
 
     var canReturnToLocalPlayback: Bool {
-        isRemotePlayback && localPlayer != nil && state != .stopped && state != .error
+        localPlayer != nil && player !== localPlayer && state != .stopped && state != .error
     }
 
     @ObservationIgnored

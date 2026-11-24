@@ -21,6 +21,8 @@ struct ExperimentalSettingsView: View {
     private var isVideoPlayerEPGEnabled
 
     #if os(iOS)
+    @Default(.Experimental.airPlayVideo)
+    private var isAirPlayVideoEnabled
     @Default(.Experimental.chromecast)
     private var isChromecastEnabled
     #endif
@@ -36,6 +38,7 @@ struct ExperimentalSettingsView: View {
 
             #if os(iOS)
             Toggle("Auto switch connection", isOn: $isServerConnectionAutoSwitchEnabled)
+            Toggle("AirPlay", isOn: $isAirPlayVideoEnabled)
             Toggle("Chromecast", isOn: $isChromecastEnabled)
                 .onChange(of: isChromecastEnabled) {
                     if isChromecastEnabled,

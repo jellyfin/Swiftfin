@@ -195,7 +195,9 @@ final class NowPlayableObserver: MediaSessionObserver {
             .publisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] reason in
-                guard self?.ownsAudioSession == true, reason == .oldDeviceUnavailable else { return }
+                guard self?.ownsAudioSession == true,
+                      reason == .oldDeviceUnavailable,
+                      self?.mediaSession?.outputPolicy.isChangingRoute != true else { return }
 
                 self?.playbackRequestStateBeforeInterruption = .paused
                 self?.mediaSession?.setPlaybackRequestStatus(status: .paused)
@@ -534,8 +536,9 @@ final class NowPlayableObserver: MediaSessionObserver {
 
         let session = AVAudioSession.sharedInstance()
         let isAudio = mediaSession?.item.nowPlayableStaticMetadata().mediaType == .audio
+        let policy = mediaSession?.outputPolicy.routeSharingPolicy ?? .default
 
-        try session.setCategory(.playback, mode: isAudio ? .default : .moviePlayback)
+        try session.setCategory(.playback, mode: isAudio ? .default : .moviePlayback, policy: policy)
         try session.setSupportsMultichannelContent(true)
         try session.setActive(true)
 

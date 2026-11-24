@@ -87,6 +87,13 @@ protocol MediaPlayerMetadataProviding {
 }
 
 @MainActor
+protocol MediaPlayerExternalVideoProviding: AnyObject, Observable {
+
+    var isExternalVideoActive: Bool { get }
+    var allowsExternalVideoPlayback: Bool { get set }
+}
+
+@MainActor
 protocol MediaPlayerOffsetProviding {
 
     func setOffset(_ seconds: Duration, for type: MediaStreamType)
