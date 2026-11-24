@@ -137,6 +137,10 @@ final class AirPlayVideoController: MediaSessionObserver {
     private func sessionDidChange() {
         guard let mediaSession else { return }
 
+        if isExternalVideoActive {
+            AirPlayVideoRoute.rememberCurrent()
+        }
+
         if let attemptPlayer, mediaSession.player === attemptPlayer {
             attemptDidChange(attemptPlayer)
         } else if attemptPlayer != nil {
@@ -166,8 +170,9 @@ final class AirPlayVideoController: MediaSessionObserver {
 
         let routeID = AirPlayVideoRoute.currentID
         let isNewPick = routePick != nil && routeID != nil && routeID != routePick?.routeBeforePick
+        let isKnownTV = AirPlayVideoRoute.isCurrentRemembered && (routePick != nil || !isAutomaticAirPlayBlocked)
 
-        guard isExternalVideoActive || isNewPick else { return }
+        guard isExternalVideoActive || isNewPick || isKnownTV else { return }
 
         let player = AVMediaPlayer(playbackProfile: .airPlayVideo)
         player.allowsExternalVideoPlayback = false
