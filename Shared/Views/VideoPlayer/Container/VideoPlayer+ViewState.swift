@@ -520,14 +520,11 @@ extension VideoPlayer {
 
                 for await activity in activities {
                     guard !Task.isCancelled else { return }
-                    guard activity == (mediaSession?.activity, mediaSession?.canSeek == true),
-                          let currentActivity = activity.0,
-                          previousActivity != (
-                              currentActivity,
-                              activity.1
-                          ) else { continue }
+                    guard let mediaSession,
+                          activity == (mediaSession.activity, mediaSession.canSeek),
+                          previousActivity != activity else { continue }
 
-                    previousActivity = (currentActivity, activity.1)
+                    previousActivity = activity
                     self?.playbackActivityDidChange(canSeek: activity.1)
                 }
             }
