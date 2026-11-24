@@ -231,7 +231,6 @@ final class MediaSegmentObserver {
     }
 
     private func publishButton(for active: ActiveSegment) {
-
         let id = active.id
         let keep: @MainActor () -> Void = { [weak self] in self?.keep(id) }
         let perform: @MainActor () -> Void = { [weak self] in self?.perform(id) }
