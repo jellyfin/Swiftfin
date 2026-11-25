@@ -19,12 +19,40 @@ where Library.Element: LibraryElement, Library.Element: Poster {
 
     private struct HeaderButtonStyle: ButtonStyle {
 
+        @AdaptiveLayout
+        private var viewLayout
+
+        @Environment(\.controlSize)
+        private var controlSize
+
+        @Environment(\.isFocused)
+        private var isFocused
+
+        private var metrics: CapsuleButtonStyle.CapsuleControlMetrics {
+            CapsuleButtonStyle.CapsuleControlMetrics(controlSize, layout: viewLayout)
+        }
+
+        private var foregroundStyle: AnyShapeStyle {
+            isFocused ? AnyShapeStyle(Color.white.overlayColor) : AnyShapeStyle(HierarchicalShapeStyle.primary)
+        }
+
         @ContentBuilder
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
-                .scaleEffect(configuration.isPressed ? 0.97 : 1)
+                .foregroundStyle(foregroundStyle)
+                .padding(.horizontal, metrics.horizontalPadding)
+                .padding(.vertical, metrics.verticalPadding)
+                .background {
+                    Capsule()
+                        .fill(.white)
+                        .opacity(isFocused ? 1 : 0)
+                }
+                .contentShape(.capsule)
+                .scaleEffect(isFocused ? 1.05 : 1)
                 .opacity(configuration.isPressed ? 0.8 : 1)
+                .animation(.linear(duration: 0.1), value: isFocused)
                 .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+                .padding(.leading, -metrics.horizontalPadding)
         }
     }
 
@@ -44,10 +72,6 @@ where Library.Element: LibraryElement, Library.Element: Poster {
         router.route(to: .library(library: viewModel.library, displayTitle: group.displayTitle))
     }
 
-    private var isHeaderFocused: Bool {
-        focusedSection == .header
-    }
-
     @ContentBuilder
     private var headerTitle: some View {
         Text(group.displayTitle)
@@ -60,34 +84,12 @@ where Library.Element: LibraryElement, Library.Element: Poster {
     private var header: some View {
         if group.environment.isHeaderButtonEnabled {
             Button(action: routeToLibrary) {
-                if viewLayout.isLarge {
-                    HStack(spacing: 3) {
-                        headerTitle
+                HStack(spacing: 3) {
+                    headerTitle
 
-                        if isHeaderFocused {
-                            Image(systemName: "chevron.forward")
-                                .font(.title3)
-                                .foregroundStyle(.secondary)
-                                .transition(.opacity)
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .backport
-                    .glassEffect(
-                        isHeaderFocused ? .regular : .identity,
-                        in: .capsule
-                    )
-                    .animation(.easeInOut(duration: 0.15), value: isHeaderFocused)
-                    .offset(x: -16)
-                } else {
-                    HStack(spacing: 3) {
-                        headerTitle
-
-                        Image(systemName: "chevron.forward")
-                            .font(.title3)
-                            .foregroundStyle(.secondary)
-                    }
+                    Image(systemName: "chevron.forward")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
                 }
             }
             .foregroundStyle(.primary, .secondary)
