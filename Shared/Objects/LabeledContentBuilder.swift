@@ -18,6 +18,12 @@ struct LabeledContentBuilder {
     }
 
     static func buildBlock(
+        _ content: ForEach<some RandomAccessCollection, some Hashable, LabeledContent<some View, some View>>
+    ) -> AnyView {
+        .init(content)
+    }
+
+    static func buildBlock(
         _ content: ForEach<some RandomAccessCollection, some Hashable, LabeledContent<some View, some View>?>
     ) -> AnyView {
         .init(content)

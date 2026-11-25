@@ -10,9 +10,6 @@ import SwiftUI
 
 struct GaugeProgressViewStyle: ProgressViewStyle {
 
-    @AppTheme
-    private var theme
-
     @State
     private var contentSize: CGSize = .zero
 
@@ -38,14 +35,14 @@ struct GaugeProgressViewStyle: ProgressViewStyle {
 
             Circle()
                 .stroke(
-                    Color.gray.opacity(0.2),
+                    .tertiary,
                     lineWidth: contentSize.width * lineWidthRatio
                 )
 
             Circle()
                 .trim(from: 0, to: configuration.fractionCompleted ?? 0)
                 .stroke(
-                    theme.accentColor,
+                    .primary,
                     style: StrokeStyle(
                         lineWidth: contentSize.width * lineWidthRatio,
                         lineCap: .round

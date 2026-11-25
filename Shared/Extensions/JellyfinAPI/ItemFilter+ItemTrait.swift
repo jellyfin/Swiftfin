@@ -64,7 +64,7 @@ extension UserItemDataDto {
             case .isFavorite: isFavorite != false
             case .isPlayed: isPlayed != false
             case .isUnplayed: isPlayed != true
-            case .isResumable: isPlayed != true && playbackPositionTicks != 0
+            case .isResumable: playbackPositionTicks.map { $0 > 0 } ?? true
             case .likes: isLikes != false
             case .dislikes: isLikes != true
             default: true

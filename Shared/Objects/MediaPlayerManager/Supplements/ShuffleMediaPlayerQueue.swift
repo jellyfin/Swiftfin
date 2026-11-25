@@ -46,10 +46,16 @@ final class ShuffleMediaPlayerQueue: MediaPlayerQueue {
         currentIndex.map { items[$0].id }
     }
 
-    var nextItem: PlaybackIntent? {
-        guard let currentIndex, currentIndex + 1 < items.count else { return nil }
+    private var nextEntry: ItemEntry? {
+        currentIndex.flatMap { items[safe: $0 + 1] }
+    }
 
-        return makeIntent(for: items[currentIndex + 1])
+    var hasNextItem: Bool {
+        nextEntry != nil
+    }
+
+    var nextItem: PlaybackIntent? {
+        nextEntry.map(makeIntent(for:))
     }
 
     var previousItem: PlaybackIntent? {
