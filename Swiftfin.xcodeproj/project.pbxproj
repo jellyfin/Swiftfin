@@ -1635,16 +1635,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
 			requirement = {
-				kind = exactVersion;
-				version = 0.4.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.0;
 			};
 		};
 		E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/MPVUI";
 			requirement = {
-				kind = exactVersion;
-				version = 0.10.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.11.0;
 			};
 		};
 		E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */ = {
