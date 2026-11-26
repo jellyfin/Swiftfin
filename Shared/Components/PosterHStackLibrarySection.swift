@@ -75,7 +75,7 @@ where Library.Element: LibraryElement, Library.Element: Poster {
     @ContentBuilder
     private var headerTitle: some View {
         Text(group.displayTitle)
-            .font(.title3)
+            .font(.title2)
             .fontWeight(.semibold)
             .lineLimit(1)
     }
