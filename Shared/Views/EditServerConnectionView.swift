@@ -184,10 +184,10 @@ struct EditServerConnectionView: View {
             } header: {
                 Text(L10n.name)
             } footer: {
-                if isNameEmpty {
-                    Label(L10n.required, systemImage: "exclamationmark.circle.fill")
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                }
+                // EXPERIMENT: keep footer in hierarchy, toggle visibility only
+                Label(L10n.required, systemImage: "exclamationmark.circle.fill")
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                    .opacity(isNameEmpty ? 1 : 0)
             }
 
             Section {
@@ -200,10 +200,10 @@ struct EditServerConnectionView: View {
             } header: {
                 Text(L10n.url)
             } footer: {
-                if isDuplicateConnection {
-                    Label(L10n.connectionAlreadyExists, systemImage: "exclamationmark.circle.fill")
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                }
+                // EXPERIMENT: keep footer in hierarchy, toggle visibility only
+                Label(L10n.connectionAlreadyExists, systemImage: "exclamationmark.circle.fill")
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                    .opacity(isDuplicateConnection ? 1 : 0)
             }
 
             #if os(iOS)
