@@ -195,7 +195,9 @@ final class NowPlayableObserver: MediaSessionObserver {
             .publisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] reason in
-                guard self?.ownsAudioSession == true, reason == .oldDeviceUnavailable else { return }
+                guard self?.ownsAudioSession == true,
+                      reason == .oldDeviceUnavailable,
+                      self?.mediaSession?.outputPolicy.isChangingRoute != true else { return }
 
                 self?.playbackRequestStateBeforeInterruption = .paused
                 self?.mediaSession?.setPlaybackRequestStatus(status: .paused)
@@ -220,7 +222,7 @@ final class NowPlayableObserver: MediaSessionObserver {
         languageOptions = NowPlayableLanguageOptions(item: item)
 
         guard item != nil else {
-            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+            updatePlaybackInfo()
             updateRemoteCommands()
             return
         }
@@ -340,7 +342,20 @@ final class NowPlayableObserver: MediaSessionObserver {
     }
 
     private func updatePlaybackInfo() {
-        guard isActive, let mediaSession, let item = mediaSession.playbackItem else { return }
+        guard isActive, let mediaSession else { return }
+
+        let center = MPNowPlayingInfoCenter.default()
+        guard let item = mediaSession.playbackItem else {
+            // Keep the last item's metadata while resolution resets the session timeline.
+            guard var info = center.nowPlayingInfo else { return }
+
+            info[MPNowPlayingInfoPropertyPlaybackRate] = 0
+            info[MPNowPlayingInfoPropertyCurrentLanguageOptions] = []
+            info[MPNowPlayingInfoPropertyAvailableLanguageOptions] = []
+            center.nowPlayingInfo = info
+
+            return
+        }
 
         publishedPositionSecond = mediaSession.observedSeconds.components.seconds
 
@@ -357,7 +372,6 @@ final class NowPlayableObserver: MediaSessionObserver {
             availableLanguageOptionGroups: languageOptions.groups
         )
 
-        let center = MPNowPlayingInfoCenter.default()
         var info = center.nowPlayingInfo ?? [:]
         metadata.update(&info)
         center.nowPlayingInfo = info
@@ -522,8 +536,9 @@ final class NowPlayableObserver: MediaSessionObserver {
 
         let session = AVAudioSession.sharedInstance()
         let isAudio = mediaSession?.item.nowPlayableStaticMetadata().mediaType == .audio
+        let policy = mediaSession?.outputPolicy.routeSharingPolicy ?? .default
 
-        try session.setCategory(.playback, mode: isAudio ? .default : .moviePlayback)
+        try session.setCategory(.playback, mode: isAudio ? .default : .moviePlayback, policy: policy)
         try session.setSupportsMultichannelContent(true)
         try session.setActive(true)
 

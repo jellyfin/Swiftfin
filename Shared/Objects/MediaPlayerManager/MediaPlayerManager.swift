@@ -16,6 +16,11 @@ extension Container {
     var mediaPlayerManager: Factory<MediaPlayerManager> {
         self { MainActor.assumeIsolated { MediaPlayerManager() } }.singleton
     }
+
+    /// Features that follow every playback session for its whole life.
+    var mediaSessionObservers: Factory<[any MediaSessionObserver]> {
+        self { [] }
+    }
 }
 
 /// The app's permanent owner of playback sessions and system playback integration.
@@ -34,9 +39,11 @@ final class MediaPlayerManager {
     @ObservationIgnored
     private var sessionObservation: AnyCancellable?
     @ObservationIgnored
-    private var nowPlayingObservation: AnyCancellable?
+    private var nowPlayingObservation: (location: MediaPlaybackLocation, token: AnyCancellable)?
     @ObservationIgnored
     private var lifecycleObservations: Set<AnyCancellable> = []
+    @ObservationIgnored
+    private var featureObservations: [AnyCancellable] = []
 
     @ObservationIgnored
     private(set) lazy var sleepTimer = DeadlineTimer { [weak self] in
@@ -99,19 +106,29 @@ final class MediaPlayerManager {
         )
 
         currentSession = session
+        featureObservations.removeAll()
+        featureObservations = Container.shared.mediaSessionObservers().map { $0.observe(session) }
 
         sessionObservation = session.core.statePublisher.sink { [weak self, weak session] state in
             guard let self, let session, currentSession === session else { return }
 
             switch state {
             case .preparing, .playback:
-                nowPlayingObservation ?= nowPlayableObserver.observe(session)
+                if nowPlayingObservation == nil, let player = session.player {
+                    nowPlayingObservation = (player.playbackLocation, nowPlayableObserver.observe(session))
+                }
 
-            case .initial, .loadingItem, .error:
+            case .loadingItem:
+                if nowPlayingObservation?.location != session.player?.playbackLocation {
+                    nowPlayingObservation = nil
+                }
+
+            case .initial, .error:
                 nowPlayingObservation = nil
 
             case .stopped:
                 nowPlayingObservation = nil
+                featureObservations = []
                 sessionObservation = nil
                 currentSession = nil
             }

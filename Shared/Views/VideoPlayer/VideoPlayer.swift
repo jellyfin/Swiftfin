@@ -54,6 +54,9 @@ struct VideoPlayer: View {
         ) { videoLayout in
             if let player = mediaSession.player as? any VideoMediaPlayer {
                 return player.videoPlayerBody(layout: videoLayout)
+                    #if os(iOS)
+                        .overlay { AirPlayVideoStatusView() }
+                    #endif
                     .eraseToAnyView()
                     .accessibilityHidden(true)
                     .eraseToAnyView()

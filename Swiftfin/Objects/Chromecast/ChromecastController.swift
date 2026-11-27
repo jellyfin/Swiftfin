@@ -115,6 +115,7 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
         guard Defaults[.Experimental.chromecast],
               let mediaSession,
               mediaSession.canControlPlayback,
+              mediaSession.outputPolicy.allowsTransfer,
               mediaSession.item.mediaType == .video,
               (mediaSession.player as? ChromecastMediaPlayer)?.session !== session else { return }
 

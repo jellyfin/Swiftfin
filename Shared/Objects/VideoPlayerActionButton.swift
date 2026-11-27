@@ -24,6 +24,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     case sleepTimer
     case subtitles
     #if os(iOS)
+    case airPlay
     case gestureLock
     case playbackDestination
     #endif
@@ -58,6 +59,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .subtitles:
             L10n.subtitles
         #if os(iOS)
+        case .airPlay:
+            L10n.airPlay
         case .gestureLock:
             L10n.gestureLock
         case .playbackDestination:
@@ -113,6 +116,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         }
 
         return switch self {
+        case .airPlay: "airplayvideo.circle"
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2.fill"
         case .audioOffset: "waveform.path"
@@ -161,7 +165,10 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
 
     static var supportedCases: [Self] {
         #if os(iOS)
-        allCases.filter { $0 != .playbackDestination || Defaults[.Experimental.chromecast] }
+        allCases.filter {
+            ($0 != .playbackDestination || Defaults[.Experimental.chromecast])
+                && ($0 != .airPlay || Defaults[.Experimental.airPlayVideo])
+        }
         #elseif os(tvOS)
         allCases.filter { $0 != .pictureInPicture }
         #else
@@ -178,6 +185,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         ]
         #if os(iOS)
         buttons.append(.playbackDestination)
+        buttons.append(.airPlay)
         #endif
         return buttons
     }()

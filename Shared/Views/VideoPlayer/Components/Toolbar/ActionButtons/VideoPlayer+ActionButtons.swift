@@ -45,6 +45,9 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             if !isChromecastEnabled {
                 filteredButtons.removeAll(equalTo: .playbackDestination)
             }
+            if !AirPlayVideoController.shared.isAvailable {
+                filteredButtons.removeAll(equalTo: .airPlay)
+            }
             #elseif os(tvOS)
             filteredButtons.removeAll(equalTo: .pictureInPicture)
             #endif
@@ -145,6 +148,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             case .subtitles:
                 Subtitles()
             #if os(iOS)
+            case .airPlay:
+                AirPlay()
             case .gestureLock:
                 GestureLock()
             case .playbackDestination:

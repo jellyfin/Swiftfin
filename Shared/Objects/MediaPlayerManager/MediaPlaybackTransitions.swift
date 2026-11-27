@@ -32,6 +32,7 @@ final class MediaPlaybackTransitions {
 
         guard let mediaSession,
               !mediaSession.isRemotePlayback,
+              !mediaSession.outputPolicy.continuesInBackground,
               mediaSession.item.mediaType != .audio,
               Defaults[.VideoPlayer.Transition.pauseOnBackground] else { return }
 

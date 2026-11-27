@@ -405,6 +405,12 @@ extension Defaults.Keys {
         }
 
         #if os(iOS)
+        static var airPlayVideo: Key<Bool> {
+            UserKey("experimentalAirPlayVideo", default: false)
+        }
+
+        static let airPlayVideoRoutes: Key<[String]> = AppKey("experimentalAirPlayVideoRoutes", default: [])
+
         static var chromecast: Key<Bool> {
             UserKey("experimentalChromecast", default: false)
         }

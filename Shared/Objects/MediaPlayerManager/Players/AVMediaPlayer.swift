@@ -15,7 +15,7 @@ import SwiftUI
 
 @MainActor
 @Observable
-final class AVMediaPlayer: NSObject, MediaPlayer, MediaPlayerMetadataProviding {
+final class AVMediaPlayer: NSObject, MediaPlayer, MediaPlayerMetadataProviding, MediaPlayerExternalVideoProviding {
 
     var allowsAutomaticPiP = false {
         didSet {
@@ -26,10 +26,16 @@ final class AVMediaPlayer: NSObject, MediaPlayer, MediaPlayerMetadataProviding {
     }
 
     let displayTitle = MediaPlayerType.avPlayer.displayTitle
+    private(set) var isExternalVideoActive = false
+    var allowsExternalVideoPlayback: Bool {
+        get { player.allowsExternalPlayback }
+        set { player.allowsExternalPlayback = newValue }
+    }
+
     private(set) var isPiPActive: Bool = false
     private(set) var isPiPAvailable: Bool = false
     private(set) var isPiPTransitioning = false
-    let playbackProfile = PlaybackProfile.local(.avPlayer)
+    let playbackProfile: PlaybackProfile
     let player: AVPlayer
     let playerLayer: AVPlayerLayer
     private(set) var subtitleCues: Set<SubtitleCue> = []
@@ -59,6 +65,8 @@ final class AVMediaPlayer: NSObject, MediaPlayer, MediaPlayerMetadataProviding {
     #endif
 
     @ObservationIgnored
+    private var externalPlaybackObservation: AnyCancellable?
+    @ObservationIgnored
     private weak var loadedItem: MediaPlayerItem?
     @ObservationIgnored
     private var generation = 0
@@ -81,7 +89,8 @@ final class AVMediaPlayer: NSObject, MediaPlayer, MediaPlayerMetadataProviding {
     @ObservationIgnored
     private var subtitleOutput: AVPlayerItemLegibleOutput?
 
-    override init() {
+    init(playbackProfile: PlaybackProfile = .local(.avPlayer)) {
+        self.playbackProfile = playbackProfile
         player = AVPlayer()
         playerLayer = AVPlayerLayer(player: player)
 
@@ -89,6 +98,10 @@ final class AVMediaPlayer: NSObject, MediaPlayer, MediaPlayerMetadataProviding {
 
         player.appliesMediaSelectionCriteriaAutomatically = false
         player.allowsExternalPlayback = true
+
+        externalPlaybackObservation = player.publisher(for: \.isExternalPlaybackActive)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in self?.isExternalVideoActive = $0 }
 
         #if os(iOS)
         automaticPiPObservation = observeAutomaticPictureInPicture()
