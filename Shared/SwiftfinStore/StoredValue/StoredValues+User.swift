@@ -112,11 +112,11 @@ extension StoredValues.Keys {
             )
         }
 
-        static func libraryStyle(id: String?) -> Key<LibraryStyle> {
+        static func libraryStyle(id: String?, default defaultValue: LibraryStyle = .default) -> Key<LibraryStyle> {
             CurrentUserKey(
                 id,
                 field: "setting-libraryStyle",
-                default: .default
+                default: defaultValue
             )
         }
 
@@ -157,6 +157,15 @@ extension StoredValues.Keys {
                 default: []
             )
         }
+
+        #if os(iOS)
+        static var layout: Key<LayoutConfiguration> {
+            CurrentUserKey(
+                field: "setting-layout",
+                default: .default
+            )
+        }
+        #endif
 
         static var enabledTrailers: Key<TrailerSelection> {
             CurrentUserKey(

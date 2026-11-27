@@ -88,6 +88,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     nonisolated let id: String
     let library: Library
     let pageSize: Int
+    private let refreshesForStoreChanges: Bool
 
     /// Retains records held weakly by the session store.
     private(set) var elements: IdentifiedArrayOf<Element>
@@ -161,6 +162,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     init(
         library: Library,
         pageSize: Int = defaultPagingLibraryPageSize,
+        refreshesForStoreChanges: Bool = true,
         userSession: UserSession? = Container.shared.currentUserSession()
     ) {
         self.elements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
@@ -170,6 +172,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         self.id = library.parent.pagingLibraryID
         self.library = library
         self.pageSize = pageSize
+        self.refreshesForStoreChanges = refreshesForStoreChanges
         self.searchElements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
 
         super.init()
@@ -277,7 +280,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     }
 
     private func scheduleRefreshForStoreChange() {
-        guard !isInvalidated else { return }
+        guard !isInvalidated, refreshesForStoreChanges else { return }
 
         hasPendingStoreRefresh = true
 

@@ -65,8 +65,22 @@ where Library.Element: LibraryElement, Library.Element: Poster {
     @Router
     private var router
 
+    @StoredValue
+    private var libraryStyle: LibraryStyle
+
     let group: PosterGroup<Library>
     let viewModel: PagingLibraryViewModel<Library>
+
+    init(group: PosterGroup<Library>, viewModel: PagingLibraryViewModel<Library>) {
+        self.group = group
+        self.viewModel = viewModel
+        self._libraryStyle = StoredValue(group.libraryStyleKey ?? .init(always: LibraryStyle(
+            displayType: .grid,
+            posterDisplayType: group.posterDisplayType,
+            listColumnCount: 1,
+            posterSize: group.posterSize
+        )))
+    }
 
     private func routeToLibrary() {
         router.route(to: .library(library: viewModel.library, displayTitle: group.displayTitle))
@@ -120,8 +134,8 @@ where Library.Element: LibraryElement, Library.Element: Poster {
             ContentGroupSection {
                 PosterHStack(
                     elements: viewModel.elements.elements,
-                    displayType: group.posterDisplayType,
-                    size: group.posterSize
+                    displayType: libraryStyle.posterDisplayType,
+                    size: libraryStyle.posterSize ?? group.posterSize
                 ) { element, namespace in
                     element.libraryDidSelectElement(router: router, in: namespace)
                 }

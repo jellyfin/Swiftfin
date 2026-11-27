@@ -91,6 +91,35 @@ extension NavigationRoute {
         }
     }
 
+    #if os(iOS)
+    static var layoutSettings: NavigationRoute {
+        NavigationRoute(id: "layoutSettings") {
+            LayoutSettingsView()
+        }
+    }
+
+    @MainActor
+    static var homeLayoutSettings: NavigationRoute {
+        NavigationRoute(id: "homeLayoutSettings") {
+            Form(systemImage: "house.fill") {
+                LayoutSettingsView.HomeSection()
+                LayoutSettingsView.PostersSection()
+            }
+            .navigationTitle(L10n.home)
+        }
+    }
+
+    @MainActor
+    static var searchLayoutSettings: NavigationRoute {
+        NavigationRoute(id: "searchLayoutSettings") {
+            Form(systemImage: "magnifyingglass") {
+                LayoutSettingsView.SearchSection()
+            }
+            .navigationTitle(L10n.search)
+        }
+    }
+    #endif
+
     static var customizeSettingsView: NavigationRoute {
         NavigationRoute(
             id: "customizeSettingsView"

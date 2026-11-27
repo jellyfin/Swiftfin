@@ -62,6 +62,8 @@ internal enum L10n {
   internal static let administrator = L10n.tr("Localizable", "administrator", fallback: "Administrator")
   /// Advanced
   internal static let advanced = L10n.tr("Localizable", "advanced", fallback: "Advanced")
+  /// Arrange tabs and views. Turn off to use the default layout without deleting your changes.
+  internal static let advancedLayoutDescription = L10n.tr("Localizable", "advancedLayoutDescription", fallback: "Arrange tabs and views. Turn off to use the default layout without deleting your changes.")
   /// Age %@
   internal static func agesGroup(_ p1: Any) -> String {
     return L10n.tr("Localizable", "agesGroup", String(describing: p1), fallback: "Age %@")
@@ -820,6 +822,10 @@ internal enum L10n {
   internal static let grid = L10n.tr("Localizable", "grid", fallback: "Grid")
   /// Grouping
   internal static let grouping = L10n.tr("Localizable", "grouping", fallback: "Grouping")
+  /// Groups
+  internal static let groups = L10n.tr("Localizable", "groups", fallback: "Groups")
+  /// Drag groups into the order they should appear. Empty rows hide automatically.
+  internal static let groupsDescription = L10n.tr("Localizable", "groupsDescription", fallback: "Drag groups into the order they should appear. Empty rows hide automatically.")
   /// Guest star
   internal static let guestStar = L10n.tr("Localizable", "guestStar", fallback: "Guest star")
   /// Guide
@@ -850,6 +856,36 @@ internal enum L10n {
   internal static let horizontalSwipe = L10n.tr("Localizable", "horizontalSwipe", fallback: "Horizontal swipe")
   /// Hours
   internal static let hours = L10n.tr("Localizable", "hours", fallback: "Hours")
+  /// Icon
+  internal static let icon = L10n.tr("Localizable", "icon", fallback: "Icon")
+  /// Bookmark - Tab icon name
+  internal static let iconBookmark = L10n.tr("Localizable", "iconBookmark", fallback: "Bookmark")
+  /// Circle - Tab icon name
+  internal static let iconCircle = L10n.tr("Localizable", "iconCircle", fallback: "Circle")
+  /// Compass - Tab icon name
+  internal static let iconCompass = L10n.tr("Localizable", "iconCompass", fallback: "Compass")
+  /// Diamond - Tab icon name
+  internal static let iconDiamond = L10n.tr("Localizable", "iconDiamond", fallback: "Diamond")
+  /// Flag - Tab icon name
+  internal static let iconFlag = L10n.tr("Localizable", "iconFlag", fallback: "Flag")
+  /// Flame - Tab icon name
+  internal static let iconFlame = L10n.tr("Localizable", "iconFlame", fallback: "Flame")
+  /// Games - Tab icon name
+  internal static let iconGames = L10n.tr("Localizable", "iconGames", fallback: "Games")
+  /// Gift - Tab icon name
+  internal static let iconGift = L10n.tr("Localizable", "iconGift", fallback: "Gift")
+  /// Globe - Tab icon name
+  internal static let iconGlobe = L10n.tr("Localizable", "iconGlobe", fallback: "Globe")
+  /// Leaf - Tab icon name
+  internal static let iconLeaf = L10n.tr("Localizable", "iconLeaf", fallback: "Leaf")
+  /// Lightning - Tab icon name
+  internal static let iconLightning = L10n.tr("Localizable", "iconLightning", fallback: "Lightning")
+  /// Moon - Tab icon name
+  internal static let iconMoon = L10n.tr("Localizable", "iconMoon", fallback: "Moon")
+  /// Sun - Tab icon name
+  internal static let iconSun = L10n.tr("Localizable", "iconSun", fallback: "Sun")
+  /// Triangle - Tab icon name
+  internal static let iconTriangle = L10n.tr("Localizable", "iconTriangle", fallback: "Triangle")
   /// ID
   internal static let id = L10n.tr("Localizable", "id", fallback: "ID")
   /// Identify
@@ -1424,6 +1460,8 @@ internal enum L10n {
   internal static let pressAndHoldToUnlock = L10n.tr("Localizable", "pressAndHoldToUnlock", fallback: "Press and hold to unlock")
   /// Preview
   internal static let preview = L10n.tr("Localizable", "preview", fallback: "Preview")
+  /// Preview uses live data. Navigation is disabled.
+  internal static let previewDescription = L10n.tr("Localizable", "previewDescription", fallback: "Preview uses live data. Navigation is disabled.")
   /// Preview image
   internal static let previewImage = L10n.tr("Localizable", "previewImage", fallback: "Preview image")
   /// Previous
@@ -1592,6 +1630,8 @@ internal enum L10n {
   internal static let requirePinDescription = L10n.tr("Localizable", "requirePinDescription", fallback: "Require a local pin when signing in to the user. This pin is unrecoverable.")
   /// Reset
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
+  /// Restore the standard tabs? Your saved views will be kept.
+  internal static let resetConfirmation = L10n.tr("Localizable", "resetConfirmation", fallback: "Restore the standard tabs? Your saved views will be kept.")
   /// Reset the filter values to none.
   internal static let resetFilterFooter = L10n.tr("Localizable", "resetFilterFooter", fallback: "Reset the filter values to none.")
   /// Reset settings
@@ -1906,6 +1946,12 @@ internal enum L10n {
   internal static let system = L10n.tr("Localizable", "system", fallback: "System")
   /// Tab bar
   internal static let tabBar = L10n.tr("Localizable", "tabBar", fallback: "Tab bar")
+  /// You can have up to %d tabs.
+  internal static func tabLimit(_ p1: Int) -> String {
+    return L10n.tr("Localizable", "tabLimit", p1, fallback: "You can have up to %d tabs.")
+  }
+  /// Tabs
+  internal static let tabs = L10n.tr("Localizable", "tabs", fallback: "Tabs")
   /// Tagline
   internal static let tagline = L10n.tr("Localizable", "tagline", fallback: "Tagline")
   /// Taglines

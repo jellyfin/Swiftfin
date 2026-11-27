@@ -11,10 +11,9 @@ import SwiftUI
 
 struct CustomizeSettingsView: View {
 
+    #if os(tvOS)
     @Default(.Customization.Search.enabledDrawerFilters)
     private var searchEnabledDrawerFilters
-
-    #if os(tvOS)
     @Default(.Customization.tabBarPlacement)
     private var tabBarPlacement
     #endif
@@ -29,8 +28,6 @@ struct CustomizeSettingsView: View {
             Section(L10n.tabBar) {
                 ListRowMenu(L10n.layout, selection: $tabBarPlacement)
             }
-            #endif
-
             Section {
                 ChevronButton(L10n.search) {
                     router.route(to: .itemFilterDrawerSelector(selection: $searchEnabledDrawerFilters))
@@ -39,10 +36,17 @@ struct CustomizeSettingsView: View {
             } header: {
                 Text(L10n.filters)
             }
+            #endif
 
             ChevronButton(L10n.items) {
                 router.route(to: .itemSettings)
             }
+
+            #if os(iOS)
+            ChevronButton(L10n.layout) {
+                router.route(to: .layoutSettings)
+            }
+            #endif
 
             ChevronButton(L10n.libraries) {
                 router.route(to: .librarySettings)
@@ -56,7 +60,9 @@ struct CustomizeSettingsView: View {
                 router.route(to: .videoPlayerSettings)
             }
 
+            #if os(tvOS)
             HomeSection()
+            #endif
         }
         .navigationTitle(L10n.advanced)
     }

@@ -14,8 +14,8 @@ struct ProgramsLibrary: BaseItemKindLibrary {
     let parent: TitledLibraryParent
     let section: ProgramSection
 
-    init(section: ProgramSection) {
-        self.parent = .init(
+    init(section: ProgramSection, parent: TitledLibraryParent? = nil) {
+        self.parent = parent ?? .init(
             displayTitle: section.displayTitle,
             id: "programs-\(section.rawValue)"
         )

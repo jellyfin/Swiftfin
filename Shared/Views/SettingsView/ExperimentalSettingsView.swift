@@ -23,6 +23,9 @@ struct ExperimentalSettingsView: View {
     #if os(iOS)
     @Default(.Experimental.chromecast)
     private var isChromecastEnabled
+
+    @Default(.Experimental.layout)
+    private var isLayoutExperimentEnabled
     #endif
 
     @Injected(\.userSessionManager)
@@ -45,8 +48,8 @@ struct ExperimentalSettingsView: View {
                     }
                     ChromecastController.updateAvailability()
                 }
+            Toggle(L10n.layout, isOn: $isLayoutExperimentEnabled)
             #endif
-
             // swiftlint:enable hard_coded_display_string
         }
         .onChange(of: isServerConnectionAutoSwitchEnabled) {
