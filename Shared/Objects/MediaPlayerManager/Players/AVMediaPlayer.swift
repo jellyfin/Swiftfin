@@ -13,7 +13,6 @@ import Foundation
 @preconcurrency import JellyfinAPI
 import SwiftUI
 
-@MainActor
 @Observable
 final class AVMediaPlayer: NSObject, MediaPlayer, MediaPlayerMetadataProviding {
 
@@ -276,7 +275,7 @@ extension AVMediaPlayer {
 
         player.publisher(for: \.timeControlStatus, options: [.new])
             .sink { [weak self] status in
-                Task { @MainActor [weak self] in
+                Task { [weak self] in
                     guard let self, self.isCurrent(playerItem, generation: generation) else { return }
 
                     self.updatePlaybackState()
@@ -329,7 +328,7 @@ extension AVMediaPlayer {
 
         playerItem.publisher(for: \.presentationSize, options: [.initial, .new])
             .sink { [weak self] size in
-                Task { @MainActor [weak self] in
+                Task { [weak self] in
                     guard let self, self.isCurrent(playerItem, generation: generation) else { return }
 
                     if self.videoState.videoSize != size {
@@ -361,7 +360,7 @@ extension AVMediaPlayer {
 
         playerItem.publisher(for: \.status, options: [.initial, .new])
             .sink { [weak self] _ in
-                Task { @MainActor [weak self] in
+                Task { [weak self] in
                     guard let self, self.isCurrent(playerItem, generation: generation) else { return }
 
                     switch playerItem.status {

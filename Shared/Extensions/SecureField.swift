@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-@ContentBuilder
 @MainActor
+@ContentBuilder
 func SecureField(
     _ title: String,
     text: Binding<String>,

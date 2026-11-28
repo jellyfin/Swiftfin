@@ -63,7 +63,6 @@ protocol VideoMediaPlayer: MediaPlayer, MediaPlayerTrackProviding {
     var videoState: VideoPlaybackState { get }
 
     @ContentBuilder
-    @MainActor
     func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> Self.VideoPlayerBody
 }
 

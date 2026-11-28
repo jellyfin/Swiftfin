@@ -9,7 +9,6 @@
 import Combine
 import Defaults
 
-@MainActor
 final class DefaultsObservable<Value: Storable>: ObservableObject, _StoredValueObservable {
 
     private var onObjectChanged: (() -> Void)?
@@ -38,7 +37,7 @@ final class DefaultsObservable<Value: Storable>: ObservableObject, _StoredValueO
     func observe() {
         task?.cancel()
 
-        task = .detached(priority: .userInitiated) { @MainActor [weak self, key] in
+        task = Task(priority: .userInitiated) { [weak self, key] in
             for await _ in Defaults.updates(key._defaultKey) {
                 guard let self else { return }
 

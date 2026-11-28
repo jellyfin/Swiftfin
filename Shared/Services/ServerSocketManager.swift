@@ -12,9 +12,10 @@ import JellyfinAPI
 import Logging
 import os
 
+@MainActor
 final class ServerSocketManager {
 
-    private struct Claim {
+    private nonisolated struct Claim {
 
         let subscription: JellyfinSocket.Subscription
         let delay: Duration
@@ -22,7 +23,7 @@ final class ServerSocketManager {
         var token: JellyfinSocket.Session.SubscriptionToken?
     }
 
-    private struct State {
+    private nonisolated struct State {
 
         var session: JellyfinSocket.Session?
         var claims: [UUID: Claim] = [:]
@@ -52,7 +53,7 @@ final class ServerSocketManager {
         (wakeStream, wake) = AsyncStream<Void>.makeStream()
     }
 
-    deinit {
+    isolated deinit {
         stop()
         wake.finish()
     }
@@ -100,9 +101,7 @@ final class ServerSocketManager {
             wake.yield()
         }
 
-        return AnyCancellable { [weak self] in
-            guard let self else { return }
-
+        return AnyCancellable { @Sendable [state] in
             let token = state.withLock { $0.claims.removeValue(forKey: id)?.token }
             token?.cancel()
         }
@@ -118,7 +117,7 @@ final class ServerSocketManager {
         while !Task.isCancelled {
             guard let userSession else { break }
 
-            let client = await userSession.client
+            let client = userSession.client
             guard !Task.isCancelled else { break }
 
             let session = client.socket(
@@ -171,11 +170,15 @@ final class ServerSocketManager {
                         logger.info("Socket disconnected")
                         isConnected.send(false)
 
-                    case let .message(message):
-                        logger.debug("Socket message", metadata: ["message": .string("\(message)")])
+                    case .message:
+                        break
                     }
 
                     allEvents.send(event)
+
+                    if case let .message(message) = event {
+                        await logMessage(message)
+                    }
                 }
             } catch {
                 if let socketError = error as? JellyfinSocket.Session.SocketError,
@@ -207,6 +210,11 @@ final class ServerSocketManager {
                 _ = await wakeIterator.next()
             }
         }
+    }
+
+    @concurrent
+    private func logMessage(_ message: OutboundWebSocketMessage) async {
+        logger.debug("Socket message", metadata: ["message": .string("\(message)")])
     }
 
     private func observeServerConnectionChange() async {

@@ -16,7 +16,7 @@ let defaultPagingLibraryPageSize = 50
 
 @Observable
 @StatefulObservable(conformances: [WithRefresh.self])
-class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
+class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable, WithRefresh {
 
     typealias Background = _BackgroundActions
     typealias Element = Library.Element
@@ -161,7 +161,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     init(
         library: Library,
         pageSize: Int = defaultPagingLibraryPageSize,
-        userSession: UserSession? = Container.shared.currentUserSession()
+        userSession: UserSession? = dependency(\.currentUserSession)
     ) {
         self.elements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
         self.environment = library.environment ?? .default

@@ -8,7 +8,6 @@
 
 import Combine
 import Defaults
-import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -31,7 +30,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
         OverlayView(itemID: itemID)
     }
 
-    private struct OverlayView: PresentationView {
+    private struct OverlayView: View {
 
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
@@ -41,7 +40,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
         let itemID: String
 
         @State
-        private var viewModel = PlaybackInformationProvider()
+        private var sessionInfo: SessionInfoDto?
 
         private var mediaSource: MediaSourceInfo? {
             mediaSession.playbackItem?.mediaSource
@@ -81,7 +80,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
                 }
             }
 
-            if let playMethod = viewModel.currentSession?.playMethodDisplayTitle {
+            if let playMethod = sessionInfo?.playMethodDisplayTitle {
                 LabeledContent(L10n.method, value: playMethod)
             }
 
@@ -108,8 +107,8 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
 
         @ContentBuilder
         private var streamingInfoSection: some View {
-            if let transcodingInfo = viewModel.currentSession?.transcodingInfo {
-                Text(viewModel.currentSession?.playMethodDisplayTitle.map { L10n.streamInfoWithMethod($0) } ?? L10n.streamInfo)
+            if let transcodingInfo = sessionInfo?.transcodingInfo {
+                Text(sessionInfo?.playMethodDisplayTitle.map { L10n.streamInfoWithMethod($0) } ?? L10n.streamInfo)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .padding(.vertical, 4)
@@ -195,7 +194,7 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
 
         @ContentBuilder
         private var transcodeReasonsSection: some View {
-            if let transcodeReasons = viewModel.currentSession?.transcodingInfo?.transcodeReasons, transcodeReasons.isNotEmpty {
+            if let transcodeReasons = sessionInfo?.transcodingInfo?.transcodeReasons, transcodeReasons.isNotEmpty {
                 Text(L10n.transcodeReasons)
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -210,19 +209,31 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
         }
 
         @ContentBuilder
-        var standardView: some View {
-            CompactOrRegularView(
-                isCompact: viewState.isCompact
-            ) {
-                compactView
-            } regularView: {
-                regularView
+        var body: some View {
+            PresentationContent {
+                CompactOrRegularView(isCompact: viewState.isCompact) {
+                    compactView
+                } regularView: {
+                    regularView
+                }
+                .padding(.leading, viewState.supplementInsets.leading)
+                .padding(.trailing, viewState.supplementInsets.trailing)
+                .padding(.bottom, viewState.systemInsets.bottom)
+            } largeView: {
+                regularView.focusSection()
             }
-            .onFirstAppear { viewModel.observe(itemID: itemID) }
             .labeledContentStyle(.playbackInfo)
-            .padding(.leading, viewState.supplementInsets.leading)
-            .padding(.trailing, viewState.supplementInsets.trailing)
-            .padding(.bottom, viewState.systemInsets.bottom)
+            .task(id: itemID) {
+                sessionInfo = nil
+                let userSession = mediaSession.userSession
+                let deviceID = userSession.client.configuration.deviceID
+                for await sessions in userSession.serverSocketManager.sessions().values {
+                    guard !Task.isCancelled else { return }
+
+                    let deviceSessions = sessions.filter { $0.deviceID == deviceID }
+                    sessionInfo = deviceSessions.first { $0.nowPlayingItem?.id == itemID } ?? deviceSessions.first
+                }
+            }
         }
 
         @ContentBuilder
@@ -262,46 +273,5 @@ extension PlaybackInfoSupplement: VideoPlayerSupplement {
             .scrollIndicators(.hidden)
             .edgePadding()
         }
-
-        @ContentBuilder
-        var largeView: some View {
-            regularView
-                .onFirstAppear { viewModel.observe(itemID: itemID) }
-                .labeledContentStyle(.playbackInfo)
-                .focusSection()
-        }
-    }
-}
-
-@MainActor
-@Observable
-final class PlaybackInformationProvider {
-
-    var currentSession: SessionInfoDto?
-
-    @ObservationIgnored
-    private var cancellables = Set<AnyCancellable>()
-
-    func observe(itemID: String) {
-        guard cancellables.isEmpty else { return }
-
-        Container.shared
-            .userSessionManager()
-            .$currentSession
-            .map { session -> AnyPublisher<[SessionInfoDto], Never> in
-                session?.serverSocketManager.sessions() ?? Combine.Empty<[SessionInfoDto], Never>().eraseToAnyPublisher()
-            }
-            .switchToLatest()
-            .sink { [weak self] sessions in
-                Task { @MainActor in
-                    guard let self else { return }
-
-                    let deviceID = Container.shared.currentUserSession()?.client.configuration.deviceID
-                    let deviceSessions = sessions.filter { $0.deviceID == deviceID }
-
-                    self.currentSession = deviceSessions.first(where: { $0.nowPlayingItem?.id == itemID }) ?? deviceSessions.first
-                }
-            }
-            .store(in: &cancellables)
     }
 }

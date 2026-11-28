@@ -59,7 +59,7 @@ struct ErrorView<ErrorType: Error>: View {
 
             if canSignIn || refresh != nil {
                 Button {
-                    Task { @MainActor in
+                    Task {
                         if canSignIn {
                             await userSessionManager.signOut(reason: .authenticationExpired)
                         } else if let refresh {

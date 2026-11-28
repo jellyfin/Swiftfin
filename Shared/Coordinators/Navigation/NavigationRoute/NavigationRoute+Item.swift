@@ -26,7 +26,6 @@ extension NavigationRoute {
     }
     #endif
 
-    @MainActor
     static func castAndCrew(people: [BaseItemPerson], itemID: String?) -> NavigationRoute {
         let id = itemID == nil ? "castAndCrew" : "castAndCrew-\(itemID!)"
         let library = StaticLibrary(
@@ -41,7 +40,6 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    @MainActor
     static func editGenres(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editGenres") {
             EditItemElementView(
@@ -53,7 +51,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func editMetadata(viewModel: ItemEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "editMetadata",
@@ -63,7 +60,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func editPeople(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editPeople") {
             EditItemElementView(
@@ -75,7 +71,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func editStudios(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editStudios") {
             EditItemElementView(
@@ -96,7 +91,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func editTags(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editTags") {
             EditItemElementView(
@@ -149,7 +143,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func item(item: BaseItemDto) -> NavigationRoute {
         let provider = ItemContentGroupProvider(item: item)
 
@@ -161,7 +154,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func item(id: String) -> NavigationRoute {
         let provider = ItemContentGroupProvider(id: id)
 
@@ -248,7 +240,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func editRecordingTimer(
         viewModel: RecordingTimerViewModel,
         isSeries: Bool

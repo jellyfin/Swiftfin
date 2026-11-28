@@ -28,7 +28,7 @@ struct AppPermissionsView: View {
                             case .authorized:
                                 ()
                             default:
-                                Task { @MainActor in
+                                Task {
                                     do {
                                         statuses[permission] = try await permission.request(reason: title)
                                     } catch {

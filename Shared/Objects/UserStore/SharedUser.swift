@@ -15,7 +15,7 @@ typealias SharedUser = SharedElement<UserRecord>
 extension UserRecord: SharedHandle {
 
     static func resolve(_ value: UserDto) -> UserRecord {
-        let store = Container.shared.currentUserSession()?.users
+        let store = dependency(\.currentUserSession)?.users
 
         // Values without a session or usable ID are only for presentation
         return (try? store?.record(for: value)) ?? UserRecord(

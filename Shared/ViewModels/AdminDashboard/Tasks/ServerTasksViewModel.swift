@@ -7,7 +7,6 @@
 //
 
 import Combine
-import FactoryKit
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -16,7 +15,6 @@ import SwiftUI
 // TODO: do something for errors from restart/shutdown
 //       - toast?
 
-@MainActor
 @Stateful
 final class ServerTasksViewModel: ViewModel {
 
@@ -56,15 +54,10 @@ final class ServerTasksViewModel: ViewModel {
     override init() {
         super.init()
 
-        Container.shared
-            .userSessionManager()
-            .$currentSession
-            .compactMap { $0?.serverSocketManager.scheduledTasks(interval: .seconds(2)) }
-            .switchToLatest()
+        userSession?.serverSocketManager
+            .scheduledTasks(interval: .seconds(2))
             .sink { [weak self] tasks in
-                Task { @MainActor in
-                    self?.updateTasks(tasks)
-                }
+                self?.updateTasks(tasks)
             }
             .store(in: &cancellables)
     }

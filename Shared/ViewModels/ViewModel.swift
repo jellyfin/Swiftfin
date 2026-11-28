@@ -18,20 +18,10 @@ class ViewModel: ObservableObject {
 
     let logger = Logger.swiftfin()
 
-    /// The current signed-in user session, if the app is authenticated.
     @Injected(\.currentUserSession)
     var userSession: UserSession?
 
     var cancellables = Set<AnyCancellable>()
-
-    init() {
-        Notifications[.didChangeServerConnection]
-            .publisher
-            .sink { [weak self] _ in
-                self?.$userSession.resolve(reset: .scope)
-            }
-            .store(in: &cancellables)
-    }
 
     func requireUserSession() throws -> UserSession {
         guard let userSession else {

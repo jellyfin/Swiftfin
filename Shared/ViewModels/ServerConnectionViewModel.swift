@@ -11,7 +11,6 @@ import Defaults
 import FactoryKit
 import Foundation
 
-@MainActor
 final class ServerConnectionViewModel: ViewModel {
 
     @Published

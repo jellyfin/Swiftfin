@@ -10,7 +10,6 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-@MainActor
 @Stateful
 final class ResetUserPasswordViewModel: ViewModel {
 

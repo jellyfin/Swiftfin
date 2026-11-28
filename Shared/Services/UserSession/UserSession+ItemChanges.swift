@@ -10,7 +10,6 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-@MainActor
 extension UserSession {
 
     func observeItemChanges() {
@@ -42,7 +41,7 @@ extension UserSession {
                     for id in data.itemsUpdated ?? [] {
                         guard let record = self.items[id] else { continue }
 
-                        Task { @MainActor [weak self] in
+                        Task { [weak self] in
                             guard let self, self.itemChanges != nil, record.value != nil else { return }
 
                             _ = try? await self.getFullItem(id: record.id)

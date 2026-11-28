@@ -27,7 +27,7 @@ extension StoredValues.Keys {
         default defaultValue: Value,
         storage: StoredValues.Key<Value>.StorageDestination = .sql,
     ) -> Key<Value> {
-        guard let currentUser = Container.shared.currentUserSession()?.user else {
+        guard let currentUser = dependency(\.currentUserSession)?.user else {
             return Key(always: defaultValue)
         }
 

@@ -11,7 +11,6 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-@MainActor
 @Stateful
 final class ServerUsersViewModel: ViewModel, Identifiable {
 

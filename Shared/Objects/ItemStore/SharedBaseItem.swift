@@ -17,7 +17,7 @@ typealias SharedBaseItems = SharedCollection<ItemEntry>
 extension ItemEntry: SharedHandle {
 
     static func resolve(_ value: BaseItemDto) -> ItemEntry {
-        let store = Container.shared.currentUserSession()?.items
+        let store = dependency(\.currentUserSession)?.items
 
         // Values without a session or usable ID are only for presentation
         let record = (try? store?.record(for: value)) ?? ItemRecord(

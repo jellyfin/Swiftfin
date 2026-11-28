@@ -23,7 +23,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func editFilters(
         filters: ItemFilterCollection,
         savedFilter: StoredItemFilter? = nil,
@@ -37,7 +36,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func contentGroup(
         provider: some ContentGroupProvider
     ) -> NavigationRoute {
@@ -49,7 +47,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func library<Library: PagingLibrary>(
         library: Library,
         displayTitle: String? = nil

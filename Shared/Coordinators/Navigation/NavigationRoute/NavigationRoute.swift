@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 struct NavigationRoute: Identifiable, Hashable {
 
     enum TransitionStyle: Hashable {
@@ -25,7 +26,7 @@ struct NavigationRoute: Identifiable, Hashable {
         case withNamespace((Namespace.ID) -> TransitionStyle)
     }
 
-    let id: String
+    nonisolated let id: String
 
     private let content: AnyView
     var transitionType: TransitionType
@@ -66,11 +67,11 @@ struct NavigationRoute: Identifiable, Hashable {
         self.content = AnyView(content())
     }
 
-    func hash(into hasher: inout Hasher) {
+    nonisolated func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
 
-    static func == (lhs: Self, rhs: Self) -> Bool {
+    nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
     }
 

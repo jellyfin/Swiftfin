@@ -8,7 +8,6 @@
 
 import SwiftUI
 
-@MainActor
 struct MediaQueueView: @MainActor VideoPlayerSupplement {
 
     @Environment(VideoPlayer.ViewState.self)

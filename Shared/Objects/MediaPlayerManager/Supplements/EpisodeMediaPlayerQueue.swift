@@ -11,7 +11,6 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-@MainActor
 @Observable
 final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
 

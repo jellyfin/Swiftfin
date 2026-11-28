@@ -14,45 +14,26 @@ import UIKit
 
 extension UserSessionManager {
 
-    func observeSocketCommands() {
-        $currentSession
-            .map { session -> AnyPublisher<PlayRequest, Never> in
-                session?.serverSocketManager.playCommands ?? Combine.Empty<PlayRequest, Never>().eraseToAnyPublisher()
-            }
-            .switchToLatest()
+    func observeSocketCommands(on socket: ServerSocketManager) {
+        socket.playCommands
             .sink { [weak self] command in
-                Task { @MainActor in
-                    self?.onReceive(playCommand: command)
-                }
+                self?.onReceive(playCommand: command)
             }
-            .store(in: &cancellables)
+            .store(in: &sessionCancellables)
 
-        $currentSession
-            .map { session -> AnyPublisher<PlaystateRequest, Never> in
-                session?.serverSocketManager.playstateCommands ?? Combine.Empty<PlaystateRequest, Never>().eraseToAnyPublisher()
-            }
-            .switchToLatest()
+        socket.playstateCommands
             .sink { [weak self] command in
-                Task { @MainActor in
-                    self?.onReceive(playstateCommand: command)
-                }
+                self?.onReceive(playstateCommand: command)
             }
-            .store(in: &cancellables)
+            .store(in: &sessionCancellables)
 
-        $currentSession
-            .map { session -> AnyPublisher<GeneralCommand, Never> in
-                session?.serverSocketManager.generalCommands ?? Combine.Empty<GeneralCommand, Never>().eraseToAnyPublisher()
-            }
-            .switchToLatest()
+        socket.generalCommands
             .sink { [weak self] command in
-                Task { @MainActor in
-                    self?.onReceive(generalCommand: command)
-                }
+                self?.onReceive(generalCommand: command)
             }
-            .store(in: &cancellables)
+            .store(in: &sessionCancellables)
     }
 
-    @MainActor
     private func onReceive(playCommand: PlayRequest) {
         guard let currentSession else { return }
 
@@ -84,7 +65,6 @@ extension UserSessionManager {
         }
     }
 
-    @MainActor
     private func onReceive(playstateCommand: PlaystateRequest) {
         guard let mediaSession = mediaPlayerManager.currentSession else { return }
 
@@ -127,7 +107,6 @@ extension UserSessionManager {
         }
     }
 
-    @MainActor
     private func onReceive(generalCommand: GeneralCommand) {
         guard let currentSession else { return }
 
@@ -184,14 +163,13 @@ extension UserSessionManager {
         }
     }
 
-    @MainActor
     private func playItem(
         id: String,
         mediaSourceID: String? = nil,
         startPositionTicks: Int? = nil,
         userSession: UserSession
     ) {
-        Task { @MainActor in
+        Task {
             do {
                 let entry = try await userSession.getFullItem(id: id)
 
@@ -229,9 +207,8 @@ extension UserSessionManager {
         }
     }
 
-    @MainActor
     private func playTrailers(itemID: String, userSession: UserSession) {
-        Task { @MainActor in
+        Task {
             do {
                 let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
                 let response = try await userSession.send(request)
@@ -242,7 +219,7 @@ extension UserSessionManager {
                 }
 
                 let entry = try await userSession.getFullItem(id: itemID)
-                guard let urlString = entry.value?.remoteTrailers?.first?.url else { return }
+                guard currentSession === userSession, let urlString = entry.value?.remoteTrailers?.first?.url else { return }
 
                 #if os(tvOS)
                 guard let externalURL = ExternalTrailerURL(string: urlString),

@@ -157,7 +157,7 @@ struct EditServerConnectionView: View {
 
     private func populateCurrentWifiSSID(keepSpecificOnFailure: Bool) {
         #if os(iOS)
-        Task { @MainActor in
+        Task {
             guard let ssid = await NetworkConnectionContext.currentWifiSSID() else {
                 draft.useWifiName = keepSpecificOnFailure
                 return

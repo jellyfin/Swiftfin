@@ -6,11 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import UIKit
 
-@MainActor
 @Stateful
 final class ItemImageViewModel: ViewModel {
 
@@ -94,7 +94,6 @@ final class ItemImageViewModel: ViewModel {
     private func _uploadFile(_ file: URL, _ type: ImageType) async throws {
         try Task.checkCancellation()
 
-        let uploadSession = userSession
         let uploadItemID = item.id
         let payload: FileImageUpload.Payload
 
@@ -110,7 +109,7 @@ final class ItemImageViewModel: ViewModel {
 
         try Task.checkCancellation()
 
-        guard userSession === uploadSession,
+        guard dependency(\.currentUserSession) === userSession,
               item.id == uploadItemID
         else {
             throw CancellationError()

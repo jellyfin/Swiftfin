@@ -122,7 +122,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     private func refreshViewModels(in groups: [any ContentGroup], inBackground: Bool) async {
         await withTaskGroup(of: Void.self) { group in
             for viewModel in uniqueViewModels(in: groups) {
-                group.addTask {
+                group.addTask { @MainActor @Sendable in
                     if inBackground {
                         await viewModel.background.refresh()
                     } else {

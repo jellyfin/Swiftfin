@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@MainActor
 extension Binding {
 
     func clamp(min: Value, max: Value) -> Binding<Value> where Value: Comparable {
@@ -54,11 +55,8 @@ extension Binding {
     func negate() -> Binding<Bool> where Value == Bool {
         map(getter: { !$0 }, setter: { $0 })
     }
-}
 
-extension Binding where Value: RangeReplaceableCollection, Value.Element: Equatable {
-
-    func contains(_ element: Value.Element) -> Binding<Bool> {
+    func contains(_ element: Value.Element) -> Binding<Bool> where Value: RangeReplaceableCollection, Value.Element: Equatable {
         Binding<Bool>(
             get: { wrappedValue.contains(element) },
             set: { newValue in
@@ -72,11 +70,8 @@ extension Binding where Value: RangeReplaceableCollection, Value.Element: Equata
             }
         )
     }
-}
 
-extension Binding where Value: SetAlgebra, Value.Element: Hashable {
-
-    func contains(_ element: Value.Element) -> Binding<Bool> {
+    func contains(_ element: Value.Element) -> Binding<Bool> where Value: SetAlgebra, Value.Element: Hashable {
         Binding<Bool>(
             get: { wrappedValue.contains(element) },
             set: { newValue in

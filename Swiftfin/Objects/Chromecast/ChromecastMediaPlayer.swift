@@ -10,7 +10,6 @@
 import Foundation
 @preconcurrency import GoogleCast
 
-@MainActor
 @Observable
 final class ChromecastMediaPlayer: NSObject, MediaPlayer {
 

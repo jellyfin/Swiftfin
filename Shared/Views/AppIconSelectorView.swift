@@ -13,7 +13,6 @@ struct AppIconSelectorView: View {
     @State
     private var currentAppIcon = AppIcon.resolve(alternateIconName: UIApplication.shared.alternateIconName)
 
-    @MainActor
     private func select(icon: AppIcon) async {
         let previousAppIcon = currentAppIcon
         currentAppIcon = icon

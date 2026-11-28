@@ -10,7 +10,6 @@ import Combine
 import CoreStore
 import Logging
 
-@MainActor
 final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObservable {
 
     let key: StoredValues.Key<Value>
@@ -75,9 +74,10 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
 
             publisher.addObserver(self) { [weak self] objectPublisher in
                 guard self?.shouldListenToPublish == true, let data = objectPublisher.object?.data else { return }
-                guard let newValue = try? JSONDecoder().decode(Value.self, from: data) else { fatalError() }
 
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let newValue = try? JSONDecoder().decode(Value.self, from: data) else { fatalError() }
+
                     self?.value = newValue
                 }
             }

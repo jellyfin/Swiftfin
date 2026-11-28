@@ -106,6 +106,9 @@ extension SessionInfoDto: Poster {
 
 private struct SessionPosterContextMenu: View {
 
+    @DynamicInjected(\.currentUserSession)
+    private var userSession
+
     @Router
     private var router
 
@@ -123,7 +126,7 @@ private struct SessionPosterContextMenu: View {
             }
         }
 
-        if session.canControlPlayback(by: Container.shared.currentUserSession()?.userData) {
+        if session.canControlPlayback(by: userSession?.userData) {
             Button(isPaused ? L10n.play : L10n.pause, systemImage: isPaused ? "play.fill" : "pause.fill") {
                 Task {
                     await sendPlaystateCommand(isPaused ? .unpause : .pause)
@@ -138,9 +141,8 @@ private struct SessionPosterContextMenu: View {
         }
     }
 
-    @MainActor
     private func sendPlaystateCommand(_ command: PlaystateCommand) async {
-        guard let userSession = Container.shared.currentUserSession(), let id = session.id else { return }
+        guard let userSession, let id = session.id else { return }
 
         do {
             try await userSession.client.send(Paths.sendPlaystateCommand(sessionID: id, command: command.rawValue))

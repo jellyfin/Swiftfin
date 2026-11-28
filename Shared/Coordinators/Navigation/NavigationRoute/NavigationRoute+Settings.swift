@@ -149,7 +149,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func serverConnections(viewModel: ServerConnectionViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "serverConnections-\(viewModel.server.id)"
@@ -158,7 +157,6 @@ extension NavigationRoute {
         }
     }
 
-    @MainActor
     static func editServerConnection(
         viewModel: ServerConnectionViewModel,
         connection: ServerConnection

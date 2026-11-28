@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -74,12 +73,7 @@ struct VideoPlayerSettingsView: View {
     private var router
 
     @StateObject
-    private var viewModel: ServerUserAdminViewModel
-
-    init() {
-        _viewModel =
-            StateObject(wrappedValue: ServerUserAdminViewModel(user: Container.shared.currentUserSession()?.userData ?? UserDto()))
-    }
+    private var viewModel = ServerUserAdminViewModel()
 
     private func updateConfiguration(_ modify: (inout UserConfiguration) -> Void) {
         guard viewModel.user.id != nil, var configuration = viewModel.user.configuration else { return }
