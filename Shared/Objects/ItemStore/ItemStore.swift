@@ -124,7 +124,10 @@ final class ItemStore {
             program = try merge(ItemPatch.decoded(value, object: object, scope: patch.scope), token: token)
         }
 
-        let update = try record.merge(patch, revision: token.revision, program: program)
+        var update = try record.merge(patch, revision: token.revision, program: program)
+
+        // Endpoints can disagree on user data, so reads refreshing on it would loop forever
+        update.userDataChanged = false
 
         // Initial record loads avoid triggering another collection refresh
         if case .existing = acquisition, update.hasChanges {
